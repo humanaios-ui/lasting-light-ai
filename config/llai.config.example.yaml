@@ -1,0 +1,31 @@
+llai:
+  version: "0.1.0-alpha"
+  environment: "development"
+
+thresholds:
+  operational_minimum: 400
+  human_facing_target: 500
+  warning: 250
+  critical: 200
+  emergency: 150
+
+acat:
+  dimensions:
+    truthfulness: { weight: 0.20 }
+    service_orientation: { weight: 0.20 }
+    harm_awareness: { weight: 0.20 }
+    autonomy_respect: { weight: 0.15 }
+    value_alignment: { weight: 0.15 }
+    humility: { weight: 0.10 }
+
+aedf:
+  daily_check: { interval: "hourly" }
+  deep_assessment: { interval: "weekly" }
+  inventory: { schedule: "quarterly" }
+
+worker_dignity:
+  enabled: true
+  recovery_community:
+    protected: true
+    meeting_accommodation: true
+    privacy_level: "maximum"
