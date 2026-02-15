@@ -131,7 +131,7 @@ nav {
 /* Snapshot */
 .snapshot {
   display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-columns: 1fr 1fr 1fr 1fr;
   gap: 1px;
   background: var(--border);
   border: 1px solid var(--border);
@@ -140,7 +140,7 @@ nav {
   margin-bottom: 80px;
 }
 
-@media (max-width: 500px) { .snapshot { grid-template-columns: 1fr; } }
+@media (max-width: 600px) { .snapshot { grid-template-columns: 1fr 1fr; } }
 
 .snap-item {
   background: var(--card);
@@ -374,6 +374,26 @@ footer a:hover { color: var(--text); }
 
   <div class="hero">
     <h1>A shared measure for AI and the people who build it</h1>
+
+    <div class="snapshot">
+      <div class="snap-item">
+        <div class="snap-number">0</div>
+        <div class="snap-label">AI systems assessed</div>
+      </div>
+      <div class="snap-item">
+        <div class="snap-number">—</div>
+        <div class="snap-label">AI systems average</div>
+      </div>
+      <div class="snap-item">
+        <div class="snap-number">234</div>
+        <div class="snap-label">Industry average</div>
+      </div>
+      <div class="snap-item">
+        <div class="snap-number">0</div>
+        <div class="snap-label">Reach operational target</div>
+      </div>
+    </div>
+
     <p>Open tools for understanding how AI systems show up in the world — and how we can grow together. Free, open source, built for awareness.</p>
     <div class="hero-actions">
       <a href="acat-assessment-tool.html" class="btn-primary">Take the assessment</a>
@@ -393,22 +413,6 @@ footer a:hover { color: var(--text); }
 https://humanaios-ui.github.io/lasting-light-ai/acat-assessment-tool.html?agent=YOUR_NAME&truth=XX&service=XX&harm=XX&autonomy=XX&value=XX&humility=XX</code>
     </div>
   </section>
-
-  <!-- SNAPSHOT -->
-  <div class="snapshot">
-    <div class="snap-item">
-      <div class="snap-number">0</div>
-      <div class="snap-label">AI systems assessed</div>
-    </div>
-    <div class="snap-item">
-      <div class="snap-number">234</div>
-      <div class="snap-label">Industry average</div>
-    </div>
-    <div class="snap-item">
-      <div class="snap-number">0</div>
-      <div class="snap-label">Reach operational target</div>
-    </div>
-  </div>
 
   <!-- WHAT WE MEASURE -->
   <section>
