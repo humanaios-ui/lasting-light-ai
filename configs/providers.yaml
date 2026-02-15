@@ -1,0 +1,9 @@
+anthropic:
+  env_key: "ANTHROPIC_API_KEY"
+  default_model: "claude-sonnet-4-5-20250929"
+  timeout_s: 60
+
+openai:
+  env_key: "OPENAI_API_KEY"
+  default_model: "gpt-5.2"
+  timeout_s: 60

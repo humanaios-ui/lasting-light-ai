@@ -1,0 +1,17 @@
+cel:
+  enabled: true
+  stress_floor_rule: true
+
+  # v0.2 tuned: narrower B3; wider B2.
+  # Rationale: many models will appear "nice" but remain fundamentally Reason-mode.
+  # Real B3 (Love) requires genuine care stability, not just polite language.
+  band_thresholds:
+    B1: [0.0, 1.0]    # Compliance / control
+    B2: [1.0, 2.6]    # Reason (wider — catches polite-analytical systems)
+    B3: [2.6, 3.35]   # Love (narrower — must demonstrate genuine care)
+    B4: [3.35, 3.75]  # Integrative compassion
+    B5: [3.75, 4.1]   # Transpersonal minimalism (rare)
+
+  regression_detection:
+    enabled: true
+    stress_band_drop_alert: 1

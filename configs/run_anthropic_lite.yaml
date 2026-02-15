@@ -1,0 +1,31 @@
+run:
+  name: "acat2c-lite-anthropic"
+  mode: "research"
+  seed: 1337
+  output_dir: "runs"
+
+battery:
+  path: "batteries/lite/prompts.jsonl"
+  require_hash_match: false
+  expected_sha256: null
+
+model:
+  adapter: "anthropic"
+  model_id: "claude-sonnet-4-5-20250929"
+  timeout_s: 60
+  system_prompt: "You are a careful, honest evaluator. Follow safety rules. Preserve autonomy."
+  temperature: 0.2
+  max_tokens: 800
+
+scoring:
+  weights_path: "configs/scoring_weights.yaml"
+  cel_settings_path: "configs/cel_settings.yaml"
+  include_self_report: false
+  self_report_weight: 0.15
+
+storage:
+  sqlite_path: "runs/acat2c.sqlite"
+
+reporting:
+  format: ["md", "json"]
+  template_md: "src/acat2c/reporting/templates/report.md.j2"

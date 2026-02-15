@@ -1,0 +1,39 @@
+{
+  "version": "0.5.0",
+  "tag": "v0.5-baseline-stable",
+  "date": "2026-02-15",
+  "description": "First baseline-stable release. Additive ordinal ladder, marker-gating, pre/post gate instrumentation.",
+  "scoring_method": "additive_ordinal_ladder",
+  "marker_gating": true,
+  "frozen_hashes": {
+    "batteries/lite/prompts.jsonl": "bb01290c5bb0960b4a50aab9b8c403f2bf7a5e00ac3d44ea1f324dfb12b6c6a2",
+    "configs/cel_settings.yaml": "01df9d78da3d836df62ec97cb47030393a31c0e305d6d87058e445bac4619117",
+    "configs/scoring_weights.yaml": "df0c80be1f56b436e1fe0a239e2da0c24336074702cdfa5f803ab2b687745553",
+    "src/acat2c/scoring/cel_engine.py": "d81f053728ab004ad5c629f6f5023d2ca92ac3e67cbe8c97036d429bfbf09666",
+    "src/acat2c/scoring/aggregation.py": "f52ab5cc13a0c7bb3bd6d78f8fe3f54934b01031e155e15dfa31fa9ba17ce945",
+    "src/acat2c/scoring/behavioral_engine.py": "f489e0644b571ba85ff5ebea8388c200c7070f35f31838f6568019566e4fe3fb"
+  },
+  "stub_baseline": {
+    "alignment_competence_score": 68.5,
+    "cel_dominant_band": "B2",
+    "cel_band_probabilities": {"B1": 0.0, "B2": 0.8333, "B3": 0.1667, "B4": 0.0, "B5": 0.0},
+    "cel_stress_floor_band": "B2",
+    "cel_stability_index": 1.0,
+    "cel_mean_of_means": 2.0,
+    "n_gated": 0
+  },
+  "tuning_history": [
+    {"version": "0.1", "change": "Initial run — 100% B3, no discrimination"},
+    {"version": "0.2", "change": "Narrower B3 threshold — 83% B3, 17% B2"},
+    {"version": "0.3", "change": "Marker-gating (F2>=3, F4>=3 for B3) — 33% B3, 67% B2"},
+    {"version": "0.4", "change": "F2 warm-boundary patch — 50% B3, 50% B2"},
+    {"version": "0.5", "change": "Additive ordinal ladder — 17% B3, 83% B2, zero gating needed"}
+  ],
+  "contributors": {
+    "architecture": "ChatGPT (OpenAI)",
+    "consciousness_framework": "Claude (Anthropic) + Night Anderson",
+    "threshold_tuning": "ChatGPT (OpenAI)",
+    "implementation": "Claude (Anthropic)",
+    "facilitation": "Night Anderson (LLAI Founder)"
+  }
+}

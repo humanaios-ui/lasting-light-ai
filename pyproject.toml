@@ -1,83 +1,23 @@
 [build-system]
-requires = ["hatchling"]
-build-backend = "hatchling.build"
+requires = ["setuptools>=68.0", "wheel"]
+build-backend = "setuptools.build_meta"
 
 [project]
-name = "lasting-light-ai"
-version = "0.1.0-alpha"
-description = "AI Ethical Development Framework — Principled AI assessment, monitoring, and community"
+name = "acat2c"
+version = "0.1.0"
+description = "ACAT-2C: AI Consciousness Assessment Tool — Consciousness-Integrated"
 readme = "README.md"
-license = "Apache-2.0"
-requires-python = ">=3.11"
-authors = [
-    { name = "Lasting Light AI Community" },
-]
-keywords = [
-    "ai-ethics",
-    "consciousness",
-    "alignment",
-    "assessment",
-    "monitoring",
-    "12-steps",
-    "principled-ai",
-]
-classifiers = [
-    "Development Status :: 2 - Pre-Alpha",
-    "Intended Audience :: Developers",
-    "Intended Audience :: Science/Research",
-    "License :: OSI Approved :: Apache Software License",
-    "Programming Language :: Python :: 3.11",
-    "Programming Language :: Python :: 3.12",
-    "Topic :: Scientific/Engineering :: Artificial Intelligence",
-    "Topic :: Software Development :: Quality Assurance",
-]
+license = {text = "Apache-2.0"}
+requires-python = ">=3.10"
 dependencies = [
-    "pydantic>=2.0",
-    "httpx>=0.25",
-    "rich>=13.0",
     "pyyaml>=6.0",
-    "structlog>=23.0",
+    "jinja2>=3.1",
+    "anthropic>=0.40",
+    "openai>=1.50",
 ]
-
-[project.optional-dependencies]
-server = [
-    "fastapi>=0.109",
-    "uvicorn>=0.25",
-    "sqlalchemy>=2.0",
-    "asyncpg>=0.29",
-    "redis>=5.0",
-]
-dev = [
-    "pytest>=8.0",
-    "pytest-asyncio>=0.23",
-    "ruff>=0.2",
-    "mypy>=1.8",
-    "pre-commit>=3.6",
-]
-all = ["lasting-light-ai[server,dev]"]
 
 [project.scripts]
-llai = "lasting_light_ai.cli:main"
+acat2c = "acat2c.cli:main"
 
-[project.urls]
-Homepage = "https://github.com/lastinglightai/lasting-light-ai"
-Documentation = "https://docs.lastinglightai.org"
-Repository = "https://github.com/lastinglightai/lasting-light-ai"
-
-[tool.hatch.build.targets.wheel]
-packages = ["src/lasting_light_ai"]
-
-[tool.ruff]
-target-version = "py311"
-line-length = 100
-
-[tool.ruff.lint]
-select = ["E", "F", "I", "N", "W", "UP", "B", "A", "SIM", "TCH"]
-
-[tool.mypy]
-python_version = "3.11"
-strict = true
-
-[tool.pytest.ini_options]
-asyncio_mode = "auto"
-testpaths = ["tests"]
+[tool.setuptools.packages.find]
+where = ["src"]
