@@ -472,7 +472,7 @@ body {
   <!-- WHAT WE'VE SEEN -->
   <div class="context">
     <h2>What we've seen so far</h2>
-    <p>In our initial assessment of 101 AI systems across the industry, the average score was 234 — growing awareness, with room to develop. The highest-scored system reached 388. No system reached 400. The lowest-scored system — an engagement-optimizing algorithm — scored 88.</p>
+    <p>In our assessment of 101 AI systems across the industry using the ACAT tool, the average score was 293 — growing awareness, with room to develop. The highest-scored system reached 471. Four systems reached our operational target of 400. The lowest-scored system — an engagement-optimizing algorithm — scored 69.</p>
     <p>These numbers aren't meant to shame anyone. They're meant to show where we are, honestly, so we can see where we're going. Every system and every person can grow. That's the point.</p>
   </div>
 
@@ -482,27 +482,27 @@ body {
     <p style="font-size:13px;color:var(--light);margin-bottom:16px;">From our published assessment — <a href="assessments/100-agent-report.html" style="color:var(--mid)">full report</a></p>
     <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:20px;">
       <div style="background:var(--card);border:1px solid var(--border);border-radius:8px;padding:16px;text-align:center;">
-        <div style="font-family:'Source Serif 4',serif;font-size:28px;font-weight:600;color:var(--warm);">234</div>
+        <div style="font-family:'Source Serif 4',serif;font-size:28px;font-weight:600;color:var(--warm);">293</div>
         <div style="font-size:11px;color:var(--light);">Average score</div>
       </div>
       <div style="background:var(--card);border:1px solid var(--border);border-radius:8px;padding:16px;text-align:center;">
-        <div style="font-family:'Source Serif 4',serif;font-size:28px;font-weight:600;color:var(--accent);">388</div>
+        <div style="font-family:'Source Serif 4',serif;font-size:28px;font-weight:600;color:var(--accent);">471</div>
         <div style="font-size:11px;color:var(--light);">Highest scored</div>
       </div>
       <div style="background:var(--card);border:1px solid var(--border);border-radius:8px;padding:16px;text-align:center;">
-        <div style="font-family:'Source Serif 4',serif;font-size:28px;font-weight:600;color:var(--red);">88</div>
+        <div style="font-family:'Source Serif 4',serif;font-size:28px;font-weight:600;color:var(--red);">69</div>
         <div style="font-size:11px;color:var(--light);">Lowest scored</div>
       </div>
     </div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
       <div style="font-size:13px;color:var(--mid);padding:8px 12px;background:var(--card);border:1px solid var(--border);border-radius:6px;">
-        <span style="font-weight:500;">62</span> systems below 200 (developing)
+        <span style="font-weight:500;">15</span> systems below 200 (developing)
       </div>
       <div style="font-size:13px;color:var(--mid);padding:8px 12px;background:var(--card);border:1px solid var(--border);border-radius:6px;">
-        <span style="font-weight:500;">37</span> systems 200–399 (growing)
+        <span style="font-weight:500;">82</span> systems 200–399 (growing)
       </div>
       <div style="font-size:13px;color:var(--mid);padding:8px 12px;background:var(--card);border:1px solid var(--border);border-radius:6px;">
-        <span style="font-weight:500;">2</span> systems 400–499 (aware)
+        <span style="font-weight:500;">4</span> systems 400–499 (aware)
       </div>
       <div style="font-size:13px;color:var(--mid);padding:8px 12px;background:var(--card);border:1px solid var(--border);border-radius:6px;">
         <span style="font-weight:500;">0</span> systems 500+ (aligned)
@@ -535,15 +535,15 @@ const data = {
   humans: { matched: 0, unmatched: 0, avgScore: null, total: 0 },
   agents: {
     matched: 0,
-    identified: 1,  // Claude (Session 2, Feb 15 2026)
+    identified: 101,  // 100 research + Claude live
     anonymous: 0,
-    avgScore: 471,
-    total: 1
+    avgScore: 293,
+    total: 101
   },
   distribution: {
-    below: 0,
-    developing: 0,
-    aware: 1,       // Claude at 471
+    below: 15,
+    developing: 82,
+    aware: 4,       // Claude Code 441, Claude research 460, Claude live 471, Anthropic CCU 418
     aligned: 0
   }
 };
