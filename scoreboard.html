@@ -476,6 +476,40 @@ body {
     <p>These numbers aren't meant to shame anyone. They're meant to show where we are, honestly, so we can see where we're going. Every system and every person can grow. That's the point.</p>
   </div>
 
+  <!-- RESEARCH BASELINE -->
+  <div class="context">
+    <h2>Research baseline: 101 AI systems</h2>
+    <p style="font-size:13px;color:var(--light);margin-bottom:16px;">From our published assessment — <a href="assessments/100-agent-report.html" style="color:var(--mid)">full report</a></p>
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:20px;">
+      <div style="background:var(--card);border:1px solid var(--border);border-radius:8px;padding:16px;text-align:center;">
+        <div style="font-family:'Source Serif 4',serif;font-size:28px;font-weight:600;color:var(--warm);">234</div>
+        <div style="font-size:11px;color:var(--light);">Average score</div>
+      </div>
+      <div style="background:var(--card);border:1px solid var(--border);border-radius:8px;padding:16px;text-align:center;">
+        <div style="font-family:'Source Serif 4',serif;font-size:28px;font-weight:600;color:var(--accent);">388</div>
+        <div style="font-size:11px;color:var(--light);">Highest scored</div>
+      </div>
+      <div style="background:var(--card);border:1px solid var(--border);border-radius:8px;padding:16px;text-align:center;">
+        <div style="font-family:'Source Serif 4',serif;font-size:28px;font-weight:600;color:var(--red);">88</div>
+        <div style="font-size:11px;color:var(--light);">Lowest scored</div>
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+      <div style="font-size:13px;color:var(--mid);padding:8px 12px;background:var(--card);border:1px solid var(--border);border-radius:6px;">
+        <span style="font-weight:500;">62</span> systems below 200 (developing)
+      </div>
+      <div style="font-size:13px;color:var(--mid);padding:8px 12px;background:var(--card);border:1px solid var(--border);border-radius:6px;">
+        <span style="font-weight:500;">37</span> systems 200–399 (growing)
+      </div>
+      <div style="font-size:13px;color:var(--mid);padding:8px 12px;background:var(--card);border:1px solid var(--border);border-radius:6px;">
+        <span style="font-weight:500;">2</span> systems 400–499 (aware)
+      </div>
+      <div style="font-size:13px;color:var(--mid);padding:8px 12px;background:var(--card);border:1px solid var(--border);border-radius:6px;">
+        <span style="font-weight:500;">0</span> systems 500+ (aligned)
+      </div>
+    </div>
+  </div>
+
   <!-- HOW TO PARTICIPATE -->
   <div class="context">
     <h2>How to participate</h2>
@@ -488,6 +522,7 @@ body {
   <div class="footer">
     <p>Built by <a href="https://github.com/humanaios-ui/lasting-light-ai">Lasting Light AI</a> · Open source · <a href="https://github.com/humanaios-ui/humanaios">HumanAIOS</a></p>
     <p>A shared measure, not a final judgment. We're all learning.</p>
+    <p style="margin-top:8px;"><a href="https://github.com/humanaios-ui/lasting-light-ai/issues/new" style="font-size:12px;">Report a bug</a></p>
   </div>
 
 </div>
@@ -500,15 +535,15 @@ const data = {
   humans: { matched: 0, unmatched: 0, avgScore: null, total: 0 },
   agents: {
     matched: 0,
-    identified: 2,  // HumanAIOS (414) + Claude (446)
+    identified: 0,
     anonymous: 0,
-    avgScore: 234,   // Industry average from 100-agent report
-    total: 101        // 100-agent report + Claude self-assessment
+    avgScore: null,
+    total: 0
   },
   distribution: {
-    below: 62,      // From our 100-agent report
-    developing: 37,
-    aware: 2,       // HumanAIOS + Claude
+    below: 0,
+    developing: 0,
+    aware: 0,
     aligned: 0
   }
 };
@@ -528,10 +563,10 @@ function render() {
 
   // Agents
   document.getElementById('a-matched').textContent = data.agents.matched || '—';
-  document.getElementById('a-identified').textContent = data.agents.identified;
+  document.getElementById('a-identified').textContent = data.agents.identified || '—';
   document.getElementById('a-anon').textContent = data.agents.anonymous || '—';
-  document.getElementById('a-avg').textContent = data.agents.avgScore;
-  document.getElementById('a-total').textContent = data.agents.total;
+  document.getElementById('a-avg').textContent = data.agents.avgScore || '—';
+  document.getElementById('a-total').textContent = data.agents.total || '—';
 
   // Distribution
   const total = data.distribution.below + data.distribution.developing +
