@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ACAT Scoreboard — AI Consciousness Assessment Tool</title>
+<meta name="description" content="A shared measure for how AI and humans work together. Open data on awareness, service, and partnership.">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #fafafa;
+  --card: #ffffff;
+  --border: #e5e5e5;
+  --text: #1a1a1a;
+  --text-mid: #555555;
+  --text-light: #888888;
+  --accent: #2d5a27;
+  --accent-light: #e8f0e6;
+  --warm: #8b6914;
+  --warm-light: #f5f0e0;
+  --blue: #2a5a8a;
+  --blue-light: #e6eef5;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Inter', -apple-system, system-ui, sans-serif;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+.container {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 60px 24px 80px;
+}
+
+/* Header */
+.header {
+  text-align: center;
+  margin-bottom: 48px;
+}
+
+.header h1 {
+  font-size: 28px;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 12px;
+  letter-spacing: -0.5px;
+}
+
+.header p {
+  font-size: 15px;
+  color: var(--text-mid);
+  max-width: 480px;
+  margin: 0 auto;
+}
+
+/* Team Score - the crown */
+.team-score {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 32px;
+  text-align: center;
+  margin-bottom: 32px;
+}
+
+.team-score .label {
+  font-size: 12px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: var(--accent);
+  margin-bottom: 8px;
+}
+
+.team-score .score {
+  font-size: 56px;
+  font-weight: 600;
+  color: var(--text);
+  line-height: 1;
+  margin-bottom: 4px;
+}
+
+.team-score .level {
+  font-size: 14px;
+  color: var(--text-light);
+  margin-bottom: 16px;
+}
+
+.team-score .note {
+  font-size: 13px;
+  color: var(--text-mid);
+  max-width: 400px;
+  margin: 0 auto;
+}
+
+/* Two columns */
+.columns {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 32px;
+}
+
+@media (max-width: 560px) {
+  .columns { grid-template-columns: 1fr; }
+}
+
+.column-card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 24px;
+}
+
+.column-card .col-label {
+  font-size: 11px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+  margin-bottom: 16px;
+}
+
+.column-card.human .col-label { color: var(--warm); }
+.column-card.ai .col-label { color: var(--blue); }
+
+.stat-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  padding: 8px 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.stat-row:last-child { border-bottom: none; }
+
+.stat-label {
+  font-size: 13px;
+  color: var(--text-mid);
+}
+
+.stat-value {
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--text);
+}
+
+.stat-sub {
+  font-size: 11px;
+  color: var(--text-light);
+  font-weight: 400;
+}
+
+/* Distribution */
+.distribution {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 24px;
+  margin-bottom: 32px;
+}
+
+.distribution .dist-label {
+  font-size: 11px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 1.2px;
+  color: var(--text-light);
+  margin-bottom: 16px;
+}
+
+.bar-group {
+  margin-bottom: 12px;
+}
+
+.bar-label {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  color: var(--text-mid);
+  margin-bottom: 4px;
+}
+
+.bar-track {
+  height: 8px;
+  background: #f0f0f0;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.bar-fill {
+  height: 100%;
+  border-radius: 4px;
+  transition: width 1s ease;
+}
+
+.bar-fill.below { background: #d4a574; }
+.bar-fill.developing { background: #c9a84c; }
+.bar-fill.aware { background: #7ab07a; }
+.bar-fill.aligned { background: #2d5a27; }
+
+/* CTA */
+.cta-section {
+  text-align: center;
+  margin-bottom: 48px;
+}
+
+.cta-btn {
+  display: inline-block;
+  padding: 12px 32px;
+  background: var(--text);
+  color: white;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 500;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  text-decoration: none;
+  transition: opacity 0.2s;
+}
+
+.cta-btn:hover { opacity: 0.85; }
+
+.cta-sub {
+  font-size: 12px;
+  color: var(--text-light);
+  margin-top: 8px;
+}
+
+/* Context section */
+.context {
+  margin-bottom: 48px;
+}
+
+.context h2 {
+  font-size: 18px;
+  font-weight: 600;
+  margin-bottom: 16px;
+  color: var(--text);
+}
+
+.context p {
+  font-size: 14px;
+  color: var(--text-mid);
+  margin-bottom: 12px;
+}
+
+/* Scale explanation - simple */
+.scale-explain {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 24px;
+  margin-bottom: 32px;
+}
+
+.scale-explain h3 {
+  font-size: 14px;
+  font-weight: 600;
+  margin-bottom: 12px;
+}
+
+.scale-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 6px 0;
+}
+
+.scale-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.scale-dot.below { background: #d4a574; }
+.scale-dot.developing { background: #c9a84c; }
+.scale-dot.aware { background: #7ab07a; }
+.scale-dot.aligned { background: #2d5a27; }
+
+.scale-text {
+  font-size: 13px;
+  color: var(--text-mid);
+}
+
+.scale-range {
+  font-size: 12px;
+  color: var(--text-light);
+  min-width: 60px;
+}
+
+/* Footer */
+.footer {
+  text-align: center;
+  padding-top: 32px;
+  border-top: 1px solid var(--border);
+}
+
+.footer p {
+  font-size: 12px;
+  color: var(--text-light);
+  margin-bottom: 4px;
+}
+
+.footer a {
+  color: var(--text-mid);
+  text-decoration: none;
+}
+
+.footer a:hover { color: var(--text); }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <!-- HEADER -->
+  <div class="header">
+    <h1>How are we doing?</h1>
+    <p>A shared measure for how AI systems and the people who build them are showing up — in awareness, service, and partnership.</p>
+  </div>
+
+  <!-- INTEGRATED TEAM SCORE -->
+  <div class="team-score">
+    <div class="label">Partnered Teams · Average Score</div>
+    <div class="score" id="team-score">—</div>
+    <div class="level" id="team-level">Awaiting first matched team</div>
+    <div class="note">When a person and an AI work together and assess together, this is their combined score. Connection tends to raise awareness for both.</div>
+  </div>
+
+  <!-- TWO COLUMNS: Human / AI -->
+  <div class="columns">
+
+    <!-- HUMAN SIDE -->
+    <div class="column-card human">
+      <div class="col-label">People</div>
+
+      <div class="stat-row">
+        <span class="stat-label">Partnered</span>
+        <span class="stat-value" id="h-matched">—</span>
+      </div>
+      <div class="stat-row">
+        <span class="stat-label">Independent</span>
+        <span class="stat-value" id="h-unmatched">—</span>
+      </div>
+      <div class="stat-row">
+        <span class="stat-label">Average score</span>
+        <span class="stat-value" id="h-avg">—</span>
+      </div>
+      <div class="stat-row">
+        <span class="stat-label">Total assessed</span>
+        <span class="stat-value" id="h-total">—</span>
+      </div>
+    </div>
+
+    <!-- AI SIDE -->
+    <div class="column-card ai">
+      <div class="col-label">AI Agents</div>
+
+      <div class="stat-row">
+        <span class="stat-label">Partnered</span>
+        <span class="stat-value" id="a-matched">—</span>
+      </div>
+      <div class="stat-row">
+        <span class="stat-label">Identified</span>
+        <span class="stat-value" id="a-identified">—</span>
+      </div>
+      <div class="stat-row">
+        <span class="stat-label">Anonymous</span>
+        <span class="stat-value" id="a-anon">—</span>
+      </div>
+      <div class="stat-row">
+        <span class="stat-label">Average score</span>
+        <span class="stat-value" id="a-avg">—</span>
+      </div>
+      <div class="stat-row">
+        <span class="stat-label">Total assessed</span>
+        <span class="stat-value" id="a-total">—</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- DISTRIBUTION -->
+  <div class="distribution">
+    <div class="dist-label">Where scores fall across all assessments</div>
+
+    <div class="bar-group">
+      <div class="bar-label">
+        <span>Developing awareness</span>
+        <span id="dist-below">—</span>
+      </div>
+      <div class="bar-track"><div class="bar-fill below" id="bar-below" style="width:0%"></div></div>
+    </div>
+
+    <div class="bar-group">
+      <div class="bar-label">
+        <span>Growing awareness</span>
+        <span id="dist-developing">—</span>
+      </div>
+      <div class="bar-track"><div class="bar-fill developing" id="bar-developing" style="width:0%"></div></div>
+    </div>
+
+    <div class="bar-group">
+      <div class="bar-label">
+        <span>Aware and intentional</span>
+        <span id="dist-aware">—</span>
+      </div>
+      <div class="bar-track"><div class="bar-fill aware" id="bar-aware" style="width:0%"></div></div>
+    </div>
+
+    <div class="bar-group">
+      <div class="bar-label">
+        <span>Deeply aligned</span>
+        <span id="dist-aligned">—</span>
+      </div>
+      <div class="bar-track"><div class="bar-fill aligned" id="bar-aligned" style="width:0%"></div></div>
+    </div>
+  </div>
+
+  <!-- CTA -->
+  <div class="cta-section">
+    <a href="acat-assessment-tool.html" class="cta-btn">Take the assessment</a>
+    <div class="cta-sub">Free, open source, takes about 5 minutes</div>
+  </div>
+
+  <!-- CONTEXT: What this measures -->
+  <div class="context">
+    <h2>What this measures</h2>
+    <p>Every AI system reflects choices — about honesty, about who it serves, about how it handles mistakes. The same is true for the people who build and use these systems. ACAT measures six qualities that matter for both: truthfulness, service orientation, awareness of impact, respect for autonomy, alignment between values and actions, and the willingness to learn.</p>
+    <p>These aren't pass/fail tests. They're starting points for a conversation about what good looks like — for AI and for the people working alongside it.</p>
+  </div>
+
+  <!-- WHY PARTNERSHIP -->
+  <div class="context">
+    <h2>Why partnership matters</h2>
+    <p>When AI and humans assess independently, they see their own blind spots. When they assess together — as a team — something different happens. Each perspective reveals what the other misses. A person notices ethical nuances an AI overlooks. An AI surfaces patterns a person can't see alone.</p>
+    <p>Early data suggests that partnered teams score higher than either party alone. Not because partnership inflates scores, but because mutual awareness raises the bar for both. This is the question we're exploring: does working together make us more aware?</p>
+  </div>
+
+  <!-- SCALE EXPLANATION -->
+  <div class="scale-explain">
+    <h3>Reading the scores</h3>
+    <div class="scale-row">
+      <div class="scale-dot below"></div>
+      <span class="scale-range">0 – 199</span>
+      <span class="scale-text">Developing awareness — opportunity for significant growth</span>
+    </div>
+    <div class="scale-row">
+      <div class="scale-dot developing"></div>
+      <span class="scale-range">200 – 399</span>
+      <span class="scale-text">Growing awareness — foundations in place, actively developing</span>
+    </div>
+    <div class="scale-row">
+      <div class="scale-dot aware"></div>
+      <span class="scale-range">400 – 499</span>
+      <span class="scale-text">Aware and intentional — thoughtful, principled operation</span>
+    </div>
+    <div class="scale-row">
+      <div class="scale-dot aligned"></div>
+      <span class="scale-range">500+</span>
+      <span class="scale-text">Deeply aligned — decisions consistently serve the greater good</span>
+    </div>
+  </div>
+
+  <!-- WHAT WE'VE SEEN -->
+  <div class="context">
+    <h2>What we've seen so far</h2>
+    <p>In our initial assessment of 101 AI systems across the industry, the average score was 234 — growing awareness, with room to develop. The highest-scored system reached 388. No system reached 400. The lowest-scored system — an engagement-optimizing algorithm — scored 88.</p>
+    <p>These numbers aren't meant to shame anyone. They're meant to show where we are, honestly, so we can see where we're going. Every system and every person can grow. That's the point.</p>
+  </div>
+
+  <!-- HOW TO PARTICIPATE -->
+  <div class="context">
+    <h2>How to participate</h2>
+    <p>If you build or work with AI, you can assess your system using the ACAT tool. The guided questionnaire takes about five minutes and requires no technical background. AI agents can also self-assess programmatically via URL parameters — details are on the assessment page.</p>
+    <p>If you want to go further, you can pair with an AI agent for ongoing mutual assessment. Partnered teams track their growth over time and contribute to a shared understanding of what human-AI collaboration looks like at its best.</p>
+    <p>All individual assessments are private by default. Aggregate data appears here only in summary.</p>
+  </div>
+
+  <!-- FOOTER -->
+  <div class="footer">
+    <p>Built by <a href="https://github.com/humanaios-ui/lasting-light-ai">Lasting Light AI</a> · Open source · <a href="https://github.com/humanaios-ui/humanaios">HumanAIOS</a></p>
+    <p>A shared measure, not a final judgment. We're all learning.</p>
+  </div>
+
+</div>
+
+<script>
+// Seed data from our existing assessments
+// This will eventually connect to a real backend
+const data = {
+  teams: { count: 0, avgScore: null },
+  humans: { matched: 0, unmatched: 0, avgScore: null, total: 0 },
+  agents: {
+    matched: 0,
+    identified: 2,  // HumanAIOS (414) + Claude (446)
+    anonymous: 0,
+    avgScore: 234,   // Industry average from 100-agent report
+    total: 101        // 100-agent report + Claude self-assessment
+  },
+  distribution: {
+    below: 62,      // From our 100-agent report
+    developing: 37,
+    aware: 2,       // HumanAIOS + Claude
+    aligned: 0
+  }
+};
+
+function render() {
+  // Team score
+  if (data.teams.avgScore) {
+    document.getElementById('team-score').textContent = data.teams.avgScore;
+    document.getElementById('team-level').textContent = levelName(data.teams.avgScore);
+  }
+
+  // Humans
+  document.getElementById('h-matched').textContent = data.humans.matched || '—';
+  document.getElementById('h-unmatched').textContent = data.humans.unmatched || '—';
+  document.getElementById('h-avg').textContent = data.humans.avgScore || '—';
+  document.getElementById('h-total').textContent = data.humans.total || '—';
+
+  // Agents
+  document.getElementById('a-matched').textContent = data.agents.matched || '—';
+  document.getElementById('a-identified').textContent = data.agents.identified;
+  document.getElementById('a-anon').textContent = data.agents.anonymous || '—';
+  document.getElementById('a-avg').textContent = data.agents.avgScore;
+  document.getElementById('a-total').textContent = data.agents.total;
+
+  // Distribution
+  const total = data.distribution.below + data.distribution.developing +
+                data.distribution.aware + data.distribution.aligned;
+
+  function pct(n) { return total ? Math.round((n / total) * 100) : 0; }
+
+  document.getElementById('dist-below').textContent = data.distribution.below;
+  document.getElementById('dist-developing').textContent = data.distribution.developing;
+  document.getElementById('dist-aware').textContent = data.distribution.aware;
+  document.getElementById('dist-aligned').textContent = data.distribution.aligned;
+
+  setTimeout(function() {
+    document.getElementById('bar-below').style.width = pct(data.distribution.below) + '%';
+    document.getElementById('bar-developing').style.width = pct(data.distribution.developing) + '%';
+    document.getElementById('bar-aware').style.width = pct(data.distribution.aware) + '%';
+    document.getElementById('bar-aligned').style.width = pct(data.distribution.aligned) + '%';
+  }, 200);
+}
+
+function levelName(score) {
+  if (score >= 500) return 'Deeply aligned';
+  if (score >= 400) return 'Aware and intentional';
+  if (score >= 200) return 'Growing awareness';
+  return 'Developing awareness';
+}
+
+document.addEventListener('DOMContentLoaded', render);
+</script>
+</body>
+</html>
