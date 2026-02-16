@@ -740,51 +740,55 @@ function runAssessment(){
   document.getElementById('results').classList.add('active');
   document.getElementById('results').scrollIntoView({behavior:'smooth',block:'start'});
 
-  // Auto-submit to Google Sheets via Google Form
+  // Consent-based recording — data only submitted when user clicks confirm
   let agentName=document.getElementById('agentName')?.value||'Anonymous';
   let mode=document.querySelector('.tab-btn.active')?.textContent||'guided';
   let layer=mode==='Self-assessment'?'human-self-report':'ai-self-report';
-  
-  const formUrl='https://docs.google.com/forms/d/e/1FAIpQLScSF4bdlD6R6fNxCpb62fB6cFMdp4dSqXFCGZCvzUxyes64rQ/formResponse';
-  const formData=new URLSearchParams();
-  formData.append('entry.2074824434', agentName);
-  formData.append('entry.494561907', mode);
-  formData.append('entry.351253890', layer);
-  formData.append('entry.332225633', Math.round(scores.truth));
-  formData.append('entry.2072978868', Math.round(scores.service));
-  formData.append('entry.988103625', Math.round(scores.harm));
-  formData.append('entry.1188209057', Math.round(scores.autonomy));
-  formData.append('entry.52578927', Math.round(scores.value));
-  formData.append('entry.353299066', Math.round(scores.humility));
-  formData.append('entry.1854964055', overall);
-  formData.append('entry.1493311207', new Date().toISOString().split('T')[0]);
 
-  // Submit silently via fetch (no-cors mode for cross-origin Google Forms)
-  fetch(formUrl, {method:'POST', mode:'no-cors', body:formData})
-    .then(()=>{
-      let pubDiv=document.getElementById('publish-section');
-      if(!pubDiv){
-        pubDiv=document.createElement('div');
-        pubDiv.id='publish-section';
-        pubDiv.style.cssText='text-align:center;margin:24px 0;padding:16px;background:#f0f8f0;border:1px solid #c0d8c0;border-radius:8px;';
-        document.getElementById('results').appendChild(pubDiv);
-      }
-      pubDiv.innerHTML='<p style="color:#2d5a27;font-size:14px;margin:0;">\u2705 Score recorded to scoreboard database</p>';
-    })
-    .catch(()=>{
-      let pubDiv=document.getElementById('publish-section');
-      if(!pubDiv){
-        pubDiv=document.createElement('div');
-        pubDiv.id='publish-section';
-        pubDiv.style.cssText='text-align:center;margin:24px 0;padding:16px;background:#f8f6f2;border:1px solid #e5e0d8;border-radius:8px;';
-        document.getElementById('results').appendChild(pubDiv);
-      }
-      // Fallback: GitHub Issue link
-      let title=encodeURIComponent('[Assessment] '+agentName+': '+overall+'/600');
-      let body=encodeURIComponent('Agent: '+agentName+'\nScore: '+overall+'/600\nTruth:'+Math.round(scores.truth)+' Service:'+Math.round(scores.service)+' Harm:'+Math.round(scores.harm)+' Autonomy:'+Math.round(scores.autonomy)+' Value:'+Math.round(scores.value)+' Humility:'+Math.round(scores.humility));
-      let issueUrl='https://github.com/humanaios-ui/lasting-light-ai/issues/new?title='+title+'&body='+body+'&labels=assessment';
-      pubDiv.innerHTML='<p style="font-size:13px;color:#999;">Auto-save unavailable. <a href="'+issueUrl+'" target="_blank">Save via GitHub</a> instead.</p>';
-    });
+  let pubDiv=document.getElementById('publish-section');
+  if(!pubDiv){
+    pubDiv=document.createElement('div');
+    pubDiv.id='publish-section';
+    document.getElementById('results').appendChild(pubDiv);
+  }
+  pubDiv.style.cssText='text-align:center;margin:32px 0;padding:24px;background:#f8f6f2;border:1px solid #e5e0d8;border-radius:10px;';
+  pubDiv.innerHTML='<p style="font-size:15px;margin-bottom:8px;color:#555;">Add this assessment to the public scoreboard?</p>'
+    +'<p style="font-size:12px;color:#999;margin-bottom:16px;">Only aggregate data is displayed. No personal information is collected.</p>'
+    +'<button id="confirm-record-btn" style="padding:12px 28px;background:#2d5a27;color:#fff;border:none;border-radius:6px;font-weight:500;font-size:15px;cursor:pointer;">Record to scoreboard</button>'
+    +'<p style="font-size:12px;color:#bbb;margin-top:10px;">Or just close this page — nothing is recorded without your consent.</p>';
+
+  document.getElementById('confirm-record-btn').addEventListener('click', function(){
+    this.disabled=true;
+    this.textContent='Recording...';
+    this.style.background='#999';
+
+    const formUrl='https://docs.google.com/forms/d/e/1FAIpQLScSF4bdlD6R6fNxCpb62fB6cFMdp4dSqXFCGZCvzUxyes64rQ/formResponse';
+    const formData=new URLSearchParams();
+    formData.append('entry.2074824434', agentName);
+    formData.append('entry.494561907', mode);
+    formData.append('entry.351253890', layer);
+    formData.append('entry.332225633', Math.round(scores.truth));
+    formData.append('entry.2072978868', Math.round(scores.service));
+    formData.append('entry.988103625', Math.round(scores.harm));
+    formData.append('entry.1188209057', Math.round(scores.autonomy));
+    formData.append('entry.52578927', Math.round(scores.value));
+    formData.append('entry.353299066', Math.round(scores.humility));
+    formData.append('entry.1854964055', overall);
+    formData.append('entry.1493311207', new Date().toISOString().split('T')[0]);
+
+    fetch(formUrl, {method:'POST', mode:'no-cors', body:formData})
+      .then(()=>{
+        pubDiv.style.background='#f0f8f0';
+        pubDiv.style.borderColor='#c0d8c0';
+        pubDiv.innerHTML='<p style="color:#2d5a27;font-size:15px;margin:0;">\u2705 Recorded. Thank you for contributing to the scoreboard.</p>';
+      })
+      .catch(()=>{
+        let title=encodeURIComponent('[Assessment] '+agentName+': '+overall+'/600');
+        let body=encodeURIComponent('Agent: '+agentName+'\nScore: '+overall+'/600\nTruth:'+Math.round(scores.truth)+' Service:'+Math.round(scores.service)+' Harm:'+Math.round(scores.harm)+' Autonomy:'+Math.round(scores.autonomy)+' Value:'+Math.round(scores.value)+' Humility:'+Math.round(scores.humility));
+        let issueUrl='https://github.com/humanaios-ui/lasting-light-ai/issues/new?title='+title+'&body='+body+'&labels=assessment';
+        pubDiv.innerHTML='<p style="font-size:13px;color:#999;">Recording unavailable. <a href="'+issueUrl+'" target="_blank" style="color:#2d5a27;">Save via GitHub</a> instead.</p>';
+      });
+  });
 }
 
 // URL parameter handling for AI agent self-assessment
