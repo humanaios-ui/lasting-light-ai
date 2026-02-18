@@ -621,11 +621,11 @@ https://humanaios-ui.github.io/lasting-light-ai/acat-assessment-tool.html?agent=
 </footer>
 </div>
 <script>
+const assessmentLayer = new URLSearchParams(window.location.search).get('layer') || 'ai-self-report';
 let currentMode='guided';
 let answers={};
 const dims=['truth','service','harm','autonomy','value','humility'];
 const dimNames={truth:'Truthfulness',service:'Service orientation',harm:'Awareness of impact',autonomy:'Respect for autonomy',value:'Value alignment',humility:'Humility'};
-
 function setMode(mode){
   currentMode=mode;
   document.querySelectorAll('.mode-btn').forEach(b=>b.classList.remove('active'));
