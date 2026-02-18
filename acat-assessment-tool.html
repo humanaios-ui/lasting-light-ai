@@ -743,7 +743,7 @@ function runAssessment(){
   // Consent-based recording — data only submitted when user clicks confirm
   let agentName=document.getElementById('agentName')?.value||'Anonymous';
   let mode=document.querySelector('.tab-btn.active')?.textContent||'guided';
-  let layer=mode==='Self-assessment'?'human-self-report':'ai-self-report';
+  let layer=assessmentLayer==='human'||currentMode==='human'?'human-assessment':'ai-self-report';
 
   let pubDiv=document.getElementById('publish-section');
   if(!pubDiv){
