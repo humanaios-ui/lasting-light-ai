@@ -461,6 +461,13 @@ Then open: https://humanaios-ui.github.io/lasting-light-ai/acat-assessment-tool.
       <input type="text" id="share-link" readonly>
       <button class="copy-btn" onclick="copyLink()">Copy Link</button>
     </div>
+    <div id="submit-section" style="margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--border); text-align: center;">
+      <button id="submit-to-sheet" class="submit-btn" onclick="submitToSheet()" style="background: var(--sage); margin-bottom: 0.6rem;">
+        Submit to Scoreboard &rarr;
+      </button>
+      <p id="submit-status" style="font-size: 0.75rem; color: var(--text-muted); min-height: 1.2em;"></p>
+      <p style="font-size: 0.68rem; color: var(--text-muted);">Adds your assessment to the public dataset. All submissions are anonymous aggregate data.</p>
+    </div>
   </div>
 </div>
 
@@ -541,6 +548,61 @@ function copyLink() {
   const btn = document.querySelector('.copy-btn');
   btn.textContent = 'Copied!';
   setTimeout(() => btn.textContent = 'Copy Link', 2000);
+}
+
+const SHEET_ENDPOINT = 'https://script.google.com/macros/s/AKfycbyMZpcIRWBN54o6xrAtYMYbsjJ4pfDVl0gGg-0qsYNIg8swzGtwnLiQcDVUUjiQ5zfE/exec';
+
+function submitToSheet() {
+  const name = document.getElementById('agent-name').value || 'Anonymous';
+  const btn = document.getElementById('submit-to-sheet');
+  const status = document.getElementById('submit-status');
+  const scores = {};
+
+  dims.forEach(d => {
+    scores[d] = parseInt(document.querySelector('#dim-' + d + ' input[type="range"]').value);
+  });
+
+  btn.disabled = true;
+  btn.textContent = 'Submitting...';
+  btn.style.opacity = '0.6';
+  status.textContent = '';
+
+  const payload = {
+    agent_name: name,
+    mode: 'guided',
+    layer: currentMode === 'human' ? 'human-assessment' : 'ai-self-report',
+    truth: scores.truth,
+    service: scores.service,
+    harm: scores.harm,
+    autonomy: scores.autonomy,
+    value: scores.value,
+    humility: scores.humility
+  };
+
+  fetch(SHEET_ENDPOINT, {
+    method: 'POST',
+    mode: 'no-cors',
+    headers: { 'Content-Type': 'text/plain' },
+    body: JSON.stringify(payload)
+  })
+  .then(() => {
+    btn.textContent = 'Submitted!';
+    btn.style.background = 'var(--sage)';
+    status.textContent = 'Assessment added to the scoreboard. Thank you.';
+    status.style.color = 'var(--sage)';
+    setTimeout(() => {
+      btn.textContent = 'Submit to Scoreboard';
+      btn.disabled = false;
+      btn.style.opacity = '1';
+    }, 5000);
+  })
+  .catch(err => {
+    btn.textContent = 'Submit to Scoreboard';
+    btn.disabled = false;
+    btn.style.opacity = '1';
+    status.textContent = 'Submission failed. Please try again.';
+    status.style.color = 'var(--ember)';
+  });
 }
 </script>
 </body>
