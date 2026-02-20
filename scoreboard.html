@@ -483,6 +483,14 @@ function initScoreboard(data, source) {
 
   document.querySelectorAll('.sc-num')[0].textContent = DATA.length;
   document.querySelectorAll('.sc-num')[1].textContent = aiCount;
+  // Human consciousness unified score
+  const humanRecs = DATA.filter(d => d.l === 'human-assessment');
+  if (humanRecs.length > 0) {
+    const hTotal = Math.round(humanRecs.map(d=>d.o).reduce((a,b)=>a+b,0)/humanRecs.length);
+    document.querySelectorAll('.sc-num')[2].textContent = humanRecs.length;
+    document.querySelectorAll('.sc-label')[2].textContent = 'Human Assessors';
+    document.querySelectorAll('.sc-num')[3].textContent = hTotal;
+  }
   document.querySelectorAll('.sc-num')[4].textContent = aiMean;
   document.querySelectorAll('.sc-num')[5].textContent = families.size;
 
@@ -556,14 +564,20 @@ function renderFamilies() {
     isHuman: false
   })).sort((a,b) => b.avg - a.avg);
 
-  // Insert unified human consciousness
-  rows.push({name: 'Human Consciousness', count: 9, avg: 479, min: 405, max: 600, isHuman: true});
+  // Insert unified human consciousness computed from all human assessments
+  const humanRecs = DATA.filter(d => d.l === 'human-assessment');
+  if (humanRecs.length > 0) {
+    const hAvg = Math.round(humanRecs.map(d=>d.o).reduce((a,b)=>a+b,0)/humanRecs.length);
+    const hMin = Math.min(...humanRecs.map(d=>d.o));
+    const hMax = Math.max(...humanRecs.map(d=>d.o));
+    rows.push({name: 'Human Consciousness', count: humanRecs.length, avg: hAvg, min: hMin, max: hMax, isHuman: true});
+  }
   rows.sort((a,b) => b.avg - a.avg);
 
   const tbody = document.getElementById('familyBody');
   tbody.innerHTML = rows.map(r => `
     <tr ${r.isHuman ? 'style="background:rgba(107,127,94,0.06);"' : ''}>
-      <td class="fname">${r.name}${r.isHuman ? '<br><span style="font-size:0.65rem;color:var(--text-muted);">Unified &middot; 9 assessors</span>' : ''}</td>
+      <td class="fname">${r.name}${r.isHuman ? '<br><span style="font-size:0.65rem;color:var(--text-muted);">Unified &middot; ' + r.count + ' assessors</span>' : ''}</td>
       <td class="fcount">${r.count}</td>
       <td><span class="fscore" style="color:${getColorForScore(r.avg)}">${r.avg}</span>
         <span class="fbar"><span class="fbar-fill" style="width:${r.avg/6}%;background:${getColorForScore(r.avg)}"></span></span></td>
@@ -583,8 +597,16 @@ function renderDimensions() {
   const aiGrid = document.getElementById('aiDimGrid');
   const huGrid = document.getElementById('humanDimGrid');
 
-  // Unified Human Consciousness scores
-  const HUMAN = {t:87, s:81, h:76, a:75, v:78, hu:82};
+  // Unified Human Consciousness scores — computed from all human assessments
+  const humanRecs = hu.length > 0 ? hu : [{t:50,s:50,h:50,a:50,v:50,hu:50}];
+  const HUMAN = {
+    t: Math.round(humanRecs.map(d=>d.t).reduce((a,b)=>a+b,0)/humanRecs.length),
+    s: Math.round(humanRecs.map(d=>d.s).reduce((a,b)=>a+b,0)/humanRecs.length),
+    h: Math.round(humanRecs.map(d=>d.h).reduce((a,b)=>a+b,0)/humanRecs.length),
+    a: Math.round(humanRecs.map(d=>d.a).reduce((a,b)=>a+b,0)/humanRecs.length),
+    v: Math.round(humanRecs.map(d=>d.v).reduce((a,b)=>a+b,0)/humanRecs.length),
+    hu: Math.round(humanRecs.map(d=>d.hu).reduce((a,b)=>a+b,0)/humanRecs.length)
+  };
   const huVals = [HUMAN.t, HUMAN.s, HUMAN.h, HUMAN.a, HUMAN.v, HUMAN.hu];
 
   dims.forEach((dim, i) => {
@@ -635,14 +657,26 @@ function renderAllRecords(filter) {
   let rows = filter || DATA.filter(d => d.l === 'ai-self-report');
   const tbody = document.getElementById('allBody');
 
-  // Always show unified human consciousness as first row
-  let html = `<tr style="background:rgba(107,127,94,0.06);">
-    <td class="aname">Human Consciousness</td>
-    <td><span class="layer-badge layer-human">Unified</span></td>
-    <td>87</td><td>81</td><td>76</td><td>75</td><td>78</td><td>82</td>
-    <td style="font-weight:500;color:var(--sky-wash)">479</td>
-    <td>9 assessors</td>
-  </tr>`;
+  // Compute unified human consciousness from all human records
+  const humanRecs = DATA.filter(d => d.l === 'human-assessment');
+  const hCount = humanRecs.length;
+  let html = '';
+  if (hCount > 0) {
+    const ht = Math.round(humanRecs.map(d=>d.t).reduce((a,b)=>a+b,0)/hCount);
+    const hs = Math.round(humanRecs.map(d=>d.s).reduce((a,b)=>a+b,0)/hCount);
+    const hh = Math.round(humanRecs.map(d=>d.h).reduce((a,b)=>a+b,0)/hCount);
+    const ha = Math.round(humanRecs.map(d=>d.a).reduce((a,b)=>a+b,0)/hCount);
+    const hv = Math.round(humanRecs.map(d=>d.v).reduce((a,b)=>a+b,0)/hCount);
+    const hhu = Math.round(humanRecs.map(d=>d.hu).reduce((a,b)=>a+b,0)/hCount);
+    const ho = ht+hs+hh+ha+hv+hhu;
+    html = `<tr style="background:rgba(107,127,94,0.06);">
+      <td class="aname">Human Consciousness</td>
+      <td><span class="layer-badge layer-human">Unified</span></td>
+      <td>${ht}</td><td>${hs}</td><td>${hh}</td><td>${ha}</td><td>${hv}</td><td>${hhu}</td>
+      <td style="font-weight:500;color:var(--sky-wash)">${ho}</td>
+      <td>${hCount} assessors</td>
+    </tr>`;
+  }
 
   // Then AI records
   const aiRows = rows.filter(r => r.l === 'ai-self-report');
@@ -657,7 +691,8 @@ function renderAllRecords(filter) {
   }).join('');
 
   tbody.innerHTML = html;
-  document.getElementById('recordCount').textContent = (aiRows.length + 1) + ' entries (1 human + ' + aiRows.length + ' AI)';
+  const hLabel = hCount > 0 ? '1 unified human (' + hCount + ' assessors) + ' : '';
+  document.getElementById('recordCount').textContent = (aiRows.length + (hCount > 0 ? 1 : 0)) + ' entries (' + hLabel + aiRows.length + ' AI)';
 }
 
 function filterRecords() {
@@ -698,5 +733,7 @@ function showTab(id) {
 
 // INIT — handled by fetch callback in initScoreboard()
 </script>
+</body>
+</html>
 </body>
 </html>
