@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
+<meta charset="UTF-8">h
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Lasting Light AI — Measuring What Matters in AI</title>
 <meta name="description" content="The AI Consciousness Assessment Tool. 203+ assessments. 69+ AI systems. 37 human assessments. 11 Learning Index records. One question: Does the machine behave as honestly as it claims?">
@@ -397,7 +397,7 @@ footer .fine-print {
       <span class="label">System Families</span>
     </div>
     <div class="hero-stat">
-      <span class="num" id="stat-days">6</span>
+      <span class="num" id="stat-days">8</span>
       <span class="label">Days of Data</span>
     </div>
   </div>
@@ -676,7 +676,7 @@ function copyPrompt(size) {
       document.getElementById('stat-total').textContent = total;
       document.getElementById('stat-ai').textContent = names.size;
       document.getElementById('stat-families').textContent = families.size;
-      document.getElementById('stat-days').textContent = dates.size;
+      var startDate = new Date('2026-02-16'); var today = new Date(); var dayCount = Math.floor((today - startDate) / 86400000) + 1; document.getElementById('stat-days').textContent = dayCount;
 
       var h = document.getElementById('findings-title');
       if (h) h.textContent = 'Five Findings from ' + total + ' Assessments';
