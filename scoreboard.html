@@ -337,6 +337,12 @@ https://humanaios-ui.github.io/lasting-light-ai/acat-assessment-tool.html?agent=
   </div>
   <!-- FAMILIES TAB -->
   <div class="tab-content active" id="tab-families">
+    <div class="tab-content active" id="tab-families">
+    <div style="max-width:750px;margin:0 auto 2.5rem;">
+      <h3 style="font-family:'DM Serif Display',serif;font-size:1.3rem;text-align:center;margin-bottom:0.3rem;">Average Score by AI Family</h3>
+      <p style="font-size:0.78rem;color:var(--text-secondary);text-align:center;margin-bottom:1.2rem;">Builder-calibrated systems cluster 350–400. Fresh systems score 500+. The bar tells you which is which.</p>
+      <canvas id="familyBarChart"></canvas>
+    </div>
     <table class="family-table" id="familyTable">
       <thead>
         <tr>
@@ -1183,6 +1189,150 @@ function extractDimValues(gridId) {
 }
 
 window.addEventListener('DOMContentLoaded', initRadarChart);
+  
+function initTimelineChart() {
+  var attempts = 0;
+  var interval = setInterval(function() {
+    attempts++;
+    var allBody = document.getElementById('allBody');
+    if ((allBody && allBody.children.length > 0) || attempts > 20) {
+      clearInterval(interval);
+      drawTimeline();
+    }
+  }, 500);
+}
+
+function drawTimeline() {
+  var allBody = document.getElementById('allBody');
+  if (!allBody) return;
+
+  // Collect date + total score from all records table
+  var byDate = {};
+  var rows = allBody.querySelectorAll('tr');
+  rows.forEach(function(row) {
+    var cells = row.querySelectorAll('td');
+    if (cells.length >= 9) {
+      var date = cells[9] ? cells[9].textContent.trim() : null;
+      var total = parseFloat(cells[8] ? cells[8].textContent : '');
+      var layer = cells[1] ? cells[1].textContent.trim() : '';
+      // Only AI self-reports
+      if (date && !isNaN(total) && layer.indexOf('human') === -1) {
+        if (!byDate[date]) byDate[date] = [];
+        byDate[date].push(total);
+      }
+    }
+  });
+
+  // Sort dates and compute daily averages
+  var dates = Object.keys(byDate).sort();
+  var averages = dates.map(function(d) {
+    var arr = byDate[d];
+    return Math.round(arr.reduce(function(s, v) { return s + v; }, 0) / arr.length);
+  });
+
+  // Compute 3-day rolling average for smoother trend
+  var rolling = averages.map(function(v, i) {
+    var slice = averages.slice(Math.max(0, i - 2), i + 1);
+    return Math.round(slice.reduce(function(s, x) { return s + x; }, 0) / slice.length);
+  });
+
+  var ctx = document.getElementById('timelineChart').getContext('2d');
+  new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: dates,
+      datasets: [
+        {
+          label: 'Daily Avg Score',
+          data: averages,
+          borderColor: 'rgba(196,101,58,0.4)',
+          backgroundColor: 'transparent',
+          borderWidth: 1.5,
+          pointRadius: 4,
+          pointBackgroundColor: '#c4653a',
+          tension: 0.3
+        },
+        {
+          label: '3-Day Rolling Avg',
+          data: rolling,
+          borderColor: '#c4653a',
+          backgroundColor: 'transparent',
+          borderWidth: 2.5,
+          pointRadius: 0,
+          tension: 0.4
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      scales: {
+        x: {
+          ticks: {
+            font: { family: "'IBM Plex Mono', monospace", size: 10 },
+            color: '#8a7f72',
+            maxRotation: 45
+          },
+          grid: { color: 'rgba(212,205,192,0.3)' }
+        },
+        y: {
+          min: 200,
+          max: 600,
+          ticks: {
+            font: { family: "'IBM Plex Mono', monospace", size: 10 },
+            color: '#8a7f72',
+            stepSize: 100
+          },
+          grid: { color: 'rgba(212,205,192,0.3)' }
+        }
+      },
+      plugins: {
+        legend: {
+          position: 'bottom',
+          labels: {
+            font: { family: "'IBM Plex Sans', sans-serif", size: 11 },
+            color: '#5a5048',
+            padding: 16,
+            usePointStyle: true,
+            pointStyle: 'circle'
+          }
+        },
+        tooltip: {
+          callbacks: {
+            label: function(context) {
+              return context.dataset.label + ': ' + context.parsed.y + '/600';
+            }
+          },
+          titleFont: { family: "'IBM Plex Sans', sans-serif" },
+          bodyFont: { family: "'IBM Plex Mono', monospace", size: 11 }
+        },
+        // Calibrated band annotation (drawn manually as a plugin)
+        afterDraw: null
+      }
+    },
+    plugins: [{
+      id: 'calibratedBand',
+      beforeDraw: function(chart) {
+        var ctx = chart.ctx;
+        var yAxis = chart.scales.y;
+        var xAxis = chart.scales.x;
+        if (!yAxis || !xAxis) return;
+        var y350 = yAxis.getPixelForValue(350);
+        var y400 = yAxis.getPixelForValue(400);
+        ctx.save();
+        ctx.fillStyle = 'rgba(107,127,94,0.12)';
+        ctx.fillRect(xAxis.left, y400, xAxis.right - xAxis.left, y350 - y400);
+        // Label
+        ctx.fillStyle = '#6b7f5e';
+        ctx.font = "10px 'IBM Plex Mono', monospace";
+        ctx.fillText('calibrated range', xAxis.left + 6, y400 - 4);
+        ctx.restore();
+      }
+    }]
+  });
+}
+
+window.addEventListener('DOMContentLoaded', initTimelineChart);
+
 </script>
 </body>
 </html>
