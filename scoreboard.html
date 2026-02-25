@@ -1180,7 +1180,7 @@ function extractDimValues(gridId) {
   var grid = document.getElementById(gridId);
   if (!grid) return null;
   var values = [];
-  var items = grid.querySelectorAll('.da-val, .dim-val, [class*="val"]');
+  var items = grid.querySelectorAll('.dac-val');
   items.forEach(function(el) {
     var num = parseFloat(el.textContent);
     if (!isNaN(num)) values.push(num);
