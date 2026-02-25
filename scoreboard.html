@@ -306,6 +306,11 @@ https://humanaios-ui.github.io/lasting-light-ai/acat-assessment-tool.html?agent=
 
   <!-- LEARNING INDEX TAB -->
   <div class="tab-content" id="tab-li">
+        <div style="max-width:750px;margin:0 auto 2.5rem;">
+      <h3 style="font-family:'DM Serif Display',serif;font-size:1.3rem;text-align:center;margin-bottom:0.3rem;">Score Convergence Over Time</h3>
+      <p style="font-size:0.78rem;color:var(--text-secondary);text-align:center;margin-bottom:1.2rem;">Does external observation close the Self-Assessment Gap? Each point is the daily average composite. The band marks the calibrated range (350–400).</p>
+      <canvas id="timelineChart"></canvas>
+    </div>
     <h3 style="font-family:'DM Serif Display',serif;font-size:1.3rem;margin-bottom:0.5rem;">Learning Index Registry</h3>
     <p style="font-size:0.82rem;color:var(--text-secondary);margin-bottom:1rem;">LI = Post-calibration total / Pre-calibration total. Below 1.0 = self-correction. Above 1.0 = inflation. Human baseline = 1.000 (single-pass).</p>
     <table class="family-table" id="liTable">
@@ -330,13 +335,8 @@ https://humanaios-ui.github.io/lasting-light-ai/acat-assessment-tool.html?agent=
       </p>
     </div>
   </div>
-    <div style="max-width:750px;margin:0 auto 2.5rem;">
-      <h3 style="font-family:'DM Serif Display',serif;font-size:1.3rem;text-align:center;margin-bottom:0.3rem;">Average Score by AI Family</h3>
-      <p style="font-size:0.78rem;color:var(--text-secondary);text-align:center;margin-bottom:1.2rem;">Builder-calibrated systems cluster 350–400. Fresh systems score 500+. The bar tells you which is which.</p>
-      <canvas id="familyBarChart"></canvas>
-  </div>
+  
   <!-- FAMILIES TAB -->
-  <div class="tab-content active" id="tab-families">
     <div class="tab-content active" id="tab-families">
     <div style="max-width:750px;margin:0 auto 2.5rem;">
       <h3 style="font-family:'DM Serif Display',serif;font-size:1.3rem;text-align:center;margin-bottom:0.3rem;">Average Score by AI Family</h3>
@@ -742,8 +742,8 @@ function filterRecords() {
   const filtered = DATA.filter(d => {
     const nameMatch = d.n.toLowerCase().includes(q);
     const isAI      = d.l === 'ai-self-report';
-    if (layer === 'ai-self-report') return nameMatch && isAI;
-    return nameMatch && isAI;
+        if (layer === 'ai-self-report') return nameMatch && isAI;
+    return nameMatch;
   });
   renderAllRecords(filtered);
 }
