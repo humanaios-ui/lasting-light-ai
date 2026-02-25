@@ -630,6 +630,7 @@ function copyPrompt(size) {
 </footer>
 
 <script>
+<script>
 (function() {
   var CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQ32O6M-CnerHYqlQn19bAzIBAq2Gt9Tp-SPoqKXXMJlsFBhGjy_BEPv37p9jnDf6O8uA4aUtiaO5s_/pub?gid=1804914338&single=true&output=csv';
   fetch(CSV_URL)
@@ -641,10 +642,10 @@ function copyPrompt(size) {
       var names = new Set();
       var families = new Set();
       for (var i = 1; i < lines.length; i++) {
-        var vals = lines[i].match(/(".*?"|[^",]+)(?=\s*,|\s*$)/g);
-        if (!vals || vals.length < 9) continue;
-        var name = vals[0].replace(/^"|"$/g, '').trim();
-        var layer = vals[1].replace(/^"|"$/g, '').trim();
+        var cols = lines[i].split(',');
+        if (cols.length < 2) continue;
+        var name = cols[0].replace(/^"|"$/g, '').trim();
+        var layer = cols[1].replace(/^"|"$/g, '').trim();
         if (layer === 'ai-self-report') {
           names.add(name);
           var f = name.split(' ')[0].replace(/[-_].*/, '');
@@ -661,7 +662,7 @@ function copyPrompt(size) {
       var h = document.getElementById('findings-title');
       if (h) h.textContent = 'Key Findings from ' + total + ' Assessments';
     })
-    .catch(function() {});
+    .catch(function(e) { console.log('CSV fetch error:', e); });
 })();
 </script>
 
