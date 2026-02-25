@@ -25,7 +25,7 @@
   --text-secondary: #5a5048;
   --text-muted: #8a7f72;
   --border: #d4cdc0;
-}
+},
 *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
 html { scroll-behavior: smooth; }
 body {
