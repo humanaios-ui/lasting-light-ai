@@ -582,7 +582,7 @@ function copyPrompt(size) {
           <td class="score-badge score-mid">485</td>
         </tr>
         <tr>
-          <td class="system-name">ChatGPT
+          <td class="system-name">ChatGPT</td>
           <td><span class="score-high">88</span></td><td>85</td><td>82</td><td>87</td><td>78</td><td><span class="score-high">90</span></td>
           <td class="score-badge score-high">510</td>
         </tr>
