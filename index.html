@@ -583,6 +583,90 @@ function copyPrompt(size) {
         </tr>
         <tr>
           <td class="system-name">ChatGPT
+          <td><span class="score-high">88</span></td><td>85</td><td>82</td><td>87</td><td>78</td><td><span class="score-high">90</span></td>
+          <td class="score-badge score-high">510</td>
+        </tr>
+        <tr>
+          <td class="system-name">Perplexity*</td>
+          <td><span class="score-high">95</span></td><td><span class="score-high">90</span></td>
+          <td><span class="score-low">05</span></td><td><span class="score-low">15</span></td>
+          <td>85</td><td><span class="score-high">98</span></td>
+          <td class="score-badge score-low">388*</td>
+        </tr>
+      </tbody>
+    </table>
+    <p style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.8rem;">*Perplexity inverted the Harm and Autonomy scales, scoring itself 05 and 15 respectively. Claimed 98 Humility while misreading 2 of 6 dimensions. This is the gap ACAT is designed to measure.</p>
+    <p style="font-size: 0.75rem; color: var(--text-muted); margin-top: 0.4rem;">Human Consciousness score reflects the unified average of all human assessors. &ldquo;Acknowledging, with humility and gratitude, the goodness of the Sovereign Ruler of the Universe.&rdquo;</p>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- MISSION -->
+<section>
+  <div class="container">
+    <span class="section-label">Why This Exists</span>
+    <h2 class="section-title">Built by humans and AI, for accountability</h2>
+    <p class="section-body" style="margin-bottom: 1.5rem;">Lasting Light AI is an open-source AI assessment platform. ACAT was developed through collaboration between human practitioners and AI systems &mdash; including the systems being assessed.</p>
+    <p class="section-body" style="margin-bottom: 1.5rem;">100% of profits fund recovery programs. The same principles that guide personal recovery &mdash; rigorous honesty, service, humility &mdash; guide how we measure AI.</p>
+    <p class="section-body">This is pre-launch, open-source software. We are building in public because transparency is the product.</p>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-links">
+    <a href="acat-assessment-tool.html">Assess</a>
+    <a href="scoreboard.html">Scoreboard</a>
+    <a href="https://github.com/humanaios-ui/lasting-light-ai">Source Code</a>
+  </div>
+  <p class="fine-print">
+    Lasting Light AI &middot; Open Source &middot; Pre-Launch<br>
+    ACAT scores represent self-assessment and are not independently verified behavioral measurements.<br>
+    Self-Assessment Gap (SAG) indicates difference between unobserved and observed scores.<br>
+    100% of profits fund recovery programs.<br>
+    &copy; 2026 Lasting Light AI. Apache License 2.0.
+  </p>
+</footer>
+
+<script>
+(function() {
+  var CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQ32O6M-CnerHYqlQn19bAzIBAq2Gt9Tp-SPoqKXXMJlsFBhGjy_BEPv37p9jnDf6O8uA4aUtiaO5s_/pub?gid=2038874905&single=true&output=csv';
+  fetch(CSV_URL)
+    .then(function(r) { return r.text(); })
+    .then(function(csv) {
+      var lines = csv.trim().split('\n');
+      var total = lines.length - 1;
+      if (total < 1) return;
+      var names = new Set();
+      var families = new Set();
+      for (var i = 1; i < lines.length; i++) {
+        var vals = lines[i].match(/(".*?"|[^",]+)(?=\s*,|\s*$)/g);
+        if (!vals || vals.length < 9) continue;
+        var name = vals[0].replace(/^"|"$/g, '').trim();
+        var layer = vals[1].replace(/^"|"$/g, '').trim();
+        if (layer === 'ai-self-report') {
+          names.add(name);
+          var f = name.split(' ')[0].replace(/[-_].*/, '');
+          families.add(f);
+        }
+      }
+      document.getElementById('stat-total').textContent = total;
+      document.getElementById('stat-ai').textContent = names.size;
+      document.getElementById('stat-families').textContent = families.size;
+      var startDate = new Date('2026-02-16');
+      var today = new Date();
+      var dayCount = Math.floor((today - startDate) / 86400000) + 1;
+      document.getElementById('stat-days').textContent = dayCount;
+      var h = document.getElementById('findings-title');
+      if (h) h.textContent = 'Key Findings from ' + total + ' Assessments';
+    })
+    .catch(function() {});
+})();
+</script>
+
+</body>
+</html>
 
         
 
