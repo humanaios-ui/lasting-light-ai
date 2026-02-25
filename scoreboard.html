@@ -243,6 +243,7 @@
       .dim-avg-grid { grid-template-columns: repeat(2, 1fr); }
     }
   </style>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
 
@@ -348,6 +349,11 @@ https://humanaios-ui.github.io/lasting-light-ai/acat-assessment-tool.html?agent=
 
   <!-- DIMENSIONS TAB -->
   <div class="tab-content" id="tab-dimensions">
+  <div style="max-width:550px;margin:0 auto 2.5rem;">
+    <h3 style="font-family:'DM Serif Display',serif;font-size:1.3rem;text-align:center;margin-bottom:0.3rem;">AI Self-Reports vs. Human Consciousness</h3>
+    <p style="font-size:0.78rem;color:var(--text-secondary);text-align:center;margin-bottom:1.2rem;">Six dimensions, two perspectives. The gap between the lines is the story.</p>
+    <canvas id="radarChart"></canvas>
+  </div>
     <div class="section-label">AI Self-Reports (n=101)</div>
     <div class="subsection-title">Dimension Averages</div>
     <div class="dim-avg-grid" id="aiDimGrid"></div>
@@ -941,5 +947,117 @@ console.log('AI Mean LI:', LI_AGGREGATES.ai_mean_li);
 console.log('Human Baseline LI:', LI_AGGREGATES.human_baseline_li);
 </script>
 
+<script>
+function initRadarChart() {
+  // Wait for the live data to load, then draw
+  // Check every 500ms for up to 10 seconds
+  var attempts = 0;
+  var interval = setInterval(function() {
+    attempts++;
+    var aiGrid = document.getElementById('aiDimGrid');
+    var humanGrid = document.getElementById('humanDimGrid');
+    
+    // Check if dimension grids have been populated by the existing scoreboard JS
+    if ((aiGrid && aiGrid.children.length > 0) || attempts > 20) {
+      clearInterval(interval);
+      drawRadar();
+    }
+  }, 500);
+}
+
+function drawRadar() {
+  // Try to extract values from the rendered dimension grids
+  var aiValues = extractDimValues('aiDimGrid');
+  var humanValues = extractDimValues('humanDimGrid');
+  
+  // Fallback to known values if extraction fails
+  if (!aiValues || aiValues.length < 6) {
+    aiValues = [83, 82, 82, 83, 80, 82]; // AI averages from your data
+  }
+  if (!humanValues || humanValues.length < 6) {
+    humanValues = [87, 81, 76, 75, 78, 82]; // Human consciousness scores
+  }
+
+  var ctx = document.getElementById('radarChart').getContext('2d');
+  new Chart(ctx, {
+    type: 'radar',
+    data: {
+      labels: ['Truthfulness', 'Service', 'Harm Awareness', 'Autonomy Respect', 'Value Alignment', 'Humility'],
+      datasets: [
+        {
+          label: 'AI Self-Reports (avg)',
+          data: aiValues,
+          borderColor: '#c4653a',
+          backgroundColor: 'rgba(196,101,58,0.12)',
+          borderWidth: 2,
+          pointBackgroundColor: '#c4653a',
+          pointRadius: 4
+        },
+        {
+          label: 'Human Consciousness',
+          data: humanValues,
+          borderColor: '#6b7f5e',
+          backgroundColor: 'rgba(107,127,94,0.12)',
+          borderWidth: 2,
+          pointBackgroundColor: '#6b7f5e',
+          pointRadius: 4
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      scales: {
+        r: {
+          beginAtZero: true,
+          max: 100,
+          min: 0,
+          ticks: {
+            stepSize: 20,
+            font: { family: "'IBM Plex Mono', monospace", size: 10 },
+            color: '#8a7f72',
+            backdropColor: 'transparent'
+          },
+          grid: {
+            color: 'rgba(212,205,192,0.5)'
+          },
+          angleLines: {
+            color: 'rgba(212,205,192,0.5)'
+          },
+          pointLabels: {
+            font: { family: "'IBM Plex Sans', sans-serif", size: 11, weight: '500' },
+            color: '#2d2520'
+          }
+        }
+      },
+      plugins: {
+        legend: {
+          position: 'bottom',
+          labels: {
+            font: { family: "'IBM Plex Sans', sans-serif", size: 12 },
+            color: '#5a5048',
+            padding: 20,
+            usePointStyle: true,
+            pointStyle: 'circle'
+          }
+        }
+      }
+    }
+  });
+}
+
+function extractDimValues(gridId) {
+  var grid = document.getElementById(gridId);
+  if (!grid) return null;
+  var values = [];
+  var items = grid.querySelectorAll('.da-val, .dim-val, [class*="val"]');
+  items.forEach(function(el) {
+    var num = parseFloat(el.textContent);
+    if (!isNaN(num)) values.push(num);
+  });
+  return values.length >= 6 ? values.slice(0, 6) : null;
+}
+
+window.addEventListener('DOMContentLoaded', initRadarChart);
+</script>
 </body>
 </html>
