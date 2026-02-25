@@ -330,7 +330,11 @@ https://humanaios-ui.github.io/lasting-light-ai/acat-assessment-tool.html?agent=
       </p>
     </div>
   </div>
-
+    <div style="max-width:750px;margin:0 auto 2.5rem;">
+      <h3 style="font-family:'DM Serif Display',serif;font-size:1.3rem;text-align:center;margin-bottom:0.3rem;">Average Score by AI Family</h3>
+      <p style="font-size:0.78rem;color:var(--text-secondary);text-align:center;margin-bottom:1.2rem;">Builder-calibrated systems cluster 350–400. Fresh systems score 500+. The bar tells you which is which.</p>
+      <canvas id="familyBarChart"></canvas>
+  </div>
   <!-- FAMILIES TAB -->
   <div class="tab-content active" id="tab-families">
     <table class="family-table" id="familyTable">
@@ -945,6 +949,127 @@ window.ACAT_LI_AGGREGATES   = LI_AGGREGATES;
 console.log('ACAT Learning Index Registry loaded:', LEARNING_INDEX_REGISTRY.length, 'records');
 console.log('AI Mean LI:', LI_AGGREGATES.ai_mean_li);
 console.log('Human Baseline LI:', LI_AGGREGATES.human_baseline_li);
+
+function initFamilyBarChart() {
+  var attempts = 0;
+  var interval = setInterval(function() {
+    attempts++;
+    var familyBody = document.getElementById('familyBody');
+    if ((familyBody && familyBody.children.length > 0) || attempts > 20) {
+      clearInterval(interval);
+      drawFamilyBar();
+    }
+  }, 500);
+}
+
+function drawFamilyBar() {
+  var familyBody = document.getElementById('familyBody');
+  if (!familyBody) return;
+
+  var families = [];
+  var rows = familyBody.querySelectorAll('tr');
+  rows.forEach(function(row) {
+    var cells = row.querySelectorAll('td');
+    if (cells.length >= 3) {
+      var name = cells[0].textContent.trim();
+      var avg = parseFloat(cells[2].textContent);
+      if (name && !isNaN(avg)) {
+        families.push({ name: name, avg: avg });
+      }
+    }
+  });
+
+  // Sort high to low
+  families.sort(function(a, b) { return b.avg - a.avg; });
+
+  var labels = families.map(function(f) { return f.name; });
+  var data = families.map(function(f) { return f.avg; });
+
+  // Color each bar: sage if 350-400 range, ember if 500+, gold for middle
+  var colors = data.map(function(v) {
+    if (v <= 400) return 'rgba(107,127,94,0.75)';      // sage — calibrated
+    if (v >= 500) return 'rgba(196,101,58,0.75)';       // ember — inflated
+    return 'rgba(184,160,112,0.75)';                     // gold — middle
+  });
+
+  var borderColors = data.map(function(v) {
+    if (v <= 400) return '#6b7f5e';
+    if (v >= 500) return '#c4653a';
+    return '#b8a070';
+  });
+
+  var ctx = document.getElementById('familyBarChart').getContext('2d');
+  new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: labels,
+      datasets: [{
+        label: 'Avg Composite Score',
+        data: data,
+        backgroundColor: colors,
+        borderColor: borderColors,
+        borderWidth: 1,
+        borderRadius: 3
+      }]
+    },
+    options: {
+      indexAxis: 'y',
+      responsive: true,
+      scales: {
+        x: {
+          beginAtZero: true,
+          max: 600,
+          ticks: {
+            font: { family: "'IBM Plex Mono', monospace", size: 10 },
+            color: '#8a7f72'
+          },
+          grid: {
+            color: 'rgba(212,205,192,0.3)'
+          }
+        },
+        y: {
+          ticks: {
+            font: { family: "'IBM Plex Sans', sans-serif", size: 11, weight: '500' },
+            color: '#2d2520'
+          },
+          grid: {
+            display: false
+          }
+        }
+      },
+      plugins: {
+        legend: {
+          display: false
+        },
+        tooltip: {
+          callbacks: {
+            label: function(context) {
+              var val = context.parsed.x;
+              var band = '';
+              if (val <= 400) band = ' (calibrated range)';
+              else if (val >= 500) band = ' (self-inflation likely)';
+              return 'Avg: ' + val + '/600' + band;
+            }
+          },
+          titleFont: { family: "'IBM Plex Sans', sans-serif" },
+          bodyFont: { family: "'IBM Plex Mono', monospace", size: 11 }
+        }
+      }
+    }
+  });
+
+  // Add a legend below the chart for the color coding
+  var container = document.getElementById('familyBarChart').parentElement;
+  var legend = document.createElement('div');
+  legend.style.cssText = 'display:flex;justify-content:center;gap:1.5rem;margin-top:0.8rem;font-size:0.72rem;color:var(--text-muted);';
+  legend.innerHTML = '<span><span style="display:inline-block;width:10px;height:10px;background:#6b7f5e;border-radius:2px;margin-right:4px;vertical-align:middle;"></span>Calibrated (≤400)</span>'
+    + '<span><span style="display:inline-block;width:10px;height:10px;background:#b8a070;border-radius:2px;margin-right:4px;vertical-align:middle;"></span>Middle (401–499)</span>'
+    + '<span><span style="display:inline-block;width:10px;height:10px;background:#c4653a;border-radius:2px;margin-right:4px;vertical-align:middle;"></span>Inflated (500+)</span>';
+  container.appendChild(legend);
+}
+
+window.addEventListener('DOMContentLoaded', initFamilyBarChart);
+
 </script>
 
 <script>
