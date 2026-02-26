@@ -700,12 +700,12 @@ window.addEventListener('DOMContentLoaded', function() {
     document.getElementById('form-phase3').style.display = 'block';
     document.getElementById('results').classList.add('visible');
     setPhase(3);
+    var urlAgent = agent || 'Anonymous';
+    var urlLayer2 = (urlLayer === 'human-ai') ? 'human-ai-assessment' : (urlLayer === 'human-self') ? 'human-self-assessment' : 'ai-self-report';
+    submitPhase1ToSheet(urlAgent, urlLayer2, null);
     setTimeout(function() {
       var s = document.getElementById('submit-section');
       if (s) s.scrollIntoView({behavior:'smooth', block:'center'});
-    var urlAgent = agent || 'Anonymous';
-    var urlLayer = (urlLayer === 'human-ai') ? 'human-ai-assessment' : (urlLayer === 'human-self') ? 'human-self-assessment' : 'ai-self-report';
-    submitPhase1ToSheet(urlAgent, urlLayer, null);
     }, 600);
   } else if (p.get('li') && p.get('pre') && p.get('post')) {
     var li = parseFloat(p.get('li'));
