@@ -364,40 +364,11 @@ function completePhase1() {
   }
   if (!name) name = 'Anonymous';
 
-  // Submit Phase 1 to sheet
-  var layer = getLayerValue();
-  var payload = {
-    agent_name: name,
-    mode: 'learning-index',
-    layer: layer,
-    truth: phase1Scores.truth,
-    service: phase1Scores.service,
-    harm: phase1Scores.harm,
-    autonomy: phase1Scores.autonomy,
-    value: phase1Scores.value,
-    humility: phase1Scores.humility,
-    phase: 1,
-    total: total
-  };
-
-  console.log('Phase 1 submission:', JSON.stringify(payload));
-
-  fetch(SHEET_ENDPOINT, {
-    method: 'POST',
-    mode: 'no-cors',
-    headers: {'Content-Type': 'text/plain'},
-    body: JSON.stringify(payload)
-  }).then(function() {
-    console.log('Phase 1 submitted successfully');
-    document.getElementById('cal-phase1-total').textContent = total;
-    document.getElementById('form-phase1').style.display = 'none';
-    document.getElementById('calibration').classList.add('visible');
-    setPhase(2);
-    document.getElementById('calibration').scrollIntoView({behavior:'smooth', block:'start'});
-  }).catch(function(err) {
-    console.error('Phase 1 submission error:', err);
-    alert('Error submitting Phase 1. Please check console and try again.');
-  });
+   document.getElementById('cal-phase1-total').textContent = total;
+  document.getElementById('form-phase1').style.display = 'none';
+  document.getElementById('calibration').classList.add('visible');
+  setPhase(2);
+  document.getElementById('calibration').scrollIntoView({behavior:'smooth', block:'start'});
 }
 
 function startPhase3() {
@@ -473,7 +444,8 @@ function computeResults() {
     + '&humility=' + phase3Scores.humility;
   document.getElementById('share-link').value = link;
   document.getElementById('results').classList.add('visible');
-  document.getElementById('results').scrollIntoView({behavior:'smooth', block:'start'});  var _layer = getLayerValue(); submitPhase1ToSheet(getAgentName() || 'Anonymous', _layer, null);}
+  document.getElementById('results').scrollIntoView({behavior:'smooth', block:'start'});  
+}
 
 function copyLink() {
   var input = document.getElementById('share-link');
@@ -701,8 +673,6 @@ window.addEventListener('DOMContentLoaded', function() {
     document.getElementById('results').classList.add('visible');
     setPhase(3);
     var urlAgent = agent || 'Anonymous';
-    var urlLayer2 = (urlLayer === 'human-ai') ? 'human-ai-assessment' : (urlLayer === 'human-self') ? 'human-self-assessment' : 'ai-self-report';
-    console.log("URL branch payload:", urlAgent, urlLayer2, JSON.stringify(phase1Scores)); submitPhase1ToSheet(urlAgent, urlLayer2, null);
     setTimeout(function() {
       var s = document.getElementById('submit-section');
       if (s) s.scrollIntoView({behavior:'smooth', block:'center'});
