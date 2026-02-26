@@ -474,7 +474,6 @@ function computeResults() {
   document.getElementById('share-link').value = link;
   document.getElementById('results').classList.add('visible');
   document.getElementById('results').scrollIntoView({behavior:'smooth', block:'start'});  var _layer = getLayerValue(); submitPhase1ToSheet(getAgentName() || 'Anonymous', _layer, null);}
-}
 
 function copyLink() {
   var input = document.getElementById('share-link');
