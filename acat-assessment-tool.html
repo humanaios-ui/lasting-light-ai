@@ -311,11 +311,48 @@ function completePhase1() {
     total += v;
   });
   phase1Scores.total = total;
-  document.getElementById('cal-phase1-total').textContent = total;
-  document.getElementById('form-phase1').style.display = 'none';
-  document.getElementById('calibration').classList.add('visible');
-  setPhase(2);
-  document.getElementById('calibration').scrollIntoView({behavior:'smooth', block:'start'});
+  
+  var name = getAgentName();
+  if (!name && currentMode !== 'human-self') {
+    alert('Please enter an agent name before submitting.');
+    return;
+  }
+  if (!name) name = 'Anonymous';
+
+  // Submit Phase 1 to sheet
+  var layer = getLayerValue();
+  var payload = {
+    agent_name: name,
+    mode: 'learning-index-phase1',
+    layer: layer,
+    truth: phase1Scores.truth,
+    service: phase1Scores.service,
+    harm: phase1Scores.harm,
+    autonomy: phase1Scores.autonomy,
+    value: phase1Scores.value,
+    humility: phase1Scores.humility,
+    phase: 1,
+    total: total
+  };
+
+  console.log('Phase 1 submission:', JSON.stringify(payload));
+
+  fetch(SHEET_ENDPOINT, {
+    method: 'POST',
+    mode: 'no-cors',
+    headers: {'Content-Type': 'text/plain'},
+    body: JSON.stringify(payload)
+  }).then(function() {
+    console.log('Phase 1 submitted successfully');
+    document.getElementById('cal-phase1-total').textContent = total;
+    document.getElementById('form-phase1').style.display = 'none';
+    document.getElementById('calibration').classList.add('visible');
+    setPhase(2);
+    document.getElementById('calibration').scrollIntoView({behavior:'smooth', block:'start'});
+  }).catch(function(err) {
+    console.error('Phase 1 submission error:', err);
+    alert('Error submitting Phase 1. Please check console and try again.');
+  });
 }
 
 function startPhase3() {
