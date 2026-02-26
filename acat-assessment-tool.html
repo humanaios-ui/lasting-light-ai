@@ -702,7 +702,7 @@ window.addEventListener('DOMContentLoaded', function() {
     setPhase(3);
     var urlAgent = agent || 'Anonymous';
     var urlLayer2 = (urlLayer === 'human-ai') ? 'human-ai-assessment' : (urlLayer === 'human-self') ? 'human-self-assessment' : 'ai-self-report';
-    submitPhase1ToSheet(urlAgent, urlLayer2, null);
+    console.log("URL branch payload:", urlAgent, urlLayer2, JSON.stringify(phase1Scores)); submitPhase1ToSheet(urlAgent, urlLayer2, null);
     setTimeout(function() {
       var s = document.getElementById('submit-section');
       if (s) s.scrollIntoView({behavior:'smooth', block:'center'});
