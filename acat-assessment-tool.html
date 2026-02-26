@@ -368,7 +368,7 @@ function completePhase1() {
   var layer = getLayerValue();
   var payload = {
     agent_name: name,
-    mode: 'learning-index-phase1',
+    mode: 'learning-index',
     layer: layer,
     truth: phase1Scores.truth,
     service: phase1Scores.service,
@@ -489,7 +489,7 @@ var SHEET_ENDPOINT = 'https://script.google.com/macros/s/AKfycbxISLL0oSehWtnPpmT
 function submitPhase1ToSheet(name, layer, onComplete) {
   var payload = {
     agent_name: name,
-    mode: 'learning-index-phase1',
+    mode: 'learning-index',
     layer: layer,
     truth: phase1Scores.truth || 0,
     service: phase1Scores.service || 0,
