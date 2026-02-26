@@ -565,6 +565,18 @@ window.addEventListener('DOMContentLoaded', function() {
     document.getElementById('results-name').textContent = 'Learning Index: ' + (agent || 'Anonymous');
     document.getElementById('share-link').value = window.location.href;
     document.getElementById('results').classList.add('visible');
+    phase1Scores.total = pre;
+    phase3Scores.total = post;
+    dims.forEach(function(d) {
+      var v = p.get(d);
+      if (v) phase3Scores[d] = parseInt(v);
+    });
+    setTimeout(function() {
+      var submitSection = document.getElementById('submit-section');
+      if (submitSection) {
+        submitSection.scrollIntoView({behavior: 'smooth', block: 'center'});
+      }
+    }, 600);
   } else if (dims.some(function(d) { return p.get(d); }))
  {
     dims.forEach(function(d) {
