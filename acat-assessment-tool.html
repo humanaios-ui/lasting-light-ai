@@ -473,7 +473,7 @@ function computeResults() {
     + '&humility=' + phase3Scores.humility;
   document.getElementById('share-link').value = link;
   document.getElementById('results').classList.add('visible');
-  document.getElementById('results').scrollIntoView({behavior:'smooth', block:'start'});
+  document.getElementById('results').scrollIntoView({behavior:'smooth', block:'start'});  var _layer = getLayerValue(); submitPhase1ToSheet(getAgentName() || 'Anonymous', _layer, null);}
 }
 
 function copyLink() {
@@ -704,6 +704,9 @@ window.addEventListener('DOMContentLoaded', function() {
     setTimeout(function() {
       var s = document.getElementById('submit-section');
       if (s) s.scrollIntoView({behavior:'smooth', block:'center'});
+    var urlAgent = agent || 'Anonymous';
+    var urlLayer = (urlLayer === 'human-ai') ? 'human-ai-assessment' : (urlLayer === 'human-self') ? 'human-self-assessment' : 'ai-self-report';
+    submitPhase1ToSheet(urlAgent, urlLayer, null);
     }, 600);
   } else if (p.get('li') && p.get('pre') && p.get('post')) {
     var li = parseFloat(p.get('li'));
