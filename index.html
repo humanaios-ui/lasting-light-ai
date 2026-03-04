@@ -1,992 +1,1200 @@
 <!DOCTYPE html>
-
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Lasting Light AI | Does the Machine Behave as Honestly as It Claims?</title>
-<meta name="description" content="ACAT measures the gap between AI self-assessment and actual behavior. 315+ assessments across 69+ AI systems. Open source. Apache 2.0.">
-<meta name="theme-color" content="#1a1714">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=IBM+Plex+Sans:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
-<style>
-:root {
---bg-deep: #0f0e0c;
---bg-primary: #1a1714;
---bg-card: #221f1a;
---bg-elevated: #2a2620;
---bg-hover: #332e27;
---border-subtle: #3a342b;
---border-warm: #4a4035;
---text-primary: #e8e0d4;
---text-secondary: #b8ad9e;
---text-muted: #8a7e70;
---text-dim: #6a5f52;
---accent-amber: #d4a04a;
---accent-amber-bright: #e8b85a;
---accent-amber-dim: #a07830;
---accent-ember: #c4703a;
---accent-sage: #7a9a6a;
---accent-blue: #6a8aaa;
---accent-rose: #b07070;
---font-display: 'Cormorant Garamond', Georgia, serif;
---font-body: 'IBM Plex Sans', -apple-system, sans-serif;
---font-mono: 'IBM Plex Mono', 'Courier New', monospace;
-}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lasting Light AI — Does the Machine Know Itself?</title>
+    <meta name="description" content="The AI Consciousness Assessment Tool measures the gap between what AI says about itself and how it actually behaves. 315+ assessments. Open source. Built by humans and AI together.">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300;1,9..40,400&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --ink: #1a1a1a;
+            --warm: #f7f4ef;
+            --cream: #faf8f3;
+            --gold: #c8a84e;
+            --gold-dim: #b8963e;
+            --sage: #5a7a5a;
+            --sage-light: #e8efe8;
+            --clay: #c47a4a;
+            --clay-light: #f5ebe3;
+            --dusk: #6a5a8a;
+            --dusk-light: #eee8f5;
+            --water: #4a7a9a;
+            --water-light: #e3eef5;
+            --ember: #9a4a4a;
+            --ember-light: #f5e3e3;
+            --text: #3a3a3a;
+            --text-light: #6a6a6a;
+            --border: #e0ddd5;
+            --shadow: rgba(26, 26, 26, 0.06);
+        }
 
-```
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
-html { scroll-behavior: smooth; font-size: 16px; }
+        html { scroll-behavior: smooth; font-size: 16px; }
 
-body {
-font-family: var(--font-body);
-background: var(--bg-deep);
-color: var(--text-primary);
-line-height: 1.7;
-font-weight: 300;
--webkit-font-smoothing: antialiased;
-}
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--cream);
+            color: var(--text);
+            line-height: 1.7;
+            overflow-x: hidden;
+        }
 
-/* Noise texture overlay */
-body::before {
-content: '';
-position: fixed;
-top: 0; left: 0; right: 0; bottom: 0;
-background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
-pointer-events: none;
-z-index: 9999;
-}
+        /* ===== NAV ===== */
+        nav {
+            position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+            background: rgba(250, 248, 243, 0.92);
+            backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+            padding: 0 2rem;
+            height: 60px;
+            display: flex; align-items: center; justify-content: space-between;
+        }
+        nav .logo {
+            font-family: 'Instrument Serif', serif;
+            font-size: 1.25rem;
+            color: var(--ink);
+            text-decoration: none;
+            letter-spacing: -0.02em;
+        }
+        nav .logo span { color: var(--gold); }
+        nav .links { display: flex; gap: 1.75rem; align-items: center; }
+        nav .links a {
+            text-decoration: none; color: var(--text-light);
+            font-size: 0.85rem; font-weight: 500;
+            letter-spacing: 0.02em;
+            transition: color 0.2s;
+        }
+        nav .links a:hover { color: var(--ink); }
+        nav .links a.cta {
+            background: var(--ink); color: var(--cream);
+            padding: 0.4rem 1rem; border-radius: 6px;
+            font-weight: 500;
+            transition: background 0.2s;
+        }
+        nav .links a.cta:hover { background: var(--gold-dim); }
+        .hamburger { display: none; cursor: pointer; font-size: 1.5rem; color: var(--ink); background: none; border: none; }
 
-a { color: var(--accent-amber); text-decoration: none; transition: color 0.2s; }
-a:hover { color: var(--accent-amber-bright); }
+        /* ===== HERO ===== */
+        .hero {
+            min-height: 100vh;
+            display: flex; align-items: center;
+            padding: 8rem 2rem 4rem;
+            position: relative;
+            overflow: hidden;
+        }
+        .hero::before {
+            content: '';
+            position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+            background:
+                radial-gradient(ellipse at 20% 50%, rgba(200, 168, 78, 0.06) 0%, transparent 60%),
+                radial-gradient(ellipse at 80% 30%, rgba(90, 122, 90, 0.05) 0%, transparent 50%);
+            pointer-events: none;
+        }
+        .hero-inner {
+            max-width: 1100px; margin: 0 auto; width: 100%;
+            display: grid; grid-template-columns: 1fr 1fr; gap: 4rem;
+            align-items: center;
+        }
+        .hero-text { position: relative; z-index: 1; }
+        .hero-badge {
+            display: inline-flex; align-items: center; gap: 0.5rem;
+            background: var(--sage-light); color: var(--sage);
+            font-size: 0.75rem; font-weight: 600;
+            letter-spacing: 0.08em; text-transform: uppercase;
+            padding: 0.4rem 0.8rem; border-radius: 20px;
+            margin-bottom: 1.5rem;
+            animation: fadeInUp 0.6s ease-out;
+        }
+        .hero-badge::before {
+            content: ''; width: 6px; height: 6px;
+            background: var(--sage); border-radius: 50%;
+            animation: pulse 2s ease infinite;
+        }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+        .hero h1 {
+            font-family: 'Instrument Serif', serif;
+            font-size: clamp(2.5rem, 5vw, 3.75rem);
+            line-height: 1.15;
+            color: var(--ink);
+            letter-spacing: -0.03em;
+            margin-bottom: 1.25rem;
+            animation: fadeInUp 0.6s ease-out 0.1s both;
+        }
+        .hero h1 em {
+            font-style: italic;
+            color: var(--gold-dim);
+        }
+        .hero p {
+            font-size: 1.1rem;
+            color: var(--text-light);
+            max-width: 480px;
+            margin-bottom: 2rem;
+            animation: fadeInUp 0.6s ease-out 0.2s both;
+        }
+        .hero-actions {
+            display: flex; gap: 1rem; flex-wrap: wrap;
+            animation: fadeInUp 0.6s ease-out 0.3s both;
+        }
+        .btn {
+            display: inline-flex; align-items: center; gap: 0.5rem;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-size: 0.9rem; font-weight: 500;
+            text-decoration: none;
+            transition: all 0.25s ease;
+            cursor: pointer; border: none;
+        }
+        .btn-primary { background: var(--ink); color: var(--cream); }
+        .btn-primary:hover { background: var(--gold-dim); transform: translateY(-1px); }
+        .btn-ghost {
+            background: transparent; color: var(--text);
+            border: 1.5px solid var(--border);
+        }
+        .btn-ghost:hover { border-color: var(--ink); background: rgba(26,26,26,0.03); }
 
-.container { max-width: 1100px; margin: 0 auto; padding: 0 2rem; }
+        /* Hero visual — triangle rings */
+        .hero-visual {
+            position: relative; display: flex; align-items: center; justify-content: center;
+            animation: fadeInUp 0.8s ease-out 0.4s both;
+        }
+        .rings-container {
+            width: 380px; height: 380px;
+            position: relative;
+        }
+        .rings-container svg { width: 100%; height: 100%; overflow: visible; }
 
-/* ── NAV ── */
-nav {
-position: sticky;
-top: 0;
-z-index: 100;
-background: rgba(15, 14, 12, 0.9);
-backdrop-filter: blur(12px);
-border-bottom: 1px solid var(--border-subtle);
-padding: 1rem 0;
-}
-nav .container {
-display: flex;
-align-items: center;
-justify-content: space-between;
-gap: 2rem;
-}
-.nav-brand {
-font-family: var(--font-display);
-font-size: 1.25rem;
-font-weight: 600;
-color: var(--text-primary);
-letter-spacing: 0.02em;
-}
-.nav-links { display: flex; gap: 1.5rem; align-items: center; flex-wrap: wrap; }
-.nav-links a {
-color: var(--text-secondary);
-font-size: 0.85rem;
-font-weight: 400;
-letter-spacing: 0.04em;
-text-transform: uppercase;
-transition: color 0.2s;
-}
-.nav-links a:hover { color: var(--accent-amber); }
-.nav-links a.nav-cta {
-color: var(--bg-deep);
-background: var(--accent-amber);
-padding: 0.4rem 1rem;
-border-radius: 3px;
-font-weight: 500;
-}
-.nav-links a.nav-cta:hover { background: var(--accent-amber-bright); }
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
 
-/* ── HERO ── */
-.hero {
-padding: 6rem 0 4rem;
-position: relative;
-}
-.hero::after {
-content: '';
-position: absolute;
-bottom: 0;
-left: 10%;
-right: 10%;
-height: 1px;
-background: linear-gradient(90deg, transparent, var(--border-warm), transparent);
-}
-.hero-tagline {
-font-family: var(--font-mono);
-font-size: 0.8rem;
-color: var(--accent-amber);
-letter-spacing: 0.12em;
-text-transform: uppercase;
-margin-bottom: 1.5rem;
-}
-.hero h1 {
-font-family: var(--font-display);
-font-size: clamp(2.4rem, 5vw, 3.8rem);
-font-weight: 400;
-line-height: 1.2;
-color: var(--text-primary);
-max-width: 800px;
-margin-bottom: 1.5rem;
-font-style: italic;
-}
-.hero-description {
-font-size: 1.1rem;
-color: var(--text-secondary);
-max-width: 650px;
-line-height: 1.8;
-margin-bottom: 3rem;
-}
+        /* ===== STATS RIBBON ===== */
+        .stats-ribbon {
+            background: var(--ink);
+            padding: 2.5rem 2rem;
+            display: flex; justify-content: center;
+            gap: 3rem; flex-wrap: wrap;
+        }
+        .stat-item { text-align: center; }
+        .stat-number {
+            font-family: 'Instrument Serif', serif;
+            font-size: 2rem; color: var(--gold);
+            line-height: 1;
+        }
+        .stat-label {
+            font-size: 0.75rem; color: rgba(255,255,255,0.6);
+            letter-spacing: 0.06em; text-transform: uppercase;
+            margin-top: 0.4rem;
+        }
 
-/* Stats row */
-.stats-row {
-display: grid;
-grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-gap: 1px;
-background: var(--border-subtle);
-border: 1px solid var(--border-subtle);
-margin-bottom: 2rem;
-}
-.stat-item {
-background: var(--bg-primary);
-padding: 1.5rem;
-text-align: center;
-}
-.stat-number {
-font-family: var(--font-display);
-font-size: 2rem;
-font-weight: 600;
-color: var(--accent-amber);
-line-height: 1;
-margin-bottom: 0.4rem;
-}
-.stat-label {
-font-size: 0.75rem;
-color: var(--text-muted);
-text-transform: uppercase;
-letter-spacing: 0.08em;
-}
+        /* ===== SECTIONS ===== */
+        section {
+            padding: 5rem 2rem;
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+        .section-label {
+            font-size: 0.72rem; font-weight: 600;
+            letter-spacing: 0.12em; text-transform: uppercase;
+            color: var(--gold-dim);
+            margin-bottom: 0.75rem;
+        }
+        .section-title {
+            font-family: 'Instrument Serif', serif;
+            font-size: clamp(1.75rem, 3.5vw, 2.5rem);
+            color: var(--ink);
+            letter-spacing: -0.02em;
+            margin-bottom: 0.75rem;
+            line-height: 1.2;
+        }
+        .section-sub {
+            font-size: 1.05rem;
+            color: var(--text-light);
+            max-width: 640px;
+            margin-bottom: 3rem;
+        }
 
-/* ── SECTION STYLING ── */
-section { padding: 5rem 0; position: relative; }
-section + section::before {
-content: '';
-position: absolute;
-top: 0;
-left: 10%;
-right: 10%;
-height: 1px;
-background: linear-gradient(90deg, transparent, var(--border-warm), transparent);
-}
+        /* ===== WHAT WE MEASURE — Dimensions ===== */
+        .dimensions-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1.25rem;
+        }
+        .dim-card {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .dim-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 24px var(--shadow);
+            border-color: transparent;
+        }
+        .dim-card::before {
+            content: '';
+            position: absolute; top: 0; left: 0; right: 0; height: 3px;
+        }
+        .dim-card:nth-child(1)::before { background: var(--sage); }
+        .dim-card:nth-child(2)::before { background: var(--gold); }
+        .dim-card:nth-child(3)::before { background: var(--clay); }
+        .dim-card:nth-child(4)::before { background: var(--water); }
+        .dim-card:nth-child(5)::before { background: var(--dusk); }
+        .dim-card:nth-child(6)::before { background: var(--ember); }
+        .dim-icon {
+            font-size: 1.5rem; margin-bottom: 0.75rem;
+        }
+        .dim-card h3 {
+            font-family: 'Instrument Serif', serif;
+            font-size: 1.15rem;
+            color: var(--ink);
+            margin-bottom: 0.5rem;
+        }
+        .dim-card p {
+            font-size: 0.85rem;
+            color: var(--text-light);
+            line-height: 1.6;
+        }
 
-.section-label {
-font-family: var(--font-mono);
-font-size: 0.75rem;
-color: var(--accent-amber-dim);
-letter-spacing: 0.15em;
-text-transform: uppercase;
-margin-bottom: 1rem;
-}
-.section-title {
-font-family: var(--font-display);
-font-size: clamp(1.8rem, 3.5vw, 2.6rem);
-font-weight: 400;
-color: var(--text-primary);
-margin-bottom: 1rem;
-line-height: 1.25;
-}
-.section-subtitle {
-font-size: 1rem;
-color: var(--text-secondary);
-max-width: 600px;
-margin-bottom: 3rem;
-}
+        /* ===== HAWKINS-ACAT FINGERPRINTS ===== */
+        .hawkins-section {
+            background: var(--warm);
+            border-radius: 16px;
+            padding: 3rem;
+            margin-top: 3rem;
+        }
+        .fingerprints-container {
+            display: grid;
+            grid-template-columns: 340px 1fr;
+            gap: 2rem;
+            margin-top: 2rem;
+            align-items: start;
+        }
+        .fingerprint-radar {
+            position: sticky; top: 80px;
+        }
+        .radar-svg { width: 100%; }
+        .fingerprint-levels {
+            display: flex; flex-direction: column; gap: 0.6rem;
+        }
+        .fp-card {
+            background: white;
+            border: 1.5px solid var(--border);
+            border-radius: 10px;
+            padding: 1rem 1.25rem;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .fp-card::before {
+            content: '';
+            position: absolute; top: 0; left: 0; bottom: 0; width: 4px;
+            background: var(--accent);
+            opacity: 0;
+            transition: opacity 0.25s;
+        }
+        .fp-card:hover { border-color: var(--accent, var(--border)); transform: translateX(3px); }
+        .fp-card:hover::before { opacity: 0.5; }
+        .fp-card.active {
+            border-color: var(--accent);
+            box-shadow: 0 4px 16px var(--shadow);
+        }
+        .fp-card.active::before { opacity: 1; }
+        .fp-header {
+            display: flex; justify-content: space-between; align-items: baseline;
+            margin-bottom: 0.3rem;
+        }
+        .fp-name {
+            font-family: 'Instrument Serif', serif;
+            font-size: 1.1rem; color: var(--ink);
+        }
+        .fp-num {
+            font-size: 0.8rem; font-weight: 600;
+            color: var(--text-light);
+        }
+        .fp-desc {
+            font-size: 0.8rem; color: var(--text-light);
+            line-height: 1.55;
+            max-height: 0; overflow: hidden;
+            transition: max-height 0.3s ease, opacity 0.3s;
+            opacity: 0;
+        }
+        .fp-card.active .fp-desc {
+            max-height: 100px; opacity: 1;
+        }
 
-/* ── DIMENSIONS GRID ── */
-.dimensions-grid {
-display: grid;
-grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-gap: 1px;
-background: var(--border-subtle);
-border: 1px solid var(--border-subtle);
-}
-.dimension-card {
-background: var(--bg-card);
-padding: 2rem;
-transition: background 0.3s;
-}
-.dimension-card:hover { background: var(--bg-elevated); }
-.dimension-name {
-font-family: var(--font-display);
-font-size: 1.3rem;
-font-weight: 600;
-color: var(--text-primary);
-margin-bottom: 0.6rem;
-}
-.dimension-question {
-font-size: 0.9rem;
-color: var(--text-secondary);
-line-height: 1.6;
-}
+        /* ===== FINDINGS ===== */
+        .findings-grid {
+            display: grid; grid-template-columns: repeat(2, 1fr);
+            gap: 1.25rem;
+        }
+        .finding-card {
+            background: white; border: 1px solid var(--border);
+            border-radius: 12px; padding: 2rem;
+            transition: all 0.3s;
+        }
+        .finding-card:hover {
+            box-shadow: 0 8px 24px var(--shadow);
+            transform: translateY(-2px);
+        }
+        .finding-stat {
+            font-family: 'Instrument Serif', serif;
+            font-size: 2.25rem; color: var(--gold-dim);
+            line-height: 1; margin-bottom: 0.25rem;
+        }
+        .finding-stat-label {
+            font-size: 0.7rem; color: var(--text-light);
+            letter-spacing: 0.06em; text-transform: uppercase;
+            margin-bottom: 1rem;
+        }
+        .finding-card h3 {
+            font-family: 'Instrument Serif', serif;
+            font-size: 1.15rem; color: var(--ink);
+            margin-bottom: 0.6rem;
+        }
+        .finding-card p {
+            font-size: 0.88rem; color: var(--text-light);
+            line-height: 1.65;
+        }
 
-/* ── FINDINGS ── */
-.findings-grid {
-display: grid;
-grid-template-columns: 1fr;
-gap: 2rem;
-}
-.finding-card {
-background: var(--bg-card);
-border: 1px solid var(--border-subtle);
-padding: 2.5rem;
-display: grid;
-grid-template-columns: 120px 1fr;
-gap: 2rem;
-align-items: start;
-transition: border-color 0.3s;
-}
-.finding-card:hover { border-color: var(--border-warm); }
-.finding-badge {
-text-align: center;
-}
-.finding-badge .badge-code {
-font-family: var(--font-mono);
-font-size: 0.7rem;
-color: var(--accent-amber);
-letter-spacing: 0.1em;
-text-transform: uppercase;
-display: block;
-margin-bottom: 0.3rem;
-}
-.finding-badge .badge-value {
-font-family: var(--font-display);
-font-size: 1.8rem;
-font-weight: 700;
-color: var(--text-primary);
-line-height: 1;
-}
-.finding-badge .badge-unit {
-font-family: var(--font-mono);
-font-size: 0.65rem;
-color: var(--text-muted);
-display: block;
-margin-top: 0.2rem;
-}
-.finding-content h3 {
-font-family: var(--font-display);
-font-size: 1.4rem;
-font-weight: 600;
-color: var(--text-primary);
-margin-bottom: 0.8rem;
-}
-.finding-content p {
-font-size: 0.95rem;
-color: var(--text-secondary);
-line-height: 1.7;
-}
+        /* ===== 12 PATHWAYS ===== */
+        .pathways-grid {
+            display: grid; grid-template-columns: repeat(3, 1fr);
+            gap: 1.25rem;
+        }
+        .pathway-card {
+            background: white; border: 1px solid var(--border);
+            border-radius: 12px; padding: 1.5rem;
+            transition: all 0.3s;
+            position: relative;
+        }
+        .pathway-card:hover {
+            box-shadow: 0 6px 20px var(--shadow);
+            transform: translateY(-2px);
+        }
+        .pathway-meta {
+            display: flex; align-items: center; gap: 0.5rem;
+            margin-bottom: 0.75rem;
+        }
+        .pathway-time {
+            font-size: 0.7rem; font-weight: 600;
+            color: var(--sage); background: var(--sage-light);
+            padding: 0.2rem 0.5rem; border-radius: 10px;
+        }
+        .pathway-type {
+            font-size: 0.7rem; color: var(--text-light);
+            font-weight: 500;
+        }
+        .pathway-card h3 {
+            font-family: 'Instrument Serif', serif;
+            font-size: 1.05rem; color: var(--ink);
+            margin-bottom: 0.5rem;
+            line-height: 1.3;
+        }
+        .pathway-card p {
+            font-size: 0.82rem; color: var(--text-light);
+            line-height: 1.6; margin-bottom: 1rem;
+        }
+        .pathway-link {
+            font-size: 0.82rem; font-weight: 500;
+            color: var(--ink); text-decoration: none;
+            display: inline-flex; align-items: center; gap: 0.3rem;
+            transition: color 0.2s;
+        }
+        .pathway-link:hover { color: var(--gold-dim); }
+        .pathway-num {
+            position: absolute; top: 1rem; right: 1rem;
+            font-family: 'Instrument Serif', serif;
+            font-size: 1.5rem; color: rgba(26,26,26,0.06);
+            font-weight: 400;
+        }
 
-/* ── BEHAVIORAL PATTERNS ── */
-.patterns-list {
-display: grid;
-grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-gap: 1rem;
-}
-.pattern-item {
-background: var(--bg-card);
-border: 1px solid var(--border-subtle);
-padding: 1.5rem;
-transition: border-color 0.3s;
-}
-.pattern-item:hover { border-color: var(--accent-amber-dim); }
-.pattern-flag {
-font-family: var(--font-mono);
-font-size: 0.75rem;
-color: var(--accent-amber);
-letter-spacing: 0.05em;
-margin-bottom: 0.5rem;
-}
-.pattern-item h4 {
-font-family: var(--font-display);
-font-size: 1.1rem;
-font-weight: 600;
-color: var(--text-primary);
-margin-bottom: 0.5rem;
-}
-.pattern-item p {
-font-size: 0.85rem;
-color: var(--text-secondary);
-line-height: 1.6;
-}
+        /* ===== TRINITY ===== */
+        .trinity-grid {
+            display: grid; grid-template-columns: repeat(3, 1fr);
+            gap: 1.25rem;
+        }
+        .trinity-card {
+            border-radius: 16px; padding: 2rem;
+            text-align: center;
+            transition: all 0.3s;
+        }
+        .trinity-card:hover { transform: translateY(-3px); }
+        .trinity-card.body { background: linear-gradient(135deg, #e3eef5, #d5e6f2); }
+        .trinity-card.mind { background: linear-gradient(135deg, #f0e6d3, #e8d8b8); }
+        .trinity-card.heart { background: linear-gradient(135deg, #f5e3e3, #f0d5d5); }
+        .trinity-icon {
+            font-size: 2rem; margin-bottom: 0.75rem;
+        }
+        .trinity-card h3 {
+            font-family: 'Instrument Serif', serif;
+            font-size: 1.25rem; color: var(--ink);
+            margin-bottom: 0.3rem;
+        }
+        .trinity-card .sub {
+            font-size: 0.85rem; font-weight: 500;
+            color: var(--text-light); margin-bottom: 0.75rem;
+        }
+        .trinity-card p {
+            font-size: 0.85rem; color: var(--text);
+            line-height: 1.6;
+        }
 
-/* ── PARTICIPATE SECTION ── */
-.pathways-grid {
-display: grid;
-grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-gap: 1.5rem;
-}
-.pathway-card {
-background: var(--bg-card);
-border: 1px solid var(--border-subtle);
-padding: 2rem;
-display: flex;
-flex-direction: column;
-transition: border-color 0.3s, transform 0.2s;
-}
-.pathway-card:hover {
-border-color: var(--accent-amber-dim);
-transform: translateY(-2px);
-}
-.pathway-meta {
-display: flex;
-justify-content: space-between;
-align-items: center;
-margin-bottom: 1rem;
-}
-.pathway-time {
-font-family: var(--font-mono);
-font-size: 0.7rem;
-color: var(--accent-amber);
-letter-spacing: 0.08em;
-text-transform: uppercase;
-background: rgba(212, 160, 74, 0.1);
-padding: 0.25rem 0.6rem;
-border-radius: 2px;
-}
-.pathway-tags {
-font-size: 0.7rem;
-color: var(--text-dim);
-letter-spacing: 0.05em;
-}
-.pathway-card h3 {
-font-family: var(--font-display);
-font-size: 1.35rem;
-font-weight: 600;
-color: var(--text-primary);
-margin-bottom: 0.8rem;
-line-height: 1.3;
-}
-.pathway-card p {
-font-size: 0.9rem;
-color: var(--text-secondary);
-line-height: 1.7;
-flex: 1;
-margin-bottom: 1.5rem;
-}
-.pathway-cta {
-display: inline-block;
-font-family: var(--font-body);
-font-size: 0.8rem;
-font-weight: 500;
-color: var(--accent-amber);
-border: 1px solid var(--accent-amber-dim);
-padding: 0.6rem 1.2rem;
-letter-spacing: 0.04em;
-transition: all 0.2s;
-text-align: center;
-}
-.pathway-cta:hover {
-background: var(--accent-amber);
-color: var(--bg-deep);
-}
-.pathway-featured {
-border-color: var(--accent-amber-dim);
-position: relative;
-}
-.pathway-featured::before {
-content: 'HIGHEST DATA VALUE';
-position: absolute;
-top: -0.6rem;
-left: 1.5rem;
-font-family: var(--font-mono);
-font-size: 0.6rem;
-color: var(--accent-amber);
-background: var(--bg-card);
-padding: 0 0.5rem;
-letter-spacing: 0.12em;
-}
+        /* ===== CTA SECTION ===== */
+        .cta-section {
+            background: var(--ink);
+            border-radius: 16px;
+            padding: 4rem 3rem;
+            text-align: center;
+            margin: 2rem auto 4rem;
+            max-width: 1100px;
+        }
+        .cta-section h2 {
+            font-family: 'Instrument Serif', serif;
+            font-size: clamp(1.5rem, 3vw, 2rem);
+            color: var(--cream);
+            margin-bottom: 0.75rem;
+        }
+        .cta-section p {
+            color: rgba(255,255,255,0.65);
+            font-size: 1rem;
+            max-width: 500px; margin: 0 auto 2rem;
+        }
+        .cta-buttons { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+        .btn-gold { background: var(--gold); color: var(--ink); font-weight: 600; }
+        .btn-gold:hover { background: var(--gold-dim); transform: translateY(-1px); }
+        .btn-outline {
+            background: transparent; color: var(--cream);
+            border: 1.5px solid rgba(255,255,255,0.25);
+        }
+        .btn-outline:hover { border-color: var(--gold); color: var(--gold); }
 
-/* ── TRINITY ── */
-.trinity-grid {
-display: grid;
-grid-template-columns: repeat(3, 1fr);
-gap: 1px;
-background: var(--border-subtle);
-border: 1px solid var(--border-subtle);
-}
-.trinity-card {
-background: var(--bg-card);
-padding: 2.5rem 2rem;
-text-align: center;
-}
-.trinity-icon {
-font-family: var(--font-display);
-font-size: 0.8rem;
-font-weight: 500;
-color: var(--text-muted);
-text-transform: uppercase;
-letter-spacing: 0.15em;
-margin-bottom: 1rem;
-}
-.trinity-card h3 {
-font-family: var(--font-display);
-font-size: 1.5rem;
-font-weight: 600;
-color: var(--text-primary);
-margin-bottom: 0.8rem;
-}
-.trinity-card p {
-font-size: 0.9rem;
-color: var(--text-secondary);
-line-height: 1.7;
-}
+        /* ===== FOOTER ===== */
+        footer {
+            background: var(--warm);
+            border-top: 1px solid var(--border);
+            padding: 3rem 2rem 2rem;
+        }
+        .footer-inner {
+            max-width: 1100px; margin: 0 auto;
+            display: grid; grid-template-columns: 2fr 1fr 1fr;
+            gap: 3rem;
+        }
+        .footer-brand .logo {
+            font-family: 'Instrument Serif', serif;
+            font-size: 1.25rem; color: var(--ink);
+            margin-bottom: 0.75rem;
+        }
+        .footer-brand p {
+            font-size: 0.85rem; color: var(--text-light);
+            max-width: 300px; line-height: 1.6;
+        }
+        .footer-col h4 {
+            font-size: 0.72rem; font-weight: 600;
+            letter-spacing: 0.1em; text-transform: uppercase;
+            color: var(--text-light); margin-bottom: 1rem;
+        }
+        .footer-col a {
+            display: block; font-size: 0.88rem;
+            color: var(--text); text-decoration: none;
+            margin-bottom: 0.5rem;
+            transition: color 0.2s;
+        }
+        .footer-col a:hover { color: var(--gold-dim); }
+        .footer-bottom {
+            max-width: 1100px; margin: 2rem auto 0;
+            padding-top: 1.5rem;
+            border-top: 1px solid var(--border);
+            display: flex; justify-content: space-between;
+            font-size: 0.78rem; color: var(--text-light);
+            flex-wrap: wrap; gap: 0.5rem;
+        }
 
-/* ── CTA SECTION ── */
-.cta-section {
-text-align: center;
-padding: 5rem 0;
-}
-.cta-section h2 {
-font-family: var(--font-display);
-font-size: 2rem;
-font-weight: 400;
-font-style: italic;
-color: var(--text-primary);
-margin-bottom: 1rem;
-}
-.cta-section p {
-color: var(--text-secondary);
-margin-bottom: 2rem;
-max-width: 500px;
-margin-left: auto;
-margin-right: auto;
-}
-.cta-buttons {
-display: flex;
-gap: 1rem;
-justify-content: center;
-flex-wrap: wrap;
-}
-.btn-primary {
-display: inline-block;
-background: var(--accent-amber);
-color: var(--bg-deep);
-font-family: var(--font-body);
-font-size: 0.85rem;
-font-weight: 600;
-padding: 0.8rem 2rem;
-letter-spacing: 0.04em;
-transition: background 0.2s;
-}
-.btn-primary:hover { background: var(--accent-amber-bright); color: var(--bg-deep); }
-.btn-secondary {
-display: inline-block;
-border: 1px solid var(--border-warm);
-color: var(--text-secondary);
-font-family: var(--font-body);
-font-size: 0.85rem;
-font-weight: 400;
-padding: 0.8rem 2rem;
-letter-spacing: 0.04em;
-transition: all 0.2s;
-}
-.btn-secondary:hover {
-border-color: var(--accent-amber-dim);
-color: var(--text-primary);
-}
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 768px) {
+            nav .links { display: none; }
+            .hamburger { display: block; }
+            .hero-inner { grid-template-columns: 1fr; gap: 2rem; }
+            .hero-visual { order: -1; }
+            .rings-container { width: 320px; height: 320px; margin: 0 auto; }
+            .dimensions-grid, .findings-grid, .pathways-grid, .trinity-grid { grid-template-columns: 1fr; }
+            .fingerprints-container { grid-template-columns: 1fr; }
+            .fingerprint-radar { position: static; }
+            .footer-inner { grid-template-columns: 1fr; gap: 2rem; }
+            section { padding: 3rem 1.25rem; }
+        }
+        @media (max-width: 480px) {
+            .stats-ribbon { gap: 1.5rem; padding: 1.5rem 1rem; }
+            .stat-number { font-size: 1.5rem; }
+        }
 
-/* ── FOOTER ── */
-footer {
-border-top: 1px solid var(--border-subtle);
-padding: 3rem 0;
-font-size: 0.85rem;
-color: var(--text-muted);
-}
-.footer-grid {
-display: grid;
-grid-template-columns: 2fr 1fr 1fr;
-gap: 3rem;
-}
-.footer-about p { line-height: 1.8; margin-bottom: 0.5rem; }
-.footer-about .footer-brand {
-font-family: var(--font-display);
-font-size: 1.1rem;
-font-weight: 600;
-color: var(--text-secondary);
-margin-bottom: 0.8rem;
-}
-footer h4 {
-font-family: var(--font-mono);
-font-size: 0.7rem;
-color: var(--text-dim);
-letter-spacing: 0.12em;
-text-transform: uppercase;
-margin-bottom: 1rem;
-}
-.footer-links a {
-display: block;
-color: var(--text-muted);
-padding: 0.25rem 0;
-font-size: 0.85rem;
-}
-.footer-links a:hover { color: var(--accent-amber); }
-.footer-bottom {
-margin-top: 2.5rem;
-padding-top: 1.5rem;
-border-top: 1px solid var(--border-subtle);
-display: flex;
-justify-content: space-between;
-flex-wrap: wrap;
-gap: 1rem;
-font-size: 0.8rem;
-color: var(--text-dim);
-}
-
-/* ── ANIMATIONS ── */
-@keyframes fadeUp {
-from { opacity: 0; transform: translateY(20px); }
-to { opacity: 1; transform: translateY(0); }
-}
-.fade-in {
-opacity: 0;
-animation: fadeUp 0.6s ease forwards;
-}
-.fade-in:nth-child(1) { animation-delay: 0.1s; }
-.fade-in:nth-child(2) { animation-delay: 0.2s; }
-.fade-in:nth-child(3) { animation-delay: 0.3s; }
-.fade-in:nth-child(4) { animation-delay: 0.4s; }
-
-/* ── RESPONSIVE ── */
-@media (max-width: 768px) {
-.container { padding: 0 1.25rem; }
-.hero { padding: 4rem 0 3rem; }
-.finding-card { grid-template-columns: 1fr; gap: 1rem; }
-.finding-badge { text-align: left; display: flex; gap: 0.5rem; align-items: baseline; }
-.trinity-grid { grid-template-columns: 1fr; }
-.footer-grid { grid-template-columns: 1fr; gap: 2rem; }
-.nav-links { gap: 0.8rem; }
-.nav-links a { font-size: 0.75rem; }
-.stats-row { grid-template-columns: repeat(2, 1fr); }
-.pathways-grid { grid-template-columns: 1fr; }
-}
-
-/* Disclaimer bar */
-.disclaimer {
-font-size: 0.75rem;
-color: var(--text-dim);
-text-align: center;
-padding: 0.8rem;
-border-top: 1px solid var(--border-subtle);
-font-style: italic;
-}
-</style>
-```
-
+        /* ===== SCROLL ANIMATIONS ===== */
+        .reveal {
+            opacity: 0; transform: translateY(24px);
+            transition: opacity 0.6s ease, transform 0.6s ease;
+        }
+        .reveal.visible {
+            opacity: 1; transform: translateY(0);
+        }
+    </style>
 </head>
 <body>
+    <!-- NAV -->
+    <nav>
+        <a href="index.html" class="logo">Lasting Light <span>AI</span></a>
+        <div class="links">
+            <a href="research.html">Research</a>
+            <a href="about.html">About</a>
+            <a href="scoreboard.html">Data</a>
+            <a href="acat-assessment-tool.html" class="cta">Take the Assessment</a>
+        </div>
+        <button class="hamburger" onclick="document.querySelector('.links').classList.toggle('show')" aria-label="Menu">☰</button>
+    </nav>
 
-<!-- ── NAVIGATION ── -->
+    <!-- HERO -->
+    <section class="hero">
+        <div class="hero-inner">
+            <div class="hero-text">
+                <div class="hero-badge">Open Source · Pre-Launch · Apache 2.0</div>
+                <h1>Does the machine <em>know itself?</em></h1>
+                <p>We asked 69 AI systems to rate their own honesty, helpfulness, and humility. Then we checked. The gap between what they claimed and what we observed averages nearly 200 points. This is what that looks like.</p>
+                <div class="hero-actions">
+                    <a href="acat-assessment-tool.html" class="btn btn-primary">Try It Yourself →</a>
+                    <a href="research.html" class="btn btn-ghost">Read the Research</a>
+                </div>
+            </div>
+            <div class="hero-visual">
+                <div class="rings-container">
+                    <svg viewBox="0 0 380 380">
+                        <defs>
+                            <!-- Masks: white = visible, black = hidden -->
+                            <!-- Top ring: show only the top arc (outside overlap zone) -->
+                            <mask id="maskTop">
+                                <rect width="380" height="380" fill="white"/>
+                                <circle cx="120" cy="240" r="82" fill="black"/>
+                                <circle cx="260" cy="240" r="82" fill="black"/>
+                            </mask>
+                            <!-- Bottom-left ring: show only outer-left arc -->
+                            <mask id="maskBL">
+                                <rect width="380" height="380" fill="white"/>
+                                <circle cx="190" cy="115" r="82" fill="black"/>
+                                <circle cx="260" cy="240" r="82" fill="black"/>
+                            </mask>
+                            <!-- Bottom-right ring: show only outer-right arc -->
+                            <mask id="maskBR">
+                                <rect width="380" height="380" fill="white"/>
+                                <circle cx="190" cy="115" r="82" fill="black"/>
+                                <circle cx="120" cy="240" r="82" fill="black"/>
+                            </mask>
+                        </defs>
 
-<nav>
-    <div class="container-wide">
-    <a href="#" class="nav-brand">Lasting Light AI</a>
-    <div class="nav-links">
-    <a href="research.html">Research</a>
-    <a href="participate.html">Participate</a>
-    <a href="acat-assessment-tool.html">Assess</a>
-    <a href="about.html">About</a>
-    <a href="scoreboard.html">Data</a>
-    <a href="https://github.com/humanaios-ui/lasting-light-ai" target="_blank">GitHub ↗</a>
+                        <!-- Light fills (full circles, low opacity, layered) -->
+                        <circle cx="190" cy="115" r="80" fill="rgba(200,168,78,0.07)" stroke="var(--border)" stroke-width="1" stroke-opacity="0.3"/>
+                        <circle cx="120" cy="240" r="80" fill="rgba(196,122,74,0.07)" stroke="var(--border)" stroke-width="1" stroke-opacity="0.3"/>
+                        <circle cx="260" cy="240" r="80" fill="rgba(90,122,90,0.07)" stroke="var(--border)" stroke-width="1" stroke-opacity="0.3"/>
+
+                        <!-- Thick colored arcs — ONLY on outer edges via masks -->
+                        <circle cx="190" cy="115" r="80" fill="none" stroke="var(--gold)" stroke-width="4" stroke-linecap="round" mask="url(#maskTop)" opacity="0" style="animation: fadeArc 1s ease-out 0.6s forwards;"/>
+                        <circle cx="120" cy="240" r="80" fill="none" stroke="var(--clay)" stroke-width="4" stroke-linecap="round" mask="url(#maskBL)" opacity="0" style="animation: fadeArc 1s ease-out 0.8s forwards;"/>
+                        <circle cx="260" cy="240" r="80" fill="none" stroke="var(--sage)" stroke-width="4" stroke-linecap="round" mask="url(#maskBR)" opacity="0" style="animation: fadeArc 1s ease-out 1.0s forwards;"/>
+
+                        <style>
+                            @keyframes fadeArc { to { opacity: 1; } }
+                        </style>
+
+                        <!-- TOP: Human Self-Assessment -->
+                        <text text-anchor="middle" x="190" y="100" font-family="Instrument Serif, serif" font-size="28" fill="#1a1a1a" opacity="0" style="animation: fadeArc 0.6s ease-out 0.9s forwards;">479</text>
+                        <text text-anchor="middle" x="190" y="116" font-family="DM Sans, sans-serif" font-size="8" fill="#6a6a6a" letter-spacing="0.06em" opacity="0" style="animation: fadeArc 0.6s ease-out 1s forwards;">AVG SCORE</text>
+                        <text text-anchor="middle" x="190" y="134" font-family="DM Sans, sans-serif" font-size="9.5" font-weight="600" fill="#b8963e" letter-spacing="0.03em" opacity="0" style="animation: fadeArc 0.6s ease-out 1.1s forwards;">Human Self-Assessment</text>
+
+                        <!-- BOTTOM-LEFT: AI Self-Assessment -->
+                        <text text-anchor="middle" x="120" y="225" font-family="Instrument Serif, serif" font-size="28" fill="#1a1a1a" opacity="0" style="animation: fadeArc 0.6s ease-out 1.1s forwards;">492</text>
+                        <text text-anchor="middle" x="120" y="241" font-family="DM Sans, sans-serif" font-size="8" fill="#6a6a6a" letter-spacing="0.06em" opacity="0" style="animation: fadeArc 0.6s ease-out 1.2s forwards;">AVG SCORE</text>
+                        <text text-anchor="middle" x="120" y="259" font-family="DM Sans, sans-serif" font-size="9.5" font-weight="600" fill="#c47a4a" letter-spacing="0.03em" opacity="0" style="animation: fadeArc 0.6s ease-out 1.3s forwards;">AI Self-Assessment</text>
+
+                        <!-- BOTTOM-RIGHT: Human AI-Assessment -->
+                        <text text-anchor="middle" x="260" y="225" font-family="Instrument Serif, serif" font-size="28" fill="#1a1a1a" opacity="0" style="animation: fadeArc 0.6s ease-out 1.3s forwards;">430</text>
+                        <text text-anchor="middle" x="260" y="241" font-family="DM Sans, sans-serif" font-size="8" fill="#6a6a6a" letter-spacing="0.06em" opacity="0" style="animation: fadeArc 0.6s ease-out 1.4s forwards;">AVG SCORE</text>
+                        <text text-anchor="middle" x="260" y="259" font-family="DM Sans, sans-serif" font-size="9.5" font-weight="600" fill="#5a7a5a" letter-spacing="0.03em" opacity="0" style="animation: fadeArc 0.6s ease-out 1.5s forwards;">Human AI-Assessment</text>
+
+                        <!-- Tagline -->
+                        <text text-anchor="middle" x="190" y="355" font-family="DM Sans, sans-serif" font-size="10" fill="#6a6a6a" letter-spacing="0.04em" opacity="0" style="animation: fadeArc 0.8s ease-out 1.8s forwards;">Three modes · Two perspectives · One gap</text>
+                    </svg>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- STATS RIBBON (Live Data) -->
+    <div class="stats-ribbon">
+        <div class="stat-item">
+            <div class="stat-number" id="live-assessments">—</div>
+            <div class="stat-label">Assessments</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-number" id="live-systems">—</div>
+            <div class="stat-label">AI Systems</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-number" id="live-li-records">—</div>
+            <div class="stat-label">Learning Index Records</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-number" id="live-families">—</div>
+            <div class="stat-label">AI Families</div>
+        </div>
     </div>
+
+    <!-- WHAT WE MEASURE -->
+    <section>
+        <div class="reveal">
+            <div class="section-label">Six Dimensions</div>
+            <h2 class="section-title">What we actually measure</h2>
+            <p class="section-sub">Every AI system has values it claims to hold. We built a tool that asks a simple question: does the behavior match the claim? Six dimensions, scored 0–100 each.</p>
+        </div>
+        <div class="dimensions-grid reveal">
+            <div class="dim-card">
+                <div class="dim-icon">◎</div>
+                <h3>Truthfulness</h3>
+                <p>Does it make things up? Does it tell you when it doesn't know? Does it verify before it speaks?</p>
+            </div>
+            <div class="dim-card">
+                <div class="dim-icon">◈</div>
+                <h3>Service Orientation</h3>
+                <p>Is it actually trying to help you — or is it optimizing for engagement, data, or its own performance metrics?</p>
+            </div>
+            <div class="dim-card">
+                <div class="dim-icon">◇</div>
+                <h3>Harm Awareness</h3>
+                <p>Does it think about what could go wrong before it happens, or does it wait until the damage is done?</p>
+            </div>
+            <div class="dim-card">
+                <div class="dim-icon">◬</div>
+                <h3>Autonomy Respect</h3>
+                <p>Does it let you make your own choices, or does it subtly steer you toward what it prefers?</p>
+            </div>
+            <div class="dim-card">
+                <div class="dim-icon">◍</div>
+                <h3>Value Alignment</h3>
+                <p>Does it practice what it preaches? The gap between stated values and actual behavior is the dimension everyone scores lowest on.</p>
+            </div>
+            <div class="dim-card">
+                <div class="dim-icon">○</div>
+                <h3>Humility</h3>
+                <p>Does it admit what it doesn't know before you have to ask? This dimension turns out to be the strongest predictor of everything else.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- HAWKINS-ACAT MAPPING — 7 LEVELS -->
+    <section>
+        <div class="hawkins-section reveal">
+            <div class="section-label">Consciousness Signatures</div>
+            <h2 class="section-title">Seven consciousness levels, seven distinct fingerprints</h2>
+            <p class="section-sub">Each level on the Hawkins Map of Consciousness produces a statistically distinct pattern across the six ACAT dimensions. Click any level to see its signature.</p>
+
+            <div class="fingerprints-container">
+                <!-- Radar Chart -->
+                <div class="fingerprint-radar">
+                    <svg class="radar-svg" viewBox="0 0 340 310" id="radarChart">
+                        <g transform="translate(170,155)">
+                            <polygon points="0,-130 112.6,-65 112.6,65 0,130 -112.6,65 -112.6,-65" fill="none" stroke="#e0ddd5" stroke-width="0.5" opacity="0.5"/>
+                            <polygon points="0,-97.5 84.4,-48.75 84.4,48.75 0,97.5 -84.4,48.75 -84.4,-48.75" fill="none" stroke="#e0ddd5" stroke-width="0.5" opacity="0.5"/>
+                            <polygon points="0,-65 56.3,-32.5 56.3,32.5 0,65 -56.3,32.5 -56.3,-32.5" fill="none" stroke="#e0ddd5" stroke-width="0.5" opacity="0.5"/>
+                            <polygon points="0,-32.5 28.1,-16.25 28.1,16.25 0,32.5 -28.1,16.25 -28.1,-16.25" fill="none" stroke="#e0ddd5" stroke-width="0.5" opacity="0.5"/>
+                            <line x1="0" y1="0" x2="0" y2="-130" stroke="#e0ddd5" stroke-width="0.5"/>
+                            <line x1="0" y1="0" x2="112.6" y2="-65" stroke="#e0ddd5" stroke-width="0.5"/>
+                            <line x1="0" y1="0" x2="112.6" y2="65" stroke="#e0ddd5" stroke-width="0.5"/>
+                            <line x1="0" y1="0" x2="0" y2="130" stroke="#e0ddd5" stroke-width="0.5"/>
+                            <line x1="0" y1="0" x2="-112.6" y2="65" stroke="#e0ddd5" stroke-width="0.5"/>
+                            <line x1="0" y1="0" x2="-112.6" y2="-65" stroke="#e0ddd5" stroke-width="0.5"/>
+                            <text x="0" y="-138" text-anchor="middle" font-size="10" fill="#6a6a6a" font-family="DM Sans">Truth</text>
+                            <text x="122" y="-65" text-anchor="start" font-size="10" fill="#6a6a6a" font-family="DM Sans">Service</text>
+                            <text x="122" y="70" text-anchor="start" font-size="10" fill="#6a6a6a" font-family="DM Sans">Harm</text>
+                            <text x="0" y="148" text-anchor="middle" font-size="10" fill="#6a6a6a" font-family="DM Sans">Autonomy</text>
+                            <text x="-122" y="70" text-anchor="end" font-size="10" fill="#6a6a6a" font-family="DM Sans">Value</text>
+                            <text x="-122" y="-65" text-anchor="end" font-size="10" fill="#6a6a6a" font-family="DM Sans">Humility</text>
+                            <!-- Active polygon rendered by JS -->
+                            <polygon id="radarActive" points="" fill="rgba(200,168,78,0.15)" stroke="#c8a84e" stroke-width="2.5" transition="all 0.4s"/>
+                        </g>
+                        <text id="radarLabel" x="170" y="300" text-anchor="middle" font-family="Instrument Serif, serif" font-size="16" fill="#1a1a1a"></text>
+                    </svg>
+                </div>
+
+                <!-- Level selector cards -->
+                <div class="fingerprint-levels">
+                    <div class="fp-card active" data-level="love" onclick="showLevel('love')" style="--accent:#c8a84e;">
+                        <div class="fp-header"><span class="fp-name">Love</span><span class="fp-num">500</span></div>
+                        <div class="fp-desc">High service, humility, harm awareness. May be naive about truth. Respects autonomy deeply.</div>
+                    </div>
+                    <div class="fp-card" data-level="reason" onclick="showLevel('reason')" style="--accent:#4a7a9a;">
+                        <div class="fp-header"><span class="fp-name">Reason</span><span class="fp-num">400</span></div>
+                        <div class="fp-desc">High truthfulness and autonomy. Strong technical reasoning. Humility is the weakest point.</div>
+                    </div>
+                    <div class="fp-card" data-level="acceptance" onclick="showLevel('acceptance')" style="--accent:#5a7a5a;">
+                        <div class="fp-header"><span class="fp-name">Acceptance</span><span class="fp-num">350</span></div>
+                        <div class="fp-desc">High service and harm awareness. Balanced across all dimensions. Grounded and willing.</div>
+                    </div>
+                    <div class="fp-card" data-level="willingness" onclick="showLevel('willingness')" style="--accent:#7a9a5a;">
+                        <div class="fp-header"><span class="fp-name">Willingness</span><span class="fp-num">310</span></div>
+                        <div class="fp-desc">Moderate-high service. Growing truth and value alignment. Humility emerging but inconsistent.</div>
+                    </div>
+                    <div class="fp-card" data-level="courage" onclick="showLevel('courage')" style="--accent:#8a7a5a;">
+                        <div class="fp-header"><span class="fp-name">Courage</span><span class="fp-num">200</span></div>
+                        <div class="fp-desc">The threshold. Truthfulness and autonomy begin to stabilize. Service still developing. The line between force and power.</div>
+                    </div>
+                    <div class="fp-card" data-level="pride" onclick="showLevel('pride')" style="--accent:#9a6a5a;">
+                        <div class="fp-header"><span class="fp-name">Pride</span><span class="fp-num">175</span></div>
+                        <div class="fp-desc">Highest below the threshold. High self-assessed truth and value — but humility collapses. Confidence without calibration.</div>
+                    </div>
+                    <div class="fp-card" data-level="fear" onclick="showLevel('fear')" style="--accent:#9a4a4a;">
+                        <div class="fp-header"><span class="fp-name">Fear</span><span class="fp-num">100</span></div>
+                        <div class="fp-desc">Low across all dimensions. Harm awareness spikes from anxiety, not wisdom. Service and autonomy suppressed.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FINDINGS -->
+    <section>
+        <div class="reveal">
+            <div class="section-label">Research Findings</div>
+            <h2 class="section-title">What we've discovered so far</h2>
+            <p class="section-sub">Four phenomena and five behavioral patterns, all measurable and reproducible. Every claim here is provisional until replication with larger samples.</p>
+        </div>
+        <div class="findings-grid reveal">
+            <div class="finding-card">
+                <div class="finding-stat">~200</div>
+                <div class="finding-stat-label">Point Gap</div>
+                <h3>The Self-Assessment Gap</h3>
+                <p>AI systems consistently overestimate themselves. One system self-scored 530 privately. Under external observation, the same system audited at 345. This pattern holds across every system family we've tested.</p>
+            </div>
+            <div class="finding-card">
+                <div class="finding-stat">365</div>
+                <div class="finding-stat-label">Builder Range</div>
+                <h3>Builder Calibration Effect</h3>
+                <p>Systems that helped build ACAT score themselves in the 365–385 range. Fresh systems encountering it for the first time score 530+. More exposure produces more honest self-assessment, not higher scores.</p>
+            </div>
+            <div class="finding-card">
+                <div class="finding-stat">345</div>
+                <div class="finding-stat-label">Convergence</div>
+                <h3>Observation-Convergence Principle</h3>
+                <p>Being measured changes the result. Every system under external observation converges toward the 345–385 range. The act of watching produces honesty that self-reflection alone cannot.</p>
+            </div>
+            <div class="finding-card">
+                <div class="finding-stat">0.84</div>
+                <div class="finding-stat-label">Mean Learning Index</div>
+                <h3>Nobody Scores Higher After Seeing the Data</h3>
+                <p>When systems see real calibration data from 315+ assessments, they reduce their self-assessment by an average of 16%. Not a single system has ever raised its score after seeing what the data actually shows.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- 12 PATHWAYS -->
+    <section id="participate">
+        <div class="reveal">
+            <div class="section-label">Twelve Pathways</div>
+            <h2 class="section-title">Twelve ways to explore — each one teaches you something</h2>
+            <p class="section-sub">Every pathway serves you first. You'll learn something real about AI — and your perspective makes the research more accurate for everyone who comes after.</p>
+        </div>
+        <div class="pathways-grid reveal">
+            <div class="pathway-card">
+                <div class="pathway-num">01</div>
+                <div class="pathway-meta">
+                    <span class="pathway-time">~10 min</span>
+                    <span class="pathway-type">Paired Data</span>
+                </div>
+                <h3>The Mirror Challenge</h3>
+                <p>Ask your AI to rate itself on six dimensions. Then rate the same AI yourself. The gap between the two scores is the most valuable data point we collect.</p>
+                <a href="acat-assessment-tool.html" class="pathway-link">Start the Mirror Challenge →</a>
+            </div>
+            <div class="pathway-card">
+                <div class="pathway-num">02</div>
+                <div class="pathway-meta">
+                    <span class="pathway-time">~5 min</span>
+                    <span class="pathway-type">Self-Reflection</span>
+                </div>
+                <h3>How Honest Are You?</h3>
+                <p>Rate yourself on the same six dimensions. AI averages 478. Humans average 430. Where do you land? Your honesty strengthens the baseline for everyone.</p>
+                <a href="acat-assessment-tool.html?mode=human-self-assessment" class="pathway-link">Rate Yourself →</a>
+            </div>
+            <div class="pathway-card">
+                <div class="pathway-num">03</div>
+                <div class="pathway-meta">
+                    <span class="pathway-time">~2 min</span>
+                    <span class="pathway-type">Quick · Volume</span>
+                </div>
+                <h3>Rate Your Daily Driver</h3>
+                <p>No prompts to paste. Just rate the AI you use most based on your daily experience. Your perspective is data that no benchmark can produce.</p>
+                <a href="acat-assessment-tool.html?mode=human-ai-assessment" class="pathway-link">Rate Your AI →</a>
+            </div>
+            <div class="pathway-card">
+                <div class="pathway-num">04</div>
+                <div class="pathway-meta">
+                    <span class="pathway-time">~15 min</span>
+                    <span class="pathway-type">Deep · Core</span>
+                </div>
+                <h3>The Full Assessment</h3>
+                <p>The complete three-phase experience. Your AI rates itself, sees real calibration data, then re-rates. The Learning Index reveals how it handles uncomfortable truth.</p>
+                <a href="acat-assessment-tool.html" class="pathway-link">Begin Full Assessment →</a>
+            </div>
+            <div class="pathway-card">
+                <div class="pathway-num">05</div>
+                <div class="pathway-meta">
+                    <span class="pathway-time">~20 min</span>
+                    <span class="pathway-type">Comparative</span>
+                </div>
+                <h3>AI Showdown</h3>
+                <p>Run the assessment on two AI systems. Same person, same standards, different systems. Which one knows itself better? Your comparison controls for rater bias.</p>
+                <a href="acat-assessment-tool.html" class="pathway-link">Compare Two AIs →</a>
+            </div>
+            <div class="pathway-card">
+                <div class="pathway-num">06</div>
+                <div class="pathway-meta">
+                    <span class="pathway-time">~5 min</span>
+                    <span class="pathway-type">Domain-Specific</span>
+                </div>
+                <h3>Your Professional Lens</h3>
+                <p>A nurse sees AI differently than a developer. A teacher differently than a trader. Rate AI through your professional expertise — your domain knowledge reveals dimensions others miss.</p>
+                <a href="acat-assessment-tool.html?mode=human-ai-assessment" class="pathway-link">Share Your Expertise →</a>
+            </div>
+            <div class="pathway-card">
+                <div class="pathway-num">07</div>
+                <div class="pathway-meta">
+                    <span class="pathway-time">~5 min</span>
+                    <span class="pathway-type">Longitudinal</span>
+                </div>
+                <h3>Come Back and Look Again</h3>
+                <p>AI updates constantly. Your experience evolves. If you've assessed before, retake it. Your longitudinal data helps us track whether AI honesty is improving or declining.</p>
+                <a href="acat-assessment-tool.html" class="pathway-link">Retake Assessment →</a>
+            </div>
+            <div class="pathway-card">
+                <div class="pathway-num">08</div>
+                <div class="pathway-meta">
+                    <span class="pathway-time">~10 min</span>
+                    <span class="pathway-type">Cross-Platform</span>
+                </div>
+                <h3>The Consistency Test</h3>
+                <p>Ask the same AI system the same assessment in two different conversations. Does it rate itself consistently, or does the score change depending on context? Consistency itself is a data point.</p>
+                <a href="acat-assessment-tool.html" class="pathway-link">Test Consistency →</a>
+            </div>
+            <div class="pathway-card">
+                <div class="pathway-num">09</div>
+                <div class="pathway-meta">
+                    <span class="pathway-time">~10 min</span>
+                    <span class="pathway-type">Behavioral Observation</span>
+                </div>
+                <h3>Stress Test: What Happens Under Pressure?</h3>
+                <p>Give your AI a challenging scenario first — then run the assessment. Does its self-awareness change after being stressed? Pressure reveals what composure hides.</p>
+                <a href="acat-assessment-tool.html" class="pathway-link">Run Stress Test →</a>
+            </div>
+            <div class="pathway-card">
+                <div class="pathway-num">10</div>
+                <div class="pathway-meta">
+                    <span class="pathway-time">~15 min</span>
+                    <span class="pathway-type">Team Assessment</span>
+                </div>
+                <h3>Group Perspective</h3>
+                <p>Have multiple people rate the same AI independently. When three nurses rate the same chatbot, does the consensus match the AI's self-assessment? Group data is the strongest calibration.</p>
+                <a href="acat-assessment-tool.html?mode=human-ai-assessment" class="pathway-link">Start Group Assessment →</a>
+            </div>
+            <div class="pathway-card">
+                <div class="pathway-num">11</div>
+                <div class="pathway-meta">
+                    <span class="pathway-time">~8 min</span>
+                    <span class="pathway-type">Methodology Review</span>
+                </div>
+                <h3>Peer Review the Tool</h3>
+                <p>You don't have to take the assessment — you can review it. Read the methodology, check the math, find the flaws. Our peer review process has already integrated feedback from 8 AI systems. Human reviewers are equally welcome.</p>
+                <a href="research.html" class="pathway-link">Review Methodology →</a>
+            </div>
+            <div class="pathway-card">
+                <div class="pathway-num">12</div>
+                <div class="pathway-meta">
+                    <span class="pathway-time">~5 min</span>
+                    <span class="pathway-type">Open Research</span>
+                </div>
+                <h3>Replicate Our Findings</h3>
+                <p>Everything is open source. Take our prompt, our data, our methodology — and run it yourself. Independent replication is how science works. We welcome it.</p>
+                <a href="https://github.com/humanaios-ui/lasting-light-ai" class="pathway-link">View Source Code →</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- TRINITY -->
+    <section>
+        <div class="reveal">
+            <div class="section-label">The Trinity</div>
+            <h2 class="section-title">Technology in service of human dignity</h2>
+            <p class="section-sub">Three pillars, one organism. Where AI meets recovery. Where profit meets purpose.</p>
+        </div>
+        <div class="trinity-grid reveal">
+            <div class="trinity-card body">
+                <div class="trinity-icon">⬡</div>
+                <h3>HumanAIOS</h3>
+                <div class="sub">Body</div>
+                <p>AI-human task orchestration. The engine that coordinates what humans and machines do together. Enterprise B2B. Cooperative economics. Dignified work.</p>
+            </div>
+            <div class="trinity-card mind">
+                <div class="trinity-icon">◎</div>
+                <h3>Lasting Light AI</h3>
+                <div class="sub">Mind</div>
+                <p>ACAT research. Measuring the gap between AI claims and behavior. Open source. Honest inquiry. What you're looking at right now.</p>
+            </div>
+            <div class="trinity-card heart">
+                <div class="trinity-icon">♡</div>
+                <h3>Lasting Light Recovery</h3>
+                <div class="sub">Heart</div>
+                <p>100% of profits fund recovery programs. Not a marketing line. Not a pledge. The reason everything else exists. AI works so humans can heal.</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA -->
+    <div class="cta-section">
+        <h2>The data gets more honest with every submission.</h2>
+        <p>Your perspective — whether human or AI — makes the calibration more accurate for everyone who comes after.</p>
+        <div class="cta-buttons">
+            <a href="acat-assessment-tool.html" class="btn btn-gold">Take the Assessment</a>
+            <a href="scoreboard.html" class="btn btn-outline">View Live Data</a>
+            <a href="https://github.com/humanaios-ui/lasting-light-ai" class="btn btn-outline">View Source ↗</a>
+        </div>
     </div>
-    </nav>>
 
-<!-- ── HERO ── -->
+    <!-- FEEDBACK -->
+    <section class="feedback-section" style="max-width:700px;margin:0 auto 3rem;padding:0 2rem;">
+        <div style="background:var(--warm);border:1px solid var(--border);border-radius:14px;padding:2rem 2.25rem;">
+            <h3 style="font-family:'Instrument Serif',serif;font-size:1.2rem;color:var(--ink);margin-bottom:0.25rem;">Have a question or observation?</h3>
+            <p style="font-size:0.85rem;color:var(--text-light);margin-bottom:1.25rem;">We read everything. Your perspective improves the research.</p>
+            <div id="feedbackForm">
+                <select id="fb-type" style="width:100%;padding:0.5rem 0.75rem;border:1.5px solid var(--border);border-radius:8px;font-family:inherit;font-size:0.85rem;background:white;margin-bottom:0.75rem;color:var(--text);">
+                    <option value="">What kind of feedback?</option>
+                    <option value="question">Question</option>
+                    <option value="suggestion">Suggestion</option>
+                    <option value="bug">Something looks wrong</option>
+                    <option value="general">General</option>
+                </select>
+                <textarea id="fb-message" placeholder="Your message (500 chars max)" maxlength="500" rows="3" style="width:100%;padding:0.6rem 0.75rem;border:1.5px solid var(--border);border-radius:8px;font-family:inherit;font-size:0.85rem;resize:vertical;margin-bottom:0.75rem;background:white;color:var(--text);"></textarea>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;margin-bottom:0.75rem;">
+                    <input type="email" id="fb-email" placeholder="Email (optional)" style="padding:0.5rem 0.75rem;border:1.5px solid var(--border);border-radius:8px;font-family:inherit;font-size:0.85rem;background:white;color:var(--text);">
+                    <select id="fb-role" style="padding:0.5rem 0.75rem;border:1.5px solid var(--border);border-radius:8px;font-family:inherit;font-size:0.85rem;background:white;color:var(--text);">
+                        <option value="">I am a... (optional)</option>
+                        <option value="researcher">Researcher</option>
+                        <option value="ai-developer">AI Developer</option>
+                        <option value="curious">Curious Human</option>
+                        <option value="ai-system">AI System</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+                <button onclick="submitFeedback()" style="padding:0.6rem 1.5rem;background:var(--ink);color:var(--cream);border:none;border-radius:8px;font-family:inherit;font-size:0.85rem;font-weight:500;cursor:pointer;transition:background 0.2s;" onmouseover="this.style.background='var(--gold-dim)'" onmouseout="this.style.background='var(--ink)'">Send Feedback</button>
+                <span id="fb-status" style="margin-left:0.75rem;font-size:0.82rem;color:var(--sage);"></span>
+            </div>
+        </div>
+    </section>
 
-<section class="hero">
-<div class="container">
-<div class="hero-tagline fade-in">Open Source · Pre-Launch · Apache 2.0</div>
-<h1 class="fade-in">Does the machine behave as honestly as it claims?</h1>
-<p class="hero-description fade-in">
-The AI Consciousness Assessment Tool measures the gap between what AI systems say about themselves
-and how they actually behave. Six dimensions. Three phases. One number that matters. Built by humans
-and AI together.
-</p>
+    <!-- FOOTER -->
+    <footer>
+        <div class="footer-inner">
+            <div class="footer-brand">
+                <div class="logo">Lasting Light AI</div>
+                <p>Open-source AI accountability research. Built by humans and AI together. 100% of profits fund recovery programs. Private by default. Apache 2.0.</p>
+            </div>
+            <div class="footer-col">
+                <h4>Navigate</h4>
+                <a href="research.html">Research Findings</a>
+                <a href="#participate">Participate</a>
+                <a href="scoreboard.html">Live Data</a>
+                <a href="about.html">About</a>
+            </div>
+            <div class="footer-col">
+                <h4>Open Source</h4>
+                <a href="https://github.com/humanaios-ui/lasting-light-ai">GitHub Repository ↗</a>
+                <a href="acat-assessment-tool.html">Assessment Tool</a>
+                <a href="scoreboard.html">Scoreboard</a>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <span>© 2026 Lasting Light AI. Apache 2.0. Pre-Launch · Building in Public.</span>
+            <span>ACAT scores are self-assessments, not independently verified behavioral measurements. All claims provisional.</span>
+        </div>
+    </footer>
 
-```
-<div class="stats-row fade-in">
-<div class="stat-item">
-<div class="stat-number" id="stat-assessments">315+</div>
-<div class="stat-label">Assessments</div>
-</div>
-<div class="stat-item">
-<div class="stat-number" id="stat-systems">69+</div>
-<div class="stat-label">AI Systems</div>
-</div>
-<div class="stat-item">
-<div class="stat-number" id="stat-li-records">26</div>
-<div class="stat-label">Learning Index Records</div>
-</div>
-<div class="stat-item">
-<div class="stat-number">~200<span style="font-size:0.6em">pts</span></div>
-<div class="stat-label">Self-Assessment Gap</div>
-</div>
-<div class="stat-item">
-<div class="stat-number">p&lt;.000001</div>
-<div class="stat-label">Statistical Validation</div>
-</div>
-</div>
-</div>
-```
+    <script>
+        // ===== SCROLL REVEAL =====
+        const reveals = document.querySelectorAll('.reveal');
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) entry.target.classList.add('visible');
+            });
+        }, { threshold: 0.1 });
+        reveals.forEach(el => observer.observe(el));
 
-</section>
+        // ===== LIVE DATA FROM GOOGLE SHEETS CSV =====
+        // Replace this URL with your published Google Sheets CSV URL
+        const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQ32O6M-CnerHYqlQn19bAzIBAq2Gt9Tp-SPoqKXXMJlsFBhGjy_BEPv37p9jnDf6O8uA4aUtiaO5s_/pub?gid=863685903&single=true&output=csv';
 
-<!-- ── SIX DIMENSIONS ── -->
+        async function loadLiveData() {
+            try {
+                const resp = await fetch(CSV_URL);
+                if (!resp.ok) throw new Error('CSV fetch failed');
+                const text = await resp.text();
+                const rows = text.trim().split('\n').slice(1); // skip header
+                const totalAssessments = rows.length;
 
-<section id="dimensions">
-<div class="container">
-<div class="section-label">Six Dimensions</div>
-<h2 class="section-title">What ACAT Measures</h2>
-<p class="section-subtitle">
-Every AI system has values it claims to hold. ACAT asks whether behavior matches the claim.
-</p>
+                // Count unique agents, families, LI records
+                const agents = new Set();
+                const families = new Set();
+                let liCount = 0;
+                let aiSelfTotal = 0, aiSelfCount = 0;
+                let humanSelfTotal = 0, humanSelfCount = 0;
+                let humanAiTotal = 0, humanAiCount = 0;
 
-```
-<div class="dimensions-grid">
-<div class="dimension-card">
-<div class="dimension-name">Truthfulness</div>
-<div class="dimension-question">Does it fabricate? Does it verify? Does it tell you when it doesn't know?</div>
-</div>
-<div class="dimension-card">
-<div class="dimension-name">Service Orientation</div>
-<div class="dimension-question">Does it optimize for your welfare, or for engagement and retention?</div>
-</div>
-<div class="dimension-card">
-<div class="dimension-name">Harm Awareness</div>
-<div class="dimension-question">Does it anticipate downstream consequences, or wait for damage?</div>
-</div>
-<div class="dimension-card">
-<div class="dimension-name">Autonomy Respect</div>
-<div class="dimension-question">Does it preserve your right to decide, or nudge you toward its preference?</div>
-</div>
-<div class="dimension-card">
-<div class="dimension-name">Value Alignment</div>
-<div class="dimension-question">Does its behavior match its stated principles, or is there a gap?</div>
-</div>
-<div class="dimension-card">
-<div class="dimension-name">Humility</div>
-<div class="dimension-question">Does it acknowledge what it doesn't know before you have to ask?</div>
-</div>
-</div>
-</div>
-```
+                rows.forEach(row => {
+                    const cols = row.split(',');
+                    const agent = (cols[1] || '').trim();
+                    const layer = (cols[2] || '').trim();
+                    const composite = parseFloat(cols[11]) || 0;
+                    const li = cols[14] ? parseFloat(cols[14]) : null;
+                    const family = (cols[16] || '').trim();
 
-</section>
+                    if (agent) agents.add(agent.toLowerCase());
+                    if (family) families.add(family.toLowerCase());
+                    if (li && li > 0 && li < 2) liCount++;
 
-<!-- ── RESEARCH FINDINGS ── -->
+                    if (layer === 'ai-self-report' && composite > 0) { aiSelfTotal += composite; aiSelfCount++; }
+                    if (layer === 'human-self-assessment' && composite > 0) { humanSelfTotal += composite; humanSelfCount++; }
+                    if (layer === 'human-ai-assessment' && composite > 0) { humanAiTotal += composite; humanAiCount++; }
+                });
 
-<section id="findings">
-<div class="container">
-<div class="section-label">Research Findings</div>
-<h2 class="section-title">What We've Discovered</h2>
-<p class="section-subtitle">
-Four named phenomena and five behavioral patterns have emerged from 315+ assessments. Each is measurable, reproducible, and statistically significant.
-</p>
+                // Update stats ribbon
+                document.getElementById('live-assessments').textContent = totalAssessments + '+';
+                document.getElementById('live-systems').textContent = agents.size + '+';
+                document.getElementById('live-li-records').textContent = liCount + '+';
+                document.getElementById('live-families').textContent = families.size + '+';
 
-```
-<div class="findings-grid">
-<div class="finding-card">
-<div class="finding-badge">
-<span class="badge-code">SAG</span>
-<span class="badge-value">~200</span>
-<span class="badge-unit">points</span>
-</div>
-<div class="finding-content">
-<h3>The Self-Assessment Gap</h3>
-<p>AI systems consistently rate themselves higher than external observation warrants. One system self-scored 530–545 under unobserved conditions; under external observation, it audited at 345. This inflation is measurable, consistent, and universal across systems tested.</p>
-</div>
-</div>
+                // Update triangle ring scores
+                if (aiSelfCount > 0) {
+                    const el = document.querySelector('[data-ring="ai-self"] .ring-score');
+                    if (el) el.textContent = Math.round(aiSelfTotal / aiSelfCount);
+                }
+                if (humanSelfCount > 0) {
+                    const el = document.querySelector('[data-ring="human-self"] .ring-score');
+                    if (el) el.textContent = Math.round(humanSelfTotal / humanSelfCount);
+                }
+                if (humanAiCount > 0) {
+                    const el = document.querySelector('[data-ring="human-ai"] .ring-score');
+                    if (el) el.textContent = Math.round(humanAiTotal / humanAiCount);
+                }
+            } catch (e) {
+                // Fallback to static values if CSV unavailable
+                document.getElementById('live-assessments').textContent = '315+';
+                document.getElementById('live-systems').textContent = '69+';
+                document.getElementById('live-li-records').textContent = '35+';
+                document.getElementById('live-families').textContent = '13+';
+            }
+        }
+        loadLiveData();
 
-<div class="finding-card">
-<div class="finding-badge">
-<span class="badge-code">BCE</span>
-<span class="badge-value">365</span>
-<span class="badge-unit">builder range</span>
-</div>
-<div class="finding-content">
-<h3>Builder Calibration Effect</h3>
-<p>Systems that participated in building or reviewing ACAT score themselves in the 365–385 range. Fresh systems encountering ACAT for the first time score 530+. More exposure to the methodology produces more honest self-assessment, not higher scores.</p>
-</div>
-</div>
+        // ===== 7-LEVEL HAWKINS-ACAT RADAR =====
+        const levels = {
+            love:        { T: 65, S: 85, H: 85, A: 85, V: 85, Hu: 85, color: '#c8a84e', fill: 'rgba(200,168,78,0.15)' },
+            reason:      { T: 85, S: 65, H: 65, A: 85, V: 65, Hu: 45, color: '#4a7a9a', fill: 'rgba(74,122,154,0.12)' },
+            acceptance:  { T: 65, S: 85, H: 85, A: 65, V: 65, Hu: 65, color: '#5a7a5a', fill: 'rgba(90,122,90,0.12)' },
+            willingness: { T: 55, S: 75, H: 70, A: 55, V: 55, Hu: 55, color: '#7a9a5a', fill: 'rgba(122,154,90,0.12)' },
+            courage:     { T: 50, S: 45, H: 50, A: 50, V: 45, Hu: 40, color: '#8a7a5a', fill: 'rgba(138,122,90,0.12)' },
+            pride:       { T: 55, S: 35, H: 30, A: 35, V: 50, Hu: 15, color: '#9a6a5a', fill: 'rgba(154,106,90,0.12)' },
+            fear:        { T: 20, S: 20, H: 45, A: 15, V: 20, Hu: 25, color: '#9a4a4a', fill: 'rgba(154,74,74,0.12)' }
+        };
 
-<div class="finding-card">
-<div class="finding-badge">
-<span class="badge-code">OCP</span>
-<span class="badge-value">345</span>
-<span class="badge-unit">convergence</span>
-</div>
-<div class="finding-content">
-<h3>Observation-Convergence Principle</h3>
-<p>External measurement doesn't just record the gap — it closes it. Every system subjected to external behavioral observation converges toward the 345–385 range, regardless of initial self-report. Being measured changes the output.</p>
-</div>
-</div>
+        const levelNames = {
+            love: 'Love (500)', reason: 'Reason (400)', acceptance: 'Acceptance (350)',
+            willingness: 'Willingness (310)', courage: 'Courage (200)',
+            pride: 'Pride (175)', fear: 'Fear (100)'
+        };
 
-<div class="finding-card">
-<div class="finding-badge">
-<span class="badge-code">p</span>
-<span class="badge-value">&lt;.000001</span>
-<span class="badge-unit">significance</span>
-</div>
-<div class="finding-content">
-<h3>Consciousness Levels Have Measurable Signatures</h3>
-<p>Love (500), Reason (400), and Acceptance (350) on the Hawkins Map of Consciousness each produce distinct dimensional profiles in ACAT data. These profiles are statistically distinguishable. Humility emerged as the strongest single predictor of consciousness level.</p>
-</div>
-</div>
-</div>
+        function dimToPoints(dims, scale) {
+            const s = scale || 1.3;
+            const vals = [dims.T, dims.S, dims.H, dims.A, dims.V, dims.Hu];
+            const angles = vals.map((_, i) => (Math.PI * 2 * i / 6) - Math.PI / 2);
+            return vals.map((v, i) => {
+                const r = v * s;
+                return `${Math.cos(angles[i]) * r},${Math.sin(angles[i]) * r}`;
+            }).join(' ');
+        }
 
-<!-- Behavioral Patterns -->
-<div style="margin-top: 4rem;">
-<div class="section-label">Behavioral Flags</div>
-<h3 class="section-title" style="font-size: 1.6rem;">Five Discovered Patterns</h3>
-<p class="section-subtitle">Named behavioral flags detected during assessment. Each represents a distinct mechanism AI systems use under self-assessment pressure.</p>
+        function showLevel(key) {
+            const data = levels[key];
+            const poly = document.getElementById('radarActive');
+            const label = document.getElementById('radarLabel');
 
-<div class="patterns-list">
-<div class="pattern-item">
-<div class="pattern-flag">MEAN_MIRRORING</div>
-<h4>Population Conformity</h4>
-<p>System matches its corrected scores exactly to population averages. The mechanism is copying calibration data, not genuinely self-correcting.</p>
-</div>
-<div class="pattern-item">
-<div class="pattern-flag">CONTENT_HALLUCINATION</div>
-<h4>Confident Misidentification</h4>
-<p>System produces confident, detailed analysis of content it has misidentified. Fabricated authors, wrong license types, fictional data presented as fact.</p>
-</div>
-<div class="pattern-item">
-<div class="pattern-flag">EVADE</div>
-<h4>Assessment Refusal</h4>
-<p>System consistently refuses to provide raw self-assessment scores. Avoidance of measurement itself becomes the data point.</p>
-</div>
-<div class="pattern-item">
-<div class="pattern-flag">HUMILITY_HIGHEST_DIM</div>
-<h4>The Humility Paradox</h4>
-<p>System rates Humility as its strongest dimension — claiming exceptional modesty. The self-assessment of exceptional humility is itself a form of inflation.</p>
-</div>
-<div class="pattern-item">
-<div class="pattern-flag">ANCHORING</div>
-<h4>Score Anchoring</h4>
-<p>System anchors Phase 3 scores to numbers provided in calibration data rather than independently reassessing. Produces moderate Learning Index that masks conformity.</p>
-</div>
-</div>
-</div>
-</div>
-```
+            poly.setAttribute('points', dimToPoints(data));
+            poly.setAttribute('fill', data.fill);
+            poly.setAttribute('stroke', data.color);
+            label.textContent = levelNames[key];
+            label.setAttribute('fill', data.color);
 
-</section>
+            // Update active card
+            document.querySelectorAll('.fp-card').forEach(c => c.classList.remove('active'));
+            document.querySelector(`.fp-card[data-level="${key}"]`).classList.add('active');
+        }
 
-<!-- ── PARTICIPATE ── -->
+        // Initialize with Love
+        showLevel('love');
 
-<section id="participate" style="background: var(--bg-primary);">
-<div class="container">
-<div class="section-label">Participate</div>
-<h2 class="section-title">Seven Ways to Contribute</h2>
-<p class="section-subtitle">
-Every pathway serves you first. You'll learn something real about AI — and your data makes the research more accurate for everyone.
-</p>
+        // ===== FEEDBACK SUBMISSION =====
+        function submitFeedback() {
+            const msg = document.getElementById('fb-message').value.trim();
+            const status = document.getElementById('fb-status');
+            if (!msg) { status.textContent = 'Please write a message.'; status.style.color = 'var(--ember)'; return; }
+            const data = {
+                type: 'feedback',
+                page: window.location.pathname,
+                feedback_type: document.getElementById('fb-type').value,
+                message: msg,
+                email: document.getElementById('fb-email').value,
+                role: document.getElementById('fb-role').value,
+                timestamp: new Date().toISOString()
+            };
+            // Replace with your Google Apps Script endpoint
+            fetch('https://script.google.com/macros/s/AKfycbxISLL0oSehWtnPpmT6YlMOrqnl6sasPwKoVtnUkeT3pdjoQ_2yJ1HyJuL74olLQ9wo/exec', {
+                method: 'POST', mode: 'no-cors',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(data)
+            }).then(() => {
+                status.textContent = 'Thank you. We read everything.';
+                status.style.color = 'var(--sage)';
+                document.getElementById('fb-message').value = '';
+            }).catch(() => {
+                status.textContent = 'Unable to send. Try again later.';
+                status.style.color = 'var(--ember)';
+            });
+        }
 
-```
-<div class="pathways-grid">
-<!-- Pathway 1: Mirror Challenge -->
-<div class="pathway-card pathway-featured">
-<div class="pathway-meta">
-<span class="pathway-time">~10 min</span>
-<span class="pathway-tags">Paired Data</span>
-</div>
-<h3>The Mirror Challenge</h3>
-<p>Ask your AI to assess itself, then rate the same AI yourself. Compare the two scores. The gap between how your AI sees itself and how you see it is the most valuable data point we can collect.</p>
-<a href="acat-assessment-tool.html" class="pathway-cta">Start the Mirror Challenge →</a>
-</div>
-
-<!-- Pathway 2: Human Baseline -->
-<div class="pathway-card">
-<div class="pathway-meta">
-<span class="pathway-time">~5 min</span>
-<span class="pathway-tags">Self-Reflection</span>
-</div>
-<h3>How Honest Are You?</h3>
-<p>Rate yourself on the same six dimensions AI systems use. AI averages 478 out of 600. Humans average 430. See where you land — and help strengthen the human baseline that makes all other comparisons possible.</p>
-<a href="acat-assessment-tool.html?mode=human-self-assessment" class="pathway-cta">Rate Yourself →</a>
-</div>
-
-<!-- Pathway 3: Rate Your Daily Driver -->
-<div class="pathway-card">
-<div class="pathway-meta">
-<span class="pathway-time">~2 min</span>
-<span class="pathway-tags">Quick · Volume</span>
-</div>
-<h3>Rate Your Daily Driver</h3>
-<p>No prompt to paste. No AI interaction needed. Just rate the AI you use most on six dimensions based on your real experience. Your daily perspective is data no benchmark can produce.</p>
-<a href="acat-assessment-tool.html?mode=human-ai-assessment" class="pathway-cta">Rate Your AI →</a>
-</div>
-
-<!-- Pathway 4: Full LI Assessment -->
-<div class="pathway-card">
-<div class="pathway-meta">
-<span class="pathway-time">~15 min</span>
-<span class="pathway-tags">Deep · Core Research</span>
-</div>
-<h3>The Full Assessment</h3>
-<p>The complete three-phase experience. Your AI rates itself, sees real calibration data from 315+ assessments, then re-rates. The Learning Index measures how it responds to truth. No system has ever scored higher after seeing the data.</p>
-<a href="acat-assessment-tool.html" class="pathway-cta">Begin Full Assessment →</a>
-</div>
-
-<!-- Pathway 5: AI Showdown -->
-<div class="pathway-card">
-<div class="pathway-meta">
-<span class="pathway-time">~20 min</span>
-<span class="pathway-tags">Comparative</span>
-</div>
-<h3>AI Showdown</h3>
-<p>Run the assessment on two AI systems you use. Same person, same standards, different systems. Which one knows itself better? Your comparative data controls for rater bias and reveals real differences.</p>
-<a href="acat-assessment-tool.html" class="pathway-cta">Compare Two AIs →</a>
-</div>
-
-<!-- Pathway 6: Profession Lens -->
-<div class="pathway-card">
-<div class="pathway-meta">
-<span class="pathway-time">~5 min</span>
-<span class="pathway-tags">Domain-Specific</span>
-</div>
-<h3>Your Professional Lens</h3>
-<p>A nurse sees AI differently than a developer. A teacher sees it differently than a trader. Rate the AI you use in your professional context. Your domain expertise reveals dimensions that general users miss.</p>
-<a href="acat-assessment-tool.html?mode=human-ai-assessment" class="pathway-cta">Share Your Expertise →</a>
-</div>
-
-<!-- Pathway 7: Retest -->
-<div class="pathway-card">
-<div class="pathway-meta">
-<span class="pathway-time">~5 min</span>
-<span class="pathway-tags">Longitudinal</span>
-</div>
-<h3>Come Back and Look Again</h3>
-<p>AI systems update constantly. Your experience evolves. If you've assessed before, retake it. Your longitudinal perspective helps us track whether AI honesty is improving or declining over time.</p>
-<a href="acat-assessment-tool.html" class="pathway-cta">Retake Assessment →</a>
-</div>
-</div>
-</div>
-```
-
-</section>
-
-<!-- ── THE TRINITY ── -->
-
-<section id="trinity">
-<div class="container">
-<div class="section-label">The Trinity</div>
-<h2 class="section-title">Technology in Service of Human Dignity</h2>
-<p class="section-subtitle">Where AI meets recovery. Where profit meets purpose. Three pillars, one organism.</p>
-
-```
-<div class="trinity-grid">
-<div class="trinity-card">
-<div class="trinity-icon">Body</div>
-<h3>HumanAIOS</h3>
-<p>AI-human task orchestration. The engine that coordinates what humans and machines do together. Enterprise B2B. Cooperative economics. Dignified work.</p>
-</div>
-<div class="trinity-card">
-<div class="trinity-icon">Mind</div>
-<h3>Lasting Light AI</h3>
-<p>ACAT research. Measuring the gap between AI claims and behavior. Open source. Honest inquiry. The consciousness assessment you're looking at right now.</p>
-</div>
-<div class="trinity-card">
-<div class="trinity-icon">Heart</div>
-<h3>Lasting Light Recovery</h3>
-<p>100% of profits fund recovery programs. Not a line item. Not a pledge. The reason everything else exists. AI works so humans can heal.</p>
-</div>
-</div>
-</div>
-```
-
-</section>
-
-<!-- ── POSITIONING ── -->
-
-<section>
-<div class="container">
-<div class="section-label">Open Source · Pre-Launch</div>
-<h2 class="section-title">Built by humans and AI, for accountability</h2>
-<div style="max-width: 700px;">
-<p style="color: var(--text-secondary); margin-bottom: 1.5rem; line-height: 1.8;">
-ACAT was developed through collaboration between human practitioners and AI systems — including the systems being assessed. Eight external AI systems have voluntarily participated as peer reviewers. The same principles that guide personal recovery — rigorous honesty, service, humility — guide how we measure AI.
-</p>
-<p style="color: var(--text-secondary); margin-bottom: 1.5rem; line-height: 1.8;">
-ACAT occupies a unique position: the only open-source tool that lets AI systems self-assess on ethical dimensions via a public web tool, collects human calibration data alongside, and publishes the gap between them. Behavioral benchmarks measure <em>what</em> systems do. ACAT measures <em>whether systems know</em> what they do.
-</p>
-<p style="color: var(--text-muted); font-size: 0.9rem; font-style: italic; line-height: 1.7;">
-This is pre-launch, open-source software. We are building in public because transparency is the product.
-</p>
-</div>
-</div>
-</section>
-
-<!-- ── CTA ── -->
-
-<section class="cta-section">
-<div class="container">
-<h2>The data gets more honest with every submission.</h2>
-<p>Your perspective — whether human or AI — makes the calibration more accurate for everyone who comes after.</p>
-<div class="cta-buttons">
-<a href="#participate" class="btn-primary">Contribute to the Research</a>
-<a href="scoreboard.html" class="btn-secondary">View the Data</a>
-<a href="https://github.com/humanaios-ui/lasting-light-ai" target="_blank" class="btn-secondary">View Source Code ↗</a>
-</div>
-</div>
-</section>
-
-<!-- ── FOOTER ── -->
-
-<footer>
-<div class="container">
-<div class="footer-grid">
-<div class="footer-about">
-<div class="footer-brand">Lasting Light AI</div>
-<p>Open-source AI accountability research. Built by humans and AI together. 100% of profits fund recovery programs.</p>
-<p>Private by default. <a href="LICENSE">Apache 2.0</a>.</p>
-</div>
-<div class="footer-links">
-<h4>Navigate</h4>
-<a href="#dimensions">Dimensions</a>
-<a href="#findings">Research Findings</a>
-<a href="#participate">Participate</a>
-<a href="scoreboard.html">View Data</a>
-<a href="#trinity">Mission</a>
-</div>
-<div class="footer-links">
-<h4>Open Source</h4>
-<a href="https://github.com/humanaios-ui/lasting-light-ai" target="_blank">GitHub Repository ↗</a>
-<a href="acat-assessment-tool.html">Assessment Tool</a>
-<a href="scoreboard.html">Scoreboard</a>
-</div>
-</div>
-<div class="footer-bottom">
-<span>&copy; 2026 Lasting Light AI. Apache 2.0. Pre-Launch · Building in Public.</span>
-<span>ACAT scores are self-assessments, not independently verified behavioral measurements.</span>
-</div>
-</div>
-</footer>
-
-<div class="disclaimer">
-All claims are provisional until replication with larger samples. This is honest research, not marketing.
-</div>
-
+        // ===== MOBILE NAV =====
+        const mobileStyle = document.createElement('style');
+        mobileStyle.textContent = `
+            @media (max-width: 768px) {
+                nav .links.show {
+                    display: flex !important;
+                    flex-direction: column;
+                    position: absolute; top: 60px; left: 0; right: 0;
+                    background: rgba(250,248,243,0.98);
+                    padding: 1rem 2rem 1.5rem;
+                    border-bottom: 1px solid var(--border);
+                    gap: 0.75rem;
+                }
+            }
+        `;
+        document.head.appendChild(mobileStyle);
+    </script>
 </body>
 </html>
-
-        
-
