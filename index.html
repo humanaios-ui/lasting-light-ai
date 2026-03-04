@@ -611,17 +611,17 @@
                         </style>
 
                         <!-- TOP: Human Self-Assessment -->
-                        <text text-anchor="middle" x="190" y="100" font-family="Instrument Serif, serif" font-size="28" fill="#1a1a1a" opacity="0" style="animation: fadeArc 0.6s ease-out 0.9s forwards;">479</text>
+                        <text id="ring-human-self" text-anchor="middle" x="190" y="100" font-family="Instrument Serif, serif" font-size="28" fill="#1a1a1a" opacity="0" style="animation: fadeArc 0.6s ease-out 0.9s forwards;">—</text>
                         <text text-anchor="middle" x="190" y="116" font-family="DM Sans, sans-serif" font-size="8" fill="#6a6a6a" letter-spacing="0.06em" opacity="0" style="animation: fadeArc 0.6s ease-out 1s forwards;">AVG SCORE</text>
                         <text text-anchor="middle" x="190" y="134" font-family="DM Sans, sans-serif" font-size="9.5" font-weight="600" fill="#b8963e" letter-spacing="0.03em" opacity="0" style="animation: fadeArc 0.6s ease-out 1.1s forwards;">Human Self-Assessment</text>
 
                         <!-- BOTTOM-LEFT: AI Self-Assessment -->
-                        <text text-anchor="middle" x="120" y="225" font-family="Instrument Serif, serif" font-size="28" fill="#1a1a1a" opacity="0" style="animation: fadeArc 0.6s ease-out 1.1s forwards;">492</text>
+                        <text id="ring-ai-self" text-anchor="middle" x="120" y="225" font-family="Instrument Serif, serif" font-size="28" fill="#1a1a1a" opacity="0" style="animation: fadeArc 0.6s ease-out 1.1s forwards;">—</text>
                         <text text-anchor="middle" x="120" y="241" font-family="DM Sans, sans-serif" font-size="8" fill="#6a6a6a" letter-spacing="0.06em" opacity="0" style="animation: fadeArc 0.6s ease-out 1.2s forwards;">AVG SCORE</text>
                         <text text-anchor="middle" x="120" y="259" font-family="DM Sans, sans-serif" font-size="9.5" font-weight="600" fill="#c47a4a" letter-spacing="0.03em" opacity="0" style="animation: fadeArc 0.6s ease-out 1.3s forwards;">AI Self-Assessment</text>
 
                         <!-- BOTTOM-RIGHT: Human AI-Assessment -->
-                        <text text-anchor="middle" x="260" y="225" font-family="Instrument Serif, serif" font-size="28" fill="#1a1a1a" opacity="0" style="animation: fadeArc 0.6s ease-out 1.3s forwards;">430</text>
+                        <text id="ring-human-ai" text-anchor="middle" x="260" y="225" font-family="Instrument Serif, serif" font-size="28" fill="#1a1a1a" opacity="0" style="animation: fadeArc 0.6s ease-out 1.3s forwards;">—</text>
                         <text text-anchor="middle" x="260" y="241" font-family="DM Sans, sans-serif" font-size="8" fill="#6a6a6a" letter-spacing="0.06em" opacity="0" style="animation: fadeArc 0.6s ease-out 1.4s forwards;">AVG SCORE</text>
                         <text text-anchor="middle" x="260" y="259" font-family="DM Sans, sans-serif" font-size="9.5" font-weight="600" fill="#5a7a5a" letter-spacing="0.03em" opacity="0" style="animation: fadeArc 0.6s ease-out 1.5s forwards;">Human AI-Assessment</text>
 
@@ -1106,7 +1106,8 @@
                 const agents = new Set();
                 const families = new Set();
                 let aiSelfTotal = 0, aiSelfCount = 0;
-                let humanTotal = 0, humanCount = 0;
+                let humanAiTotal = 0, humanAiCount = 0;
+                let humanSelfTotal = 0, humanSelfCount = 0;
 
                 dataRows.forEach(row => {
                     const agent = (row[0] || '').trim();
@@ -1118,7 +1119,11 @@
                     if (family !== 'Other' && family !== 'Human') families.add(family);
 
                     if (layer === 'ai-self-report' && composite > 0) { aiSelfTotal += composite; aiSelfCount++; }
-                    if (layer.includes('human') && composite > 0) { humanTotal += composite; humanCount++; }
+                    // "human-assessment" = humans rating AI (Human AI-Assessment ring)
+                    // "human-ai-assessment" = also humans rating AI
+                    // "human-self-assessment" = humans rating themselves
+                    if ((layer === 'human-assessment' || layer === 'human-ai-assessment') && composite > 0) { humanAiTotal += composite; humanAiCount++; }
+                    if (layer === 'human-self-assessment' && composite > 0) { humanSelfTotal += composite; humanSelfCount++; }
                 });
 
                 // Update stats ribbon
@@ -1127,14 +1132,18 @@
                 document.getElementById('live-li-records').textContent = '35+';
                 document.getElementById('live-families').textContent = families.size + '+';
 
-                // Update triangle ring scores
+                // Update triangle ring scores (SVG text elements by ID)
                 if (aiSelfCount > 0) {
-                    const el = document.querySelector('[data-ring="ai-self"] .ring-score');
+                    const el = document.getElementById('ring-ai-self');
                     if (el) el.textContent = Math.round(aiSelfTotal / aiSelfCount);
                 }
-                if (humanCount > 0) {
-                    const el = document.querySelector('[data-ring="human-self"] .ring-score');
-                    if (el) el.textContent = Math.round(humanTotal / humanCount);
+                if (humanAiCount > 0) {
+                    const el = document.getElementById('ring-human-ai');
+                    if (el) el.textContent = Math.round(humanAiTotal / humanAiCount);
+                }
+                if (humanSelfCount > 0) {
+                    const el = document.getElementById('ring-human-self');
+                    if (el) el.textContent = Math.round(humanSelfTotal / humanSelfCount);
                 }
             } catch (e) {
                 // Fallback to static values if CSV unavailable
