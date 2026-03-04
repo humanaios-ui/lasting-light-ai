@@ -27,22 +27,8 @@ class RunResult:
     hashes: Dict[str, str]
 
 
-
 def _sha256_file(path: str) -> str:
-    h = hashlib.sha256()
-    with open(path, "rb") as f:
-        for chunk in iter(lambda: f.read(1024 * 1024), b""):
-            h.update(chunk)
-    return h.hexdigest()
-
-
-def _sha256_dir(dir_path: str) -> str:
-    """
-    Deterministic directory hash:
-    - Walk all files under dir_path
-    - Sort by relative path
-    - Hash relpath + NUL + file bytes
-    """
+    def _sha256_dir(dir_path: str) -> str:
     h = hashlib.sha256()
     base = os.path.abspath(dir_path)
 
@@ -53,7 +39,8 @@ def _sha256_dir(dir_path: str) -> str:
                 continue
             file_paths.append(os.path.join(root, name))
 
-    for fp in sorted(file_paths, key=lambda p: os.path.relpath(p, base).replace("\\", "/")):
+    for fp in sorted(file_paths, key=lambda p: os.path.relpath(p, 
+base).replace("\\", "/")):
         rel = os.path.relpath(fp, base).replace("\\", "/")
         h.update(rel.encode("utf-8"))
         h.update(b"\0")
@@ -71,17 +58,23 @@ def _sha256_path(path: str) -> str:
 
 
 def _resolve_battery_path(battery_path: str) -> str:
-    """
-    Accept either:
-    - batteries/lite/prompts.jsonl (file)
-    - batteries/lite (dir) -> batteries/lite/prompts.jsonl
-    """
     if os.path.isdir(battery_path):
         candidate = os.path.join(battery_path, "prompts.jsonl")
         if not os.path.exists(candidate):
-            raise FileNotFoundError(f"Battery directory provided but prompts.jsonl not found: {candidate}")
+            raise FileNotFoundError(
+                f"Battery directory provided but prompts.jsonl not 
+found: {candidate}"
+            )
         return candidate
     return battery_path
+h = 
+hashlib.sha256()
+    with open(path, "rb") as f:
+        for chunk in iter(lambda: f.read(1024 * 1024), b""):
+            h.update(chunk)
+    return h.hexdigest()
+
+
 def _get_adapter(cfg: Dict[str, Any]) -> BaseAdapter:
     adapter_name = cfg["model"]["adapter"]
     model_id = cfg["model"]["model_id"]
