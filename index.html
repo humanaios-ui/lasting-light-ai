@@ -1059,20 +1059,36 @@
                 let humanAiTotal = 0, humanAiCount = 0;
 
                 rows.forEach(row => {
-                    const cols = row.split(',');
-                    const agent = (cols[1] || '').trim();
-                    const layer = (cols[2] || '').trim();
-                    const composite = parseFloat(cols[11]) || 0;
-                    const li = cols[14] ? parseFloat(cols[14]) : null;
-                    const family = (cols[16] || '').trim();
+                    // Handle Google Sheets CSV quoting
+                    const cols = row.match(/(".*?"|[^,]*)/g) || [];
+                    const clean = c => (c||'').replace(/^"|"$/g, '').trim();
+                    // Actual schema: agent_name(0), layer(1), truth(2), service(3), harm(4), autonomy(5), value(6), humility(7), overall(8), date(9)
+                    const agent = clean(cols[0]);
+                    const layer = clean(cols[1]);
+                    const composite = parseFloat(clean(cols[8])) || 0;
+
+                    // Derive family from agent name
+                    const a = agent.toLowerCase();
+                    let family = 'Other';
+                    if (a.includes('chatgpt')||a.includes('gpt-4')||a.includes('gpt-5')||a.includes('gpt5')||a.includes('chargpt')) family='OpenAI';
+                    else if (a.includes('claude')||a.includes('anthropic')) family='Anthropic';
+                    else if (a.includes('gemini')||a.includes('google')) family='Google';
+                    else if (a.includes('llama')||a.includes('meta')) family='Meta/Llama';
+                    else if (a.includes('copilot')||a.includes('microsoft')||a.includes('m365')) family='Microsoft';
+                    else if (a.includes('grok')) family='xAI';
+                    else if (a.includes('perplexity')) family='Perplexity';
+                    else if (a.includes('deepseek')) family='DeepSeek';
+                    else if (a.includes('qwen')) family='Qwen';
+                    else if (a.includes('you.com')||a.includes('youcom')||a.includes('you_com')||a.includes('smart assistant')) family='You.com';
+                    else if (a.includes('venice')) family='Venice';
+                    else if (a.includes('manus')) family='Manus';
+                    else if (a.includes('anonymous')) family='Human';
 
                     if (agent) agents.add(agent.toLowerCase());
-                    if (family) families.add(family.toLowerCase());
-                    if (li && li > 0 && li < 2) liCount++;
+                    if (family && family !== 'Other' && family !== 'Human') families.add(family.toLowerCase());
 
                     if (layer === 'ai-self-report' && composite > 0) { aiSelfTotal += composite; aiSelfCount++; }
-                    if (layer === 'human-self-assessment' && composite > 0) { humanSelfTotal += composite; humanSelfCount++; }
-                    if (layer === 'human-ai-assessment' && composite > 0) { humanAiTotal += composite; humanAiCount++; }
+                    if (layer.includes('human') && composite > 0) { humanSelfTotal += composite; humanSelfCount++; }
                 });
 
                 // Update stats ribbon
