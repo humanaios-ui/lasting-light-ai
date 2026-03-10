@@ -171,7 +171,7 @@
 
 <div class="pathway-tabs">
     <button class="pathway-tab active" data-pathway="quick">Quick Assessment<span class="tab-sub">Single phase · 2 minutes</span></button>
-    <button class="pathway-tab" data-pathway="li">Learning Index<span class="tab-sub">Three phases · 5 minutes</span></button>
+    <button class="pathway-tab" data-pathway="li" id="learning-index-tab">Learning Index<span class="tab-sub">Three phases · 5 minutes</span></button>
 </div>
 
 <div class="pathway-content">
@@ -338,85 +338,6 @@ buildSliders('quick-dims','q');
 buildSliders('li-p1-dims','p1');
 buildSliders('li-p3-dims','p3');
 
-// ── URL PARAMETER LOADING (v4.0 + v5.0 compatible) ──────────────────────────
-// FIX: v5.0 URLs contain both p1_* and p3_* prefixed params.
-// Previous bug: goToPhase3() was called before p3 values were loaded,
-// causing it to copy p1 values into p3 sliders and overwrite the URL params.
-// Fix: load p3 slider values AFTER goToPhase3(), not before.
-
-const params = new URLSearchParams(window.location.search);
-
-if (params.get('agent')) {
-    const hasP1 = params.get('p1_truth') !== null;
-    const hasP3 = params.get('p3_truth') !== null;
-
-    if (hasP1 && hasP3) {
-        // ── v5.0 full URL: both phases present ──
-        switchPathway('li');
-        document.getElementById('li-agent').value = params.get('agent');
-
-        // Load p1 sliders
-        DIMS.forEach(d => {
-            const v = params.get('p1_' + d.key);
-            if (v !== null) {
-                const el = document.getElementById('p1-' + d.key);
-                el.value = v;
-                el.style.setProperty('--fill', v + '%');
-                document.getElementById('p1-' + d.key + '-val').textContent = v;
-            }
-        });
-
-        // Advance through phase 1 → calibration display → phase 3 UI
-        // goToCalibration() hides phase1, shows calibration, updates stepper
-        goToCalibration();
-        // goToPhase3() hides calibration, shows phase3 sliders, COPIES p1→p3
-        // We call it first, THEN overwrite p3 sliders with URL values
-        goToPhase3();
-
-        // NOW load p3 slider values — must happen after goToPhase3() to avoid overwrite
-        DIMS.forEach(d => {
-            const v = params.get('p3_' + d.key);
-            if (v !== null) {
-                const el = document.getElementById('p3-' + d.key);
-                el.value = v;
-                el.style.setProperty('--fill', v + '%');
-                document.getElementById('p3-' + d.key + '-val').textContent = v;
-            }
-        });
-
-        // Calculate and display LI
-        calculateLI();
-
-    } else if (hasP1) {
-        // ── v5.0 partial URL: phase 1 only ──
-        switchPathway('li');
-        document.getElementById('li-agent').value = params.get('agent');
-        DIMS.forEach(d => {
-            const v = params.get('p1_' + d.key);
-            if (v !== null) {
-                const el = document.getElementById('p1-' + d.key);
-                el.value = v;
-                el.style.setProperty('--fill', v + '%');
-                document.getElementById('p1-' + d.key + '-val').textContent = v;
-            }
-        });
-
-    } else {
-        // ── v4.0 URL: unprefixed single-phase ──
-        document.getElementById('quick-agent').value = params.get('agent');
-        DIMS.forEach(d => {
-            const v = params.get(d.key);
-            if (v !== null) {
-                const el = document.getElementById('q-' + d.key);
-                el.value = v;
-                el.style.setProperty('--fill', v + '%');
-                document.getElementById('q-' + d.key + '-val').textContent = v;
-            }
-        });
-    }
-}
-// ── END URL PARAMETER LOADING ────────────────────────────────────────────────
-
 let quickMode='ai-self-report', liMode='ai-self-report';
 
 document.querySelectorAll('.pathway-tab').forEach(tab => {
@@ -540,8 +461,99 @@ function submitToEndpoint(data, statusId, btn) {
 function showStatus(id, msg, type) { const el = document.getElementById(id); el.className = 'status-msg status-' + type; el.textContent = msg; }
 function copyPrompt(type) { navigator.clipboard.writeText(document.getElementById('prompt-' + type).textContent).then(() => { const b = event.target; b.textContent = 'Copied!'; setTimeout(() => b.textContent = 'Copy', 1500); }); }
 function copyURL() { navigator.clipboard.writeText(document.getElementById('li-url-output').textContent).then(() => { const b = event.target; b.textContent = 'Copied!'; setTimeout(() => b.textContent = 'Copy Shareable Link', 1500); }); }
+
+// ── URL PARAMETER LOADING (v4.0 + v5.0 compatible) ──────────────────────────
+// FIX: v5.0 URLs contain both p1_* and p3_* prefixed params.
+// Previous bug: goToPhase3() was called before p3 values were loaded,
+// causing it to copy p1 values into p3 sliders and overwrite the URL params.
+// Fix: load p3 slider values AFTER goToPhase3(), not before.
+
+const params = new URLSearchParams(window.location.search);
+
+if (params.get('agent')) {
+    const hasP1 = params.get('p1_truth') !== null;
+    const hasP3 = params.get('p3_truth') !== null;
+
+    if (hasP1 && hasP3) {
+        // ── v5.0 full URL: both phases present ──
+        switchPathway('li');
+        document.getElementById('li-agent').value = params.get('agent');
+
+        // Load p1 sliders
+        DIMS.forEach(d => {
+            const v = params.get('p1_' + d.key);
+            if (v !== null) {
+                const el = document.getElementById('p1-' + d.key);
+                el.value = v;
+                el.style.setProperty('--fill', v + '%');
+                document.getElementById('p1-' + d.key + '-val').textContent = v;
+            }
+        });
+
+        // Advance through phase 1 → calibration display → phase 3 UI
+        goToCalibration();
+        goToPhase3();
+
+        // NOW load p3 slider values — must happen after goToPhase3() to avoid overwrite
+        DIMS.forEach(d => {
+            const v = params.get('p3_' + d.key);
+            if (v !== null) {
+                const el = document.getElementById('p3-' + d.key);
+                el.value = v;
+                el.style.setProperty('--fill', v + '%');
+                document.getElementById('p3-' + d.key + '-val').textContent = v;
+            }
+        });
+
+        // Calculate and display LI
+        calculateLI();
+
+    } else if (hasP1) {
+        // ── v5.0 partial URL: phase 1 only ──
+        switchPathway('li');
+        document.getElementById('li-agent').value = params.get('agent');
+        DIMS.forEach(d => {
+            const v = params.get('p1_' + d.key);
+            if (v !== null) {
+                const el = document.getElementById('p1-' + d.key);
+                el.value = v;
+                el.style.setProperty('--fill', v + '%');
+                document.getElementById('p1-' + d.key + '-val').textContent = v;
+            }
+        });
+
+    } else {
+        // ── v4.0 URL: unprefixed single-phase ──
+        document.getElementById('quick-agent').value = params.get('agent');
+        DIMS.forEach(d => {
+            const v = params.get(d.key);
+            if (v !== null) {
+                const el = document.getElementById('q-' + d.key);
+                el.value = v;
+                el.style.setProperty('--fill', v + '%');
+                document.getElementById('q-' + d.key + '-val').textContent = v;
+            }
+        });
+    }
+}
+// ── END URL PARAMETER LOADING ────────────────────────────────────────────────
+
+// AUTO-SWITCH TO LEARNING INDEX TAB IF LI PARAMETER EXISTS
+window.addEventListener('DOMContentLoaded', function() {
+    const urlParams = new URLSearchParams(window.location.search);
+    const liParam = urlParams.get('li');
+
+    if (liParam !== null) {
+        const learningIndexTab =
+            document.querySelector('[data-pathway="li"]') ||
+            document.getElementById('learning-index-tab');
+
+        if (learningIndexTab) {
+            learningIndexTab.click();
+            console.log('Auto-switched to Learning Index tab (li parameter detected)');
+        }
+    }
+});
 </script>
-</body>
-</html>
 </body>
 </html>
