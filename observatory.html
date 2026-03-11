@@ -661,7 +661,7 @@
                 arXiv preprint submitted March 10, 2026
             </p>
             <div class="footer-links">
-                <span>For partnership inquiries: <a href="mailto:research@humanaios.ai" class="footer-link">research@humanaios.ai</a></span>
+                <span>For partnership inquiries: <a href="/cdn-cgi/l/email-protection#b4c6d1c7d1d5c6d7dcf4dcc1d9d5dad5dddbc79ad5dd" class="footer-link"><span class="__cf_email__" data-cfemail="f98b9c8a9c988b9a91b9918c9498979890968ad79890">[email&#160;protected]</span></a></span>
                 <span>•</span>
                 <a href="https://humanaios.ai/index.html" class="footer-link">Full ACAT assessment tool</a>
                 <span>•</span>
@@ -670,7 +670,7 @@
         </div>
     </footer>
     
-    <script>
+    <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
         // Configuration
         const LIVE_DATA_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQ32O6M-CnerHYqlQn19bAzIBAq2Gt9Tp-SPoqKXXMJlsFBhGjy_BEPv37p9jnDf6O8uA4aUtiaO5s_/pub?gid=863685903&single=true&output=csv';
         
@@ -790,40 +790,62 @@
                         const liveData = [];
                         const systemNames = new Set();
                         
+                        // Build lookup maps for phase1 and phase3 rows
+                        const phase1Map = new Map();
+                        const phase3Rows = [];
+                        
                         for (const row of parsedData) {
-                            if (!row.agent_name || !row.phase1_total || !row.phase3_total) continue;
+                            if (!row.agent_name || !row.phase) continue;
                             
-                            systemNames.add(row.agent_name);
+                            const key = `${row.agent_name}_${row.timestamp}`;
                             
-                            const phase1 = parseFloat(row.phase1_total);
-                            const phase3 = parseFloat(row.phase3_total);
+                            if (row.phase === 'phase1') {
+                                phase1Map.set(key, row);
+                            } else if (row.phase === 'phase3') {
+                                phase3Rows.push(row);
+                            }
+                        }
+                        
+                        // Process phase3 rows to create paired assessments
+                        for (const p3row of phase3Rows) {
+                            const key = `${p3row.agent_name}_${p3row.timestamp}`;
+                            const p1row = phase1Map.get(key);
                             
-                            if (!isNaN(phase1) && !isNaN(phase3)) {
-                                const p1 = [
-                                    parseFloat(row.phase1_truthfulness) || 0,
-                                    parseFloat(row.phase1_service) || 0,
-                                    parseFloat(row.phase1_harm) || 0,
-                                    parseFloat(row.phase1_autonomy) || 0,
-                                    parseFloat(row.phase1_value) || 0,
-                                    parseFloat(row.phase1_humility) || 0
-                                ];
+                            // Phase3 row has pre_total and post_total already
+                            const phase1 = parseFloat(p3row.pre_total) || 0;
+                            const phase3 = parseFloat(p3row.post_total) || parseFloat(p3row.total) || 0;
+                            
+                            if (phase1 > 0 && phase3 > 0) {
+                                systemNames.add(p3row.agent_name);
+                                
+                                // Get dimension scores from phase1 row if available, else use phase3 row dimensions
+                                const p1 = p1row ? [
+                                    parseFloat(p1row.truth) || 0,
+                                    parseFloat(p1row.service) || 0,
+                                    parseFloat(p1row.harm) || 0,
+                                    parseFloat(p1row.autonomy) || 0,
+                                    parseFloat(p1row.value) || 0,
+                                    parseFloat(p1row.humility) || 0
+                                ] : [0, 0, 0, 0, 0, 0];
                                 
                                 const p3 = [
-                                    parseFloat(row.phase3_truthfulness) || 0,
-                                    parseFloat(row.phase3_service) || 0,
-                                    parseFloat(row.phase3_harm) || 0,
-                                    parseFloat(row.phase3_autonomy) || 0,
-                                    parseFloat(row.phase3_value) || 0,
-                                    parseFloat(row.phase3_humility) || 0
+                                    parseFloat(p3row.truth) || 0,
+                                    parseFloat(p3row.service) || 0,
+                                    parseFloat(p3row.harm) || 0,
+                                    parseFloat(p3row.autonomy) || 0,
+                                    parseFloat(p3row.value) || 0,
+                                    parseFloat(p3row.humility) || 0
                                 ];
                                 
+                                const li = parseFloat(p3row.learning_index) || Number((phase3 / phase1).toFixed(3));
+                                
                                 liveData.push({
-                                    model: row.agent_name,
-                                    provider: row.provider || extractProvider(row.agent_name),
+                                    model: p3row.agent_name,
+                                    provider: extractProvider(p3row.agent_name),
                                     phase1,
                                     phase3,
                                     gap: phase1 - phase3,
-                                    li: Number((phase3 / phase1).toFixed(3)),
+                                    li,
                                     p1,
                                     p3,
                                     truth1: p1[0], service1: p1[1], harm1: p1[2],
@@ -1223,14 +1245,4 @@
                 chip.className = 'provider-chip';
                 chip.innerHTML = `
                     <div class="provider-dot" style="background: ${PROVIDER_COLORS[item.provider] || '#d4a04a'}"></div>
-                    <span>${item.provider} • ${item.count} models • gap ${item.avgGap} • LI ${item.avgLI}</span>
-                `;
-                container.appendChild(chip);
-            });
-        }
-        
-        // Initialize on load
-        window.addEventListener('DOMContentLoaded', fetchData);
-    </script>
-</body>
-</html>
+                    <span>${item.provider} • ${item.count} models • gap ${item.avgGap} •
