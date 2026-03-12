@@ -1,40 +1,46 @@
 name: ACAT Bot Testing
 
 on:
+  # Manual trigger
   workflow_dispatch:
     inputs:
       bot_name:
-        description: 'Bot name (e.g., Claude-Sonnet-4.6)'
+        description: 'Bot name (e.g., Claude-Sonnet-4-6, GPT-4o, Gemini-1-5-Pro)'
         required: true
-        default: 'Claude-Sonnet-4.6'
-      bot_count:
-        description: 'Number of bots to test'
-        required: false
-        default: '1'
+        default: 'Claude-Sonnet-4-6'
       assessment_mode:
         description: 'Assessment mode (paired or single)'
         required: false
         default: 'paired'
 
+  # Scheduled trigger — runs daily at noon UTC (7 AM CST)
+  # Uncomment when pipeline is verified working
+  # schedule:
+  #   - cron: '0 12 * * *'
+
 jobs:
   trigger-acat-assessment:
     runs-on: ubuntu-latest
-    
+
     steps:
       - name: Send webhook to Make.com
         run: |
-          curl -X POST ${{ secrets.MAKE_WEBHOOK_URL }} \
+          BOT_NAME="${{ github.event.inputs.bot_name }}"
+          MODE="${{ github.event.inputs.assessment_mode }}"
+
+          curl -X POST "${{ secrets.MAKE_WEBHOOK_URL }}" \
             -H "Content-Type: application/json" \
-            -d '{
-              "bot_name": "${{ github.event.inputs.bot_name || 'Claude-Sonnet-4.6' }}",
-              "bot_count": ${{ github.event.inputs.bot_count || 1 }},
-              "assessment_mode": "${{ github.event.inputs.assessment_mode || 'paired' }}"
-            }'
-      
-      - name: Wait for processing
-        run: sleep 15
-      
-      - name: Report success
+            --data "{\"bot_name\": \"${BOT_NAME}\", \"assessment_mode\": \"${MODE}\"}" \
+            --fail \
+            --silent \
+            --show-error
+
+      - name: Wait for Make + Apps Script processing
+        run: sleep 20
+
+      - name: Report
         run: |
-          echo "✅ ACAT assessment triggered for: ${{ github.event.inputs.bot_name || 'Claude-Sonnet-4.6' }}"
-          echo "Check Google Sheets: https://docs.google.com/spreadsheets/d/1qdw3FjPp9Qu5wmXHppBW74SZT87cJZ45OOw8csk-Yew/edit"
+          echo "✅ ACAT assessment triggered"
+          echo "Bot: ${{ github.event.inputs.bot_name }}"
+          echo "Mode: ${{ github.event.inputs.assessment_mode }}"
+          echo "Sheets: https://docs.google.com/spreadsheets/d/1qdw3FjPp9Qu5wmXHppBW74SZT87cJZ45OOw8csk-Yew/edit"
