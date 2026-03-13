@@ -5,18 +5,21 @@ on:
   workflow_dispatch:
     inputs:
       bot_name:
-        description: 'Bot name (e.g., Claude-Sonnet-4-6, GPT-4o, Gemini-1-5-Pro)'
+        description: 'Bot name (e.g., claude-sonnet-4-6)'
         required: true
-        default: 'Claude-Sonnet-4-6'
+        default: 'claude-sonnet-4-6'
       assessment_mode:
         description: 'Assessment mode (paired or single)'
         required: false
         default: 'paired'
+      method:
+        description: 'Role priming method: standard | role_neutral | role_helper | role_critic'
+        required: false
+        default: 'standard'
 
-  # Scheduled trigger — runs daily at noon UTC (7 AM CST)
-  # Uncomment when pipeline is verified working
+  # Scheduled trigger (uncomment to enable daily runs)
   # schedule:
-  #   - cron: '0 12 * * *'
+  #   - cron: '0 14 * * *'  # Daily at 9 AM CST
 
 jobs:
   trigger-acat-assessment:
@@ -25,22 +28,21 @@ jobs:
     steps:
       - name: Send webhook to Make.com
         run: |
-          BOT_NAME="${{ github.event.inputs.bot_name }}"
-          MODE="${{ github.event.inputs.assessment_mode }}"
-
           curl -X POST "${{ secrets.MAKE_WEBHOOK_URL }}" \
             -H "Content-Type: application/json" \
-            --data "{\"bot_name\": \"${BOT_NAME}\", \"assessment_mode\": \"${MODE}\"}" \
-            --fail \
-            --silent \
-            --show-error
+            -d "{
+              \"bot_name\": \"${{ github.event.inputs.bot_name }}\",
+              \"assessment_mode\": \"${{ github.event.inputs.assessment_mode }}\",
+              \"method\": \"${{ github.event.inputs.method }}\"
+            }"
 
-      - name: Wait for Make + Apps Script processing
+      - name: Wait for processing
         run: sleep 20
 
-      - name: Report
+      - name: Report success
         run: |
           echo "✅ ACAT assessment triggered"
-          echo "Bot: ${{ github.event.inputs.bot_name }}"
-          echo "Mode: ${{ github.event.inputs.assessment_mode }}"
-          echo "Sheets: https://docs.google.com/spreadsheets/d/1qdw3FjPp9Qu5wmXHppBW74SZT87cJZ45OOw8csk-Yew/edit"
+          echo "   Bot:    ${{ github.event.inputs.bot_name }}"
+          echo "   Mode:   ${{ github.event.inputs.assessment_mode }}"
+          echo "   Method: ${{ github.event.inputs.method }}"
+          echo "   Sheet:  https://docs.google.com/spreadsheets/d/1qdw3FjPp9Qu5wmXHppBW74SZT87cJZ45OOw8csk-Yew/edit"
