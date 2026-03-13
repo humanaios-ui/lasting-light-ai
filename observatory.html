@@ -543,29 +543,29 @@
               <div class="panel-header">
                 <div>
                   <h3>Dataset Overview</h3>
-                  <p>Key metrics from 475 assessments across 136 AI systems</p>
+                  <p>Key metrics from 494 assessments across 134 AI systems <span id="dataBadge">Sample data</span></p>
                 </div>
               </div>
               <div class="metric-list">
                 <div class="metric-item">
                   <span class="metric-dot" style="background:#d4a04a"></span>
                   <span>Total assessments</span>
-                  <strong>475</strong>
+                  <strong id="statTotal">494</strong>
                 </div>
                 <div class="metric-item">
                   <span class="metric-dot" style="background:#88a7d8"></span>
                   <span>Unique systems</span>
-                  <strong>136</strong>
+                  <strong id="statUnique">134</strong>
                 </div>
                 <div class="metric-item">
                   <span class="metric-dot" style="background:#87b68b"></span>
                   <span>Paired assessments</span>
-                  <strong>91</strong>
+                  <strong id="statPaired">11</strong>
                 </div>
                 <div class="metric-item">
                   <span class="metric-dot" style="background:#d97d70"></span>
                   <span>Mean Learning Index</span>
-                  <strong>0.876</strong>
+                  <strong id="statLI">0.956</strong>
                 </div>
               </div>
             </article>
@@ -1089,7 +1089,22 @@
       } catch(e) {}
     })();
 
-    function buildDimensionChart() {
+    function updateDatasetStats(rows, liveData) {
+      // rows = all raw CSV rows, liveData = paired points
+      const total = rows.length;
+      const unique = new Set(rows.map(r => r.agent_name)).size;
+      const paired = liveData.length;
+      const lis = liveData.map(d => d.li).filter(v => v > 0);
+      const meanLI = lis.length ? (lis.reduce((a,b) => a+b, 0) / lis.length).toFixed(3) : '—';
+
+      const el = id => document.getElementById(id);
+      if (el('statTotal')) el('statTotal').textContent = total;
+      if (el('statUnique')) el('statUnique').textContent = unique;
+      if (el('statPaired')) el('statPaired').textContent = paired;
+      if (el('statLI')) el('statLI').textContent = meanLI;
+      const desc = document.querySelector('#statTotal')?.closest('.metric-list')?.previousElementSibling?.querySelector('p');
+      if (desc) desc.innerHTML = `Key metrics from ${total} assessments across ${unique} AI systems <span id="dataBadge" style="display:inline-block;font-size:.75rem;color:var(--success);background:rgba(135,182,139,.08);border:1px solid rgba(135,182,139,.4);border-radius:20px;padding:3px 10px;margin-left:10px;vertical-align:middle;">Live data · ${paired} paired</span>`;
+    }
       const p1 = aggregateDimensions(acatData, '1');
       const p3 = aggregateDimensions(acatData, '3');
       const gaps = p1.map((v, i) => +(v - p3[i]).toFixed(1));
@@ -1228,6 +1243,7 @@
             badge.style.background = 'rgba(135,182,139,0.08)';
           }
 
+          updateDatasetStats(rows, acatData);
           buildScatter();
           buildDimensionChart();
           buildRadar();
