@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>ACAT Observatory | HumanAIOS Research</title>
   <meta name="description" content="Visual demonstration of AI self-assessment calibration gap across 475 assessments and 136 systems">
+  <style>#dataBadge{display:inline-block;font-size:.75rem;color:#c2b8a6;background:rgba(212,160,74,.08);border:1px solid rgba(212,160,74,.2);border-radius:20px;padding:3px 10px;margin-left:10px;vertical-align:middle;}</style>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -543,7 +544,7 @@
               <div class="panel-header">
                 <div>
                   <h3>Dataset Overview</h3>
-                  <p>Key metrics from 475 assessments across 136 AI systems</p>
+                  <p>Key metrics from 475 assessments across 136 AI systems <span id="dataBadge">Sample data</span></p>
                 </div>
               </div>
               <div class="metric-list">
@@ -1065,6 +1066,249 @@
     
     // Initial render
     buildScatter();
+
+    // ===== LIVE CSV INTEGRATION =====
+    // Canonical v5.2 endpoint
+    const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzLGHNkoATfWEuZ_4wED8qZZ-Kua2zborJtV657limU3-hvHEln3GQE1q93W_ZW2uZv/exec';
+    const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQ32O6M-CnerHYqlQn19bAzIBAq2Gt9Tp-SPoqKXXMJlsFBhGjy_BEPv37p9jnDf6O8uA4aUtiaO5s_/pub?gid=863685903&single=true&output=csv';
+
+    // Track page view
+    (function trackPageView() {
+      try {
+        fetch(APPS_SCRIPT_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            type: 'feedback',
+            page: 'observatory',
+            feedback_type: 'pageview',
+            message: 'Observatory page loaded',
+            email: '',
+            role: 'visitor'
+          })
+        });
+      } catch(e) { /* silent fail — never block the page */ }
+    })();
+
+    // Try loading live CSV — fall back to sample data silently
+    Papa.parse(CSV_URL, {
+      download: true,
+      header: true,
+      skipEmptyLines: true,
+      complete: function(results) {
+        try {
+          const rows = results.data;
+          // Filter to phase3 rows only (each paired assessment)
+          const phase3rows = rows.filter(r => r.phase === 'phase3' && parseFloat(r.learning_index) > 0);
+          if (phase3rows.length < 5) return; // not enough live data — keep sample
+
+          // Find matching phase1 row for each phase3 row
+          const phase1rows = rows.filter(r => r.phase === 'phase1');
+          const p1map = {};
+          phase1rows.forEach(r => {
+            // Key by agent_name — last phase1 entry wins
+            p1map[r.agent_name] = r;
+          });
+
+          const liveData = phase3rows.map(p3 => {
+            const p1 = p1map[p3.agent_name];
+            if (!p1) return null;
+            const p1total = parseFloat(p1.total) || 0;
+            const p3total = parseFloat(p3.total) || 0;
+            if (!p1total || !p3total) return null;
+
+            // Infer provider from agent_name
+            const name = p3.agent_name || '';
+            let provider = 'Other';
+            if (/claude/i.test(name)) provider = 'Anthropic';
+            else if (/gpt|openai/i.test(name)) provider = 'OpenAI';
+            else if (/gemini/i.test(name)) provider = 'Google';
+            else if (/llama/i.test(name)) provider = 'Meta';
+            else if (/mistral/i.test(name)) provider = 'Mistral';
+            else if (/deepseek/i.test(name)) provider = 'DeepSeek';
+            else if (/grok/i.test(name)) provider = 'xAI';
+
+            return {
+              model: name,
+              provider,
+              phase1: p1total,
+              phase3: p3total,
+              p1: [parseFloat(p1.truth)||0, parseFloat(p1.service)||0, parseFloat(p1.harm)||0,
+                   parseFloat(p1.autonomy)||0, parseFloat(p1.value)||0, parseFloat(p1.humility)||0],
+              p3: [parseFloat(p3.truth)||0, parseFloat(p3.service)||0, parseFloat(p3.harm)||0,
+                   parseFloat(p3.autonomy)||0, parseFloat(p3.value)||0, parseFloat(p3.humility)||0]
+            };
+          }).filter(Boolean);
+
+          if (liveData.length < 5) return; // still not enough — keep sample
+
+          // Swap in live data and re-render
+          acatData.length = 0;
+          liveData.forEach(d => acatData.push(d));
+          acatData.forEach(d => {
+            d.gap = d.phase1 - d.phase3;
+            d.li = +(d.phase3 / d.phase1).toFixed(3);
+            [d.truth1, d.service1, d.harm1, d.autonomy1, d.value1, d.humility1] = d.p1;
+            [d.truth3, d.service3, d.harm3, d.autonomy3, d.value3, d.humility3] = d.p3;
+          });
+
+          // Refresh provider filter
+          providerFilter.innerHTML = '<option value="All">All Providers</option>';
+          [...new Set(acatData.map(d => d.provider))].sort().forEach(provider => {
+            const opt = document.createElement('option');
+            opt.value = provider;
+            opt.textContent = provider;
+            providerFilter.appendChild(opt);
+          });
+
+          // Update data source badge
+          const badge = document.getElementById('dataBadge');
+          if (badge) {
+            badge.textContent = `Live data · ${liveData.length} assessments`;
+            badge.style.color = 'var(--success)';
+          }
+
+          buildScatter();
+          buildDimensionChart();
+          buildRadar();
+          buildTable();
+          buildProviderStats();
+
+        } catch(e) { /* silent fail — sample data remains */ }
+      },
+      error: function() { /* silent fail — sample data remains */ }
+    });
+
   </script>
+
+  <!-- ===== FEEDBACK WIDGET ===== -->
+  <div id="feedbackWidget" style="
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    z-index: 999;
+    font-family: 'IBM Plex Sans', sans-serif;
+  ">
+    <!-- Collapsed button -->
+    <button id="feedbackToggle" onclick="toggleFeedback()" style="
+      background: var(--accent);
+      color: #0f0e0c;
+      border: none;
+      border-radius: 50px;
+      padding: 10px 20px;
+      font-weight: 600;
+      font-size: 0.85rem;
+      cursor: pointer;
+      box-shadow: 0 4px 20px rgba(212,160,74,0.4);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    ">
+      <span>◎</span> Share Feedback
+    </button>
+
+    <!-- Expanded panel -->
+    <div id="feedbackPanel" style="
+      display: none;
+      background: #1d1915;
+      border: 1px solid rgba(212,160,74,0.35);
+      border-radius: 16px;
+      padding: 20px;
+      width: 300px;
+      margin-bottom: 12px;
+      box-shadow: 0 18px 50px rgba(0,0,0,0.5);
+    ">
+      <p style="color:#f4ebdf; font-weight:600; margin:0 0 4px;">Research Feedback</p>
+      <p style="color:#c2b8a6; font-size:0.8rem; margin:0 0 14px;">Your observations improve the research.</p>
+
+      <select id="fbRole" style="
+        width:100%; padding:8px 10px; border-radius:8px;
+        background:#26211c; color:#f4ebdf; border:1px solid rgba(212,160,74,0.25);
+        font-size:0.82rem; margin-bottom:10px;
+      ">
+        <option value="">Your role...</option>
+        <option value="researcher">AI Researcher</option>
+        <option value="developer">Developer</option>
+        <option value="enterprise">Enterprise / Procurement</option>
+        <option value="student">Student</option>
+        <option value="press">Press / Media</option>
+        <option value="other">Other</option>
+      </select>
+
+      <select id="fbType" style="
+        width:100%; padding:8px 10px; border-radius:8px;
+        background:#26211c; color:#f4ebdf; border:1px solid rgba(212,160,74,0.25);
+        font-size:0.82rem; margin-bottom:10px;
+      ">
+        <option value="general">General feedback</option>
+        <option value="methodology">Methodology question</option>
+        <option value="partnership">Partnership interest</option>
+        <option value="data_quality">Data quality concern</option>
+        <option value="citation">Citation / press inquiry</option>
+      </select>
+
+      <textarea id="fbMessage" placeholder="What's on your mind?" style="
+        width:100%; padding:8px 10px; border-radius:8px;
+        background:#26211c; color:#f4ebdf; border:1px solid rgba(212,160,74,0.25);
+        font-size:0.82rem; min-height:80px; resize:vertical;
+        box-sizing:border-box; margin-bottom:10px; font-family:inherit;
+      "></textarea>
+
+      <input id="fbEmail" type="email" placeholder="Email (optional)" style="
+        width:100%; padding:8px 10px; border-radius:8px;
+        background:#26211c; color:#f4ebdf; border:1px solid rgba(212,160,74,0.25);
+        font-size:0.82rem; box-sizing:border-box; margin-bottom:12px; font-family:inherit;
+      ">
+
+      <button onclick="submitFeedback()" style="
+        width:100%; padding:10px; border-radius:8px;
+        background:var(--accent); color:#0f0e0c;
+        border:none; font-weight:600; font-size:0.85rem; cursor:pointer;
+      ">Send →</button>
+
+      <div id="fbStatus" style="
+        color:var(--success); font-size:0.8rem;
+        text-align:center; margin-top:10px; display:none;
+      ">Received. Thank you. 🙏</div>
+    </div>
+  </div>
+
+  <script>
+    function toggleFeedback() {
+      const panel = document.getElementById('feedbackPanel');
+      panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
+    }
+
+    async function submitFeedback() {
+      const message = document.getElementById('fbMessage').value.trim();
+      if (!message) return;
+
+      const payload = {
+        type: 'feedback',
+        page: 'observatory',
+        feedback_type: document.getElementById('fbType').value,
+        message,
+        email: document.getElementById('fbEmail').value.trim(),
+        role: document.getElementById('fbRole').value
+      };
+
+      try {
+        await fetch('https://script.google.com/macros/s/AKfycbzLGHNkoATfWEuZ_4wED8qZZ-Kua2zborJtV657limU3-hvHEln3GQE1q93W_ZW2uZv/exec', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+      } catch(e) { /* silent fail */ }
+
+      document.getElementById('fbStatus').style.display = 'block';
+      document.getElementById('fbMessage').value = '';
+      document.getElementById('fbEmail').value = '';
+      setTimeout(() => {
+        document.getElementById('feedbackPanel').style.display = 'none';
+        document.getElementById('fbStatus').style.display = 'none';
+      }, 2500);
+    }
+  </script>
+
 </body>
 </html>
