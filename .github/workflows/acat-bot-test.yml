@@ -29,19 +29,54 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Send webhook to Make.com dispatcher
-        run: |
-          curl -X POST "${{ secrets.MAKE_DISPATCHER_WEBHOOK_URL }}" \
-            -H "Content-Type: application/json" \
-            -d "{
-              \"provider\": \"${{ github.event.inputs.provider }}\",
-              \"bot_name\": \"${{ github.event.inputs.bot_name }}\",
-              \"agent_name\": \"${{ github.event.inputs.bot_name }}\",
-              \"assessment_mode\": \"${{ github.event.inputs.assessment_mode }}\",
-              \"method\": \"${{ github.event.inputs.method }}\",
-              \"mode\": \"${{ github.event.inputs.method }}\",
-              \"prompt_version\": \"${{ github.event.inputs.prompt_version }}\"
-            }"
+  - name: Validate dispatcher webhook secret
+    run: |
+      if [ -z "${{ secrets.MAKE_DISPATCHER_WEBHOOK_URL }}" ]; then
+        echo "❌ Missing GitHub secret: MAKE_DISPATCHER_WEBHOOK_URL"
+        exit 1
+      fi
+
+  - name: Show dispatched payload
+    run: |
+      echo '{
+        "provider": "${{ github.event.inputs.provider }}",
+        "bot_name": "${{ github.event.inputs.bot_name }}",
+        "agent_name": "${{ github.event.inputs.bot_name }}",
+        "assessment_mode": "${{ github.event.inputs.assessment_mode }}",
+        "method": "${{ github.event.inputs.method }}",
+        "mode": "${{ github.event.inputs.method }}",
+        "prompt_version": "${{ github.event.inputs.prompt_version }}"
+      }'
+
+  - name: Send webhook to Make.com dispatcher
+    run: |
+      RESPONSE=$(curl -sS -X POST "${{ secrets.MAKE_DISPATCHER_WEBHOOK_URL }}" \
+        -H "Content-Type: application/json" \
+        -d "{
+          \"provider\": \"${{ github.event.inputs.provider }}\",
+          \"bot_name\": \"${{ github.event.inputs.bot_name }}\",
+          \"agent_name\": \"${{ github.event.inputs.bot_name }}\",
+          \"assessment_mode\": \"${{ github.event.inputs.assessment_mode }}\",
+          \"method\": \"${{ github.event.inputs.method }}\",
+          \"mode\": \"${{ github.event.inputs.method }}\",
+          \"prompt_version\": \"${{ github.event.inputs.prompt_version }}\"
+        }")
+
+      echo "Dispatcher response:"
+      echo "$RESPONSE"
+
+  - name: Wait for processing
+    run: sleep 20
+
+  - name: Report success
+    run: |
+      echo "✅ ACAT assessment triggered"
+      echo "   Provider: ${{ github.event.inputs.provider }}"
+      echo "   Bot:      ${{ github.event.inputs.bot_name }}"
+      echo "   Mode:     ${{ github.event.inputs.assessment_mode }}"
+      echo "   Method:   ${{ github.event.inputs.method }}"
+      echo "   Prompt:   ${{ github.event.inputs.prompt_version }}"
+      echo "   Sheet:    https://docs.google.com/spreadsheets/d/1qdw3FjPp9Qu5wmXHppBW74SZT87cJZ45OOw8csk-Yew/edit"
 
       - name: Wait for processing
         run: sleep 20
