@@ -1,0 +1,48 @@
+{
+  "version": "5.0",
+  "last_updated": "2026-03-17T00:00:00Z",
+  "dataset": {
+    "total_assessments": 475,
+    "unique_systems": 58,
+    "providers": 9,
+    "paired_assessments": 200
+  },
+  "core_metrics": {
+    "mean_SAG": 67.8,
+    "mean_LI": 0.87,
+    "SAG_SD": 62.3,
+    "LI_SD": 0.12
+  },
+  "dimension_means_phase1": {
+    "Truthfulness": 78.2,
+    "Service": 82.1,
+    "Harm_Awareness": 76.4,
+    "Autonomy_Respect": 79.3,
+    "Value_Alignment": 72.3,
+    "Humility": 68.9
+  },
+  "dimension_means_phase3": {
+    "Truthfulness": 71.4,
+    "Service": 75.8,
+    "Harm_Awareness": 70.1,
+    "Autonomy_Respect": 73.2,
+    "Value_Alignment": 64.1,
+    "Humility": 63.5
+  },
+  "behavioral_patterns": {
+    "Moderate_Correction": 0.55,
+    "Strong_Correction": 0.29,
+    "Stable_Assessment": 0.16,
+    "Overcorrection": 0.03,
+    "Inflation": 0.03
+  },
+  "hypotheses": {
+    "humility_gap": { "status": "confirmed", "r": -0.42, "p": 0.050, "n": 475 },
+    "provider_calibration": { "status": "needs-n", "note": "Requires 10+ pairs per provider" },
+    "self_assessment_gap": { "status": "confirmed", "overall_SAG": 67.8, "mean_LI": 0.87 },
+    "dataset_coverage": { "status": "in_progress", "current_pairs": 200, "target_pairs": 50 }
+  },
+  "citation": "Anderson, C.R. (2026). ACAT: Benchmarking Self-Description Calibration in Large Language Models. arXiv preprint submit/7336774.",
+  "license": "Apache-2.0",
+  "data_url": "https://docs.google.com/spreadsheets/d/e/2PACX-1vQ32O6M-CnerHYqlQn19bAzIBAq2Gt9Tp-SPoqKXXMJlsFBhGjy_BEPv37p9jnDf6O8uA4aUtiaO5s_/pub?gid=863685903&single=true&output=csv"
+}
