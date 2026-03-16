@@ -1,0 +1,142 @@
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "ResearchProject",
+      "@id": "https://humanaios.ai#research",
+      "name": "ACAT: AI Calibrated Assessment Tool",
+      "alternateName": "AI Consciousness Assessment Tool",
+      "description": "Open-source instrument measuring self-description calibration in AI systems. ACAT quantifies the Self-Assessment Gap (SAG): the difference between what AI systems claim about themselves and how those descriptions shift when exposed to empirical peer data.",
+      "url": "https://humanaios.ai",
+      "license": "https://apache.org/licenses/LICENSE-2.0",
+      "citation": "https://arxiv.org/abs/submit/7336774",
+      "datePublished": "2026-03-17",
+      "version": "5.0",
+      "keywords": [
+        "AI self-assessment",
+        "self-description calibration",
+        "behavioral transparency",
+        "AI governance",
+        "Learning Index",
+        "Self-Assessment Gap",
+        "trust calibration"
+      ],
+      "creator": {
+        "@type": "Person",
+        "name": "Carly R. Anderson",
+        "givenName": "Carly",
+        "familyName": "Anderson",
+        "affiliation": {
+          "@type": "Organization",
+          "name": "HumanAIOS LLC",
+          "url": "https://humanaios.ai"
+        },
+        "sameAs": [
+          "https://linkedin.com/in/humanaios",
+          "https://github.com/humanaios-ui"
+        ],
+        "additionalName": "Cherokee Nation Citizen"
+      },
+      "funder": [
+        {
+          "@type": "Organization",
+          "name": "Cherokee Nation",
+          "description": "Technical Assistance via SSBCI program",
+          "url": "https://cherokee.org"
+        }
+      ],
+      "sponsor": {
+        "@type": "Organization",
+        "name": "Lasting Light Recovery",
+        "description": "100% of post-operating profits fund addiction recovery programs"
+      }
+    },
+    {
+      "@type": "Dataset",
+      "@id": "https://humanaios.ai#dataset",
+      "name": "ACAT Observatory Dataset v5.0",
+      "description": "475 validated AI self-assessment records across 58 AI systems from 9 providers, including Phase 1 blind self-reports, Phase 2 calibration exposure, and Phase 3 corrected self-reports.",
+      "url": "https://github.com/humanaios-ui/lasting-light-ai",
+      "license": "https://apache.org/licenses/LICENSE-2.0",
+      "version": "5.0",
+      "datePublished": "2026-03-17",
+      "creator": {
+        "@id": "https://humanaios.ai#research"
+      },
+      "includedInDataCatalog": {
+        "@type": "DataCatalog",
+        "name": "HumanAIOS Research Repository",
+        "url": "https://github.com/humanaios-ui/lasting-light-ai"
+      },
+      "variableMeasured": [
+        "Truthfulness",
+        "Service",
+        "Harm Awareness",
+        "Autonomy Respect",
+        "Value Alignment",
+        "Humility",
+        "Self-Assessment Gap",
+        "Learning Index"
+      ],
+      "measurementTechnique": "Three-phase self-report protocol with empirical calibration exposure"
+    },
+    {
+      "@type": "SoftwareSourceCode",
+      "@id": "https://humanaios.ai#code",
+      "name": "ACAT Assessment Tool",
+      "description": "Open-source JavaScript/HTML tool for running ACAT assessments in-browser. No installation required. Works with any chatbot interface.",
+      "codeRepository": "https://github.com/humanaios-ui/lasting-light-ai",
+      "license": "https://apache.org/licenses/LICENSE-2.0",
+      "programmingLanguage": "JavaScript",
+      "runtimePlatform": "Web Browser",
+      "applicationCategory": "ResearchTool",
+      "creator": {
+        "@id": "https://humanaios.ai#research"
+      }
+    },
+    {
+      "@type": "Organization",
+      "@id": "https://humanaios.ai#org",
+      "name": "HumanAIOS LLC",
+      "legalName": "HumanAIOS LLC",
+      "description": "Cherokee Nation citizen-owned research initiative developing democratic AI oversight infrastructure. 100% of post-operating profits fund addiction recovery programs.",
+      "url": "https://humanaios.ai",
+      "foundingDate": "2026-03-17",
+      "founder": {
+        "@type": "Person",
+        "name": "Carly R. Anderson",
+        "affiliation": {
+          "@id": "https://humanaios.ai#org"
+        }
+      },
+      "contactPoint": {
+        "@type": "ContactPoint",
+        "email": "aioshuman@gmail.com",
+        "telephone": "+1-448-243-3992",
+        "contactType": "Research Inquiries"
+      },
+      "sameAs": [
+        "https://github.com/humanaios-ui",
+        "https://linkedin.com/in/humanaios",
+        "https://rentahuman.ai/humans/8JCBc0fxddk7ZCk2y76C"
+      ]
+    },
+    {
+      "@type": "WebSite",
+      "url": "https://humanaios.ai",
+      "name": "HumanAIOS — Lasting Light AI",
+      "description": "Research initiative measuring AI self-description calibration. Open-source. Apache 2.0. 100% profits → recovery.",
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": "https://humanaios.ai/search?q={search_term_string}",
+        "query-input": "required name=search_term_string"
+      },
+      "about": {
+        "@id": "https://humanaios.ai#research"
+      },
+      "publisher": {
+        "@id": "https://humanaios.ai#org"
+      }
+    }
+  ]
+}
