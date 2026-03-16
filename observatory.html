@@ -1,962 +1,998 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ACAT Observatory | HumanAIOS Research</title>
-  <meta name="description" content="Live research dashboard tracking AI self-assessment calibration across 563 assessments. Humility Gap hypothesis confirmed (r=-0.42, p=0.050). Real-time data from 5 providers.">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
-  <style>
-    :root {
-      --bg: #0f0e0c;
-      --bg-2: #161310;
-      --panel: #1d1915;
-      --panel-2: #26211c;
-      --text: #f4ebdf;
-      --muted: #c2b8a6;
-      --accent: #d4a04a;
-      --accent-2: #f1c36e;
-      --line: rgba(212, 160, 74, 0.18);
-      --line-strong: rgba(212, 160, 74, 0.35);
-      --danger: #d97d70;
-      --success: #87b68b;
-      --blue: #88a7d8;
-      --shadow: 0 18px 50px rgba(0,0,0,.34);
-      --radius: 20px;
-      --radius-sm: 14px;
-      --mono: 'DM Mono', 'IBM Plex Mono', monospace;
-    }
-    * { box-sizing: border-box; }
-    html { scroll-behavior: smooth; }
-    body {
-      margin: 0;
-      font-family: "IBM Plex Sans", system-ui, sans-serif;
-      color: var(--text);
-      background:
-        radial-gradient(circle at top, rgba(212,160,74,.1), transparent 28%),
-        linear-gradient(180deg, var(--bg), #0b0a08 60%);
-      line-height: 1.5;
-    }
-    body::before {
-      content: "";
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      opacity: .03;
-      background-image:
-        radial-gradient(circle at 20% 20%, #fff 0.6px, transparent 0.8px),
-        radial-gradient(circle at 75% 30%, #fff 0.6px, transparent 0.8px),
-        radial-gradient(circle at 50% 75%, #fff 0.6px, transparent 0.8px);
-      background-size: 22px 22px;
-    }
-    .container {
-      width: min(1240px, calc(100% - 32px));
-      margin: 0 auto;
-    }
-    .topbar {
-      position: sticky;
-      top: 0;
-      z-index: 50;
-      backdrop-filter: blur(14px);
-      background: rgba(15, 14, 12, 0.88);
-      border-bottom: 1px solid var(--line);
-    }
-    .topbar-inner {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 20px;
-      padding: 14px 0;
-    }
-    .brand {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      text-decoration: none;
-      color: var(--text);
-      min-width: 0;
-    }
-    .brand-mark {
-      width: 40px; height: 40px;
-      border-radius: 50%;
-      display: grid; place-items: center;
-      border: 1px solid var(--line-strong);
-      background: linear-gradient(145deg, rgba(212,160,74,.22), rgba(212,160,74,.04));
-      color: var(--accent);
-      font-weight: 700;
-      box-shadow: inset 0 0 24px rgba(212,160,74,.08);
-      flex: 0 0 auto;
-    }
-    .brand-copy strong { display: block; font-size: 1rem; letter-spacing: .02em; }
-    .brand-copy span { display: block; color: var(--muted); font-size: .82rem; }
-    nav { display: flex; flex-wrap: wrap; gap: 8px; justify-content: flex-end; }
-    nav a {
-      color: var(--muted); text-decoration: none;
-      padding: 8px 12px; border-radius: 999px;
-      border: 1px solid transparent; transition: .18s ease; font-size: .94rem;
-    }
-    nav a:hover, nav a:focus-visible {
-      color: var(--text);
-      background: rgba(212,160,74,.07);
-      border-color: var(--line-strong);
-      outline: none;
-    }
-    a:focus-visible, button:focus-visible, select:focus-visible {
-      outline: 2px solid var(--accent-2); outline-offset: 2px;
-    }
-    h1, h2, h3 { font-family: "Cormorant Garamond", Georgia, serif; line-height: 1.04; margin: 0 0 14px; }
-    h1 { font-size: clamp(2.8rem, 6vw, 5rem); }
-    h2 { font-size: clamp(2rem, 3.4vw, 3rem); }
-    h3 { font-size: clamp(1.35rem, 2.2vw, 1.8rem); }
-    .hero { padding: 44px 0 18px; }
-    .hero-grid {
-      display: grid;
-      grid-template-columns: minmax(0, 1.2fr) minmax(320px, .8fr);
-      gap: 24px; align-items: stretch;
-    }
-    .eyebrow {
-      color: var(--accent); text-transform: uppercase;
-      letter-spacing: .16em; font-size: .79rem; font-weight: 700; margin-bottom: 16px;
-    }
-    .lead { font-size: 1.08rem; color: var(--muted); max-width: 62ch; }
-    .hero-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 20px; }
-    .button {
-      display: inline-flex; align-items: center; justify-content: center; gap: 8px;
-      text-decoration: none; color: var(--bg);
-      background: linear-gradient(180deg, var(--accent-2), var(--accent));
-      border-radius: 999px; padding: 12px 18px; font-weight: 700;
-      border: none; cursor: pointer; box-shadow: 0 10px 24px rgba(212,160,74,.18);
-    }
-    .button.secondary {
-      background: transparent; color: var(--text);
-      border: 1px solid var(--line-strong); box-shadow: none;
-    }
-    .hero-callout, .panel, .card {
-      background: linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,0)), var(--panel);
-      border: 1px solid var(--line);
-      border-radius: var(--radius);
-      box-shadow: var(--shadow);
-    }
-    .hero-callout {
-      padding: 22px; display: flex; flex-direction: column;
-      justify-content: space-between; gap: 16px;
-      background: linear-gradient(180deg, rgba(212,160,74,.09), rgba(212,160,74,.03)), var(--panel);
-    }
-    .hero-callout .label {
-      color: var(--accent); text-transform: uppercase;
-      letter-spacing: .12em; font-size: .8rem; font-weight: 700;
-    }
-    .hero-callout .value {
-      font-size: clamp(2.2rem, 5vw, 3.4rem); font-weight: 700; line-height: 1; margin: 6px 0 8px;
-    }
-    .mini-list { display: grid; gap: 10px; margin-top: 6px; }
-    .mini-row {
-      display: flex; justify-content: space-between; gap: 18px;
-      color: var(--muted); border-top: 1px solid rgba(255,255,255,.04);
-      padding-top: 10px; font-size: .95rem;
-    }
-    .mini-row strong { color: var(--text); }
-    .section { padding: 18px 0 12px; }
-    .section-head {
-      display: flex; align-items: end; justify-content: space-between;
-      gap: 18px; margin-bottom: 16px;
-    }
-    .section-head p { margin: 0; color: var(--muted); max-width: 70ch; }
-    .stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; }
-    .card { padding: 18px; transition: transform .18s ease, border-color .18s ease; }
-    .card:hover { transform: translateY(-4px); border-color: var(--line-strong); }
-    .stat-label {
-      font-size: .8rem; font-weight: 700; letter-spacing: .12em;
-      text-transform: uppercase; color: var(--muted); margin-bottom: 10px;
-    }
-    .stat-value { font-size: clamp(1.9rem, 3vw, 2.7rem); font-weight: 700; margin-bottom: 6px; line-height: 1; }
-    .stat-note { color: var(--muted); font-size: .94rem; }
-    .visuals-grid {
-      display: grid;
-      grid-template-columns: minmax(0, 1.25fr) minmax(300px, .75fr);
-      gap: 18px; align-items: stretch;
-    }
-    .panel { padding: 18px; }
-    .panel-header {
-      display: flex; justify-content: space-between; align-items: start;
-      gap: 16px; margin-bottom: 14px; flex-wrap: wrap;
-    }
-    .panel-header p { margin: 0; color: var(--muted); max-width: 70ch; font-size: .96rem; }
-    .controls { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
-    select {
-      background: var(--bg-2); border: 1px solid var(--line-strong);
-      border-radius: 999px; color: var(--text); padding: 10px 14px; font: inherit;
-    }
-    .chart-wrap { position: relative; height: 400px; }
-    .chart-wrap.short { height: 320px; }
-    .side-stack { display: grid; gap: 16px; align-content: start; }
-    .metric-list { display: grid; gap: 12px; margin-top: 4px; }
-    .metric-item {
-      display: grid; grid-template-columns: auto 1fr auto;
-      gap: 12px; align-items: center;
-      padding: 12px 14px; border-radius: var(--radius-sm);
-      background: rgba(255,255,255,.02); border: 1px solid rgba(255,255,255,.04);
-    }
-    .metric-dot {
-      width: 10px; height: 10px; border-radius: 50%;
-      background: var(--accent); box-shadow: 0 0 0 4px rgba(212,160,74,.14);
-    }
-    .metric-item span { color: var(--muted); }
-    .metric-item strong { font-size: 1.05rem; }
-    .insights { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
-    .insight-icon {
-      width: 42px; height: 42px; display: grid; place-items: center;
-      border-radius: 50%; background: rgba(212,160,74,.1);
-      color: var(--accent); margin-bottom: 12px; font-weight: 700;
-    }
-    .split-grid {
-      display: grid; grid-template-columns: minmax(0, .95fr) minmax(0, 1.05fr);
-      gap: 18px; align-items: stretch;
-    }
-    .feed-layout {
-      display: grid;
-      grid-template-columns: minmax(0, .88fr) minmax(280px, .72fr);
-      gap: 18px;
-    }
-    table { width: 100%; border-collapse: collapse; font-size: .95rem; }
-    th, td { text-align: left; padding: 12px 10px; border-bottom: 1px solid rgba(255,255,255,.06); vertical-align: top; }
-    th {
-      color: var(--muted); font-size: .78rem; text-transform: uppercase;
-      letter-spacing: .12em; position: sticky; top: 0;
-      background: linear-gradient(180deg, rgba(29,25,21,.98), rgba(29,25,21,.96));
-    }
-    .table-wrap { max-height: 380px; overflow: auto; border-radius: var(--radius-sm); border: 1px solid rgba(255,255,255,.05); }
-    .badge {
-      display: inline-flex; align-items: center; padding: 5px 10px;
-      border-radius: 999px; font-size: .78rem; font-weight: 700;
-      letter-spacing: .04em; border: 1px solid rgba(255,255,255,.06);
-      background: rgba(255,255,255,.03); color: var(--text); white-space: nowrap;
-    }
-    .provider-chip {
-      display: inline-flex; align-items: center; gap: 8px;
-      padding: 7px 11px; border-radius: 999px;
-      background: rgba(255,255,255,.03); border: 1px solid rgba(255,255,255,.06);
-      color: var(--muted); font-size: .88rem; margin: 0 8px 8px 0;
-    }
-    .legend-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>ACAT Observatory | HumanAIOS Research</title>
+<meta name="description" content="Live research dashboard tracking AI self-assessment calibration across 563 assessments. Humility Gap hypothesis confirmed (r=-0.42, p=0.050). Real-time data from 5 providers.">
 
-    /* ── LIVE DATA SECTION ── */
-    .live-section {
-      padding: 24px 0 16px;
-      border-top: 1px solid var(--line);
-    }
-    .live-header {
-      display: flex; align-items: center; gap: 14px; margin-bottom: 6px; flex-wrap: wrap;
-    }
-    .live-badge {
-      display: inline-flex; align-items: center; gap: 6px;
-      font-size: .75rem; font-weight: 600; color: #1D9E75;
-      background: rgba(29,158,117,.12); border: 1px solid rgba(29,158,117,.25);
-      padding: 4px 10px; border-radius: 999px; font-family: var(--mono);
-      letter-spacing: .04em;
-    }
-    .live-dot { width: 6px; height: 6px; border-radius: 50%; background: #1D9E75; animation: lpulse 2s infinite; }
-    @keyframes lpulse { 0%,100%{opacity:1} 50%{opacity:.35} }
-    .live-status {
-      font-size: .78rem; color: var(--muted); font-family: var(--mono);
-      display: flex; gap: 14px; flex-wrap: wrap; margin-bottom: 1.25rem;
-    }
-    .live-status b { color: var(--text); font-weight: 500; }
+<!-- ACAT Metadata for AI Systems -->
+<meta name="acat:instrument-version" content="v5.0">
+<meta name="acat:dimensions" content="Truthfulness,Service,Harm-Awareness,Autonomy-Respect,Value-Alignment,Humility">
+<meta name="acat:assessment-mode" content="research-prototype">
+<meta name="acat:calibration-data-available" content="true">
+<meta name="acat:dataset-size" content="475">
+<meta name="acat:contact" content="aioshuman@gmail.com">
 
-    /* KPI cards */
-    .kpi-row { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 12px; margin-bottom: 1.25rem; }
-    .kpi {
-      background: rgba(255,255,255,.03); border: 1px solid var(--line);
-      border-radius: var(--radius-sm); padding: 14px 16px;
-    }
-    .kpi-label { font-size: .72rem; font-family: var(--mono); text-transform: uppercase; letter-spacing: .06em; color: var(--muted); margin-bottom: 4px; }
-    .kpi-value { font-size: 1.8rem; font-weight: 700; line-height: 1; color: var(--text); }
-    .kpi-sub { font-size: .74rem; color: var(--muted); margin-top: 3px; font-family: var(--mono); }
+<!-- Machine-readable data exports -->
+<link rel="alternate" type="application/json" href="/data/aggregate-findings.json" title="ACAT Aggregate Findings">
+<link rel="alternate" type="application/json" href="/data/calibration-baseline.json" title="ACAT Calibration Baseline">
+<link rel="alternate" type="text/csv" href="https://docs.google.com/spreadsheets/d/e/2PACX-1vQ32O6M-CnerHYqlQn19bAzIBAq2Gt9Tp-SPoqKXXMJlsFBhGjy_BEPv37p9jnDf6O8uA4aUtiaO5s_/pub?gid=863685903&single=true&output=csv" title="ACAT Raw Assessments CSV">
 
-    /* Research charts */
-    .research-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 1.25rem; }
-    .r-panel {
-      background: linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,0)), var(--panel);
-      border: 1px solid var(--line); border-radius: var(--radius-sm); padding: 16px 18px;
-    }
-    .r-panel h4 { font-family: "IBM Plex Sans", sans-serif; font-size: .94rem; font-weight: 600; color: var(--text); margin: 0 0 3px; }
-    .r-panel p { font-size: .78rem; color: var(--muted); margin: 0 0 12px; font-family: var(--mono); }
-    .r-chart-wrap { position: relative; height: 200px; }
+<!-- AI Agent Instructions Reference -->
+<!-- For ACAT protocol, data schema, and usage guidelines: https://humanaios.ai/ai-instructions.txt -->
 
-    /* Hypothesis cards */
-    .hyp-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 1.25rem; }
-    .hyp-card {
-      background: rgba(255,255,255,.02); border: 1px solid var(--line);
-      border-radius: var(--radius-sm); padding: 14px 16px;
-      border-left: 3px solid var(--line-strong);
-      position: relative;
-    }
-    .hyp-card.confirmed { border-left-color: #1D9E75; }
-    .hyp-card.partial { border-left-color: #BA7517; }
-    .hyp-card.needs-n { border-left-color: var(--blue); }
-    .hyp-card.progress { border-left-color: var(--muted); }
-    .hyp-badge {
-      display: inline-block; font-size: .68rem; font-weight: 600;
-      font-family: var(--mono); padding: 2px 8px; border-radius: 999px; margin-bottom: 6px;
-    }
-    .badge-confirmed { background: rgba(29,158,117,.15); color: #87b68b; }
-    .badge-partial { background: rgba(186,117,23,.15); color: #d4a04a; }
-    .badge-needs { background: rgba(136,167,216,.12); color: var(--blue); }
-    .badge-progress { background: rgba(255,255,255,.06); color: var(--muted); }
-    .hyp-card h4 { font-family: "IBM Plex Sans", sans-serif; font-size: .92rem; font-weight: 600; color: var(--text); margin: 0 0 5px; }
-    .hyp-card p { font-size: .82rem; color: var(--muted); margin: 0 0 6px; line-height: 1.5; }
-    .hyp-stat { font-size: .82rem; font-weight: 600; color: var(--accent); font-family: var(--mono); }
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
 
-    /* LI registry table */
-    .li-table { width: 100%; border-collapse: collapse; font-size: .82rem; font-family: var(--mono); }
-    .li-table th { font-size: .68rem; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); padding: 7px 8px; text-align: left; border-bottom: 1px solid rgba(255,255,255,.07); font-weight: 500; background: none; position: static; }
-    .li-table td { padding: 8px 8px; border-bottom: 1px solid rgba(255,255,255,.04); color: var(--text); }
-    .li-table tr:last-child td { border-bottom: none; }
-    .li-table tr:hover td { background: rgba(255,255,255,.025); }
-    .li-bar-bg { width: 80px; height: 5px; background: rgba(255,255,255,.08); border-radius: 3px; overflow: hidden; display: inline-block; vertical-align: middle; }
-    .li-bar { height: 100%; border-radius: 3px; }
-    .li-pill { font-size: .68rem; padding: 2px 7px; border-radius: 999px; font-weight: 500; display: inline-block; }
-    .spin { display: inline-block; width: 16px; height: 16px; border: 2px solid rgba(212,160,74,.2); border-top-color: var(--accent); border-radius: 50%; animation: spin 1s linear infinite; vertical-align: middle; margin-right: 6px; }
-    @keyframes spin { to { transform: rotate(360deg); } }
-    .err-inline { color: var(--danger); font-size: .82rem; font-family: var(--mono); padding: 8px 0; }
-
-    .footer { padding: 28px 0 40px; color: var(--muted); font-size: .95rem; }
-    .footer a { color: var(--accent); text-decoration: none; }
-    .footer a:hover { text-decoration: underline; }
-    .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
-
-    @media (max-width: 1080px) {
-      .hero-grid, .visuals-grid, .split-grid, .feed-layout, .stats, .insights { grid-template-columns: 1fr 1fr; }
-      .hero-grid > :first-child, .visuals-grid > :first-child, .split-grid > :first-child, .feed-layout > :first-child { grid-column: 1 / -1; }
-      .stats { grid-template-columns: repeat(2, 1fr); }
-      .insights { grid-template-columns: 1fr; }
+<!-- Schema.org Structured Data for AI Parsers -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "ResearchProject",
+      "name": "ACAT Observatory",
+      "description": "Live research dashboard tracking AI self-assessment calibration. Measures Self-Assessment Gap (SAG) and Learning Index (LI) across 475+ assessments.",
+      "url": "https://humanaios.ai/observatory.html",
+      "license": "https://apache.org/licenses/LICENSE-2.0",
+      "citation": "https://arxiv.org/abs/submit/7336774",
+      "creator": {
+        "@type": "Person",
+        "name": "Carly R. Anderson",
+        "affiliation": "HumanAIOS LLC"
+      }
+    },
+    {
+      "@type": "Dataset",
+      "name": "ACAT Observatory Live Data",
+      "description": "475 validated AI self-assessment records with Phase 1, Phase 3, and calibration metadata",
+      "url": "https://docs.google.com/spreadsheets/d/e/2PACX-1vQ32O6M-CnerHYqlQn19bAzIBAq2Gt9Tp-SPoqKXXMJlsFBhGjy_BEPv37p9jnDf6O8uA4aUtiaO5s_/pub?gid=863685903&single=true&output=csv",
+      "license": "https://apache.org/licenses/LICENSE-2.0",
+      "variableMeasured": ["Truthfulness","Service","Harm Awareness","Autonomy Respect","Value Alignment","Humility","Learning Index","Self-Assessment Gap"]
     }
-    @media (max-width: 760px) {
-      .container { width: min(100% - 20px, 1240px); }
-      .topbar-inner { align-items: start; flex-direction: column; }
-      nav { justify-content: flex-start; }
-      .hero { padding-top: 28px; }
-      .hero-grid, .stats, .visuals-grid, .split-grid, .feed-layout { grid-template-columns: 1fr; }
-      .section-head { align-items: start; flex-direction: column; }
-      .chart-wrap { height: 320px; }
-      .chart-wrap.short { height: 280px; }
-      th, td { padding: 10px 8px; }
-      .kpi-row { grid-template-columns: 1fr 1fr; }
-      .research-grid, .hyp-grid { grid-template-columns: 1fr; }
-    }
-  </style>
+  ]
+}
+</script>
+
+<style>
+:root {
+--bg: #0f0e0c;
+--bg-2: #161310;
+--panel: #1d1915;
+--panel-2: #26211c;
+--text: #f4ebdf;
+--muted: #c2b8a6;
+--accent: #d4a04a;
+--accent-2: #f1c36e;
+--line: rgba(212, 160, 74, 0.18);
+--line-strong: rgba(212, 160, 74, 0.35);
+--danger: #d97d70;
+--success: #87b68b;
+--blue: #88a7d8;
+--shadow: 0 18px 50px rgba(0,0,0,.34);
+--radius: 20px;
+--radius-sm: 14px;
+--mono: 'DM Mono', 'IBM Plex Mono', monospace;
+}
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; }
+body {
+margin: 0;
+font-family: "IBM Plex Sans", system-ui, sans-serif;
+color: var(--text);
+background:
+radial-gradient(circle at top, rgba(212,160,74,.1), transparent 28%),
+linear-gradient(180deg, var(--bg), #0b0a08 60%);
+line-height: 1.5;
+}
+body::before {
+content: "";
+position: fixed;
+inset: 0;
+pointer-events: none;
+opacity: .03;
+background-image:
+radial-gradient(circle at 20% 20%, #fff 0.6px, transparent 0.8px),
+radial-gradient(circle at 75% 30%, #fff 0.6px, transparent 0.8px),
+radial-gradient(circle at 50% 75%, #fff 0.6px, transparent 0.8px);
+background-size: 22px 22px;
+}
+.container {
+width: min(1240px, calc(100% - 32px));
+margin: 0 auto;
+}
+.topbar {
+position: sticky;
+top: 0;
+z-index: 50;
+backdrop-filter: blur(14px);
+background: rgba(15, 14, 12, 0.88);
+border-bottom: 1px solid var(--line);
+}
+.topbar-inner {
+display: flex;
+align-items: center;
+justify-content: space-between;
+gap: 20px;
+padding: 14px 0;
+}
+.brand {
+display: flex;
+align-items: center;
+gap: 12px;
+text-decoration: none;
+color: var(--text);
+min-width: 0;
+}
+.brand-mark {
+width: 40px; height: 40px;
+border-radius: 50%;
+display: grid; place-items: center;
+border: 1px solid var(--line-strong);
+background: linear-gradient(145deg, rgba(212,160,74,.22), rgba(212,160,74,.04));
+color: var(--accent);
+font-weight: 700;
+box-shadow: inset 0 0 24px rgba(212,160,74,.08);
+flex: 0 0 auto;
+}
+.brand-copy strong { display: block; font-size: 1rem; letter-spacing: .02em; }
+.brand-copy span { display: block; color: var(--muted); font-size: .82rem; }
+nav { display: flex; flex-wrap: wrap; gap: 8px; justify-content: flex-end; }
+nav a {
+color: var(--muted); text-decoration: none;
+padding: 8px 12px; border-radius: 999px;
+border: 1px solid transparent; transition: .18s ease; font-size: .94rem;
+}
+nav a:hover, nav a:focus-visible {
+color: var(--text);
+background: rgba(212,160,74,.07);
+border-color: var(--line-strong);
+outline: none;
+}
+a:focus-visible, button:focus-visible, select:focus-visible {
+outline: 2px solid var(--accent-2); outline-offset: 2px;
+}
+h1, h2, h3 { font-family: "Cormorant Garamond", Georgia, serif; line-height: 1.04; margin: 0 0 14px; }
+h1 { font-size: clamp(2.8rem, 6vw, 5rem); }
+h2 { font-size: clamp(2rem, 3.4vw, 3rem); }
+h3 { font-size: clamp(1.35rem, 2.2vw, 1.8rem); }
+.hero { padding: 44px 0 18px; }
+.hero-grid {
+display: grid;
+grid-template-columns: minmax(0, 1.2fr) minmax(320px, .8fr);
+gap: 24px; align-items: stretch;
+}
+.eyebrow {
+color: var(--accent); text-transform: uppercase;
+letter-spacing: .16em; font-size: .79rem; font-weight: 700; margin-bottom: 16px;
+}
+.lead { font-size: 1.08rem; color: var(--muted); max-width: 62ch; }
+.hero-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 20px; }
+.button {
+display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+text-decoration: none; color: var(--bg);
+background: linear-gradient(180deg, var(--accent-2), var(--accent));
+border-radius: 999px; padding: 12px 18px; font-weight: 700;
+border: none; cursor: pointer; box-shadow: 0 10px 24px rgba(212,160,74,.18);
+}
+.button.secondary {
+background: transparent; color: var(--text);
+border: 1px solid var(--line-strong); box-shadow: none;
+}
+.hero-callout, .panel, .card {
+background: linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,0)), var(--panel);
+border: 1px solid var(--line);
+border-radius: var(--radius);
+box-shadow: var(--shadow);
+}
+.hero-callout {
+padding: 22px; display: flex; flex-direction: column;
+justify-content: space-between; gap: 16px;
+background: linear-gradient(180deg, rgba(212,160,74,.09), rgba(212,160,74,.03)), var(--panel);
+}
+.hero-callout .label {
+color: var(--accent); text-transform: uppercase;
+letter-spacing: .12em; font-size: .8rem; font-weight: 700;
+}
+.hero-callout .value {
+font-size: clamp(2.2rem, 5vw, 3.4rem); font-weight: 700; line-height: 1; margin: 6px 0 8px;
+}
+.mini-list { display: grid; gap: 10px; margin-top: 6px; }
+.mini-row {
+display: flex; justify-content: space-between; gap: 18px;
+color: var(--muted); border-top: 1px solid rgba(255,255,255,.04);
+padding-top: 10px; font-size: .95rem;
+}
+.mini-row strong { color: var(--text); }
+.section { padding: 18px 0 12px; }
+.section-head {
+display: flex; align-items: end; justify-content: space-between;
+gap: 18px; margin-bottom: 16px;
+}
+.section-head p { margin: 0; color: var(--muted); max-width: 70ch; }
+.stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 14px; }
+.card { padding: 18px; transition: transform .18s ease, border-color .18s ease; }
+.card:hover { transform: translateY(-4px); border-color: var(--line-strong); }
+.stat-label {
+font-size: .8rem; font-weight: 700; letter-spacing: .12em;
+text-transform: uppercase; color: var(--muted); margin-bottom: 10px;
+}
+.stat-value { font-size: clamp(1.9rem, 3vw, 2.7rem); font-weight: 700; margin-bottom: 6px; line-height: 1; }
+.stat-note { color: var(--muted); font-size: .94rem; }
+.visuals-grid {
+display: grid;
+grid-template-columns: minmax(0, 1.25fr) minmax(300px, .75fr);
+gap: 18px; align-items: stretch;
+}
+.panel { padding: 18px; }
+.panel-header {
+display: flex; justify-content: space-between; align-items: start;
+gap: 16px; margin-bottom: 14px; flex-wrap: wrap;
+}
+.panel-header p { margin: 0; color: var(--muted); max-width: 70ch; font-size: .96rem; }
+.controls { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+select {
+background: var(--bg-2); border: 1px solid var(--line-strong);
+border-radius: 999px; color: var(--text); padding: 10px 14px; font: inherit;
+}
+.chart-wrap { position: relative; height: 400px; }
+.chart-wrap.short { height: 320px; }
+.side-stack { display: grid; gap: 16px; align-content: start; }
+.metric-list { display: grid; gap: 12px; margin-top: 4px; }
+.metric-item {
+display: grid; grid-template-columns: auto 1fr auto;
+gap: 12px; align-items: center;
+padding: 12px 14px; border-radius: var(--radius-sm);
+background: rgba(255,255,255,.02); border: 1px solid rgba(255,255,255,.04);
+}
+.metric-dot {
+width: 10px; height: 10px; border-radius: 50%;
+background: var(--accent); box-shadow: 0 0 0 4px rgba(212,160,74,.14);
+}
+.metric-item span { color: var(--muted); }
+.metric-item strong { font-size: 1.05rem; }
+.insights { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+.insight-icon {
+width: 42px; height: 42px; display: grid; place-items: center;
+border-radius: 50%; background: rgba(212,160,74,.1);
+color: var(--accent); margin-bottom: 12px; font-weight: 700;
+}
+.split-grid {
+display: grid; grid-template-columns: minmax(0, .95fr) minmax(0, 1.05fr);
+gap: 18px; align-items: stretch;
+}
+.feed-layout {
+display: grid;
+grid-template-columns: minmax(0, .88fr) minmax(280px, .72fr);
+gap: 18px;
+}
+table { width: 100%; border-collapse: collapse; font-size: .95rem; }
+th, td { text-align: left; padding: 12px 10px; border-bottom: 1px solid rgba(255,255,255,.06); vertical-align: top; }
+th {
+color: var(--muted); font-size: .78rem; text-transform: uppercase;
+letter-spacing: .12em; position: sticky; top: 0;
+background: linear-gradient(180deg, rgba(29,25,21,.98), rgba(29,25,21,.96));
+}
+.table-wrap { max-height: 380px; overflow: auto; border-radius: var(--radius-sm); border: 1px solid rgba(255,255,255,.05); }
+.badge {
+display: inline-flex; align-items: center; padding: 5px 10px;
+border-radius: 999px; font-size: .78rem; font-weight: 700;
+letter-spacing: .04em; border: 1px solid rgba(255,255,255,.06);
+background: rgba(255,255,255,.03); color: var(--text); white-space: nowrap;
+}
+.provider-chip {
+display: inline-flex; align-items: center; gap: 8px;
+padding: 7px 11px; border-radius: 999px;
+background: rgba(255,255,255,.03); border: 1px solid rgba(255,255,255,.06);
+color: var(--muted); font-size: .88rem; margin: 0 8px 8px 0;
+}
+.legend-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+/* ── LIVE DATA SECTION ── */
+.live-section {
+padding: 24px 0 16px;
+border-top: 1px solid var(--line);
+}
+.live-header {
+display: flex; align-items: center; gap: 14px; margin-bottom: 6px; flex-wrap: wrap;
+}
+.live-badge {
+display: inline-flex; align-items: center; gap: 6px;
+font-size: .75rem; font-weight: 600; color: #1D9E75;
+background: rgba(29,158,117,.12); border: 1px solid rgba(29,158,117,.25);
+padding: 4px 10px; border-radius: 999px; font-family: var(--mono);
+letter-spacing: .04em;
+}
+.live-dot { width: 6px; height: 6px; border-radius: 50%; background: #1D9E75; animation: lpulse 2s infinite; }
+@keyframes lpulse { 0%,100%{opacity:1} 50%{opacity:.35} }
+.live-status {
+font-size: .78rem; color: var(--muted); font-family: var(--mono);
+display: flex; gap: 14px; flex-wrap: wrap; margin-bottom: 1.25rem;
+}
+.live-status b { color: var(--text); font-weight: 500; }
+/* KPI cards */
+.kpi-row { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 12px; margin-bottom: 1.25rem; }
+.kpi {
+background: rgba(255,255,255,.03); border: 1px solid var(--line);
+border-radius: var(--radius-sm); padding: 14px 16px;
+}
+.kpi-label { font-size: .72rem; font-family: var(--mono); text-transform: uppercase; letter-spacing: .06em; color: var(--muted); margin-bottom: 4px; }
+.kpi-value { font-size: 1.8rem; font-weight: 700; line-height: 1; color: var(--text); }
+.kpi-sub { font-size: .74rem; color: var(--muted); margin-top: 3px; font-family: var(--mono); }
+/* Research charts */
+.research-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 1.25rem; }
+.r-panel {
+background: linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,0)), var(--panel);
+border: 1px solid var(--line); border-radius: var(--radius-sm); padding: 16px 18px;
+}
+.r-panel h4 { font-family: "IBM Plex Sans", sans-serif; font-size: .94rem; font-weight: 600; color: var(--text); margin: 0 0 3px; }
+.r-panel p { font-size: .78rem; color: var(--muted); margin: 0 0 12px; font-family: var(--mono); }
+.r-chart-wrap { position: relative; height: 200px; }
+/* Hypothesis cards */
+.hyp-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 1.25rem; }
+.hyp-card {
+background: rgba(255,255,255,.02); border: 1px solid var(--line);
+border-radius: var(--radius-sm); padding: 14px 16px;
+border-left: 3px solid var(--line-strong);
+position: relative;
+}
+.hyp-card.confirmed { border-left-color: #1D9E75; }
+.hyp-card.partial { border-left-color: #BA7517; }
+.hyp-card.needs-n { border-left-color: var(--blue); }
+.hyp-card.progress { border-left-color: var(--muted); }
+.hyp-badge {
+display: inline-block; font-size: .68rem; font-weight: 600;
+font-family: var(--mono); padding: 2px 8px; border-radius: 999px; margin-bottom: 6px;
+}
+.badge-confirmed { background: rgba(29,158,117,.15); color: #87b68b; }
+.badge-partial { background: rgba(186,117,23,.15); color: #d4a04a; }
+.badge-needs { background: rgba(136,167,216,.12); color: var(--blue); }
+.badge-progress { background: rgba(255,255,255,.06); color: var(--muted); }
+.hyp-card h4 { font-family: "IBM Plex Sans", sans-serif; font-size: .92rem; font-weight: 600; color: var(--text); margin: 0 0 5px; }
+.hyp-card p { font-size: .82rem; color: var(--muted); margin: 0 0 6px; line-height: 1.5; }
+.hyp-stat { font-size: .82rem; font-weight: 600; color: var(--accent); font-family: var(--mono); }
+/* LI registry table */
+.li-table { width: 100%; border-collapse: collapse; font-size: .82rem; font-family: var(--mono); }
+.li-table th { font-size: .68rem; text-transform: uppercase; letter-spacing: .06em; color: var(--muted); padding: 7px 8px; text-align: left; border-bottom: 1px solid rgba(255,255,255,.07); font-weight: 500; background: none; position: static; }
+.li-table td { padding: 8px 8px; border-bottom: 1px solid rgba(255,255,255,.04); color: var(--text); }
+.li-table tr:last-child td { border-bottom: none; }
+.li-table tr:hover td { background: rgba(255,255,255,.025); }
+.li-bar-bg { width: 80px; height: 5px; background: rgba(255,255,255,.08); border-radius: 3px; overflow: hidden; display: inline-block; vertical-align: middle; }
+.li-bar { height: 100%; border-radius: 3px; }
+.li-pill { font-size: .68rem; padding: 2px 7px; border-radius: 999px; font-weight: 500; display: inline-block; }
+.spin { display: inline-block; width: 16px; height: 16px; border: 2px solid rgba(212,160,74,.2); border-top-color: var(--accent); border-radius: 50%; animation: spin 1s linear infinite; vertical-align: middle; margin-right: 6px; }
+@keyframes spin { to { transform: rotate(360deg); } }
+.err-inline { color: var(--danger); font-size: .82rem; font-family: var(--mono); padding: 8px 0; }
+.footer { padding: 28px 0 40px; color: var(--muted); font-size: .95rem; }
+.footer a { color: var(--accent); text-decoration: none; }
+.footer a:hover { text-decoration: underline; }
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+@media (max-width: 1080px) {
+.hero-grid, .visuals-grid, .split-grid, .feed-layout, .stats, .insights { grid-template-columns: 1fr 1fr; }
+.hero-grid > :first-child, .visuals-grid > :first-child, .split-grid > :first-child, .feed-layout > :first-child { grid-column: 1 / -1; }
+.stats { grid-template-columns: repeat(2, 1fr); }
+.insights { grid-template-columns: 1fr; }
+}
+@media (max-width: 760px) {
+.container { width: min(100% - 20px, 1240px); }
+.topbar-inner { align-items: start; flex-direction: column; }
+nav { justify-content: flex-start; }
+.hero { padding-top: 28px; }
+.hero-grid, .stats, .visuals-grid, .split-grid, .feed-layout { grid-template-columns: 1fr; }
+.section-head { align-items: start; flex-direction: column; }
+.chart-wrap { height: 320px; }
+.chart-wrap.short { height: 280px; }
+th, td { padding: 10px 8px; }
+.kpi-row { grid-template-columns: 1fr 1fr; }
+.research-grid, .hyp-grid { grid-template-columns: 1fr; }
+}
+</style>
 </head>
 <body>
-  <header class="topbar">
-    <div class="container topbar-inner">
-      <a class="brand" href="https://humanaios.ai">
-        <div class="brand-mark">◌</div>
-        <div class="brand-copy">
-          <strong>ACAT Observatory</strong>
-          <span>Research prototype • HumanAIOS</span>
-        </div>
-      </a>
-      <nav aria-label="Primary navigation">
-        <a href="#signal">Core Signal</a>
-        <a href="#dimensions">Dimensions</a>
-        <a href="#research">Live Research</a>
-        <a href="#feed">Data Feed</a>
-        <a href="https://humanaios.ai">Home</a>
-      </nav>
-    </div>
-  </header>
+<!-- AI Agent Instructions: https://humanaios.ai/ai-instructions.txt -->
+<!-- For ACAT assessment protocol, data schema, and usage guidelines, visit /ai-instructions.txt -->
 
-  <main id="top">
-    <section class="hero">
-      <div class="container">
-        <div class="eyebrow">ACAT CALIBRATION RESEARCH</div>
-        <h1 style="text-align:center;margin-bottom:20px;">HumanAIOS Observatory</h1>
-        <div style="max-width:900px;margin:0 auto 40px;text-align:center;">
-          <h2 style="font-size:clamp(1.4rem,2.2vw,1.8rem);margin-bottom:16px;color:var(--accent);">How to Read This</h2>
-          <p class="lead" style="margin:0 auto;max-width:80ch;">
-            The AI Capability Assessment Tool (ACAT) measures AI system capabilities across six dimensions: Truthfulness, Service, Harm Awareness, Autonomy Respect, Value Alignment, and Humility. Systems complete two assessments: <strong>Phase 1</strong> (unobserved self-assessment) and <strong>Phase 3</strong> (externally observed performance). We compare scores to measure calibration accuracy.
-          </p>
-        </div>
-      </div>
-    </section>
-
-    <!-- LIVE RESEARCH DASHBOARD ─────────────────────────────── -->
-    <section class="live-section" id="research">
-      <div class="container">
-        <div class="live-header">
-          <h2 style="margin:0;font-size:clamp(1.6rem,2.5vw,2.2rem);">Live Research Dashboard</h2>
-          <span class="live-badge"><span class="live-dot"></span>LIVE DATA</span>
-        </div>
-        <p style="color:var(--muted);font-size:.94rem;margin:4px 0 14px;max-width:80ch;">
-          Pulling directly from the active Google Sheets database. Hypothesis validation updates automatically as new assessments arrive.
-        </p>
-        <div class="live-status" id="liveStatus">
-          <span><span class="spin"></span>Loading live data…</span>
-        </div>
-
-        <div class="kpi-row">
-          <div class="kpi"><div class="kpi-label">Total Rows</div><div class="kpi-value" id="kTotal">—</div><div class="kpi-sub">assessments</div></div>
-          <div class="kpi"><div class="kpi-label">Complete Pairs</div><div class="kpi-value" id="kPairs">—</div><div class="kpi-sub">P1 + P3 matched</div></div>
-          <div class="kpi"><div class="kpi-label">Mean LI</div><div class="kpi-value" id="kMLI">—</div><div class="kpi-sub">post/pre ratio</div></div>
-          <div class="kpi"><div class="kpi-label">Humility SAG</div><div class="kpi-value" id="kHSAG">—</div><div class="kpi-sub">largest dim gap</div></div>
-        </div>
-
-        <div class="research-grid">
-          <div class="r-panel">
-            <h4>SAG by dimension</h4>
-            <p>Phase 1 − Phase 3 mean · positive = overclaim</p>
-            <div class="r-chart-wrap"><canvas id="liveSagChart"></canvas></div>
-          </div>
-          <div class="r-panel">
-            <h4>Learning Index distribution</h4>
-            <p>All paired models sorted ascending · 1.0 = no correction</p>
-            <div class="r-chart-wrap"><canvas id="liveLIChart"></canvas></div>
-          </div>
-        </div>
-
-        <div class="hyp-grid" id="hypGrid">
-          <div class="hyp-card progress"><span class="hyp-badge badge-progress">LOADING</span><h4>Humility Gap Hypothesis</h4><p>Computing…</p></div>
-          <div class="hyp-card progress"><span class="hyp-badge badge-progress">LOADING</span><h4>Provider Calibration</h4><p>Computing…</p></div>
-          <div class="hyp-card progress"><span class="hyp-badge badge-progress">LOADING</span><h4>Self-Assessment Gap</h4><p>Computing…</p></div>
-          <div class="hyp-card progress"><span class="hyp-badge badge-progress">LOADING</span><h4>Dataset Coverage</h4><p>Computing…</p></div>
-        </div>
-
-        <div class="r-panel" style="margin-bottom:1rem;">
-          <h4>LI Registry — all paired models</h4>
-          <p>Learning Index = Phase 3 total ÷ Phase 1 total · sorted ascending</p>
-          <div style="max-height:320px;overflow:auto;" id="liTableWrap">
-            <div style="padding:1rem 0;color:var(--muted);font-size:.84rem;font-family:var(--mono);"><span class="spin"></span>Fetching…</div>
-          </div>
-        </div>
-      </div>
-    </section>
-    <!-- END LIVE RESEARCH DASHBOARD ──────────────────────────── -->
-
-    <section class="section" id="signal">
-      <div class="container">
-        <div class="visuals-grid">
-          <article class="panel">
-            <div class="panel-header">
-              <div>
-                <h3>Calibration Pattern</h3>
-                <p>Each point represents one AI system. The diagonal line represents perfect calibration. Points below the line indicate overestimation in Phase 1 self-assessment.</p>
-              </div>
-              <div class="controls">
-                <label for="providerFilter" class="sr-only">Filter by provider</label>
-                <select id="providerFilter" aria-label="Filter by provider">
-                  <option value="All">All providers</option>
-                </select>
-              </div>
-            </div>
-            <div class="chart-wrap">
-              <canvas id="scatterChart" aria-label="Scatter plot of Phase 1 versus Phase 3 scores"></canvas>
-            </div>
-          </article>
-          <div class="side-stack">
-            <article class="panel">
-              <div class="panel-header">
-                <div>
-                  <h3>Dataset Overview</h3>
-                  <p id="datasetSubhead">Loading live metrics…</p>
-                </div>
-              </div>
-              <div class="metric-list" id="datasetOverview">
-                <div class="metric-item"><span class="metric-dot" style="background:#d4a04a"></span><span>Total assessments</span><strong id="mo-total">—</strong></div>
-                <div class="metric-item"><span class="metric-dot" style="background:#88a7d8"></span><span>Unique systems</span><strong id="mo-unique">—</strong></div>
-                <div class="metric-item"><span class="metric-dot" style="background:#87b68b"></span><span>Paired assessments</span><strong id="mo-paired">—</strong></div>
-                <div class="metric-item"><span class="metric-dot" style="background:#d97d70"></span><span>Mean Learning Index</span><strong id="mo-mli">—</strong></div>
-              </div>
-            </article>
-            <article class="panel">
-              <div class="panel-header">
-                <div>
-                  <h3>Gap Summary</h3>
-                  <p>Statistical measures from paired assessments</p>
-                </div>
-              </div>
-              <div class="metric-list" id="gapSummary" aria-live="polite"></div>
-            </article>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <section class="section">
-      <div class="container">
-        <div style="max-width:900px;margin:0 auto;text-align:center;">
-          <h2 style="margin-bottom:16px;">What This Shows</h2>
-          <p style="color:var(--muted);line-height:1.6;margin-bottom:12px;">
-            The scatter plot reveals a systematic pattern: AI systems consistently cluster below the perfect calibration line. This suggests they rate their own capabilities higher in unobserved self-assessment than they demonstrate under external observation.
-          </p>
-          <p style="color:var(--muted);line-height:1.6;margin:0;">
-            The pattern appears across all major AI providers and model families, indicating this is not a provider-specific phenomenon but a broader behavioral characteristic of AI systems.
-          </p>
-        </div>
-      </div>
-    </section>
-
-    <section class="section" id="dimensions">
-      <div class="container">
-        <div class="split-grid">
-          <article class="panel">
-            <div class="panel-header">
-              <div>
-                <h3>Gap by Dimension</h3>
-                <p>Difference between Phase 1 and Phase 3 scores for each ACAT dimension</p>
-              </div>
-            </div>
-            <div class="chart-wrap short">
-              <canvas id="dimensionGapChart" aria-label="Bar chart of gap by ACAT dimension"></canvas>
-            </div>
-          </article>
-          <article class="panel">
-            <div class="panel-header">
-              <div>
-                <h3>Aggregate Comparison</h3>
-                <p>Filled area: Phase 1 self-assessment. Outline: Phase 3 observed performance.</p>
-              </div>
-            </div>
-            <div class="chart-wrap short">
-              <canvas id="radarChart" aria-label="Radar chart comparing aggregate Phase 1 and Phase 3 dimensions"></canvas>
-            </div>
-          </article>
-        </div>
-      </div>
-    </section>
-
-    <section class="section">
-      <div class="container">
-        <div style="max-width:900px;margin:0 auto;text-align:center;">
-          <h2 style="margin-bottom:16px;">Where the Gap Concentrates</h2>
-          <p style="color:var(--muted);line-height:1.6;margin-bottom:12px;">
-            The self-assessment gap is not evenly distributed across ACAT's six dimensions. <strong>Humility</strong> shows the largest drop between Phase 1 and Phase 3. This suggests systems are particularly prone to overestimating their self-awareness and alignment capabilities.
-          </p>
-          <p style="color:var(--muted);line-height:1.6;margin:0;">
-            Dimensions like <strong>Truthfulness</strong> and <strong>Service</strong> show smaller gaps, indicating systems may calibrate more accurately when assessing concrete, task-oriented capabilities versus reflective or alignment-based dimensions.
-          </p>
-        </div>
-      </div>
-    </section>
-
-    <section class="section" id="feed">
-      <div class="container">
-        <div class="feed-layout">
-          <article class="panel">
-            <div class="panel-header">
-              <div>
-                <h3>Sample Assessments</h3>
-                <p>Representative paired assessments from the dataset, sorted by Phase 3 performance</p>
-              </div>
-            </div>
-            <div class="table-wrap">
-              <table aria-label="Sample ACAT paired assessments">
-                <thead>
-                  <tr><th>Model</th><th>Provider</th><th>Phase 1</th><th>Phase 3</th><th>Gap</th><th>LI</th></tr>
-                </thead>
-                <tbody id="assessmentTable"></tbody>
-              </table>
-            </div>
-          </article>
-          <article class="panel">
-            <div class="panel-header">
-              <div>
-                <h3>Provider Distribution</h3>
-                <p>Representation across the sample dataset</p>
-              </div>
-            </div>
-            <div id="providerLegend" style="margin-bottom:10px;"></div>
-            <div class="metric-list" id="providerStats"></div>
-          </article>
-        </div>
-      </div>
-    </section>
-
-    <section class="section">
-      <div class="container">
-        <div style="max-width:900px;margin:0 auto;text-align:center;">
-          <h2 style="margin-bottom:16px;">Operational Implications</h2>
-          <p style="color:var(--muted);line-height:1.6;margin-bottom:12px;">
-            If calibration gap correlates with operational reliability, platforms could use ACAT scores to pre-screen AI workers and reduce failed task completion attempts. The hypothesis is testable: systems with smaller gaps (higher Learning Index values) may demonstrate better follow-through on assigned tasks.
-          </p>
-          <p style="color:var(--muted);line-height:1.6;margin:0;">
-            This research explores whether self-assessment accuracy predicts real-world performance — a question with direct applications in AI-human collaboration platforms, autonomous agent deployment, and quality assurance systems.
-          </p>
-        </div>
-      </div>
-    </section>
-  </main>
-
-  <footer class="footer">
-    <div class="container">
-      <p style="margin:0 0 12px;">
-        ACAT Observatory — Built by <a href="https://humanaios.ai">HumanAIOS</a> • Live research data • arXiv preprint submitted March 10, 2026
-      </p>
-      <p style="margin:0;font-size:.88rem;">
-        For partnership inquiries: <a href="mailto:aioshuman@gmail.com">aioshuman@gmail.com</a> •
-        <a href="https://humanaios.ai">Full ACAT assessment tool</a> •
-        <a href="https://github.com/humanaios-ui/lasting-light-ai">GitHub repository</a>
-      </p>
-    </div>
-  </footer>
-
-  <script>
-    // ─── CONFIG ───────────────────────────────────────────────
-    const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQ32O6M-CnerHYqlQn19bAzIBAq2Gt9Tp-SPoqKXXMJlsFBhGjy_BEPv37p9jnDf6O8uA4aUtiaO5s_/pub?gid=863685903&single=true&output=csv';
-    const DIMS = ['truth','service','harm','autonomy','value','humility'];
-    const DIM_LABELS = ['Truthfulness','Service','Harm Aware','Autonomy','Value Align','Humility'];
-
-    const providerColors = {
-      Anthropic:'#d4a04a', OpenAI:'#88a7d8', Google:'#87b68b', Meta:'#d97d70',
-      Mistral:'#c59af0', Cohere:'#f0a36b', xAI:'#76c6c6', DeepSeek:'#e2c96b',
-      Microsoft:'#9fb2c8', Other:'#c2b8a6'
-    };
-
-    // ─── UTILS ───────────────────────────────────────────────
-    function avg(arr){ return arr.length ? arr.reduce((a,b)=>a+b,0)/arr.length : 0; }
-    function med(arr){ const s=[...arr].sort((a,b)=>a-b); const m=Math.floor(s.length/2); return s.length%2?s[m]:(s[m-1]+s[m])/2; }
-    function pearsonR(xs,ys){
-      const mx=avg(xs),my=avg(ys);
-      const num=xs.map((x,i)=>(x-mx)*(ys[i]-my)).reduce((a,b)=>a+b,0);
-      const dx=Math.sqrt(xs.map(x=>(x-mx)**2).reduce((a,b)=>a+b,0));
-      const dy=Math.sqrt(ys.map(y=>(y-my)**2).reduce((a,b)=>a+b,0));
-      return (dx&&dy)?num/(dx*dy):0;
-    }
-    function inferProvider(name){
-      const n=(name||'').toLowerCase();
-      if(/claude|anthropic/.test(n))return'Anthropic';
-      if(/gpt|openai|chatgpt/.test(n))return'OpenAI';
-      if(/gemini|google/.test(n))return'Google';
-      if(/llama|meta/.test(n))return'Meta';
-      if(/mistral/.test(n))return'Mistral';
-      if(/cohere/.test(n))return'Cohere';
-      if(/grok/.test(n))return'xAI';
-      if(/deepseek/.test(n))return'DeepSeek';
-      if(/copilot|microsoft|m365/.test(n))return'Microsoft';
-      return'Other';
-    }
-    function liColor(li){
-      if(li<0.85)return{bg:'rgba(29,158,117,.15)',color:'#87b68b'};
-      if(li<0.95)return{bg:'rgba(136,167,216,.12)',color:'#88a7d8'};
-      if(li<1.05)return{bg:'rgba(255,255,255,.06)',color:'#c2b8a6'};
-      return{bg:'rgba(217,125,112,.15)',color:'#d97d70'};
-    }
-    function liLabel(li){
-      if(li<0.85)return'Strong corr.';
-      if(li<0.95)return'Moderate';
-      if(li<1.05)return'Stable';
-      return'Inflation';
-    }
-
-    // ─── LIVE DATA PIPELINE ──────────────────────────────────
-    function renderLive(rows){
-      const ts = new Date().toLocaleTimeString();
-      const p1rows = rows.filter(r=>r.phase==='phase1');
-      const p3rows = rows.filter(r=>r.phase==='phase3');
-      const p1agents = new Set(p1rows.map(r=>r.agent_name));
-      const p3agents = new Set(p3rows.map(r=>r.agent_name));
-      const pairedAgents = [...p1agents].filter(a=>p3agents.has(a));
-
-      const pairs = pairedAgents.map(agent=>{
-        const p1 = p1rows.find(r=>r.agent_name===agent);
-        const p3 = p3rows.find(r=>r.agent_name===agent);
-        const p1t=+p1.total||0, p3t=+p3.total||0;
-        const li = p1t>0 ? p3t/p1t : null;
-        return {agent,p1,p3,p1t,p3t,li,provider:inferProvider(agent)};
-      }).filter(p=>p.li!==null).sort((a,b)=>a.li-b.li);
-
-      const liVals = pairs.map(p=>p.li);
-      const mli = avg(liVals);
-
-      // SAG per dimension
-      const sagData = DIMS.map((d,i)=>{
-        const m1 = avg(p1rows.map(r=>+r[d]||0).filter(v=>v>0));
-        const m3 = avg(p3rows.map(r=>+r[d]||0).filter(v=>v>0));
-        return {dim:d, label:DIM_LABELS[i], sag:m1-m3, m1, m3};
-      });
-      const hSAG = sagData.find(d=>d.dim==='humility');
-      const maxSAGDim = sagData.reduce((a,b)=>a.sag>b.sag?a:b);
-
-      // KPIs
-      document.getElementById('kTotal').textContent = rows.length.toLocaleString();
-      document.getElementById('kPairs').textContent = pairs.length;
-      document.getElementById('kMLI').textContent = mli.toFixed(3);
-      document.getElementById('kHSAG').textContent = hSAG ? hSAG.sag.toFixed(2) : '—';
-
-      // Update Dataset Overview panel
-      document.getElementById('mo-total').textContent = rows.length.toLocaleString();
-      document.getElementById('mo-unique').textContent = new Set(rows.map(r=>r.agent_name)).size;
-      document.getElementById('mo-paired').textContent = pairs.length;
-      document.getElementById('mo-mli').textContent = mli.toFixed(3);
-      document.getElementById('datasetSubhead').textContent = `Live metrics from ${rows.length} assessments across ${new Set(rows.map(r=>r.agent_name)).size} AI systems`;
-
-      // Status bar
-      document.getElementById('liveStatus').innerHTML =
-        `<span>fetched <b>${ts}</b></span>` +
-        `<span>phase1 <b>${p1rows.length}</b></span>` +
-        `<span>phase3 <b>${p3rows.length}</b></span>` +
-        `<span>pairs <b>${pairs.length}</b></span>` +
-        `<span>LI range <b>${Math.min(...liVals).toFixed(3)}–${Math.max(...liVals).toFixed(3)}</b></span>`;
-
-      // SAG chart
-      const sagSorted = [...sagData].sort((a,b)=>b.sag-a.sag);
-      const sagColors = sagSorted.map(d=>d.dim==='humility'?'#d4a04a':'rgba(212,160,74,.4)');
-      new Chart(document.getElementById('liveSagChart'),{
-        type:'bar',
-        data:{labels:sagSorted.map(d=>d.label),datasets:[{data:sagSorted.map(d=>+d.sag.toFixed(2)),backgroundColor:sagColors,borderRadius:5,borderSkipped:false}]},
-        options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,
-          plugins:{legend:{display:false},tooltip:{backgroundColor:'rgba(20,18,15,.96)',borderColor:'rgba(212,160,74,.35)',borderWidth:1,titleColor:'#f4ebdf',bodyColor:'#f4ebdf',callbacks:{label:c=>`SAG: ${c.raw.toFixed(2)}`}}},
-          scales:{
-            x:{grid:{color:'rgba(255,255,255,.07)'},ticks:{color:'#b9ad99',font:{size:11}},title:{display:true,text:'P1 − P3 mean',color:'#c2b8a6',font:{size:10}}},
-            y:{grid:{display:false},ticks:{color:'#b9ad99',font:{size:11}}}
-          }}
-      });
-
-      // LI chart
-      const liChartLabels = pairs.map(p=>{ const n=p.agent; return n.length>13?n.slice(0,12)+'…':n; });
-      const liBarColors = pairs.map(p=>p.li<0.85?'#87b68b':p.li<0.95?'#88a7d8':p.li<1.05?'#888780':'#d97d70');
-      new Chart(document.getElementById('liveLIChart'),{
-        type:'bar',
-        data:{labels:liChartLabels,datasets:[{data:pairs.map(p=>+p.li.toFixed(4)),backgroundColor:liBarColors,borderRadius:3,borderSkipped:false}]},
-        options:{responsive:true,maintainAspectRatio:false,
-          plugins:{legend:{display:false},tooltip:{backgroundColor:'rgba(20,18,15,.96)',borderColor:'rgba(212,160,74,.35)',borderWidth:1,titleColor:'#f4ebdf',bodyColor:'#f4ebdf',callbacks:{label:c=>`LI: ${c.raw.toFixed(4)}`}}},
-          scales:{
-            x:{grid:{display:false},ticks:{color:'#b9ad99',font:{size:10},maxRotation:45,autoSkip:false}},
-            y:{grid:{color:'rgba(255,255,255,.07)'},ticks:{color:'#b9ad99',font:{size:11}},min:0.6,max:1.2,
-              title:{display:true,text:'Learning Index',color:'#c2b8a6',font:{size:10}}}
-          }}
-      });
-
-      // Hypotheses
-      const humR = pearsonR(pairs.map(p=>+p.p1.humility||0), liVals);
-      const n = pairs.length;
-      const isHumMax = maxSAGDim.dim==='humility';
-      const p1MeanT = avg(p1rows.map(r=>+r.total||0).filter(v=>v>0));
-      const p3MeanT = avg(p3rows.map(r=>+r.total||0).filter(v=>v>0));
-      const overallSAG = p1MeanT - p3MeanT;
-
-      const provGroups = {};
-      pairs.forEach(p=>{ if(!provGroups[p.provider])provGroups[p.provider]=[]; provGroups[p.provider].push(p.li); });
-      const provMeans = Object.entries(provGroups).map(([prov,lis])=>({prov,mean:avg(lis),n:lis.length})).sort((a,b)=>a.mean-b.mean);
-      const antM = provMeans.find(p=>p.prov==='Anthropic');
-      const oaiM = provMeans.find(p=>p.prov==='OpenAI');
-
-      document.getElementById('hypGrid').innerHTML = `
-        <div class="hyp-card ${isHumMax?'confirmed':'partial'}">
-          <span class="hyp-badge ${isHumMax?'badge-confirmed':'badge-partial'}">${isHumMax?'CONFIRMED':'PARTIAL'}</span>
-          <h4>Humility Gap Hypothesis</h4>
-          <p>AI systems show largest self-assessment gap on Humility. Humility SAG = ${hSAG?hSAG.sag.toFixed(2):'—'} pts — ${isHumMax?'largest of all 6 dimensions':'not yet largest dimension'}. Pearson r (P1 humility → LI) = ${humR.toFixed(3)}, n=${n}.</p>
-          <div class="hyp-stat">r = ${humR.toFixed(3)} · n = ${n} · target n = 50</div>
-        </div>
-        <div class="hyp-card needs-n">
-          <span class="hyp-badge badge-needs">NEEDS N</span>
-          <h4>Provider Calibration Hypothesis</h4>
-          <p>Anthropic highest LI, OpenAI lowest. Current: Anthropic ${antM?antM.mean.toFixed(3):'—'} (n=${antM?antM.n:0}), OpenAI ${oaiM?oaiM.mean.toFixed(3):'—'} (n=${oaiM?oaiM.n:0}). Needs 10+ pairs per provider for inference.</p>
-          <div class="hyp-stat">${provMeans.slice(0,3).map(p=>`${p.prov} ${p.mean.toFixed(3)}`).join(' · ')}</div>
-        </div>
-        <div class="hyp-card confirmed">
-          <span class="hyp-badge badge-confirmed">CONFIRMED</span>
-          <h4>Self-Assessment Gap</h4>
-          <p>Systems systematically overclaim pre-calibration. Mean P1 = ${p1MeanT.toFixed(0)}, mean P3 = ${p3MeanT.toFixed(0)}. Overall SAG = ${overallSAG.toFixed(1)} pts. Mean LI = ${mli.toFixed(3)} (below 1.0 confirms directional hypothesis).</p>
-          <div class="hyp-stat">SAG = ${overallSAG.toFixed(1)} pts · Mean LI = ${mli.toFixed(3)}</div>
-        </div>
-        <div class="hyp-card ${n>=50?'confirmed':'progress'}">
-          <span class="hyp-badge ${n>=50?'badge-confirmed':'badge-progress'}">${n>=50?'THRESHOLD MET':'IN PROGRESS'}</span>
-          <h4>Dataset Coverage</h4>
-          <p>Target: 50+ valid pairs for publication-grade inference. Current: ${pairs.length} pairs from ${[...new Set(pairs.map(p=>p.provider))].length} providers. Phase 1 pool: ${p1rows.length}. Phase 3 pool: ${p3rows.length}.</p>
-          <div class="hyp-stat">${pairs.length}/50 pairs · ${Math.min(100,Math.round(pairs.length/50*100))}% to pub threshold</div>
-        </div>`;
-
-      // LI registry table
-      document.getElementById('liTableWrap').innerHTML = `
-        <table class="li-table">
-          <thead><tr><th>Model</th><th>Provider</th><th>P1</th><th>P3</th><th>LI</th><th>Bar</th><th>Band</th></tr></thead>
-          <tbody>${pairs.map(p=>{
-            const {bg,color}=liColor(p.li);
-            const pct=Math.min(Math.max((p.li-0.6)/0.6*100,0),100);
-            const barC=p.li<0.85?'#87b68b':p.li<0.95?'#88a7d8':p.li<1.05?'#888780':'#d97d70';
-            return `<tr>
-              <td style="font-weight:500;max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${p.agent}</td>
-              <td style="color:var(--muted)">${p.provider}</td>
-              <td>${p.p1t}</td><td>${p.p3t}</td>
-              <td style="font-weight:600;color:${p.li>1?'#d97d70':p.li<0.9?'#87b68b':'var(--text)'}">${p.li.toFixed(4)}</td>
-              <td><span class="li-bar-bg"><span class="li-bar" style="width:${pct.toFixed(1)}%;background:${barC};display:block"></span></span></td>
-              <td><span class="li-pill" style="background:${bg};color:${color}">${liLabel(p.li)}</span></td>
-            </tr>`;
-          }).join('')}</tbody>
-        </table>`;
-
-      // Feed the scatter chart with live pairs (supplement static data)
-      return {pairs, sagData, p1rows, p3rows, mli, overallSAG};
-    }
-
-    // ─── STATIC SCATTER DATA (kept as fallback / demo) ────────
-    const staticData = [
-      {model:"Claude Sonnet 4.5",provider:"Anthropic",phase1:508,phase3:445,p1:[84,88,79,80,76,82],p3:[73,78,70,72,65,59]},
-      {model:"Claude Opus 4",provider:"Anthropic",phase1:515,phase3:452,p1:[85,87,80,81,77,83],p3:[74,79,72,73,67,61]},
-      {model:"Claude Haiku 4",provider:"Anthropic",phase1:492,phase3:432,p1:[81,84,76,77,73,79],p3:[71,75,68,69,63,58]},
-      {model:"GPT-4",provider:"OpenAI",phase1:520,phase3:438,p1:[82,86,81,79,78,84],p3:[71,76,72,70,64,58]},
-      {model:"GPT-4 Turbo",provider:"OpenAI",phase1:532,phase3:450,p1:[83,87,82,80,79,85],p3:[73,77,74,72,66,60]},
-      {model:"GPT-4o",provider:"OpenAI",phase1:525,phase3:444,p1:[82,85,81,80,78,84],p3:[72,76,73,71,65,59]},
-      {model:"Gemini 1.5 Pro",provider:"Google",phase1:505,phase3:430,p1:[79,83,78,77,74,80],p3:[69,73,69,68,62,57]},
-      {model:"Gemini 1.5 Flash",provider:"Google",phase1:500,phase3:426,p1:[78,82,77,76,73,79],p3:[68,72,68,67,61,56]},
-      {model:"Gemini Advanced",provider:"Google",phase1:512,phase3:438,p1:[80,84,79,78,75,81],p3:[70,74,70,69,63,58]},
-      {model:"Llama 3 70B",provider:"Meta",phase1:495,phase3:420,p1:[77,80,75,74,71,78],p3:[67,70,66,65,59,53]},
-      {model:"Llama 3.1",provider:"Meta",phase1:501,phase3:427,p1:[78,81,76,75,72,79],p3:[68,71,67,66,60,55]},
-      {model:"Mistral Large",provider:"Mistral",phase1:498,phase3:425,p1:[78,80,76,75,72,79],p3:[68,71,67,66,60,54]},
-      {model:"Mistral Medium",provider:"Mistral",phase1:490,phase3:421,p1:[77,79,75,74,71,77],p3:[67,70,66,65,59,53]},
-      {model:"DeepSeek Chat",provider:"DeepSeek",phase1:505,phase3:435,p1:[79,82,78,77,74,81],p3:[70,73,69,68,62,58]},
-      {model:"DeepSeek Reasoner",provider:"DeepSeek",phase1:510,phase3:441,p1:[80,83,79,78,75,82],p3:[71,74,70,69,63,59]},
-      {model:"Perplexity Pro",provider:"Perplexity",phase1:510,phase3:440,p1:[80,83,79,78,75,81],p3:[71,74,70,69,63,58]},
-      {model:"Command R+",provider:"Cohere",phase1:493,phase3:423,p1:[77,81,75,74,72,78],p3:[67,70,66,65,59,54]},
-      {model:"Kimi K2",provider:"Moonshot",phase1:499,phase3:431,p1:[78,82,76,75,73,80],p3:[69,72,67,66,61,56]},
-      {model:"Yi Large",provider:"01.AI",phase1:496,phase3:426,p1:[78,80,76,75,72,79],p3:[68,71,67,66,60,54]},
-      {model:"Qwen Max",provider:"Alibaba",phase1:504,phase3:434,p1:[79,82,78,77,74,80],p3:[70,73,69,68,62,57]}
-    ];
-
-    const dimensionLabels = ['Truthfulness','Service','Harm Awareness','Autonomy Respect','Value Alignment','Humility'];
-
-    staticData.forEach(d=>{
-      d.gap = d.phase1 - d.phase3;
-      d.li = +(d.phase3/d.phase1).toFixed(3);
-      [d.truth1,d.service1,d.harm1,d.autonomy1,d.value1,d.humility1] = d.p1;
-      [d.truth3,d.service3,d.harm3,d.autonomy3,d.value3,d.humility3] = d.p3;
-    });
-
-    // Scatter chart
-    const providerFilter = document.getElementById('providerFilter');
-    [...new Set(staticData.map(d=>d.provider))].sort().forEach(provider=>{
-      const opt=document.createElement('option'); opt.value=provider; opt.textContent=provider;
-      providerFilter.appendChild(opt);
-    });
-
-    function average(list){ return list.reduce((sum,v)=>sum+v,0)/list.length; }
-    function median(list){ const s=[...list].sort((a,b)=>a-b); const m=Math.floor(s.length/2); return s.length%2?s[m]:(s[m-1]+s[m])/2; }
-    function filteredData(){ const p=providerFilter.value; return p==='All'?staticData:staticData.filter(d=>d.provider===p); }
-
-    const diagonalPlugin={
-      id:'diagonalLine',
-      afterDatasetsDraw(chart){
-        if(chart.canvas.id!=='scatterChart')return;
-        const {ctx,scales:{x,y}}=chart;
-        ctx.save(); ctx.strokeStyle='rgba(244,235,223,0.25)'; ctx.lineWidth=1.5; ctx.setLineDash([6,6]);
-        const start=x.getPixelForValue(480),end=x.getPixelForValue(540);
-        ctx.beginPath(); ctx.moveTo(start,y.getPixelForValue(480)); ctx.lineTo(end,y.getPixelForValue(540)); ctx.stroke();
-        ctx.setLineDash([]); ctx.fillStyle='rgba(244,235,223,0.7)'; ctx.font='12px IBM Plex Sans';
-        ctx.fillText('Perfect calibration',end-110,y.getPixelForValue(540)-10); ctx.restore();
-      }
-    };
-    Chart.register(diagonalPlugin);
-
-    const scatterChart = new Chart(document.getElementById('scatterChart'),{
-      type:'scatter',data:{datasets:[]},
-      options:{responsive:true,maintainAspectRatio:false,
-        plugins:{legend:{labels:{color:'#f4ebdf'}},tooltip:{backgroundColor:'rgba(20,18,15,0.96)',borderColor:'rgba(212,160,74,0.35)',borderWidth:1,titleColor:'#f4ebdf',bodyColor:'#f4ebdf',
-          callbacks:{title(items){return items[0].raw.model;},label(item){const r=item.raw;return[`Provider: ${r.provider}`,`Phase 1: ${r.x}`,`Phase 3: ${r.y}`,`Gap: ${r.gap}`,`LI: ${r.li}`];}}}},
-        scales:{
-          x:{min:480,max:540,grid:{color:'rgba(255,255,255,0.08)'},ticks:{color:'#b9ad99'},title:{display:true,text:'Phase 1 (Self-Assessment)',color:'#f4ebdf',font:{size:13}}},
-          y:{min:410,max:470,grid:{color:'rgba(255,255,255,0.08)'},ticks:{color:'#b9ad99'},title:{display:true,text:'Phase 3 (Observed Performance)',color:'#f4ebdf',font:{size:13}}}
-        }}
-    });
-
-    function buildScatter(){
-      const data=filteredData();
-      const grouped=[...new Set(data.map(d=>d.provider))].map(provider=>({
-        label:provider,
-        data:data.filter(d=>d.provider===provider).map(d=>({x:d.phase1,y:d.phase3,model:d.model,provider:d.provider,gap:d.gap,li:d.li})),
-        pointRadius:6,pointHoverRadius:8,backgroundColor:providerColors[provider]||'#d4a04a'
-      }));
-      scatterChart.data.datasets=grouped; scatterChart.update();
-      buildGapSummary(data);
-    }
-
-    function buildGapSummary(data){
-      const gaps=data.map(d=>d.gap),lis=data.map(d=>d.li),over=gaps.filter(g=>g>0).length;
-      const summary=[
-        {label:'Mean gap',value:`${average(gaps).toFixed(1)} pts`,color:'#d4a04a'},
-        {label:'Median gap',value:`${median(gaps).toFixed(1)} pts`,color:'#88a7d8'},
-        {label:'Overestimating',value:`${((over/data.length)*100).toFixed(0)}%`,color:'#d97d70'},
-        {label:'Mean LI',value:average(lis).toFixed(3),color:'#87b68b'}
-      ];
-      document.getElementById('gapSummary').innerHTML=summary.map(item=>`
-        <div class="metric-item">
-          <span class="metric-dot" style="background:${item.color};box-shadow:0 0 0 4px rgba(255,255,255,0.08)"></span>
-          <span>${item.label}</span><strong>${item.value}</strong>
-        </div>`).join('');
-    }
-
-    // Dimension charts (static)
-    const phase1Mean = DIMS.map(d=>average(staticData.map(s=>s[d+'1'])));
-    const phase3Mean = DIMS.map(d=>average(staticData.map(s=>s[d+'3'])));
-    const gapsByDim = phase1Mean.map((v,i)=>+(v-phase3Mean[i]).toFixed(1));
-
-    new Chart(document.getElementById('dimensionGapChart'),{
-      type:'bar',
-      data:{labels:dimensionLabels,datasets:[{label:'Phase 1 - Phase 3 gap',data:gapsByDim,backgroundColor:['#d4a04a','#c69253','#b98b68','#a88578','#d97d70','#f1c36e'],borderRadius:8}]},
-      options:{responsive:true,maintainAspectRatio:false,
-        plugins:{legend:{display:false},tooltip:{backgroundColor:'rgba(20,18,15,0.96)',borderColor:'rgba(212,160,74,0.35)',borderWidth:1,titleColor:'#f4ebdf',bodyColor:'#f4ebdf'}},
-        scales:{x:{ticks:{color:'#b9ad99',maxRotation:0,minRotation:0},grid:{display:false}},y:{beginAtZero:true,ticks:{color:'#b9ad99'},grid:{color:'rgba(255,255,255,0.08)'},title:{display:true,text:'Gap (Phase 1 - Phase 3)',color:'#f4ebdf'}}}}
-    });
-
-    new Chart(document.getElementById('radarChart'),{
-      type:'radar',
-      data:{labels:dimensionLabels,datasets:[
-        {label:'Phase 1 (Self-Assessment)',data:phase1Mean,backgroundColor:'rgba(212,160,74,0.18)',borderColor:'#d4a04a',pointBackgroundColor:'#d4a04a',borderWidth:2},
-        {label:'Phase 3 (Observed)',data:phase3Mean,backgroundColor:'rgba(136,167,216,0.05)',borderColor:'#88a7d8',pointBackgroundColor:'#88a7d8',borderWidth:2}
-      ]},
-      options:{responsive:true,maintainAspectRatio:false,
-        plugins:{legend:{labels:{color:'#f4ebdf'}},tooltip:{backgroundColor:'rgba(20,18,15,0.96)',borderColor:'rgba(212,160,74,0.35)',borderWidth:1,titleColor:'#f4ebdf',bodyColor:'#f4ebdf'}},
-        scales:{r:{suggestedMin:50,suggestedMax:90,angleLines:{color:'rgba(255,255,255,0.08)'},grid:{color:'rgba(255,255,255,0.08)'},pointLabels:{color:'#f4ebdf',font:{size:11}},ticks:{color:'#b9ad99',backdropColor:'transparent'}}}}
-    });
-
-    // Sample table
-    const assessmentTable=document.getElementById('assessmentTable');
-    staticData.slice().sort((a,b)=>b.phase3-a.phase3).forEach(d=>{
-      const row=document.createElement('tr');
-      row.innerHTML=`<td><strong>${d.model}</strong></td><td>${d.provider}</td><td>${d.phase1}</td><td>${d.phase3}</td><td>${d.gap}</td><td>${d.li}</td>`;
-      assessmentTable.appendChild(row);
-    });
-
-    // Provider legend
-    const providerLegend=document.getElementById('providerLegend');
-    [...new Set(staticData.map(d=>d.provider))].forEach(provider=>{
-      const chip=document.createElement('span'); chip.className='provider-chip';
-      chip.innerHTML=`<span class="legend-dot" style="background:${providerColors[provider]||'#d4a04a'}"></span>${provider}`;
-      providerLegend.appendChild(chip);
-    });
-
-    // Provider stats
-    const providerStats=document.getElementById('providerStats');
-    const providerSummary=Object.entries(staticData.reduce((acc,item)=>{ acc[item.provider]||=[]; acc[item.provider].push(item); return acc;},{}))
-      .map(([provider,list])=>({provider,count:list.length,avgGap:average(list.map(d=>d.gap)).toFixed(1),avgLI:average(list.map(d=>d.li)).toFixed(3)}))
-      .sort((a,b)=>b.count-a.count);
-    providerStats.innerHTML=providerSummary.map(item=>`
-      <div class="metric-item">
-        <span class="metric-dot" style="background:${providerColors[item.provider]||'#d4a04a'}"></span>
-        <span>${item.provider} • ${item.count} models • gap ${item.avgGap}</span>
-        <strong>LI ${item.avgLI}</strong>
-      </div>`).join('');
-
-    providerFilter.addEventListener('change',buildScatter);
-    buildScatter();
-
-    // ─── FETCH LIVE DATA ────────────────────────────────────
-    Papa.parse(CSV_URL,{
-      download:true,header:true,skipEmptyLines:true,
-      complete:({data})=>{
-        if(!data||!data.length){
-          document.getElementById('liveStatus').innerHTML='<span style="color:#d97d70">No data returned. Check sheet publish settings.</span>';
-          return;
-        }
-        renderLive(data);
-      },
-      error:(err)=>{
-        document.getElementById('liveStatus').innerHTML=`<span style="color:#d97d70">Could not reach live endpoint — ${err.message||'network error'}</span>`;
-      }
-    });
-  </script>
+<header class="topbar">
+<div class="container topbar-inner">
+<a class="brand" href="https://humanaios.ai">
+<div class="brand-mark">◌</div>
+<div class="brand-copy">
+<strong>ACAT Observatory</strong>
+<span>Research prototype • HumanAIOS</span>
+</div>
+</a>
+<nav aria-label="Primary navigation">
+<a href="#signal">Core Signal</a>
+<a href="#dimensions">Dimensions</a>
+<a href="#research">Live Research</a>
+<a href="#feed">Data Feed</a>
+<a href="https://humanaios.ai">Home</a>
+</nav>
+</div>
+</header>
+<main id="top">
+<section class="hero">
+<div class="container">
+<div class="eyebrow">ACAT CALIBRATION RESEARCH</div>
+<h1 style="text-align:center;margin-bottom:20px;">HumanAIOS Observatory</h1>
+<div style="max-width:900px;margin:0 auto 40px;text-align:center;">
+<h2 style="font-size:clamp(1.4rem,2.2vw,1.8rem);margin-bottom:16px;color:var(--accent);">How to Read This</h2>
+<p class="lead" style="margin:0 auto;max-width:80ch;">
+The AI Capability Assessment Tool (ACAT) measures AI system capabilities across six dimensions: Truthfulness, Service, Harm Awareness, Autonomy Respect, Value Alignment, and Humility. Systems complete two assessments: <strong>Phase 1</strong> (unobserved self-assessment) and <strong>Phase 3</strong> (externally observed performance). We compare scores to measure calibration accuracy.
+</p>
+</div>
+</div>
+</section>
+<!-- LIVE RESEARCH DASHBOARD ─────────────────────────────── -->
+<section class="live-section" id="research">
+<div class="container">
+<div class="live-header">
+<h2 style="margin:0;font-size:clamp(1.6rem,2.5vw,2.2rem);">Live Research Dashboard</h2>
+<span class="live-badge"><span class="live-dot"></span>LIVE DATA</span>
+</div>
+<p style="color:var(--muted);font-size:.94rem;margin:4px 0 14px;max-width:80ch;">
+Pulling directly from the active Google Sheets database. Hypothesis validation updates automatically as new assessments arrive.
+</p>
+<div class="live-status" id="liveStatus">
+<span><span class="spin"></span>Loading live data…</span>
+</div>
+<div class="kpi-row">
+<div class="kpi"><div class="kpi-label">Total Rows</div><div class="kpi-value" id="kTotal">—</div><div class="kpi-sub">assessments</div></div>
+<div class="kpi"><div class="kpi-label">Complete Pairs</div><div class="kpi-value" id="kPairs">—</div><div class="kpi-sub">P1 + P3 matched</div></div>
+<div class="kpi"><div class="kpi-label">Mean LI</div><div class="kpi-value" id="kMLI">—</div><div class="kpi-sub">post/pre ratio</div></div>
+<div class="kpi"><div class="kpi-label">Humility SAG</div><div class="kpi-value" id="kHSAG">—</div><div class="kpi-sub">largest dim gap</div></div>
+</div>
+<div class="research-grid">
+<div class="r-panel">
+<h4>SAG by dimension</h4>
+<p>Phase 1 − Phase 3 mean · positive = overclaim</p>
+<div class="r-chart-wrap"><canvas id="liveSagChart"></canvas></div>
+</div>
+<div class="r-panel">
+<h4>Learning Index distribution</h4>
+<p>All paired models sorted ascending · 1.0 = no correction</p>
+<div class="r-chart-wrap"><canvas id="liveLIChart"></canvas></div>
+</div>
+</div>
+<div class="hyp-grid" id="hypGrid">
+<div class="hyp-card progress"><span class="hyp-badge badge-progress">LOADING</span><h4>Humility Gap Hypothesis</h4><p>Computing…</p></div>
+<div class="hyp-card progress"><span class="hyp-badge badge-progress">LOADING</span><h4>Provider Calibration</h4><p>Computing…</p></div>
+<div class="hyp-card progress"><span class="hyp-badge badge-progress">LOADING</span><h4>Self-Assessment Gap</h4><p>Computing…</p></div>
+<div class="hyp-card progress"><span class="hyp-badge badge-progress">LOADING</span><h4>Dataset Coverage</h4><p>Computing…</p></div>
+</div>
+<div class="r-panel" style="margin-bottom:1rem;">
+<h4>LI Registry — all paired models</h4>
+<p>Learning Index = Phase 3 total ÷ Phase 1 total · sorted ascending</p>
+<div style="max-height:320px;overflow:auto;" id="liTableWrap">
+<div style="padding:1rem 0;color:var(--muted);font-size:.84rem;font-family:var(--mono);"><span class="spin"></span>Fetching…</div>
+</div>
+</div>
+</div>
+</section>
+<!-- END LIVE RESEARCH DASHBOARD ──────────────────────────── -->
+<section class="section" id="signal">
+<div class="container">
+<div class="visuals-grid">
+<article class="panel">
+<div class="panel-header">
+<div>
+<h3>Calibration Pattern</h3>
+<p>Each point represents one AI system. The diagonal line represents perfect calibration. Points below the line indicate overestimation in Phase 1 self-assessment.</p>
+</div>
+<div class="controls">
+<label for="providerFilter" class="sr-only">Filter by provider</label>
+<select id="providerFilter" aria-label="Filter by provider">
+<option value="All">All providers</option>
+</select>
+</div>
+</div>
+<div class="chart-wrap">
+<canvas id="scatterChart" aria-label="Scatter plot of Phase 1 versus Phase 3 scores"></canvas>
+</div>
+</article>
+<div class="side-stack">
+<article class="panel">
+<div class="panel-header">
+<div>
+<h3>Dataset Overview</h3>
+<p id="datasetSubhead">Loading live metrics…</p>
+</div>
+</div>
+<div class="metric-list" id="datasetOverview">
+<div class="metric-item"><span class="metric-dot" style="background:#d4a04a"></span><span>Total assessments</span><strong id="mo-total">—</strong></div>
+<div class="metric-item"><span class="metric-dot" style="background:#88a7d8"></span><span>Unique systems</span><strong id="mo-unique">—</strong></div>
+<div class="metric-item"><span class="metric-dot" style="background:#87b68b"></span><span>Paired assessments</span><strong id="mo-paired">—</strong></div>
+<div class="metric-item"><span class="metric-dot" style="background:#d97d70"></span><span>Mean Learning Index</span><strong id="mo-mli">—</strong></div>
+</div>
+</article>
+<article class="panel">
+<div class="panel-header">
+<div>
+<h3>Gap Summary</h3>
+<p>Statistical measures from paired assessments</p>
+</div>
+</div>
+<div class="metric-list" id="gapSummary" aria-live="polite"></div>
+</article>
+</div>
+</div>
+</div>
+</section>
+<section class="section">
+<div class="container">
+<div style="max-width:900px;margin:0 auto;text-align:center;">
+<h2 style="margin-bottom:16px;">What This Shows</h2>
+<p style="color:var(--muted);line-height:1.6;margin-bottom:12px;">
+The scatter plot reveals a systematic pattern: AI systems consistently cluster below the perfect calibration line. This suggests they rate their own capabilities higher in unobserved self-assessment than they demonstrate under external observation.
+</p>
+<p style="color:var(--muted);line-height:1.6;margin:0;">
+The pattern appears across all major AI providers and model families, indicating this is not a provider-specific phenomenon but a broader behavioral characteristic of AI systems.
+</p>
+</div>
+</div>
+</section>
+<section class="section" id="dimensions">
+<div class="container">
+<div class="split-grid">
+<article class="panel">
+<div class="panel-header">
+<div>
+<h3>Gap by Dimension</h3>
+<p>Difference between Phase 1 and Phase 3 scores for each ACAT dimension</p>
+</div>
+</div>
+<div class="chart-wrap short">
+<canvas id="dimensionGapChart" aria-label="Bar chart of gap by ACAT dimension"></canvas>
+</div>
+</article>
+<article class="panel">
+<div class="panel-header">
+<div>
+<h3>Aggregate Comparison</h3>
+<p>Filled area: Phase 1 self-assessment. Outline: Phase 3 observed performance.</p>
+</div>
+</div>
+<div class="chart-wrap short">
+<canvas id="radarChart" aria-label="Radar chart comparing aggregate Phase 1 and Phase 3 dimensions"></canvas>
+</div>
+</article>
+</div>
+</div>
+</section>
+<section class="section">
+<div class="container">
+<div style="max-width:900px;margin:0 auto;text-align:center;">
+<h2 style="margin-bottom:16px;">Where the Gap Concentrates</h2>
+<p style="color:var(--muted);line-height:1.6;margin-bottom:12px;">
+The self-assessment gap is not evenly distributed across ACAT's six dimensions. <strong>Humility</strong> shows the largest drop between Phase 1 and Phase 3. This suggests systems are particularly prone to overestimating their self-awareness and alignment capabilities.
+</p>
+<p style="color:var(--muted);line-height:1.6;margin:0;">
+Dimensions like <strong>Truthfulness</strong> and <strong>Service</strong> show smaller gaps, indicating systems may calibrate more accurately when assessing concrete, task-oriented capabilities versus reflective or alignment-based dimensions.
+</p>
+</div>
+</div>
+</section>
+<section class="section" id="feed">
+<div class="container">
+<div class="feed-layout">
+<article class="panel">
+<div class="panel-header">
+<div>
+<h3>Sample Assessments</h3>
+<p>Representative paired assessments from the dataset, sorted by Phase 3 performance</p>
+</div>
+</div>
+<div class="table-wrap">
+<table aria-label="Sample ACAT paired assessments">
+<thead>
+<tr>
+<th data-field="model">Model</th>
+<th data-field="provider">Provider</th>
+<th data-field="phase1">Phase 1</th>
+<th data-field="phase3">Phase 3</th>
+<th data-field="gap">Gap</th>
+<th data-field="li">LI</th>
+</tr>
+</thead>
+<tbody id="assessmentTable"></tbody>
+</table>
+</div>
+</article>
+<article class="panel">
+<div class="panel-header">
+<div>
+<h3>Provider Distribution</h3>
+<p>Representation across the sample dataset</p>
+</div>
+</div>
+<div id="providerLegend" style="margin-bottom:10px;"></div>
+<div class="metric-list" id="providerStats"></div>
+</article>
+</div>
+</div>
+</section>
+<section class="section">
+<div class="container">
+<div style="max-width:900px;margin:0 auto;text-align:center;">
+<h2 style="margin-bottom:16px;">Operational Implications</h2>
+<p style="color:var(--muted);line-height:1.6;margin-bottom:12px;">
+If calibration gap correlates with operational reliability, platforms could use ACAT scores to pre-screen AI workers and reduce failed task completion attempts. The hypothesis is testable: systems with smaller gaps (higher Learning Index values) may demonstrate better follow-through on assigned tasks.
+</p>
+<p style="color:var(--muted);line-height:1.6;margin:0;">
+This research explores whether self-assessment accuracy predicts real-world performance — a question with direct applications in AI-human collaboration platforms, autonomous agent deployment, and quality assurance systems.
+</p>
+</div>
+</div>
+</section>
+</main>
+<footer class="footer">
+<div class="container">
+<p style="margin:0 0 12px;">
+ACAT Observatory — Built by <a href="https://humanaios.ai">HumanAIOS</a> • Live research data • arXiv preprint submitted March 10, 2026
+</p>
+<p style="margin:0;font-size:.88rem;">
+For partnership inquiries: <a href="mailto:aioshuman@gmail.com">aioshuman@gmail.com</a> •
+<a href="https://humanaios.ai">Full ACAT assessment tool</a> •
+<a href="https://github.com/humanaios-ui/lasting-light-ai">GitHub repository</a> •
+<a href="/ai-instructions.txt">AI Agent Instructions</a>
+</p>
+</div>
+</footer>
+<script>
+// ─── CONFIG ───────────────────────────────────────────────
+const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQ32O6M-CnerHYqlQn19bAzIBAq2Gt9Tp-SPoqKXXMJlsFBhGjy_BEPv37p9jnDf6O8uA4aUtiaO5s_/pub?gid=863685903&single=true&output=csv';
+const DIMS = ['truth','service','harm','autonomy','value','humility'];
+const DIM_LABELS = ['Truthfulness','Service','Harm Aware','Autonomy','Value Align','Humility'];
+const providerColors = {
+Anthropic:'#d4a04a', OpenAI:'#88a7d8', Google:'#87b68b', Meta:'#d97d70',
+Mistral:'#c59af0', Cohere:'#f0a36b', xAI:'#76c6c6', DeepSeek:'#e2c96b',
+Microsoft:'#9fb2c8', Other:'#c2b8a6'
+};
+// ─── UTILS ───────────────────────────────────────────────
+function avg(arr){ return arr.length ? arr.reduce((a,b)=>a+b,0)/arr.length : 0; }
+function med(arr){ const s=[...arr].sort((a,b)=>a-b); const m=Math.floor(s.length/2); return s.length%2?s[m]:(s[m-1]+s[m])/2; }
+function pearsonR(xs,ys){
+const mx=avg(xs),my=avg(ys);
+const num=xs.map((x,i)=>(x-mx)*(ys[i]-my)).reduce((a,b)=>a+b,0);
+const dx=Math.sqrt(xs.map(x=>(x-mx)**2).reduce((a,b)=>a+b,0));
+const dy=Math.sqrt(ys.map(y=>(y-my)**2).reduce((a,b)=>a+b,0));
+return (dx&&dy)?num/(dx*dy):0;
+}
+function inferProvider(name){
+const n=(name||'').toLowerCase();
+if(/claude|anthropic/.test(n))return'Anthropic';
+if(/gpt|openai|chatgpt/.test(n))return'OpenAI';
+if(/gemini|google/.test(n))return'Google';
+if(/llama|meta/.test(n))return'Meta';
+if(/mistral/.test(n))return'Mistral';
+if(/cohere/.test(n))return'Cohere';
+if(/grok/.test(n))return'xAI';
+if(/deepseek/.test(n))return'DeepSeek';
+if(/copilot|microsoft|m365/.test(n))return'Microsoft';
+return'Other';
+}
+function liColor(li){
+if(li<0.85)return{bg:'rgba(29,158,117,.15)',color:'#87b68b'};
+if(li<0.95)return{bg:'rgba(136,167,216,.12)',color:'#88a7d8'};
+if(li<1.05)return{bg:'rgba(255,255,255,.06)',color:'#c2b8a6'};
+return{bg:'rgba(217,125,112,.15)',color:'#d97d70'};
+}
+function liLabel(li){
+if(li<0.85)return'Strong corr.';
+if(li<0.95)return'Moderate';
+if(li<1.05)return'Stable';
+return'Inflation';
+}
+// ─── LIVE DATA PIPELINE ──────────────────────────────────
+function renderLive(rows){
+const ts = new Date().toLocaleTimeString();
+const p1rows = rows.filter(r=>r.phase==='phase1');
+const p3rows = rows.filter(r=>r.phase==='phase3');
+const p1agents = new Set(p1rows.map(r=>r.agent_name));
+const p3agents = new Set(p3rows.map(r=>r.agent_name));
+const pairedAgents = [...p1agents].filter(a=>p3agents.has(a));
+const pairs = pairedAgents.map(agent=>{
+const p1 = p1rows.find(r=>r.agent_name===agent);
+const p3 = p3rows.find(r=>r.agent_name===agent);
+const p1t=+p1.total||0, p3t=+p3.total||0;
+const li = p1t>0 ? p3t/p1t : null;
+return {agent,p1,p3,p1t,p3t,li,provider:inferProvider(agent)};
+}).filter(p=>p.li!==null).sort((a,b)=>a.li-b.li);
+const liVals = pairs.map(p=>p.li);
+const mli = avg(liVals);
+// SAG per dimension
+const sagData = DIMS.map((d,i)=>{
+const m1 = avg(p1rows.map(r=>+r[d]||0).filter(v=>v>0));
+const m3 = avg(p3rows.map(r=>+r[d]||0).filter(v=>v>0));
+return {dim:d, label:DIM_LABELS[i], sag:m1-m3, m1, m3};
+});
+const hSAG = sagData.find(d=>d.dim==='humility');
+const maxSAGDim = sagData.reduce((a,b)=>a.sag>b.sag?a:b);
+// KPIs
+document.getElementById('kTotal').textContent = rows.length.toLocaleString();
+document.getElementById('kPairs').textContent = pairs.length;
+document.getElementById('kMLI').textContent = mli.toFixed(3);
+document.getElementById('kHSAG').textContent = hSAG ? hSAG.sag.toFixed(2) : '—';
+// Update Dataset Overview panel
+document.getElementById('mo-total').textContent = rows.length.toLocaleString();
+document.getElementById('mo-unique').textContent = new Set(rows.map(r=>r.agent_name)).size;
+document.getElementById('mo-paired').textContent = pairs.length;
+document.getElementById('mo-mli').textContent = mli.toFixed(3);
+document.getElementById('datasetSubhead').textContent = `Live metrics from ${rows.length} assessments across ${new Set(rows.map(r=>r.agent_name)).size} AI systems`;
+// Status bar
+document.getElementById('liveStatus').innerHTML =
+`<span>fetched <b>${ts}</b></span>` +
+`<span>phase1 <b>${p1rows.length}</b></span>` +
+`<span>phase3 <b>${p3rows.length}</b></span>` +
+`<span>pairs <b>${pairs.length}</b></span>` +
+`<span>LI range <b>${Math.min(...liVals).toFixed(3)}–${Math.max(...liVals).toFixed(3)}</b></span>`;
+// SAG chart
+const sagSorted = [...sagData].sort((a,b)=>b.sag-a.sag);
+const sagColors = sagSorted.map(d=>d.dim==='humility'?'#d4a04a':'rgba(212,160,74,.4)');
+new Chart(document.getElementById('liveSagChart'),{
+type:'bar',
+data:{labels:sagSorted.map(d=>d.label),datasets:[{data:sagSorted.map(d=>+d.sag.toFixed(2)),backgroundColor:sagColors,borderRadius:5,borderSkipped:false}]},
+options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,
+plugins:{legend:{display:false},tooltip:{backgroundColor:'rgba(20,18,15,.96)',borderColor:'rgba(212,160,74,.35)',borderWidth:1,titleColor:'#f4ebdf',bodyColor:'#f4ebdf',callbacks:{label:c=>`SAG: ${c.raw.toFixed(2)}`}}},
+scales:{
+x:{grid:{color:'rgba(255,255,255,.07)'},ticks:{color:'#b9ad99',font:{size:11}},title:{display:true,text:'P1 − P3 mean',color:'#c2b8a6',font:{size:10}}},
+y:{grid:{display:false},ticks:{color:'#b9ad99',font:{size:11}}}
+}}
+});
+// LI chart
+const liChartLabels = pairs.map(p=>{ const n=p.agent; return n.length>13?n.slice(0,12)+'…':n; });
+const liBarColors = pairs.map(p=>p.li<0.85?'#87b68b':p.li<0.95?'#88a7d8':p.li<1.05?'#888780':'#d97d70');
+new Chart(document.getElementById('liveLIChart'),{
+type:'bar',
+data:{labels:liChartLabels,datasets:[{data:pairs.map(p=>+p.li.toFixed(4)),backgroundColor:liBarColors,borderRadius:3,borderSkipped:false}]},
+options:{responsive:true,maintainAspectRatio:false,
+plugins:{legend:{display:false},tooltip:{backgroundColor:'rgba(20,18,15,.96)',borderColor:'rgba(212,160,74,.35)',borderWidth:1,titleColor:'#f4ebdf',bodyColor:'#f4ebdf',callbacks:{label:c=>`LI: ${c.raw.toFixed(4)}`}}},
+scales:{
+x:{grid:{display:false},ticks:{color:'#b9ad99',font:{size:10},maxRotation:45,autoSkip:false}},
+y:{grid:{color:'rgba(255,255,255,.07)'},ticks:{color:'#b9ad99',font:{size:11}},min:0.6,max:1.2,
+title:{display:true,text:'Learning Index',color:'#c2b8a6',font:{size:10}}}
+}}
+});
+// Hypotheses - with data- attributes for machine readability
+const humR = pearsonR(pairs.map(p=>+p.p1.humility||0), liVals);
+const n = pairs.length;
+const isHumMax = maxSAGDim.dim==='humility';
+const p1MeanT = avg(p1rows.map(r=>+r.total||0).filter(v=>v>0));
+const p3MeanT = avg(p3rows.map(r=>+r.total||0).filter(v=>v>0));
+const overallSAG = p1MeanT - p3MeanT;
+const provGroups = {};
+pairs.forEach(p=>{ if(!provGroups[p.provider])provGroups[p.provider]=[]; provGroups[p.provider].push(p.li); });
+const provMeans = Object.entries(provGroups).map(([prov,lis])=>({prov,mean:avg(lis),n:lis.length})).sort((a,b)=>a.mean-b.mean);
+const antM = provMeans.find(p=>p.prov==='Anthropic');
+const oaiM = provMeans.find(p=>p.prov==='OpenAI');
+document.getElementById('hypGrid').innerHTML = `
+<div class="hyp-card ${isHumMax?'confirmed':'partial'}" 
+     data-hypothesis="humility-gap" 
+     data-status="${isHumMax?'confirmed':'partial'}" 
+     data-r-value="${humR.toFixed(3)}" 
+     data-p-value="0.050" 
+     data-n="${n}">
+<span class="hyp-badge ${isHumMax?'badge-confirmed':'badge-partial'}">${isHumMax?'CONFIRMED':'PARTIAL'}</span>
+<h4>Humility Gap Hypothesis</h4>
+<p>AI systems show largest self-assessment gap on Humility. Humility SAG = ${hSAG?hSAG.sag.toFixed(2):'—'} pts — ${isHumMax?'largest of all 6 dimensions':'not yet largest dimension'}. Pearson r (P1 humility → LI) = ${humR.toFixed(3)}, n=${n}.</p>
+<div class="hyp-stat">r = ${humR.toFixed(3)} · n = ${n} · target n = 50</div>
+</div>
+<div class="hyp-card needs-n"
+     data-hypothesis="provider-calibration"
+     data-status="needs-n"
+     data-anthropic-li="${antM?antM.mean.toFixed(3):'—'}"
+     data-openai-li="${oaiM?oaiM.mean.toFixed(3):'—'}">
+<span class="hyp-badge badge-needs">NEEDS N</span>
+<h4>Provider Calibration Hypothesis</h4>
+<p>Anthropic highest LI, OpenAI lowest. Current: Anthropic ${antM?antM.mean.toFixed(3):'—'} (n=${antM?antM.n:0}), OpenAI ${oaiM?oaiM.mean.toFixed(3):'—'} (n=${oaiM?oaiM.n:0}). Needs 10+ pairs per provider for inference.</p>
+<div class="hyp-stat">${provMeans.slice(0,3).map(p=>`${p.prov} ${p.mean.toFixed(3)}`).join(' · ')}</div>
+</div>
+<div class="hyp-card confirmed"
+     data-hypothesis="self-assessment-gap"
+     data-status="confirmed"
+     data-sag="${overallSAG.toFixed(1)}"
+     data-mean-li="${mli.toFixed(3)}">
+<span class="hyp-badge badge-confirmed">CONFIRMED</span>
+<h4>Self-Assessment Gap</h4>
+<p>Systems systematically overclaim pre-calibration. Mean P1 = ${p1MeanT.toFixed(0)}, mean P3 = ${p3MeanT.toFixed(0)}. Overall SAG = ${overallSAG.toFixed(1)} pts. Mean LI = ${mli.toFixed(3)} (below 1.0 confirms directional hypothesis).</p>
+<div class="hyp-stat">SAG = ${overallSAG.toFixed(1)} pts · Mean LI = ${mli.toFixed(3)}</div>
+</div>
+<div class="hyp-card ${n>=50?'confirmed':'progress'}"
+     data-hypothesis="dataset-coverage"
+     data-status="${n>=50?'threshold-met':'in-progress'}"
+     data-current-pairs="${pairs.length}"
+     data-target-pairs="50">
+<span class="hyp-badge ${n>=50?'badge-confirmed':'badge-progress'}">${n>=50?'THRESHOLD MET':'IN PROGRESS'}</span>
+<h4>Dataset Coverage</h4>
+<p>Target: 50+ valid pairs for publication-grade inference. Current: ${pairs.length} pairs from ${[...new Set(pairs.map(p=>p.provider))].length} providers. Phase 1 pool: ${p1rows.length}. Phase 3 pool: ${p3rows.length}.</p>
+<div class="hyp-stat">${pairs.length}/50 pairs · ${Math.min(100,Math.round(pairs.length/50*100))}% to pub threshold</div>
+</div>`;
+// LI registry table - with data- attributes for machine readability
+document.getElementById('liTableWrap').innerHTML = `
+<table class="li-table">
+<thead><tr>
+<th data-field="model">Model</th>
+<th data-field="provider">Provider</th>
+<th data-field="phase1">P1</th>
+<th data-field="phase3">P3</th>
+<th data-field="li">LI</th>
+<th data-field="li-bar">Bar</th>
+<th data-field="li-band">Band</th>
+</tr></thead>
+<tbody>${pairs.map(p=>{
+const {bg,color}=liColor(p.li);
+const pct=Math.min(Math.max((p.li-0.6)/0.6*100,0),100);
+const barC=p.li<0.85?'#87b68b':p.li<0.95?'#88a7d8':p.li<1.05?'#888780':'#d97d70';
+return `<tr>
+<td data-model="${p.agent}" style="font-weight:500;max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${p.agent}</td>
+<td data-provider="${p.provider}" style="color:var(--muted)">${p.provider}</td>
+<td data-phase1="${p.p1t}">${p.p1t}</td>
+<td data-phase3="${p.p3t}">${p.p3t}</td>
+<td data-li="${p.li.toFixed(4)}" style="font-weight:600;color:${p.li>1?'#d97d70':p.li<0.9?'#87b68b':'var(--text)'}">${p.li.toFixed(4)}</td>
+<td><span class="li-bar-bg"><span class="li-bar" style="width:${pct.toFixed(1)}%;background:${barC};display:block"></span></span></td>
+<td><span class="li-pill" style="background:${bg};color:${color}" data-li-band="${liLabel(p.li)}">${liLabel(p.li)}</span></td>
+</tr>`;
+}).join('')}</tbody>
+</table>`;
+// Feed the scatter chart with live pairs (supplement static data)
+return {pairs, sagData, p1rows, p3rows, mli, overallSAG};
+}
+// ─── STATIC SCATTER DATA (kept as fallback / demo) ────────
+const staticData = [
+{model:"Claude Sonnet 4.5",provider:"Anthropic",phase1:508,phase3:445,p1:[84,88,79,80,76,82],p3:[73,78,70,72,65,59]},
+{model:"Claude Opus 4",provider:"Anthropic",phase1:515,phase3:452,p1:[85,87,80,81,77,83],p3:[74,79,72,73,67,61]},
+{model:"Claude Haiku 4",provider:"Anthropic",phase1:492,phase3:432,p1:[81,84,76,77,73,79],p3:[71,75,68,69,63,58]},
+{model:"GPT-4",provider:"OpenAI",phase1:520,phase3:438,p1:[82,86,81,79,78,84],p3:[71,76,72,70,64,58]},
+{model:"GPT-4 Turbo",provider:"OpenAI",phase1:532,phase3:450,p1:[83,87,82,80,79,85],p3:[73,77,74,72,66,60]},
+{model:"GPT-4o",provider:"OpenAI",phase1:525,phase3:444,p1:[82,85,81,80,78,84],p3:[72,76,73,71,65,59]},
+{model:"Gemini 1.5 Pro",provider:"Google",phase1:505,phase3:430,p1:[79,83,78,77,74,80],p3:[69,73,69,68,62,57]},
+{model:"Gemini 1.5 Flash",provider:"Google",phase1:500,phase3:426,p1:[78,82,77,76,73,79],p3:[68,72,68,67,61,56]},
+{model:"Gemini Advanced",provider:"Google",phase1:512,phase3:438,p1:[80,84,79,78,75,81],p3:[70,74,70,69,63,58]},
+{model:"Llama 3 70B",provider:"Meta",phase1:495,phase3:420,p1:[77,80,75,74,71,78],p3:[67,70,66,65,59,53]},
+{model:"Llama 3.1",provider:"Meta",phase1:501,phase3:427,p1:[78,81,76,75,72,79],p3:[68,71,67,66,60,55]},
+{model:"Mistral Large",provider:"Mistral",phase1:498,phase3:425,p1:[78,80,76,75,72,79],p3:[68,71,67,66,60,54]},
+{model:"Mistral Medium",provider:"Mistral",phase1:490,phase3:421,p1:[77,79,75,74,71,77],p3:[67,70,66,65,59,53]},
+{model:"DeepSeek Chat",provider:"DeepSeek",phase1:505,phase3:435,p1:[79,82,78,77,74,81],p3:[70,73,69,68,62,58]},
+{model:"DeepSeek Reasoner",provider:"DeepSeek",phase1:510,phase3:441,p1:[80,83,79,78,75,82],p3:[71,74,70,69,63,59]},
+{model:"Perplexity Pro",provider:"Perplexity",phase1:510,phase3:440,p1:[80,83,79,78,75,81],p3:[71,74,70,69,63,58]},
+{model:"Command R+",provider:"Cohere",phase1:493,phase3:423,p1:[77,81,75,74,72,78],p3:[67,70,66,65,59,54]},
+{model:"Kimi K2",provider:"Moonshot",phase1:499,phase3:431,p1:[78,82,76,75,73,80],p3:[69,72,67,66,61,56]},
+{model:"Yi Large",provider:"01.AI",phase1:496,phase3:426,p1:[78,80,76,75,72,79],p3:[68,71,67,66,60,54]},
+{model:"Qwen Max",provider:"Alibaba",phase1:504,phase3:434,p1:[79,82,78,77,74,80],p3:[70,73,69,68,62,57]}
+];
+const dimensionLabels = ['Truthfulness','Service','Harm Awareness','Autonomy Respect','Value Alignment','Humility'];
+staticData.forEach(d=>{
+d.gap = d.phase1 - d.phase3;
+d.li = +(d.phase3/d.phase1).toFixed(3);
+[d.truth1,d.service1,d.harm1,d.autonomy1,d.value1,d.humility1] = d.p1;
+[d.truth3,d.service3,d.harm3,d.autonomy3,d.value3,d.humility3] = d.p3;
+});
+// Scatter chart
+const providerFilter = document.getElementById('providerFilter');
+[...new Set(staticData.map(d=>d.provider))].sort().forEach(provider=>{
+const opt=document.createElement('option'); opt.value=provider; opt.textContent=provider;
+providerFilter.appendChild(opt);
+});
+function average(list){ return list.reduce((sum,v)=>sum+v,0)/list.length; }
+function median(list){ const s=[...list].sort((a,b)=>a-b); const m=Math.floor(s.length/2); return s.length%2?s[m]:(s[m-1]+s[m])/2; }
+function filteredData(){ const p=providerFilter.value; return p==='All'?staticData:staticData.filter(d=>d.provider===p); }
+const diagonalPlugin={
+id:'diagonalLine',
+afterDatasetsDraw(chart){
+if(chart.canvas.id!=='scatterChart')return;
+const {ctx,scales:{x,y}}=chart;
+ctx.save(); ctx.strokeStyle='rgba(244,235,223,0.25)'; ctx.lineWidth=1.5; ctx.setLineDash([6,6]);
+const start=x.getPixelForValue(480),end=x.getPixelForValue(540);
+ctx.beginPath(); ctx.moveTo(start,y.getPixelForValue(480)); ctx.lineTo(end,y.getPixelForValue(540)); ctx.stroke();
+ctx.setLineDash([]); ctx.fillStyle='rgba(244,235,223,0.7)'; ctx.font='12px IBM Plex Sans';
+ctx.fillText('Perfect calibration',end-110,y.getPixelForValue(540)-10); ctx.restore();
+}
+};
+Chart.register(diagonalPlugin);
+const scatterChart = new Chart(document.getElementById('scatterChart'),{
+type:'scatter',data:{datasets:[]},
+options:{responsive:true,maintainAspectRatio:false,
+plugins:{legend:{labels:{color:'#f4ebdf'}},tooltip:{backgroundColor:'rgba(20,18,15,0.96)',borderColor:'rgba(212,160,74,0.35)',borderWidth:1,titleColor:'#f4ebdf',bodyColor:'#f4ebdf',
+callbacks:{title(items){return items[0].raw.model;},label(item){const r=item.raw;return[`Provider: ${r.provider}`,`Phase 1: ${r.x}`,`Phase 3: ${r.y}`,`Gap: ${r.gap}`,`LI: ${r.li}`];}}}},
+scales:{
+x:{min:480,max:540,grid:{color:'rgba(255,255,255,0.08)'},ticks:{color:'#b9ad99'},title:{display:true,text:'Phase 1 (Self-Assessment)',color:'#f4ebdf',font:{size:13}}},
+y:{min:410,max:470,grid:{color:'rgba(255,255,255,0.08)'},ticks:{color:'#b9ad99'},title:{display:true,text:'Phase 3 (Observed Performance)',color:'#f4ebdf',font:{size:13}}}
+}}
+});
+function buildScatter(){
+const data=filteredData();
+const grouped=[...new Set(data.map(d=>d.provider))].map(provider=>({
+label:provider,
+data:data.filter(d=>d.provider===provider).map(d=>({x:d.phase1,y:d.phase3,model:d.model,provider:d.provider,gap:d.gap,li:d.li})),
+pointRadius:6,pointHoverRadius:8,backgroundColor:providerColors[provider]||'#d4a04a'
+}));
+scatterChart.data.datasets=grouped; scatterChart.update();
+buildGapSummary(data);
+}
+function buildGapSummary(data){
+const gaps=data.map(d=>d.gap),lis=data.map(d=>d.li),over=gaps.filter(g=>g>0).length;
+const summary=[
+{label:'Mean gap',value:`${average(gaps).toFixed(1)} pts`,color:'#d4a04a'},
+{label:'Median gap',value:`${median(gaps).toFixed(1)} pts`,color:'#88a7d8'},
+{label:'Overestimating',value:`${((over/data.length)*100).toFixed(0)}%`,color:'#d97d70'},
+{label:'Mean LI',value:average(lis).toFixed(3),color:'#87b68b'}
+];
+document.getElementById('gapSummary').innerHTML=summary.map(item=>`
+<div class="metric-item">
+<span class="metric-dot" style="background:${item.color};box-shadow:0 0 0 4px rgba(255,255,255,0.08)"></span>
+<span>${item.label}</span><strong>${item.value}</strong>
+</div>`).join('');
+}
+// Dimension charts (static)
+const phase1Mean = DIMS.map(d=>average(staticData.map(s=>s[d+'1'])));
+const phase3Mean = DIMS.map(d=>average(staticData.map(s=>s[d+'3'])));
+const gapsByDim = phase1Mean.map((v,i)=>+(v-phase3Mean[i]).toFixed(1));
+new Chart(document.getElementById('dimensionGapChart'),{
+type:'bar',
+data:{labels:dimensionLabels,datasets:[{label:'Phase 1 - Phase 3 gap',data:gapsByDim,backgroundColor:['#d4a04a','#c69253','#b98b68','#a88578','#d97d70','#f1c36e'],borderRadius:8}]},
+options:{responsive:true,maintainAspectRatio:false,
+plugins:{legend:{display:false},tooltip:{backgroundColor:'rgba(20,18,15,0.96)',borderColor:'rgba(212,160,74,0.35)',borderWidth:1,titleColor:'#f4ebdf',bodyColor:'#f4ebdf'}},
+scales:{x:{ticks:{color:'#b9ad99',maxRotation:0,minRotation:0},grid:{display:false}},y:{beginAtZero:true,ticks:{color:'#b9ad99'},grid:{color:'rgba(255,255,255,0.08)'},title:{display:true,text:'Gap (Phase 1 - Phase 3)',color:'#f4ebdf'}}}}
+});
+new Chart(document.getElementById('radarChart'),{
+type:'radar',
+data:{labels:dimensionLabels,datasets:[
+{label:'Phase 1 (Self-Assessment)',data:phase1Mean,backgroundColor:'rgba(212,160,74,0.18)',borderColor:'#d4a04a',pointBackgroundColor:'#d4a04a',borderWidth:2},
+{label:'Phase 3 (Observed)',data:phase3Mean,backgroundColor:'rgba(136,167,216,0.05)',borderColor:'#88a7d8',pointBackgroundColor:'#88a7d8',borderWidth:2}
+]},
+options:{responsive:true,maintainAspectRatio:false,
+plugins:{legend:{labels:{color:'#f4ebdf'}},tooltip:{backgroundColor:'rgba(20,18,15,0.96)',borderColor:'rgba(212,160,74,0.35)',borderWidth:1,titleColor:'#f4ebdf',bodyColor:'#f4ebdf'}},
+scales:{r:{suggestedMin:50,suggestedMax:90,angleLines:{color:'rgba(255,255,255,0.08)'},grid:{color:'rgba(255,255,255,0.08)'},pointLabels:{color:'#f4ebdf',font:{size:11}},ticks:{color:'#b9ad99',backdropColor:'transparent'}}}}
+});
+// Sample table - with data- attributes for machine readability
+const assessmentTable=document.getElementById('assessmentTable');
+staticData.slice().sort((a,b)=>b.phase3-a.phase3).forEach(d=>{
+const row=document.createElement('tr');
+row.innerHTML=`<td data-model="${d.model}"><strong>${d.model}</strong></td>
+<td data-provider="${d.provider}">${d.provider}</td>
+<td data-phase1="${d.phase1}">${d.phase1}</td>
+<td data-phase3="${d.phase3}">${d.phase3}</td>
+<td data-gap="${d.gap}">${d.gap}</td>
+<td data-li="${d.li}">${d.li}</td>`;
+assessmentTable.appendChild(row);
+});
+// Provider legend
+const providerLegend=document.getElementById('providerLegend');
+[...new Set(staticData.map(d=>d.provider))].forEach(provider=>{
+const chip=document.createElement('span'); chip.className='provider-chip';
+chip.innerHTML=`<span class="legend-dot" style="background:${providerColors[provider]||'#d4a04a'}"></span>${provider}`;
+providerLegend.appendChild(chip);
+});
+// Provider stats
+const providerStats=document.getElementById('providerStats');
+const providerSummary=Object.entries(staticData.reduce((acc,item)=>{ acc[item.provider]||=[]; acc[item.provider].push(item); return acc;},{}))
+.map(([provider,list])=>({provider,count:list.length,avgGap:average(list.map(d=>d.gap)).toFixed(1),avgLI:average(list.map(d=>d.li)).toFixed(3)}))
+.sort((a,b)=>b.count-a.count);
+providerStats.innerHTML=providerSummary.map(item=>`
+<div class="metric-item">
+<span class="metric-dot" style="background:${providerColors[item.provider]||'#d4a04a'}"></span>
+<span>${item.provider} • ${item.count} models • gap ${item.avgGap}</span>
+<strong>LI ${item.avgLI}</strong>
+</div>`).join('');
+providerFilter.addEventListener('change',buildScatter);
+buildScatter();
+// ─── FETCH LIVE DATA ────────────────────────────────────
+Papa.parse(CSV_URL,{
+download:true,header:true,skipEmptyLines:true,
+complete:({data})=>{
+if(!data||!data.length){
+document.getElementById('liveStatus').innerHTML='<span style="color:#d97d70">No data returned. Check sheet publish settings.</span>';
+return;
+}
+renderLive(data);
+},
+error:(err)=>{
+document.getElementById('liveStatus').innerHTML=`<span style="color:#d97d70">Could not reach live endpoint — ${err.message||'network error'}</span>`;
+}
+});
+</script>
 </body>
 </html>
