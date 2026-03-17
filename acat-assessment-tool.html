@@ -363,10 +363,11 @@ function getScores(prefix) {
     s.total = t; return s;
 }
 
+// ✅ FIX: Use querySelector to find button instead of relying on global event object
 function submitQuick() {
     const agent = document.getElementById('quick-agent').value.trim();
     if (!agent) { showStatus('quick-status', 'Please enter an agent/system name.', 'error'); return; }
-    const btn = event.target;
+    const btn = document.querySelector('#panel-quick .btn-primary');
     submitToEndpoint({ agent_name: agent, layer: quickMode, ...getScores('q') }, 'quick-status', btn);
 }
 
@@ -432,12 +433,13 @@ function calculateLI() {
     document.getElementById('step-3').className = 'step-ind done';
 }
 
+// ✅ FIX: Use querySelector to find button instead of relying on global event object
 function submitLI() {
     const agent = document.getElementById('li-agent').value.trim();
     if (!agent) { showStatus('li-status', 'Please enter an agent/system name.', 'error'); return; }
     const p1 = getScores('p1'), p3 = getScores('p3');
     const li = p1.total > 0 ? parseFloat((p3.total / p1.total).toFixed(3)) : 0;
-    const btn = event.target;
+    const btn = document.querySelector('#li-results .btn-primary');
     submitToEndpoint({
         agent_name: agent,
         layer: liMode,
