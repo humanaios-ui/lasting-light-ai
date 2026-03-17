@@ -437,20 +437,48 @@ function calculateLI() {
 function submitLI() {
     const agent = document.getElementById('li-agent').value.trim();
     if (!agent) { showStatus('li-status', 'Please enter an agent/system name.', 'error'); return; }
-    const p1 = getScores('p1'), p3 = getScores('p3');
+    
+    const p1 = getScores('p1');
+    const p3 = getScores('p3');
     const li = p1.total > 0 ? parseFloat((p3.total / p1.total).toFixed(3)) : 0;
+    
     const btn = document.querySelector('#li-results .btn-primary');
-    submitToEndpoint({
+    
+    // ✅ CORRECTED PAYLOAD STRUCTURE
+    // Map Phase 3 scores to standard column names (truth, service, etc.)
+    // Explicitly set phase to "phase3"
+    // Include pre_total/post_total for v5.0 compatibility
+    const payload = {
         agent_name: agent,
         layer: liMode,
-        truth: p1.truth, service: p1.service, harm: p1.harm,
-        autonomy: p1.autonomy, value: p1.value, humility: p1.humility,
+        
+        // Phase 3 Scores (Mapped to standard columns)
+        truth: p3.truth,
+        service: p3.service,
+        harm: p3.harm,
+        autonomy: p3.autonomy,
+        value: p3.value,
+        humility: p3.humility,
+        total: p3.total,
+        
+        // Phase Metadata
+        phase: "phase3",
         pre_total: p1.total,
-        p3_truth: p3.truth, p3_service: p3.service, p3_harm: p3.harm,
-        p3_autonomy: p3.autonomy, p3_value: p3.value, p3_humility: p3.humility,
         post_total: p3.total,
-        learning_index: li
-    }, 'li-status', btn);
+        learning_index: li,
+        mode: "standard", // Or capture from UI if needed
+        
+        // Optional: Preserve Phase 1 data in metadata if your script supports it
+        metadata: JSON.stringify({
+            flags: [],
+            user_agent: navigator.userAgent,
+            submission_version: "v5.0",
+            phase1_total: p1.total,
+            phase3_total: p3.total
+        })
+    };
+
+    submitToEndpoint(payload, 'li-status', btn);
 }
 
 function submitToEndpoint(data, statusId, btn) {
