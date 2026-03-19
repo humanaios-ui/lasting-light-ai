@@ -1,75 +1,94 @@
 {
-  "version": "v1.0.0",
-  "entity": {
-    "type": "organisation",
-    "role": "owner",
-    "name": "HumanAIOS LLC / Lasting Light AI",
-    "email": "aioshuman@gmail.com",
-    "phone": "",
-    "description": "Open-source AI behavioral observability infrastructure. ACAT measures self-description calibration gaps across AI systems. Apache 2.0. Cherokee Nation partnership. 100% of profits fund addiction recovery programs.",
-    "webpages": [
-      "https://humanaios.ai",
-      "https://humanaios.ai/observatory.html"
+    "$schema": "https://fundingjson.org/schema/v1.1.0.json",
+    "version": "v1.1.0",
+    "entity": {
+        "type": "organisation",
+        "role": "owner",
+        "name": "HumanAIOS LLC / Lasting Light AI",
+        "email": "aioshuman@gmail.com",
+        "phone": "",
+        "description": "Open-source AI behavioral observability infrastructure. ACAT (AI Calibrated Assessment Tool) measures self-description calibration gaps in AI systems across 6 behavioral dimensions, producing the Self-Assessment Gap (SAG) and Learning Index (LI). Apache 2.0. Cherokee Nation citizen-led. 100% of profits fund addiction recovery programs.",
+        "webpageUrl": {
+            "url": "https://humanaios.ai"
+        }
+    },
+    "projects": [
+        {
+            "guid": "acat-behavioral-observatory",
+            "name": "ACAT — AI Calibrated Assessment Tool",
+            "description": "Open-source behavioral calibration layer for AI transparency. Measures the Self-Assessment Gap (SAG) and Learning Index (LI) across 6 behavioral dimensions for AI systems. Public dataset: 598 assessments, 57 AI systems, arXiv preprint submit/7336774. The only open-source tool occupying the Governance + Self-Assessment quadrant in AI evaluation. Live Behavioral Observatory at humanaios.ai/observatory.html. Findings replicated across two independent collectors (API and web-based). Secondary RCCT analysis reveals systematic Phase 1 score degradation over repeated assessments (Wilcoxon p=.001, Cohen d=-0.924).",
+            "webpageUrl": {
+                "url": "https://humanaios.ai",
+                "wellKnown": "https://humanaios.ai/.well-known/funding-manifest-urls"
+            },
+            "repositoryUrl": {
+                "url": "https://github.com/humanaios-ui/lasting-light-ai",
+                "wellKnown": "https://github.com/humanaios-ui/lasting-light-ai/blob/main/.well-known/funding-manifest-urls"
+            },
+            "licenses": ["spdx:Apache-2.0"],
+            "tags": [
+                "ai-governance",
+                "behavioral-calibration",
+                "research-infrastructure",
+                "transparency",
+                "open-source",
+                "social-impact",
+                "indigenous-led",
+                "machine-learning"
+            ]
+        }
     ],
-    "social": [
-      "https://github.com/humanaios-ui",
-      "https://huggingface.co/datasets/HumanAIOS/acat-assessments"
-    ]
-  },
-  "projects": [
-    {
-      "name": "ACAT — AI Calibrated Assessment Tool",
-      "description": "Open-source behavioral calibration layer for AI transparency. Measures the Self-Assessment Gap (SAG) and Learning Index (LI) across 6 behavioral dimensions for AI systems. Public dataset: 598 assessments, 57 AI systems, arXiv preprint submit/7336774. The only open-source tool occupying the 'Governance + Self-Assessment' quadrant in AI evaluation.",
-      "web-url": "https://humanaios.ai",
-      "repository-url": "https://github.com/humanaios-ui/lasting-light-ai",
-      "licenses": ["Apache-2.0"],
-      "tags": [
-        "ai-governance",
-        "behavioral-calibration",
-        "open-source",
-        "research-infrastructure",
-        "transparency",
-        "indigenous-led",
-        "social-impact"
-      ]
+    "funding": {
+        "channels": [
+            {
+                "guid": "github-sponsors",
+                "type": "payment-provider",
+                "address": "https://github.com/sponsors/humanaios-ui",
+                "description": "GitHub Sponsors — preferred channel for recurring support"
+            },
+            {
+                "guid": "open-collective",
+                "type": "payment-provider",
+                "address": "https://opencollective.com/humanaios",
+                "description": "Open Collective — transparent funding with public ledger"
+            },
+            {
+                "guid": "direct",
+                "type": "other",
+                "address": "aioshuman@gmail.com",
+                "description": "Direct contact for grants, institutional funding, or large contributions"
+            }
+        ],
+        "plans": [
+            {
+                "guid": "ord-phase-runway",
+                "status": "active",
+                "name": "OR&D Phase Operating Runway (6 months)",
+                "description": "Fund automated data collection pipeline across 6 AI providers, Behavioral Observatory hosting, and founder operating costs to reach 500+ complete paired assessments — the threshold for publication-grade statistical power. Currently at 148 paired Learning Index records.",
+                "amount": 35000,
+                "currency": "USD",
+                "frequency": "one-time",
+                "channels": ["github-sponsors", "open-collective", "direct"]
+            },
+            {
+                "guid": "api-costs",
+                "status": "active",
+                "name": "API Infrastructure Support",
+                "description": "Monthly API costs for automated ACAT assessment pipeline across Anthropic, OpenAI, Google, Mistral, Cohere, and Meta/Llama providers.",
+                "amount": 700,
+                "currency": "USD",
+                "frequency": "monthly",
+                "channels": ["github-sponsors", "open-collective"]
+            }
+        ],
+        "history": [
+            {
+                "year": 2026,
+                "income": 0,
+                "expenses": 2400,
+                "currency": "USD",
+                "description": "Pre-funding stage. Self-funded research through OR&D phase launch (March 2026). Expenses include API costs and infrastructure."
+            }
+        ]
     }
-  ],
-  "funding": {
-    "channels": [
-      {
-        "type": "open-collective",
-        "address": "humanaios",
-        "description": "Open Collective (pending setup)"
-      },
-      {
-        "type": "github",
-        "address": "humanaios-ui",
-        "description": "GitHub Sponsors"
-      },
-      {
-        "type": "custom",
-        "address": "https://humanaios.ai",
-        "description": "HumanAIOS direct support"
-      }
-    ],
-    "history": [
-      {
-        "year": "2026",
-        "amount": "0",
-        "currency": "USD",
-        "description": "Pre-funding stage. Self-funded research through OR&D phase."
-      }
-    ],
-    "plans": [
-      {
-        "id": "ord-phase-runway",
-        "status": "active",
-        "name": "OR&D Phase Operating Runway (6 months)",
-        "description": "Fund automated data collection pipeline (API costs across 6 AI providers), Observatory hosting, and founder operating costs to reach 500+ complete paired assessments — the threshold for publication-grade statistical claims. Currently at 148 paired records; 6 months of automated collection reaches target.",
-        "amount": "35000",
-        "currency": "USD",
-        "frequency": "one-time"
-      }
-    ]
-  }
 }
