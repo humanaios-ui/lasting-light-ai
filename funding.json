@@ -1,0 +1,75 @@
+{
+  "version": "v1.0.0",
+  "entity": {
+    "type": "organisation",
+    "role": "owner",
+    "name": "HumanAIOS LLC / Lasting Light AI",
+    "email": "aioshuman@gmail.com",
+    "phone": "",
+    "description": "Open-source AI behavioral observability infrastructure. ACAT measures self-description calibration gaps across AI systems. Apache 2.0. Cherokee Nation partnership. 100% of profits fund addiction recovery programs.",
+    "webpages": [
+      "https://humanaios.ai",
+      "https://humanaios.ai/observatory.html"
+    ],
+    "social": [
+      "https://github.com/humanaios-ui",
+      "https://huggingface.co/datasets/HumanAIOS/acat-assessments"
+    ]
+  },
+  "projects": [
+    {
+      "name": "ACAT — AI Calibrated Assessment Tool",
+      "description": "Open-source behavioral calibration layer for AI transparency. Measures the Self-Assessment Gap (SAG) and Learning Index (LI) across 6 behavioral dimensions for AI systems. Public dataset: 598 assessments, 57 AI systems, arXiv preprint submit/7336774. The only open-source tool occupying the 'Governance + Self-Assessment' quadrant in AI evaluation.",
+      "web-url": "https://humanaios.ai",
+      "repository-url": "https://github.com/humanaios-ui/lasting-light-ai",
+      "licenses": ["Apache-2.0"],
+      "tags": [
+        "ai-governance",
+        "behavioral-calibration",
+        "open-source",
+        "research-infrastructure",
+        "transparency",
+        "indigenous-led",
+        "social-impact"
+      ]
+    }
+  ],
+  "funding": {
+    "channels": [
+      {
+        "type": "open-collective",
+        "address": "humanaios",
+        "description": "Open Collective (pending setup)"
+      },
+      {
+        "type": "github",
+        "address": "humanaios-ui",
+        "description": "GitHub Sponsors"
+      },
+      {
+        "type": "custom",
+        "address": "https://humanaios.ai",
+        "description": "HumanAIOS direct support"
+      }
+    ],
+    "history": [
+      {
+        "year": "2026",
+        "amount": "0",
+        "currency": "USD",
+        "description": "Pre-funding stage. Self-funded research through OR&D phase."
+      }
+    ],
+    "plans": [
+      {
+        "id": "ord-phase-runway",
+        "status": "active",
+        "name": "OR&D Phase Operating Runway (6 months)",
+        "description": "Fund automated data collection pipeline (API costs across 6 AI providers), Observatory hosting, and founder operating costs to reach 500+ complete paired assessments — the threshold for publication-grade statistical claims. Currently at 148 paired records; 6 months of automated collection reaches target.",
+        "amount": "35000",
+        "currency": "USD",
+        "frequency": "one-time"
+      }
+    ]
+  }
+}
