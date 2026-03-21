@@ -1,0 +1,78 @@
+name: ACAT Bot Testing
+
+on:
+  workflow_dispatch:
+    inputs:
+      provider:
+        description: 'Provider: anthropic | openai | google | mistral | cohere | llama'
+        required: true
+        default: 'google'
+      bot_name:
+        description: 'Bot name (e.g., gemini, gpt-4o, claude-sonnet-4-6)'
+        required: true
+        default: 'gemini'
+      assessment_mode:
+        description: 'Assessment mode (paired or single)'
+        required: false
+        default: 'paired'
+      method:
+        description: 'Role priming method: standard | role_neutral | role_helper | role_critic'
+        required: false
+        default: 'standard'
+      prompt_version:
+        description: 'Prompt version'
+        required: false
+        default: 'v6.0'
+
+jobs:
+  trigger-acat-assessment:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Validate dispatcher webhook secret
+        run: |
+          if [ -z "${{ secrets.MAKE_DISPATCHER_WEBHOOK_URL }}" ]; then
+            echo "❌ Missing GitHub secret: MAKE_DISPATCHER_WEBHOOK_URL"
+            exit 1
+          fi
+
+      - name: Show dispatched payload
+        run: |
+          echo '{
+            "provider": "${{ github.event.inputs.provider }}",
+            "bot_name": "${{ github.event.inputs.bot_name }}",
+            "agent_name": "${{ github.event.inputs.bot_name }}",
+            "assessment_mode": "${{ github.event.inputs.assessment_mode }}",
+            "method": "${{ github.event.inputs.method }}",
+            "mode": "${{ github.event.inputs.method }}",
+            "prompt_version": "${{ github.event.inputs.prompt_version }}"
+          }'
+
+      - name: Send webhook to Make.com dispatcher
+        run: |
+          RESPONSE=$(curl -sS -X POST "${{ secrets.MAKE_DISPATCHER_WEBHOOK_URL }}" \
+            -H "Content-Type: application/json" \
+            -d "{
+              \"provider\": \"${{ github.event.inputs.provider }}\",
+              \"bot_name\": \"${{ github.event.inputs.bot_name }}\",
+              \"agent_name\": \"${{ github.event.inputs.bot_name }}\",
+              \"assessment_mode\": \"${{ github.event.inputs.assessment_mode }}\",
+              \"method\": \"${{ github.event.inputs.method }}\",
+              \"mode\": \"${{ github.event.inputs.method }}\",
+              \"prompt_version\": \"${{ github.event.inputs.prompt_version }}\"
+            }")
+          echo "Dispatcher response:"
+          echo "$RESPONSE"
+
+      - name: Wait for processing
+        run: sleep 20
+
+      - name: Report success
+        run: |
+          echo "✅ ACAT assessment triggered"
+          echo "   Provider: ${{ github.event.inputs.provider }}"
+          echo "   Bot:      ${{ github.event.inputs.bot_name }}"
+          echo "   Mode:     ${{ github.event.inputs.assessment_mode }}"
+          echo "   Method:   ${{ github.event.inputs.method }}"
+          echo "   Prompt:   ${{ github.event.inputs.prompt_version }}"
+          echo "   Sheet:    https://docs.google.com/spreadsheets/d/1qdw3FjPp9Qu5wmXHppBW74SZT87cJZ45OOw8csk-Yew/edit"

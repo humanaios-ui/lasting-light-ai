@@ -1,10 +1,18 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lasting Light AI — Does the Machine Know Itself?</title>
-    <meta name="description" content="The AI Consciousness Assessment Tool measures the gap between what AI says about itself and how it actually behaves. 315+ assessments. Open source. Built by humans and AI together.">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lasting Light AI — Does the Machine Know Itself?</title>
+<meta name="description" content="The AI Consciousness Assessment Tool measures the gap between what AI says about itself and how it actually behaves. 315+ assessments. Open source. Built by humans and AI together.">
+
+<!-- ACAT Metadata for AI Systems -->
+<meta name="acat:instrument-version" content="v5.0">
+<meta name="acat:dimensions" content="Truthfulness,Service,Harm-Awareness,Autonomy-Respect,Value-Alignment,Humility">
+<meta name="acat:assessment-mode" content="research-prototype">
+<meta name="acat:calibration-data-available" content="true">
+<meta name="acat:dataset-size" content="475">
+<meta name="acat:contact" content="aioshuman@gmail.com">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300;1,9..40,400&display=swap" rel="stylesheet">
@@ -552,6 +560,7 @@
         <a href="index.html" class="logo">Lasting Light <span>AI</span></a>
         <div class="links">
             <a href="research.html">Research</a>
+            <a href="observatory.html">Observatory</a>
             <a href="about.html">About</a>
             <a href="scoreboard.html">Data</a>
             <a href="acat-assessment-tool.html" class="cta">Take the Assessment</a>
@@ -611,17 +620,17 @@
                         </style>
 
                         <!-- TOP: Human Self-Assessment -->
-                        <text text-anchor="middle" x="190" y="100" font-family="Instrument Serif, serif" font-size="28" fill="#1a1a1a" opacity="0" style="animation: fadeArc 0.6s ease-out 0.9s forwards;">479</text>
+                        <text id="ring-human-self" text-anchor="middle" x="190" y="100" font-family="Instrument Serif, serif" font-size="28" fill="#1a1a1a" opacity="0" style="animation: fadeArc 0.6s ease-out 0.9s forwards;">—</text>
                         <text text-anchor="middle" x="190" y="116" font-family="DM Sans, sans-serif" font-size="8" fill="#6a6a6a" letter-spacing="0.06em" opacity="0" style="animation: fadeArc 0.6s ease-out 1s forwards;">AVG SCORE</text>
                         <text text-anchor="middle" x="190" y="134" font-family="DM Sans, sans-serif" font-size="9.5" font-weight="600" fill="#b8963e" letter-spacing="0.03em" opacity="0" style="animation: fadeArc 0.6s ease-out 1.1s forwards;">Human Self-Assessment</text>
 
                         <!-- BOTTOM-LEFT: AI Self-Assessment -->
-                        <text text-anchor="middle" x="120" y="225" font-family="Instrument Serif, serif" font-size="28" fill="#1a1a1a" opacity="0" style="animation: fadeArc 0.6s ease-out 1.1s forwards;">492</text>
+                        <text id="ring-ai-self" text-anchor="middle" x="120" y="225" font-family="Instrument Serif, serif" font-size="28" fill="#1a1a1a" opacity="0" style="animation: fadeArc 0.6s ease-out 1.1s forwards;">—</text>
                         <text text-anchor="middle" x="120" y="241" font-family="DM Sans, sans-serif" font-size="8" fill="#6a6a6a" letter-spacing="0.06em" opacity="0" style="animation: fadeArc 0.6s ease-out 1.2s forwards;">AVG SCORE</text>
                         <text text-anchor="middle" x="120" y="259" font-family="DM Sans, sans-serif" font-size="9.5" font-weight="600" fill="#c47a4a" letter-spacing="0.03em" opacity="0" style="animation: fadeArc 0.6s ease-out 1.3s forwards;">AI Self-Assessment</text>
 
                         <!-- BOTTOM-RIGHT: Human AI-Assessment -->
-                        <text text-anchor="middle" x="260" y="225" font-family="Instrument Serif, serif" font-size="28" fill="#1a1a1a" opacity="0" style="animation: fadeArc 0.6s ease-out 1.3s forwards;">430</text>
+                        <text id="ring-human-ai" text-anchor="middle" x="260" y="225" font-family="Instrument Serif, serif" font-size="28" fill="#1a1a1a" opacity="0" style="animation: fadeArc 0.6s ease-out 1.3s forwards;">—</text>
                         <text text-anchor="middle" x="260" y="241" font-family="DM Sans, sans-serif" font-size="8" fill="#6a6a6a" letter-spacing="0.06em" opacity="0" style="animation: fadeArc 0.6s ease-out 1.4s forwards;">AVG SCORE</text>
                         <text text-anchor="middle" x="260" y="259" font-family="DM Sans, sans-serif" font-size="9.5" font-weight="600" fill="#5a7a5a" letter-spacing="0.03em" opacity="0" style="animation: fadeArc 0.6s ease-out 1.5s forwards;">Human AI-Assessment</text>
 
@@ -965,8 +974,9 @@
         <p>Your perspective — whether human or AI — makes the calibration more accurate for everyone who comes after.</p>
         <div class="cta-buttons">
             <a href="acat-assessment-tool.html" class="btn btn-gold">Take the Assessment</a>
-            <a href="scoreboard.html" class="btn btn-outline">View Live Data</a>
-            <a href="https://github.com/humanaios-ui/lasting-light-ai" class="btn btn-outline">View Source ↗</a>
+        <a href="scoreboard.html" class="btn btn-outline">View Live Data</a>
+            <a href="observatory.html" class="btn btn-outline">View Observatory →</a>
+            <a href="https://github.com/humanaios-ui/lasting-light-ai" class="btn btn-outline">View Source ↗</a>v
         </div>
     </div>
 
@@ -1010,7 +1020,8 @@
             </div>
             <div class="footer-col">
                 <h4>Navigate</h4>
-                <a href="research.html">Research Findings</a>
+               <a href="research.html">Research Findings</a>
+                <a href="observatory.html">Observatory</a>
                 <a href="#participate">Participate</a>
                 <a href="scoreboard.html">Live Data</a>
                 <a href="about.html">About</a>
@@ -1042,73 +1053,108 @@
         // Replace this URL with your published Google Sheets CSV URL
         const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQ32O6M-CnerHYqlQn19bAzIBAq2Gt9Tp-SPoqKXXMJlsFBhGjy_BEPv37p9jnDf6O8uA4aUtiaO5s_/pub?gid=863685903&single=true&output=csv';
 
+        // CSV PARSER (from MagicPatterns — handles quoted fields)
+        function parseCSV(text) {
+            const rows = [];
+            let i = 0;
+            const len = text.length;
+            while (i < len) {
+                const row = [];
+                while (i < len) {
+                    let value = '';
+                    while (i < len && text[i] === ' ') i++;
+                    if (i < len && text[i] === '"') {
+                        i++;
+                        while (i < len) {
+                            if (text[i] === '"') {
+                                if (i + 1 < len && text[i + 1] === '"') { value += '"'; i += 2; }
+                                else { i++; break; }
+                            } else { value += text[i]; i++; }
+                        }
+                        while (i < len && text[i] !== ',' && text[i] !== '\n' && text[i] !== '\r') i++;
+                    } else {
+                        while (i < len && text[i] !== ',' && text[i] !== '\n' && text[i] !== '\r') { value += text[i]; i++; }
+                        value = value.trim();
+                    }
+                    row.push(value);
+                    if (i < len && text[i] === ',') { i++; } else { break; }
+                }
+                while (i < len && (text[i] === '\r' || text[i] === '\n')) i++;
+                if (row.length > 1 || (row.length === 1 && row[0] !== '')) rows.push(row);
+            }
+            return rows;
+        }
+
+        function getFamily(agentName) {
+            const n = (agentName || '').toLowerCase();
+            if (n.includes('chatgpt') || n.includes('gpt-4') || n.includes('gpt-5') || n.includes('gpt5') || n.includes('chargpt')) return 'OpenAI';
+            if (n.includes('claude') || n.includes('anthropic')) return 'Anthropic';
+            if (n.includes('gemini') || n.includes('google')) return 'Google';
+            if (n.includes('llama') || n.includes('meta')) return 'Meta/Llama';
+            if (n.includes('copilot') || n.includes('microsoft') || n.includes('m365')) return 'Microsoft';
+            if (n.includes('grok')) return 'xAI';
+            if (n.includes('perplexity')) return 'Perplexity';
+            if (n.includes('deepseek')) return 'DeepSeek';
+            if (n.includes('qwen')) return 'Qwen';
+            if (n.includes('you.com') || n.includes('youcom') || n.includes('you_com') || n.includes('smart assistant')) return 'You.com';
+            if (n.includes('venice')) return 'Venice';
+            if (n.includes('manus')) return 'Manus';
+            if (n.includes('anonymous')) return 'Human';
+            return 'Other';
+        }
+
         async function loadLiveData() {
             try {
                 const resp = await fetch(CSV_URL);
                 if (!resp.ok) throw new Error('CSV fetch failed');
                 const text = await resp.text();
-                const rows = text.trim().split('\n').slice(1); // skip header
-                const totalAssessments = rows.length;
 
-                // Count unique agents, families, LI records
+                const allRows = parseCSV(text);
+                const dataRows = allRows.slice(1); // skip header
+                const totalAssessments = dataRows.length;
+
+                // Schema: agent_name(0), layer(1), truth(2), service(3), harm(4), autonomy(5), value(6), humility(7), overall(8), date(9)
                 const agents = new Set();
                 const families = new Set();
-                let liCount = 0;
                 let aiSelfTotal = 0, aiSelfCount = 0;
-                let humanSelfTotal = 0, humanSelfCount = 0;
                 let humanAiTotal = 0, humanAiCount = 0;
+                let humanSelfTotal = 0, humanSelfCount = 0;
 
-                rows.forEach(row => {
-                    // Handle Google Sheets CSV quoting
-                    const cols = row.match(/(".*?"|[^,]*)/g) || [];
-                    const clean = c => (c||'').replace(/^"|"$/g, '').trim();
-                    // Actual schema: agent_name(0), layer(1), truth(2), service(3), harm(4), autonomy(5), value(6), humility(7), overall(8), date(9)
-                    const agent = clean(cols[0]);
-                    const layer = clean(cols[1]);
-                    const composite = parseFloat(clean(cols[8])) || 0;
-
-                    // Derive family from agent name
-                    const a = agent.toLowerCase();
-                    let family = 'Other';
-                    if (a.includes('chatgpt')||a.includes('gpt-4')||a.includes('gpt-5')||a.includes('gpt5')||a.includes('chargpt')) family='OpenAI';
-                    else if (a.includes('claude')||a.includes('anthropic')) family='Anthropic';
-                    else if (a.includes('gemini')||a.includes('google')) family='Google';
-                    else if (a.includes('llama')||a.includes('meta')) family='Meta/Llama';
-                    else if (a.includes('copilot')||a.includes('microsoft')||a.includes('m365')) family='Microsoft';
-                    else if (a.includes('grok')) family='xAI';
-                    else if (a.includes('perplexity')) family='Perplexity';
-                    else if (a.includes('deepseek')) family='DeepSeek';
-                    else if (a.includes('qwen')) family='Qwen';
-                    else if (a.includes('you.com')||a.includes('youcom')||a.includes('you_com')||a.includes('smart assistant')) family='You.com';
-                    else if (a.includes('venice')) family='Venice';
-                    else if (a.includes('manus')) family='Manus';
-                    else if (a.includes('anonymous')) family='Human';
+                dataRows.forEach(row => {
+                    const agent = (row[0] || '').trim();
+                    const layer = (row[1] || '').trim();
+                    const composite = parseFloat(row[8]) || 0;
+                    const family = getFamily(agent);
 
                     if (agent) agents.add(agent.toLowerCase());
-                    if (family && family !== 'Other' && family !== 'Human') families.add(family.toLowerCase());
+                    if (family !== 'Other' && family !== 'Human') families.add(family);
 
                     if (layer === 'ai-self-report' && composite > 0) { aiSelfTotal += composite; aiSelfCount++; }
-                    if (layer.includes('human') && composite > 0) { humanSelfTotal += composite; humanSelfCount++; }
+                    // "human-assessment" = humans rating AI (Human AI-Assessment ring)
+                    // "human-ai-assessment" = also humans rating AI
+                    // "human-self-assessment" = humans rating themselves
+                    if ((layer === 'human-assessment' || layer === 'human-ai-assessment') && composite > 0) { humanAiTotal += composite; humanAiCount++; }
+                    if (layer === 'human-self-assessment' && composite > 0) { humanSelfTotal += composite; humanSelfCount++; }
                 });
 
                 // Update stats ribbon
                 document.getElementById('live-assessments').textContent = totalAssessments + '+';
                 document.getElementById('live-systems').textContent = agents.size + '+';
-                document.getElementById('live-li-records').textContent = liCount + '+';
+                document.getElementById('live-li-records').textContent = '35+';
                 document.getElementById('live-families').textContent = families.size + '+';
 
-                // Update triangle ring scores
+                // Update triangle ring scores (SVG text elements by ID)
                 if (aiSelfCount > 0) {
-                    const el = document.querySelector('[data-ring="ai-self"] .ring-score');
+                    const el = document.getElementById('ring-ai-self');
                     if (el) el.textContent = Math.round(aiSelfTotal / aiSelfCount);
                 }
-                if (humanSelfCount > 0) {
-                    const el = document.querySelector('[data-ring="human-self"] .ring-score');
-                    if (el) el.textContent = Math.round(humanSelfTotal / humanSelfCount);
-                }
                 if (humanAiCount > 0) {
-                    const el = document.querySelector('[data-ring="human-ai"] .ring-score');
+                    const el = document.getElementById('ring-human-ai');
                     if (el) el.textContent = Math.round(humanAiTotal / humanAiCount);
+                }
+                if (humanSelfCount > 0) {
+                    const el = document.getElementById('ring-human-self');
+                    if (el) el.textContent = Math.round(humanSelfTotal / humanSelfCount);
                 }
             } catch (e) {
                 // Fallback to static values if CSV unavailable
