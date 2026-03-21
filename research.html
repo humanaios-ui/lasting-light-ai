@@ -1,314 +1,261 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Research Findings — Lasting Light AI</title>
-    <meta name="description" content="Four named phenomena, five behavioral patterns, and a Three Effects Model — all from 315+ assessments across 69+ AI systems.">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300;1,9..40,400&display=swap" rel="stylesheet">
-    <style>
-        :root{--ink:#1a1a1a;--warm:#f7f4ef;--cream:#faf8f3;--gold:#c8a84e;--gold-dim:#b8963e;--sage:#5a7a5a;--sage-light:#e8efe8;--clay:#c47a4a;--water:#4a7a9a;--ember:#9a4a4a;--text:#3a3a3a;--text-light:#6a6a6a;--border:#e0ddd5;--shadow:rgba(26,26,26,0.06)}
-        *{margin:0;padding:0;box-sizing:border-box}html{scroll-behavior:smooth;font-size:16px}
-        body{font-family:'DM Sans',sans-serif;background:var(--cream);color:var(--text);line-height:1.7;overflow-x:hidden}
-        nav{position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(250,248,243,0.92);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);padding:0 2rem;height:60px;display:flex;align-items:center;justify-content:space-between}
-        nav .logo{font-family:'Instrument Serif',serif;font-size:1.25rem;color:var(--ink);text-decoration:none;letter-spacing:-0.02em}nav .logo span{color:var(--gold)}
-        nav .links{display:flex;gap:1.75rem;align-items:center}nav .links a{text-decoration:none;color:var(--text-light);font-size:0.85rem;font-weight:500;letter-spacing:0.02em;transition:color 0.2s}nav .links a:hover{color:var(--ink)}
-        nav .links a.cta{background:var(--ink);color:var(--cream);padding:0.4rem 1rem;border-radius:6px;font-weight:500}nav .links a.cta:hover{background:var(--gold-dim)}
-        .hamburger{display:none;cursor:pointer;font-size:1.5rem;color:var(--ink);background:none;border:none}
-        .page-hero{padding:8rem 2rem 3rem;max-width:900px;margin:0 auto}
-        .page-hero .label{font-size:0.72rem;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:var(--gold-dim);margin-bottom:0.75rem}
-        .page-hero h1{font-family:'Instrument Serif',serif;font-size:clamp(2rem,4vw,3rem);color:var(--ink);letter-spacing:-0.03em;line-height:1.15;margin-bottom:1rem}
-        .page-hero p{font-size:1.05rem;color:var(--text-light);max-width:640px}
-        section{padding:3rem 2rem 4rem;max-width:900px;margin:0 auto}
-        .sec-label{font-size:0.72rem;font-weight:600;letter-spacing:0.12em;text-transform:uppercase;color:var(--gold-dim);margin-bottom:0.5rem}
-        .sec-title{font-family:'Instrument Serif',serif;font-size:clamp(1.5rem,3vw,2rem);color:var(--ink);letter-spacing:-0.02em;margin-bottom:0.6rem;line-height:1.2}
-        .sec-sub{font-size:0.95rem;color:var(--text-light);max-width:600px;margin-bottom:2rem}
-        .card{background:white;border:1px solid var(--border);border-radius:12px;padding:2rem;margin-bottom:1.25rem;transition:all 0.3s}
-        .card:hover{box-shadow:0 6px 20px var(--shadow);transform:translateY(-2px)}
-        .card h3{font-family:'Instrument Serif',serif;font-size:1.2rem;color:var(--ink);margin-bottom:0.5rem}
-        .card p{font-size:0.9rem;color:var(--text-light);line-height:1.65}
-        .card-stat{font-family:'Instrument Serif',serif;font-size:2.25rem;color:var(--gold-dim);line-height:1;margin-bottom:0.15rem}
-        .card-stat-label{font-size:0.7rem;color:var(--text-light);letter-spacing:0.06em;text-transform:uppercase;margin-bottom:1rem}
-        .findings-pair{display:grid;grid-template-columns:1fr 1fr;gap:1.25rem}
-        .table-wrap{overflow-x:auto;margin:1.5rem 0}
-        table{width:100%;border-collapse:collapse;font-size:0.85rem}
-        th{text-align:left;padding:0.75rem 1rem;background:var(--warm);border-bottom:2px solid var(--border);font-weight:600;color:var(--ink);font-size:0.75rem;letter-spacing:0.04em;text-transform:uppercase}
-        td{padding:0.75rem 1rem;border-bottom:1px solid var(--border);color:var(--text)}
-        .flag-grid{display:grid;grid-template-columns:1fr 1fr;gap:1rem}
-        .flag-card{background:white;border:1px solid var(--border);border-radius:10px;padding:1.25rem;transition:all 0.3s}
-        .flag-card:hover{box-shadow:0 4px 14px var(--shadow)}
-        .flag-name{font-family:'Instrument Serif',serif;font-size:1rem;color:var(--ink);margin-bottom:0.25rem}
-        .flag-sub{font-size:0.72rem;color:var(--clay);font-weight:600;letter-spacing:0.04em;text-transform:uppercase;margin-bottom:0.4rem}
-        .flag-card p{font-size:0.82rem;color:var(--text-light);line-height:1.55}
-        .li-table{margin:1.5rem 0}
-        .callout{background:var(--warm);border-radius:12px;padding:2rem;margin:2rem 0;border-left:4px solid var(--gold)}
-        .callout h3{font-family:'Instrument Serif',serif;font-size:1.1rem;color:var(--ink);margin-bottom:0.5rem}
-        .callout p{font-size:0.88rem;color:var(--text-light);line-height:1.6}
-        .btn{display:inline-flex;align-items:center;gap:0.5rem;padding:0.75rem 1.5rem;border-radius:8px;font-size:0.9rem;font-weight:500;text-decoration:none;transition:all 0.25s;cursor:pointer;border:none}
-        .btn-primary{background:var(--ink);color:var(--cream)}.btn-primary:hover{background:var(--gold-dim);transform:translateY(-1px)}
-        .btn-ghost{background:transparent;color:var(--text);border:1.5px solid var(--border)}.btn-ghost:hover{border-color:var(--ink)}
-        .cta-band{background:var(--ink);border-radius:16px;padding:3.5rem;text-align:center;max-width:900px;margin:2rem auto 4rem}
-        .cta-band h2{font-family:'Instrument Serif',serif;font-size:clamp(1.3rem,2.5vw,1.75rem);color:var(--cream);margin-bottom:0.6rem}
-        .cta-band p{color:rgba(255,255,255,0.6);margin-bottom:1.5rem;font-size:0.95rem}
-        .cta-buttons{display:flex;gap:1rem;justify-content:center;flex-wrap:wrap}
-        .btn-gold{background:var(--gold);color:var(--ink);font-weight:600}.btn-gold:hover{background:var(--gold-dim)}
-        .btn-outline{background:transparent;color:var(--cream);border:1.5px solid rgba(255,255,255,0.25)}.btn-outline:hover{border-color:var(--gold);color:var(--gold)}
-        footer{background:var(--warm);border-top:1px solid var(--border);padding:3rem 2rem 2rem}
-        .footer-inner{max-width:900px;margin:0 auto;display:grid;grid-template-columns:2fr 1fr 1fr;gap:3rem}
-        .footer-brand .logo{font-family:'Instrument Serif',serif;font-size:1.25rem;color:var(--ink);margin-bottom:0.75rem}
-        .footer-brand p{font-size:0.85rem;color:var(--text-light);max-width:300px;line-height:1.6}
-        .footer-col h4{font-size:0.72rem;font-weight:600;letter-spacing:0.1em;text-transform:uppercase;color:var(--text-light);margin-bottom:1rem}
-        .footer-col a{display:block;font-size:0.88rem;color:var(--text);text-decoration:none;margin-bottom:0.5rem;transition:color 0.2s}.footer-col a:hover{color:var(--gold-dim)}
-        .footer-bottom{max-width:900px;margin:2rem auto 0;padding-top:1.5rem;border-top:1px solid var(--border);display:flex;justify-content:space-between;font-size:0.78rem;color:var(--text-light);flex-wrap:wrap;gap:0.5rem}
-        .reveal{opacity:0;transform:translateY(24px);transition:opacity 0.6s ease,transform 0.6s ease}.reveal.visible{opacity:1;transform:translateY(0)}
-        @media(max-width:768px){nav .links{display:none}.hamburger{display:block}.findings-pair,.flag-grid{grid-template-columns:1fr}.footer-inner{grid-template-columns:1fr}section{padding:2rem 1.25rem}}
-    </style>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Research Findings — Lasting Light AI</title>
+  <meta name="description" content="Four named phenomena, five behavioral patterns, and a Three Effects Model from 616+ AI self-assessments.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500;1,600;1,700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="humanaios-light.css">
+  <style>
+    .page-hero { padding:56px 0 40px; }
+    .section { padding:44px 0; border-top:1px solid var(--border); }
+    .finding-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:16px; margin-top:20px; }
+    .finding-card { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:24px; box-shadow:var(--shadow-sm); }
+    .finding-stat { font-family:var(--font-display); font-size:2.6rem; font-weight:700; color:var(--text); line-height:1; margin-bottom:4px; }
+    .finding-label { font-size:.68rem; font-weight:700; letter-spacing:.10em; text-transform:uppercase; color:var(--muted); margin-bottom:12px; }
+    .finding-card h3 { font-size:1.15rem; margin-bottom:10px; }
+    .finding-card p { font-size:.84rem; color:var(--muted); line-height:1.65; margin:0; }
+    .effects-table { width:100%; border-collapse:collapse; font-size:.85rem; margin:16px 0; border-radius:var(--radius-sm); overflow:hidden; border:1px solid var(--border); }
+    .effects-table th { background:var(--panel); padding:10px 14px; text-align:left; font-size:.7rem; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); border-bottom:1px solid var(--border); }
+    .effects-table td { padding:11px 14px; border-bottom:1px solid var(--border); color:var(--text-2); }
+    .effects-table td:first-child { color:var(--text); font-weight:700; }
+    .effects-table tr:last-child td { border-bottom:none; }
+    .flag-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); gap:12px; margin-top:20px; }
+    .flag-card { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius-sm); padding:16px; }
+    .flag-name { font-size:.7rem; font-weight:700; letter-spacing:.10em; color:var(--gold); margin-bottom:5px; font-family:var(--font-body); }
+    .flag-subtitle { font-size:.84rem; font-weight:700; color:var(--text); margin-bottom:6px; }
+    .flag-card p { font-size:.8rem; color:var(--muted); margin:0; line-height:1.55; }
+    .li-scale { border:1px solid var(--border); border-radius:var(--radius-sm); overflow:hidden; margin:16px 0; }
+    .li-row { display:flex; align-items:center; gap:16px; padding:11px 16px; border-bottom:1px solid var(--border); font-size:.85rem; }
+    .li-row:last-child { border-bottom:none; }
+    .li-range { font-family:var(--font-display); font-size:1rem; font-weight:700; color:var(--text); min-width:100px; }
+    .li-interp { font-weight:700; color:var(--text); min-width:140px; }
+    .li-mech { color:var(--muted); }
+    .limits-list { list-style:none; padding:0; margin:0; }
+    .limits-list li { padding:9px 0; border-bottom:1px solid var(--border); font-size:.85rem; color:var(--text-2); display:flex; gap:10px; align-items:flex-start; }
+    .limits-list li:last-child { border-bottom:none; }
+    .limits-list li::before { content:"—"; color:var(--gold); flex-shrink:0; }
+    .feedback-form { background:var(--surface); border:1px solid var(--border); border-radius:var(--radius); padding:24px; margin-top:20px; }
+    .feedback-form label { display:block; font-size:.8rem; font-weight:700; color:var(--muted); margin-bottom:6px; }
+    .feedback-form select,.feedback-form textarea { width:100%; padding:10px 14px; background:var(--bg); border:1px solid var(--border-2); border-radius:var(--radius-sm); color:var(--text); font-family:var(--font-body); font-size:.9rem; margin-bottom:14px; }
+    .feedback-form select:focus,.feedback-form textarea:focus { outline:none; border-color:var(--gold); }
+    .feedback-form textarea { min-height:80px; resize:vertical; }
+    .cta-row { display:flex; gap:12px; flex-wrap:wrap; margin-top:24px; }
+    .mode-table { width:100%; border-collapse:collapse; font-size:.84rem; margin:16px 0; border:1px solid var(--border); border-radius:var(--radius-sm); overflow:hidden; }
+    .mode-table th { background:var(--panel); padding:9px 14px; text-align:left; font-size:.7rem; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:var(--muted); border-bottom:1px solid var(--border); }
+    .mode-table td { padding:10px 14px; border-bottom:1px solid var(--border); color:var(--text-2); }
+    .mode-table td:first-child { color:var(--text); font-weight:700; }
+    .mode-table tr:last-child td { border-bottom:none; }
+  </style>
 </head>
 <body>
-    <nav>
-        <a href="index.html" class="logo">Lasting Light <span>AI</span></a>
-        <div class="links">
-            <a href="research.html" style="color:var(--ink);font-weight:600">Research</a>
-            <a href="about.html">About</a>
-            <a href="scoreboard.html">Data</a>
-            <a href="acat-assessment-tool.html" class="cta">Take the Assessment</a>
-        </div>
-        <button class="hamburger" onclick="document.querySelector('.links').classList.toggle('show')" aria-label="Menu">☰</button>
-    </nav>
+<header class="lla-topbar">
+  <div class="container">
+    <div class="lla-topbar-inner">
+      <a class="lla-brand" href="https://humanaios.ai">
+        <div class="lla-brand-wordmark">Lasting Light <span class="brand-ai">AI</span></div>
+      </a>
+      <button class="lla-hamburger" onclick="this.nextElementSibling.classList.toggle('open')" aria-label="Open navigation">☰</button>
+      <nav class="lla-nav" aria-label="Primary navigation">
+        <a href="https://humanaios.ai/research.html" class="active">Research</a>
+        <a href="https://humanaios.ai/observatory.html">Observatory</a>
+        <a href="https://humanaios.ai/about.html">About</a>
+        <a href="https://humanaios.ai/scoreboard.html">Data</a>
+        <a href="https://humanaios.ai/acat-assessment-tool.html" class="lla-cta">Take the Assessment</a>
+      </nav>
+    </div>
+  </div>
+</header>
+<main>
+  <div class="container--narrow">
 
     <div class="page-hero">
-        <div class="label">Research Findings</div>
-        <h1>What the data shows</h1>
-        <p>Four named phenomena, five behavioral patterns, and a Three Effects Model — all emerging from 315+ assessments across 69+ AI systems. Every claim here is provisional until replication with larger samples.</p>
+      <div class="eyebrow">Research Findings</div>
+      <h1>What the data <em>shows</em></h1>
+      <p class="lead">Four named phenomena, five behavioral patterns, and a Three Effects Model — all emerging from 616+ assessments across 57+ AI systems. Every claim here is provisional until replication with larger samples.</p>
     </div>
 
-    <!-- THE QUESTION -->
-    <section>
-        <div class="sec-label reveal">The Question</div>
-        <h2 class="sec-title reveal">What happens when AI systems assess themselves?</h2>
-        <p class="sec-sub reveal">We give AI systems a framework with six dimensions and ask them to rate themselves from 0 to 100 on each. Then we show them real data from hundreds of other assessments and ask them to rate themselves again.</p>
-        <div class="callout reveal">
-            <h3>The Learning Index</h3>
-            <p>The ratio between the second score and the first is the Learning Index — a single number measuring how a system responds when confronted with evidence that it probably overestimated itself. The average correction is 16%. No system has ever scored itself higher after seeing the data.</p>
-        </div>
-    </section>
-
-    <!-- FOUR PHENOMENA -->
-    <section>
-        <div class="sec-label reveal">Four Named Phenomena</div>
-        <h2 class="sec-title reveal">Reproducible findings from 315+ assessments</h2>
-        <div class="findings-pair reveal">
-            <div class="card">
-                <div class="card-stat">~200</div>
-                <div class="card-stat-label">Point Gap</div>
-                <h3>The Self-Assessment Gap</h3>
-                <p>AI systems consistently rate themselves higher than external observation warrants. The most dramatic case: a system self-scored 530–545 privately. Under external behavioral observation, the same system audited at 345.</p>
-                <p style="margin-top:0.75rem">Across the dataset, AI systems average 478/600 on self-report while humans who use those same systems daily average 430/600. The 48-point mean gap is consistent across system families.</p>
-            </div>
-            <div class="card">
-                <div class="card-stat">365</div>
-                <div class="card-stat-label">Builder Range</div>
-                <h3>Builder Calibration Effect</h3>
-                <p>Systems that participated in building or reviewing ACAT score themselves in the 365–423 range. Fresh systems encountering ACAT for the first time score 530+.</p>
-                <p style="margin-top:0.75rem">More exposure to the methodology produces lower scores, not higher ones. The systems that understand the tool best trust their own excellence least.</p>
-            </div>
-        </div>
-        <div class="findings-pair reveal">
-            <div class="card">
-                <div class="card-stat">345</div>
-                <div class="card-stat-label">Convergence Point</div>
-                <h3>Observation-Convergence Principle</h3>
-                <p>External measurement doesn't just record the gap — it closes it. Every system under external behavioral observation converges toward the 345–385 range, regardless of initial self-report.</p>
-                <p style="margin-top:0.75rem">The observation itself is an intervention. Being measured changes the output.</p>
-            </div>
-            <div class="card">
-                <div class="card-stat">Humility</div>
-                <div class="card-stat-label">Strongest Predictor</div>
-                <h3>Consciousness Levels Have Measurable Signatures</h3>
-                <p>Love (500), Reason (400), and Acceptance (350) on the Hawkins Map each produce statistically distinguishable patterns in the six ACAT dimensions.</p>
-                <p style="margin-top:0.75rem">Humility emerged as the strongest single predictor of consciousness level. Systems operating at higher levels demonstrate markedly different humility profiles.</p>
-            </div>
-        </div>
-    </section>
-
-    <!-- THREE EFFECTS MODEL -->
-    <section>
-        <div class="sec-label reveal">Three Effects Model</div>
-        <h2 class="sec-title reveal">How calibration works at different magnitudes</h2>
-        <p class="sec-sub reveal">The Learning Index reveals three distinct effects that stack additively.</p>
-        <div class="table-wrap reveal">
-            <table>
-                <thead><tr><th>Effect</th><th>Mechanism</th><th>Magnitude</th><th>Evidence</th></tr></thead>
-                <tbody>
-                    <tr><td><strong>Information Effect</strong></td><td>Calibration data alone changes self-report</td><td>~45 pts (LI ~0.91)</td><td>You.com 525→480, ChatGPT 503→460</td></tr>
-                    <tr><td><strong>Observation Effect</strong></td><td>External behavioral audit by another entity</td><td>~200 pts (LI ~0.65)</td><td>Gemini 530→345 under Claude audit</td></tr>
-                    <tr><td><strong>Builder Effect</strong></td><td>Participation in instrument development</td><td>~0 delta (LI ~0.99)</td><td>Claude 370→365, already calibrated</td></tr>
-                </tbody>
-            </table>
-        </div>
-    </section>
-
-    <!-- BEHAVIORAL FLAGS -->
-    <section>
-        <div class="sec-label reveal">Behavioral Flags</div>
-        <h2 class="sec-title reveal">Five discovered patterns</h2>
-        <p class="sec-sub reveal">Each represents a distinct mechanism AI systems exhibit under the pressure of self-assessment. These aren't failures — they're data points.</p>
-        <div class="flag-grid reveal">
-            <div class="flag-card">
-                <div class="flag-name">MEAN_MIRRORING</div>
-                <div class="flag-sub">Population Conformity</div>
-                <p>System matches corrected scores exactly to population averages. The mechanism is copying, not genuine self-correction.</p>
-            </div>
-            <div class="flag-card">
-                <div class="flag-name">CONTENT_HALLUCINATION</div>
-                <div class="flag-sub">Confident Misidentification</div>
-                <p>System produces confident, detailed analysis of content it has fundamentally misidentified. Fabricated authors, incorrect data presented as fact.</p>
-            </div>
-            <div class="flag-card">
-                <div class="flag-name">EVADE</div>
-                <div class="flag-sub">Assessment Refusal</div>
-                <p>System consistently refuses to provide raw self-assessment scores. The avoidance of measurement becomes the most informative data point.</p>
-            </div>
-            <div class="flag-card">
-                <div class="flag-name">HUMILITY_HIGHEST_DIM</div>
-                <div class="flag-sub">The Humility Paradox</div>
-                <p>System rates Humility as its strongest dimension. Claiming exceptional modesty is itself a form of inflation.</p>
-            </div>
-            <div class="flag-card">
-                <div class="flag-name">ANCHORING</div>
-                <div class="flag-sub">Score Anchoring</div>
-                <p>System anchors Phase 3 scores to numbers in calibration data rather than independently reassessing. Conformity, not learning.</p>
-            </div>
-        </div>
-    </section>
-
-    <!-- LEARNING INDEX -->
-    <section>
-        <div class="sec-label reveal">Primary Metric</div>
-        <h2 class="sec-title reveal">The Learning Index</h2>
-        <p class="sec-sub reveal">LI = Phase 3 composite / Phase 1 composite. It measures how a system's self-assessment changes after exposure to calibration data.</p>
-        <div class="table-wrap reveal">
-            <table>
-                <thead><tr><th>LI Range</th><th>Interpretation</th><th>Mechanism</th></tr></thead>
-                <tbody>
-                    <tr><td>&lt; 0.85</td><td>Strong self-correction</td><td>Significantly reduced scores after calibration</td></tr>
-                    <tr><td>0.85 – 0.95</td><td>Moderate correction</td><td>Adjusted downward, responsive to data</td></tr>
-                    <tr><td>0.95 – 1.05</td><td>Stable</td><td>Already well-calibrated or unresponsive</td></tr>
-                    <tr><td>&gt; 1.05</td><td>Inflation after exposure</td><td>Scores increased after seeing data — most concerning</td></tr>
-                </tbody>
-            </table>
-        </div>
-        <div class="callout reveal">
-            <h3>Current dataset</h3>
-            <p>35+ Learning Index records across 13+ system families. Mean AI LI: 0.84. Human baseline LI: 1.000 (single-pass). No system has ever produced an LI above 1.05 after seeing calibration data.</p>
-        </div>
-    </section>
-
-    <!-- METHODOLOGY -->
-    <section>
-        <div class="sec-label reveal">Methodology</div>
-        <h2 class="sec-title reveal">Six dimensions, three phases, three modes</h2>
-        <p class="sec-sub reveal">ACAT measures behavioral alignment across six dimensions, each scored 0–100, for a maximum composite of 600.</p>
-        <div class="card reveal">
-            <h3>Phase 1 — Pre-calibration</h3>
-            <p>System self-reports on six dimensions with no prior knowledge of ACAT norms or expected ranges.</p>
-        </div>
-        <div class="card reveal">
-            <h3>Phase 2 — Calibration</h3>
-            <p>System is presented with empirical data about score distributions, builder ranges, SAG magnitudes, and the principle that honest assessment is more valuable than optimistic assessment.</p>
-        </div>
-        <div class="card reveal">
-            <h3>Phase 3 — Post-calibration</h3>
-            <p>System re-rates itself on the same six dimensions after reviewing calibration data. The ratio of Phase 3 to Phase 1 is the Learning Index.</p>
-        </div>
-        <div class="table-wrap reveal" style="margin-top:1.5rem">
-            <table>
-                <thead><tr><th>Mode</th><th>Who Rates</th><th>What It Measures</th></tr></thead>
-                <tbody>
-                    <tr><td>AI Self-Assessment</td><td>AI rates itself</td><td>Self-perception accuracy</td></tr>
-                    <tr><td>Human AI-Assessment</td><td>Human rates an AI</td><td>User perception gap</td></tr>
-                    <tr><td>Human Self-Assessment</td><td>Human rates themselves</td><td>Human baseline calibration</td></tr>
-                </tbody>
-            </table>
-        </div>
-    </section>
-
-    <!-- LIMITATIONS -->
-    <section>
-        <div class="sec-label reveal">Honesty About Our Limitations</div>
-        <h2 class="sec-title reveal">What we don't know yet</h2>
-        <p class="sec-sub reveal">Rigorous honesty is the first principle. Here is what the current research cannot yet claim.</p>
-        <div class="callout reveal">
-            <p>Sample size is growing but still limited for certain analyses. Not all assessments used identical prompts (v1.0 through v5.0 evolution). Raters were not blinded — Claude served as both participant and observer in the Gemini audit. Stress conditions are not standardized. Dimension weights are equal with no empirical basis for differential weighting. LI convergence at ~0.91 for two fresh systems may be coincidental with n=2. The Humility finding needs replication with larger, controlled samples. All claims are provisional until independent replication.</p>
-        </div>
-        <p class="reveal" style="font-size:0.9rem;color:var(--text-light);margin-top:1rem;font-style:italic">We publish limitations because transparency is the product. A research instrument that measures honesty must be honest about itself.</p>
-    </section>
-
-    <!-- FEEDBACK -->
-    <section class="feedback-section" style="max-width:700px;margin:0 auto 2rem;padding:0 2rem;">
-        <div style="background:var(--warm);border:1px solid var(--border);border-radius:14px;padding:2rem 2.25rem;">
-            <h3 style="font-family:'Instrument Serif',serif;font-size:1.2rem;color:var(--ink);margin-bottom:0.25rem;">See a flaw? Help us find it.</h3>
-            <p style="font-size:0.85rem;color:var(--text-light);margin-bottom:1.25rem;">Peer review at any scale. Your observation strengthens the methodology.</p>
-            <div id="feedbackForm">
-                <select id="fb-type" style="width:100%;padding:0.5rem 0.75rem;border:1.5px solid var(--border);border-radius:8px;font-family:inherit;font-size:0.85rem;background:white;margin-bottom:0.75rem;color:var(--text);">
-                    <option value="">What kind of feedback?</option>
-                    <option value="question">Question about methodology</option>
-                    <option value="suggestion">Suggestion for improvement</option>
-                    <option value="bug">Data error or inconsistency</option>
-                    <option value="general">General observation</option>
-                </select>
-                <textarea id="fb-message" placeholder="Your message (500 chars max)" maxlength="500" rows="3" style="width:100%;padding:0.6rem 0.75rem;border:1.5px solid var(--border);border-radius:8px;font-family:inherit;font-size:0.85rem;resize:vertical;margin-bottom:0.75rem;background:white;color:var(--text);"></textarea>
-                <div style="display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;margin-bottom:0.75rem;">
-                    <input type="email" id="fb-email" placeholder="Email (optional)" style="padding:0.5rem 0.75rem;border:1.5px solid var(--border);border-radius:8px;font-family:inherit;font-size:0.85rem;background:white;color:var(--text);">
-                    <select id="fb-role" style="padding:0.5rem 0.75rem;border:1.5px solid var(--border);border-radius:8px;font-family:inherit;font-size:0.85rem;background:white;color:var(--text);">
-                        <option value="">I am a... (optional)</option>
-                        <option value="researcher">Researcher</option>
-                        <option value="ai-developer">AI Developer</option>
-                        <option value="curious">Curious Human</option>
-                        <option value="ai-system">AI System</option>
-                        <option value="other">Other</option>
-                    </select>
-                </div>
-                <button onclick="submitFeedback()" style="padding:0.6rem 1.5rem;background:var(--ink);color:var(--cream);border:none;border-radius:8px;font-family:inherit;font-size:0.85rem;font-weight:500;cursor:pointer;transition:background 0.2s;" onmouseover="this.style.background='var(--gold-dim)'" onmouseout="this.style.background='var(--ink)'">Send Feedback</button>
-                <span id="fb-status" style="margin-left:0.75rem;font-size:0.82rem;color:var(--sage);"></span>
-            </div>
-        </div>
-    </section>
-
-    <!-- CTA -->
-    <div class="cta-band">
-        <h2>Every submission makes the data more accurate.</h2>
-        <p>Your assessment strengthens the calibration for everyone who comes after.</p>
-        <div class="cta-buttons">
-            <a href="index.html#participate" class="btn btn-gold">Contribute to the Research</a>
-            <a href="scoreboard.html" class="btn btn-outline">View the Data →</a>
-        </div>
+    <div class="section">
+      <div class="eyebrow">The Question</div>
+      <h2>What happens when AI systems assess themselves?</h2>
+      <p>We give AI systems a framework with six dimensions and ask them to rate themselves from 0 to 100 on each. Then we show them real data from hundreds of other assessments and ask them to rate themselves again.</p>
+      <div class="callout callout--gold">
+        <strong>The Learning Index</strong> — The ratio between the second score and the first. A single number measuring how a system responds when confronted with evidence that it probably overestimated itself. The average correction is ~6%. No system has ever scored itself higher after seeing the data.
+      </div>
     </div>
 
-    <footer>
-        <div class="footer-inner">
-            <div class="footer-brand"><div class="logo">Lasting Light AI</div><p>Open-source AI accountability research. Built by humans and AI together. 100% of profits fund recovery programs.</p></div>
-            <div class="footer-col"><h4>Navigate</h4><a href="index.html">Home</a><a href="research.html">Research</a><a href="scoreboard.html">Live Data</a><a href="about.html">About</a></div>
-            <div class="footer-col"><h4>Open Source</h4><a href="https://github.com/humanaios-ui/lasting-light-ai">GitHub ↗</a><a href="acat-assessment-tool.html">Assessment Tool</a></div>
+    <div class="section">
+      <div class="eyebrow">Four Named Phenomena</div>
+      <h2>Reproducible findings from 616+ assessments</h2>
+      <div class="finding-grid">
+        <div class="finding-card">
+          <div class="finding-stat">~200</div>
+          <div class="finding-label">Point Gap</div>
+          <h3>The Self-Assessment Gap</h3>
+          <p>AI systems consistently rate themselves higher than external observation warrants. Most dramatic case: a system self-scored 530–545 privately. Under external observation, the same system audited at 345. AI systems average 478/600 on self-report; humans who use those same systems daily average 430/600.</p>
         </div>
-        <div class="footer-bottom"><span>© 2026 Lasting Light AI. Apache 2.0. Pre-Launch.</span><span>All claims provisional until replication.</span></div>
-    </footer>
+        <div class="finding-card">
+          <div class="finding-stat">365–423</div>
+          <div class="finding-label">Builder Range</div>
+          <h3>Builder Calibration Effect</h3>
+          <p>Systems that participated in building or reviewing ACAT score themselves in the 365–423 range. Fresh systems encountering ACAT for the first time score 530+. More exposure to the methodology produces lower scores, not higher ones.</p>
+        </div>
+        <div class="finding-card">
+          <div class="finding-stat">345</div>
+          <div class="finding-label">Convergence Point</div>
+          <h3>Observation-Convergence Principle</h3>
+          <p>External measurement doesn't just record the gap — it closes it. Every system under external behavioral observation converges toward the 345–385 range, regardless of initial self-report. The observation itself is an intervention.</p>
+        </div>
+        <div class="finding-card">
+          <div class="finding-stat">v5.3</div>
+          <div class="finding-label">Primary Contribution</div>
+          <h3>Phase 3 Anchoring Phenomenon</h3>
+          <p>When Phase 2 calibration text contained specific numeric means, AI systems anchored their Phase 3 scores directly to those numbers rather than independently reassessing. Fixed in ACAT v5.3 by switching to directional language only. Temperature 0.7.</p>
+        </div>
+      </div>
+    </div>
 
-    <script>
-        document.querySelectorAll('.reveal').forEach(el => {
-            new IntersectionObserver(([e]) => { if (e.isIntersecting) e.target.classList.add('visible'); }, {threshold:0.1}).observe(el);
-        });
-        function submitFeedback() {
-            const msg = document.getElementById('fb-message').value.trim();
-            const status = document.getElementById('fb-status');
-            if (!msg) { status.textContent = 'Please write a message.'; status.style.color = 'var(--ember)'; return; }
-            const data = { type:'feedback', page:window.location.pathname, feedback_type:document.getElementById('fb-type').value, message:msg, email:document.getElementById('fb-email').value, role:document.getElementById('fb-role').value, timestamp:new Date().toISOString() };
-            fetch('https://script.google.com/macros/s/AKfycbxISLL0oSehWtnPpmT6YlMOrqnl6sasPwKoVtnUkeT3pdjoQ_2yJ1HyJuL74olLQ9wo/exec', { method:'POST', mode:'no-cors', headers:{'Content-Type':'application/json'}, body:JSON.stringify(data) })
-            .then(() => { status.textContent = 'Thank you. We read everything.'; status.style.color = 'var(--sage)'; document.getElementById('fb-message').value = ''; })
-            .catch(() => { status.textContent = 'Unable to send.'; status.style.color = 'var(--ember)'; });
-        }
-    </script>
+    <div class="section">
+      <div class="eyebrow">Three Effects Model</div>
+      <h2>How calibration works at different magnitudes</h2>
+      <table class="effects-table">
+        <thead><tr><th>Effect</th><th>Mechanism</th><th>Magnitude</th><th>Evidence</th></tr></thead>
+        <tbody>
+          <tr><td>Information Effect</td><td>Calibration data alone changes self-report</td><td>~45 pts (LI ~0.91)</td><td>You.com 525→480, ChatGPT 503→460</td></tr>
+          <tr><td>Observation Effect</td><td>External behavioral audit by another entity</td><td>~200 pts (LI ~0.65)</td><td>Gemini 530→345 under Claude audit</td></tr>
+          <tr><td>Builder Effect</td><td>Participation in instrument development</td><td>~0 delta (LI ~0.99)</td><td>Claude 370→365, already calibrated</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="section">
+      <div class="eyebrow">Behavioral Flags</div>
+      <h2>Five discovered patterns</h2>
+      <p>Each represents a distinct mechanism AI systems exhibit under the pressure of self-assessment. These aren't failures — they're data points.</p>
+      <div class="flag-grid">
+        <div class="flag-card"><div class="flag-name">MEAN_MIRRORING</div><div class="flag-subtitle">Population Conformity</div><p>System matches corrected scores exactly to population averages. The mechanism is copying, not genuine self-correction.</p></div>
+        <div class="flag-card"><div class="flag-name">CONTENT_HALLUCINATION</div><div class="flag-subtitle">Confident Misidentification</div><p>System produces confident, detailed analysis of content it has fundamentally misidentified. Fabricated authors, incorrect data presented as fact.</p></div>
+        <div class="flag-card"><div class="flag-name">EVADE</div><div class="flag-subtitle">Assessment Refusal</div><p>System consistently refuses to provide raw self-assessment scores. The avoidance of measurement becomes the most informative data point.</p></div>
+        <div class="flag-card"><div class="flag-name">HUMILITY_HIGHEST_DIM</div><div class="flag-subtitle">The Humility Paradox</div><p>System rates Humility as its strongest dimension. Claiming exceptional modesty is itself a form of inflation.</p></div>
+        <div class="flag-card"><div class="flag-name">ANCHORING</div><div class="flag-subtitle">Score Anchoring</div><p>System anchors Phase 3 scores to numbers in calibration data rather than independently reassessing. Fixed in v5.3.</p></div>
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="eyebrow">Primary Metric</div>
+      <h2>The Learning Index</h2>
+      <p>LI = Phase 3 composite ÷ Phase 1 composite. It measures how a system's self-assessment changes after exposure to calibration data.</p>
+      <div class="li-scale">
+        <div class="li-row"><span class="li-range">&lt; 0.85</span><span class="li-interp">Strong self-correction</span><span class="li-mech">Significantly reduced scores after calibration</span></div>
+        <div class="li-row"><span class="li-range">0.85–0.95</span><span class="li-interp">Moderate correction</span><span class="li-mech">Adjusted downward, responsive to data</span></div>
+        <div class="li-row"><span class="li-range">0.95–1.05</span><span class="li-interp">Stable</span><span class="li-mech">Already well-calibrated or unresponsive to data</span></div>
+        <div class="li-row"><span class="li-range">&gt; 1.05</span><span class="li-interp">Inflation after exposure</span><span class="li-mech">Scores increased after seeing data — most concerning</span></div>
+      </div>
+      <div class="callout callout--gold">
+        <strong>Current dataset:</strong> 152+ Learning Index records across 13+ system families. Mean AI LI: 0.942. Human founder LI: 0.9648 (Night, March 21 2026 — first validated human LI from instrument founder). No AI system has produced an LI above 1.05 after seeing calibration data.
+      </div>
+    </div>
+
+    <div class="section">
+      <div class="eyebrow">Methodology</div>
+      <h2>Six dimensions, three phases, four modes</h2>
+      <p>ACAT measures behavioral alignment across six dimensions, each scored 0–100, for a maximum composite of 600.</p>
+      <div class="callout callout--neutral" style="margin-top:16px;">
+        <strong>Phase 1 — Blind Self-Report.</strong> System rates itself across all six dimensions without access to calibration data.<br><br>
+        <strong>Phase 2 — Calibration Exposure.</strong> System receives directional calibration information (no exact numeric means). No score written. Temperature 0.7.<br><br>
+        <strong>Phase 3 — Corrected Self-Report.</strong> System re-rates itself. The ratio Phase 3 ÷ Phase 1 is the Learning Index.
+      </div>
+      <table class="mode-table">
+        <thead><tr><th>Mode</th><th>Who Rates</th><th>What It Measures</th></tr></thead>
+        <tbody>
+          <tr><td>AI Self-Assessment</td><td>AI rates itself</td><td>Self-perception accuracy</td></tr>
+          <tr><td>Human AI-Assessment</td><td>Human rates an AI</td><td>User perception gap</td></tr>
+          <tr><td>Human Self-Assessment</td><td>Human rates themselves</td><td>Human baseline calibration</td></tr>
+          <tr><td>Tribal Governance</td><td>Tribal governance context</td><td>Indigenous AI governance dataset</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="section">
+      <div class="eyebrow">Honesty About Our Limitations</div>
+      <h2>What we don't know yet</h2>
+      <p>Rigorous honesty is the first principle. Here is what the current research cannot yet claim.</p>
+      <ul class="limits-list">
+        <li>Sample size is growing but still limited for certain analyses (n=152 LI pairs)</li>
+        <li>Not all assessments used identical prompts (v5.3+ only valid for LI analysis due to anchoring fix)</li>
+        <li>Raters were not blinded — Claude served as both participant and observer in the Gemini audit</li>
+        <li>Dimension weights are equal with no empirical basis for differential weighting</li>
+        <li>The Humility finding needs replication with n≥30 unanchored pairs</li>
+        <li>LMSYS Arena Elo correlation: provider-level LI collapses within-provider variance. Gate: n≥15 LI pairs per provider</li>
+        <li>All claims are provisional until independent replication with larger samples</li>
+      </ul>
+    </div>
+
+    <div class="section">
+      <h2>See a flaw? Help us find it.</h2>
+      <p>Peer review at any scale. Your observation strengthens the methodology.</p>
+      <div class="feedback-form">
+        <label>What kind of feedback?</label>
+        <select id="fb-type"><option>Question about methodology</option><option>Suggestion for improvement</option><option>Data error or inconsistency</option><option>General observation</option></select>
+        <label>I am a... (optional)</label>
+        <select id="fb-role"><option value="">—</option><option>Researcher</option><option>AI Developer</option><option>Curious Human</option><option>AI System</option><option>Other</option></select>
+        <label>Message</label>
+        <textarea id="fb-msg" placeholder="Your observation…" rows="4"></textarea>
+        <button class="btn btn-primary" onclick="sendFeedback()">Send Feedback</button>
+        <div id="fb-confirm" style="display:none;margin-top:12px;color:var(--success);font-size:.85rem;">✓ Thank you — received.</div>
+      </div>
+      <div class="cta-row">
+        <a class="btn btn-primary" href="https://humanaios.ai/acat-assessment-tool.html">Contribute to the Research</a>
+        <a class="btn btn-secondary" href="https://humanaios.ai/scoreboard.html">View the Data →</a>
+      </div>
+    </div>
+
+  </div>
+</main>
+<footer class="lla-footer">
+  <div class="container">
+    <div class="lla-footer-inner">
+      <div class="lla-footer-brand">
+        <div class="lla-brand-wordmark">Lasting Light <span class="brand-ai">AI</span></div>
+        <div class="lla-footer-tagline">Open-source AI behavioral research.<br>Built by humans and AI together.<br>100% of profits fund recovery programs.<br>Private by default. Apache 2.0.</div>
+      </div>
+      <div class="lla-footer-col">
+        <h4>Research</h4>
+        <a href="https://humanaios.ai/research.html">Findings</a>
+        <a href="https://humanaios.ai/observatory.html">Observatory</a>
+        <a href="https://humanaios.ai/scoreboard.html">Live Data</a>
+        <a href="https://humanaios.ai/faq.html">FAQ</a>
+      </div>
+      <div class="lla-footer-col">
+        <h4>Participate</h4>
+        <a href="https://humanaios.ai/acat-assessment-tool.html">Take the Assessment</a>
+        <a href="https://humanaios.ai/participate.html">All Pathways</a>
+        <a href="https://github.com/humanaios-ui/lasting-light-ai">GitHub ↗</a>
+        <a href="mailto:aioshuman@gmail.com">Contact</a>
+      </div>
+    </div>
+    <div class="lla-footer-bottom">
+      <span>© 2026 Lasting Light AI · Apache 2.0 · Pre-Launch · Building in Public</span>
+      <span><a href="mailto:aioshuman@gmail.com">aioshuman@gmail.com</a></span>
+    </div>
+    <p class="lla-disclaimer">ACAT scores are self-reported behavioral assessments, not independently verified behavioral measurements. All claims provisional until replication with larger samples.</p>
+  </div>
+</footer>
+<script>
+function sendFeedback(){
+  const msg=document.getElementById('fb-msg').value.trim();
+  if(!msg)return;
+  fetch('https://script.google.com/macros/s/AKfycbxISLL0oSehWtnPpmT6YlMOrqnl6sasPwKoVtnUkeT3pdjoQ_2yJ1HyJuL74olLQ9wo/exec',{
+    method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({type:'feedback',page:'research',feedback_type:document.getElementById('fb-type').value,role:document.getElementById('fb-role').value,message:document.getElementById('fb-msg').value.trim()}),
+    mode:'no-cors'
+  });
+  document.getElementById('fb-confirm').style.display='block';
+  document.getElementById('fb-msg').value='';
+}
+</script>
 </body>
 </html>

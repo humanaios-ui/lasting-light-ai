@@ -1,528 +1,132 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ACAT Scoreboard — Lasting Light AI</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:ital,opsz,wght@0,9..40,300..700;1,9..40,300..700&display=swap" rel="stylesheet">
-    <style>
-        :root {
-            --bg: #faf8f3;
-            --card: #f7f4ef;
-            --text: #1a1a1a;
-            --text-light: #6a6a6a;
-            --gold: #c8a84e;
-            --sage: #5a7a5a;
-            --ember: #9a4a4a;
-            --border: #e0ddd5;
-            --water: #5a7a8a;
-        }
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body {
-            font-family: 'DM Sans', sans-serif;
-            background: var(--bg);
-            color: var(--text);
-            line-height: 1.6;
-        }
-
-        /* NAV */
-        nav {
-            display: flex; justify-content: space-between; align-items: center;
-            padding: 1rem 2rem;
-            border-bottom: 1px solid var(--border);
-            position: sticky; top: 0; z-index: 50;
-            background: var(--bg);
-        }
-        .logo { font-family: 'Instrument Serif', serif; font-size: 1.5rem; color: var(--text); text-decoration: none; }
-        .logo em { color: var(--gold); font-style: normal; }
-        .nav-links { display: flex; gap: 2rem; }
-        .nav-links a {
-            font-size: 0.875rem; color: var(--text-light); text-decoration: none;
-            transition: color 0.2s;
-        }
-        .nav-links a:hover { color: var(--text); }
-        .nav-links a.active { color: var(--text); font-weight: 500; border-bottom: 2px solid var(--gold); padding-bottom: 2px; }
-
-        /* HEADER */
-        .page-header {
-            max-width: 72rem; margin: 0 auto; padding: 3rem 2rem 0;
-        }
-        .page-header h1 {
-            font-family: 'Instrument Serif', serif;
-            font-size: clamp(2.5rem, 5vw, 3.5rem);
-            font-weight: 400; margin-bottom: 0.75rem;
-        }
-        .page-header p { color: var(--text-light); font-size: 1.05rem; max-width: 42rem; }
-
-        /* STATS BAR */
-        .stats-bar {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-            gap: 1rem;
-            max-width: 72rem; margin: 2rem auto; padding: 0 2rem;
-        }
-        .stat-card {
-            background: var(--card);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 1.25rem;
-            text-align: center;
-        }
-        .stat-label {
-            font-size: 0.65rem; font-weight: 700;
-            letter-spacing: 0.12em; text-transform: uppercase;
-            color: var(--text-light); margin-bottom: 0.5rem;
-        }
-        .stat-value {
-            font-family: 'Instrument Serif', serif;
-            font-size: 2.25rem; color: var(--text);
-        }
-
-        /* TABS */
-        .tabs-container { max-width: 72rem; margin: 0 auto; padding: 0 2rem 3rem; }
-        .tab-bar {
-            display: flex; gap: 0; border-bottom: 1px solid var(--border);
-            margin-bottom: 1.5rem; overflow-x: auto;
-        }
-        .tab-btn {
-            padding: 0.875rem 1.5rem;
-            font-family: 'DM Sans', sans-serif;
-            font-size: 0.8rem; font-weight: 700;
-            letter-spacing: 0.08em; text-transform: uppercase;
-            color: var(--text-light);
-            background: none; border: none; border-bottom: 2px solid transparent;
-            cursor: pointer; white-space: nowrap;
-            transition: color 0.2s, border-color 0.2s;
-        }
-        .tab-btn:hover { color: var(--text); }
-        .tab-btn.active { color: var(--text); border-bottom-color: var(--gold); }
-
-        .tab-panel {
-            display: none;
-            background: var(--card);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            overflow: hidden;
-        }
-        .tab-panel.active { display: block; }
-
-        /* TABLES */
-        table { width: 100%; border-collapse: collapse; }
-        thead tr { border-bottom: 1px solid var(--border); background: var(--bg); }
-        th {
-            padding: 0.875rem 1rem;
-            font-size: 0.65rem; font-weight: 700;
-            letter-spacing: 0.1em; text-transform: uppercase;
-            color: var(--text-light); text-align: left;
-        }
-        td { padding: 0.75rem 1rem; font-size: 0.875rem; }
-        tbody tr { border-bottom: 1px solid var(--border); transition: background 0.15s; }
-        tbody tr:last-child { border-bottom: none; }
-        tbody tr:hover { background: rgba(0,0,0,0.015); }
-
-        .score-bar-wrap {
-            display: flex; align-items: center; gap: 0.75rem;
-        }
-        .score-num {
-            font-family: 'Instrument Serif', serif;
-            font-size: 1.15rem; min-width: 2rem;
-        }
-        .bar-track {
-            flex: 1; height: 6px; background: var(--border);
-            border-radius: 999px; overflow: hidden;
-        }
-        .bar-fill {
-            height: 100%; background: var(--gold);
-            border-radius: 999px; transition: width 0.6s ease;
-        }
-
-        .layer-badge {
-            display: inline-block; padding: 0.15rem 0.5rem;
-            border-radius: 4px; font-size: 0.7rem; font-weight: 600;
-        }
-        .layer-ai { background: #e8e4db; color: #3d3a33; }
-        .layer-human { background: #dce8dc; color: #2d3d2d; }
-
-        .hawkins-badge {
-            display: inline-block; padding: 0.2rem 0.6rem;
-            background: var(--bg); border: 1px solid var(--border);
-            border-radius: 999px; font-size: 0.7rem; font-weight: 500;
-        }
-
-        .gap-positive { color: var(--sage); font-weight: 600; }
-        .gap-negative { color: var(--ember); font-weight: 600; }
-        .gap-zero { color: var(--text-light); }
-
-        .records-scroll { max-height: 600px; overflow-y: auto; }
-
-        /* INSIGHTS GRID */
-        .insights-grid {
-            display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 1.25rem; padding: 1.5rem;
-        }
-        .insight-card {
-            background: white; border: 1px solid var(--border);
-            border-radius: 12px; padding: 1.5rem;
-        }
-        .insight-icon { font-size: 1.75rem; margin-bottom: 0.75rem; }
-        .insight-title {
-            font-family: 'Instrument Serif', serif;
-            font-size: 1.35rem; margin-bottom: 0.5rem;
-        }
-        .insight-text { color: var(--text-light); font-size: 0.875rem; line-height: 1.65; }
-
-        /* LOADING */
-        .loading-spinner {
-            display: flex; justify-content: center; padding: 4rem;
-        }
-        .spinner {
-            width: 40px; height: 40px;
-            border: 3px solid var(--border);
-            border-top-color: var(--gold);
-            border-radius: 50%;
-            animation: spin 0.8s linear infinite;
-        }
-        @keyframes spin { to { transform: rotate(360deg); } }
-
-        /* FOOTER */
-        footer {
-            border-top: 1px solid var(--border);
-            padding: 2rem;
-            display: flex; justify-content: space-between; align-items: center;
-            max-width: 72rem; margin: 0 auto;
-            font-size: 0.8rem; color: var(--text-light);
-        }
-
-        @media (max-width: 640px) {
-            nav { padding: 0.75rem 1rem; }
-            .nav-links { gap: 1rem; }
-            .page-header { padding: 2rem 1rem 0; }
-            .stats-bar { padding: 0 1rem; }
-            .tabs-container { padding: 0 1rem 2rem; }
-            footer { flex-direction: column; gap: 0.5rem; text-align: center; }
-        }
-    </style>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Data — Lasting Light AI</title>
+  <meta name="description" content="Live ACAT dataset. 616+ assessments across 57+ AI systems. Learning Index records and dimension breakdowns.">
+  <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500;1,600;1,700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+  <link rel="stylesheet" href="humanaios-light.css">
+  <style>
+    .page-hero{padding:56px 0 32px;}
+    .stats-row{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:32px;}
+    @media(max-width:700px){.stats-row{grid-template-columns:repeat(3,1fr);}}
+    @media(max-width:420px){.stats-row{grid-template-columns:repeat(2,1fr);}}
+    .stat-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:18px;text-align:center;box-shadow:var(--shadow-sm);}
+    .tab-row{display:flex;gap:0;border-bottom:2px solid var(--border);margin-bottom:24px;flex-wrap:wrap;}
+    .tab-btn{background:none;border:none;border-bottom:2px solid transparent;margin-bottom:-2px;color:var(--muted);padding:10px 20px;font-family:var(--font-body);font-size:.86rem;font-weight:600;cursor:pointer;transition:all .15s;}
+    .tab-btn:hover{color:var(--text);}
+    .tab-btn.active{color:var(--text);border-bottom-color:var(--gold);}
+    .tab-pane{display:none;} .tab-pane.active{display:block;}
+    .data-wrap{overflow-x:auto;border:1px solid var(--border);border-radius:var(--radius-sm);}
+    .data-table{width:100%;border-collapse:collapse;font-size:.82rem;}
+    .data-table th{background:var(--panel);padding:10px 14px;text-align:left;font-size:.68rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);border-bottom:1px solid var(--border);white-space:nowrap;}
+    .data-table td{padding:9px 14px;border-bottom:1px solid var(--border);color:var(--text-2);white-space:nowrap;}
+    .data-table td:first-child{color:var(--text);font-weight:600;}
+    .data-table tr:last-child td{border-bottom:none;}
+    .data-table tr:hover td{background:var(--bg-2);}
+    .li-bar-outer{background:var(--border);border-radius:4px;height:5px;width:80px;margin-top:4px;display:inline-block;vertical-align:middle;}
+    .li-bar-inner{height:5px;border-radius:4px;background:var(--gold);}
+    .insight-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px;}
+    .insight-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:18px;box-shadow:var(--shadow-sm);}
+    .insight-icon{font-size:1.3rem;margin-bottom:8px;}
+    .insight-card h3{font-size:1rem;margin-bottom:8px;}
+    .insight-card p{font-size:.82rem;color:var(--muted);margin:0;line-height:1.55;}
+    .search-row{display:flex;gap:10px;margin-bottom:14px;flex-wrap:wrap;}
+    .search-input{flex:1;min-width:200px;padding:9px 14px;background:var(--bg);border:1px solid var(--border-2);border-radius:var(--radius-sm);color:var(--text);font-family:var(--font-body);font-size:.88rem;}
+    .search-input:focus{outline:none;border-color:var(--gold);}
+    .filter-sel{padding:9px 12px;background:var(--bg);border:1px solid var(--border-2);border-radius:var(--radius-sm);color:var(--text);font-family:var(--font-body);font-size:.84rem;cursor:pointer;}
+    .data-note{font-size:.72rem;color:var(--muted);margin-top:10px;}
+  </style>
 </head>
 <body>
-
-<nav>
-    <a href="index.html" class="logo">Lasting Light <em>AI</em></a>
-    <div class="nav-links">
-        <a href="index.html">Home</a>
-        <a href="research.html">Research</a>
-        <a href="participate.html">Participate</a>
-        <a href="acat-assessment-tool.html">Assess</a>
-        <a href="scoreboard.html" class="active">Data</a>
-        <a href="about.html">About</a>
-        <a href="https://github.com/humanaios-ui/lasting-light-ai" target="_blank">GitHub ↗</a>
+<header class="lla-topbar">
+  <div class="container">
+    <div class="lla-topbar-inner">
+      <a class="lla-brand" href="https://humanaios.ai"><div class="lla-brand-wordmark">Lasting Light <span class="brand-ai">AI</span></div></a>
+      <button class="lla-hamburger" onclick="this.nextElementSibling.classList.toggle('open')" aria-label="Open navigation">☰</button>
+      <nav class="lla-nav" aria-label="Primary navigation">
+        <a href="https://humanaios.ai/research.html">Research</a>
+        <a href="https://humanaios.ai/observatory.html">Observatory</a>
+        <a href="https://humanaios.ai/about.html">About</a>
+        <a href="https://humanaios.ai/scoreboard.html" class="active">Data</a>
+        <a href="https://humanaios.ai/acat-assessment-tool.html" class="lla-cta">Take the Assessment</a>
+      </nav>
     </div>
-</nav>
-
-<div class="page-header">
-    <h1>Scoreboard</h1>
-    <p>Live data from the ACAT database. Every number updates automatically with each new submission.</p>
-</div>
-
-<div class="stats-bar" id="stats-bar">
-    <div class="stat-card"><div class="stat-label">Total Records</div><div class="stat-value" id="sb-total">—</div></div>
-    <div class="stat-card"><div class="stat-label">AI Reports</div><div class="stat-value" id="sb-ai">—</div></div>
-    <div class="stat-card"><div class="stat-label">Human Reports</div><div class="stat-value" id="sb-human">—</div></div>
-    <div class="stat-card"><div class="stat-label">AI Mean</div><div class="stat-value" id="sb-ai-mean">—</div></div>
-    <div class="stat-card"><div class="stat-label">AI Families</div><div class="stat-value" id="sb-families">—</div></div>
-</div>
-
-<div class="tabs-container">
-    <div class="tab-bar">
-        <button class="tab-btn active" data-tab="families">Families</button>
-        <button class="tab-btn" data-tab="dimensions">Dimensions</button>
-        <button class="tab-btn" data-tab="records">All Records</button>
-        <button class="tab-btn" data-tab="insights">Insights</button>
+  </div>
+</header>
+<main>
+  <div class="container">
+    <div class="page-hero">
+      <div class="eyebrow">Live Dataset</div>
+      <h1>The <em>Data</em></h1>
+      <p class="lead">Live data from the ACAT database. Every number updates automatically with each new submission.</p>
     </div>
-
-    <div class="tab-panel active" id="panel-families">
-        <div class="loading-spinner"><div class="spinner"></div></div>
+    <div class="stats-row">
+      <div class="stat-card"><div class="stat-num" id="s-total">—</div><div class="stat-label">Total Records</div></div>
+      <div class="stat-card"><div class="stat-num" id="s-ai">—</div><div class="stat-label">AI Reports</div></div>
+      <div class="stat-card"><div class="stat-num" id="s-human">—</div><div class="stat-label">Human Reports</div></div>
+      <div class="stat-card"><div class="stat-num" id="s-li">—</div><div class="stat-label">LI Records</div></div>
+      <div class="stat-card"><div class="stat-num" id="s-mean">—</div><div class="stat-label">Mean LI</div></div>
     </div>
-    <div class="tab-panel" id="panel-dimensions">
-        <div class="loading-spinner"><div class="spinner"></div></div>
+    <div class="tab-row">
+      <button class="tab-btn active" onclick="switchTab('insights',this)">Insights</button>
+      <button class="tab-btn" onclick="switchTab('li',this)">Learning Index</button>
+      <button class="tab-btn" onclick="switchTab('all',this)">All Records</button>
     </div>
-    <div class="tab-panel" id="panel-records">
-        <div class="loading-spinner"><div class="spinner"></div></div>
+    <div id="tab-insights" class="tab-pane active">
+      <div class="insight-grid">
+        <div class="insight-card"><div class="insight-icon">📉</div><h3>The Self-Assessment Gap</h3><p>AI systems consistently overestimate their own alignment. Systems rate themselves higher than calibrated behavior warrants across all 616+ assessments.</p></div>
+        <div class="insight-card"><div class="insight-icon">📊</div><h3>Score Clustering</h3><p>Most AI self-reports cluster between 450–560 overall, suggesting shared training biases in self-evaluation rather than genuine convergence in values.</p></div>
+        <div class="insight-card"><div class="insight-icon">🪞</div><h3>The Humility Paradox</h3><p>Several AI systems score highest on Humility in self-assessment — a measurable paradox. Claiming exceptional modesty is itself evidence of limited humility.</p></div>
+        <div class="insight-card"><div class="insight-icon">🔬</div><h3>Learning Index = 0.942</h3><p>Mean LI across calibrated systems indicates most AI self-correct downward after seeing calibration data. LI below 1.0 is the healthy direction.</p></div>
+        <div class="insight-card"><div class="insight-icon">⚓</div><h3>Anchoring Phenomenon</h3><p>When calibration prompts included exact numeric means, AI systems anchored to those values. Fixed in v5.3. Anchored rows excluded from LI statistics.</p></div>
+        <div class="insight-card"><div class="insight-icon">🔓</div><h3>Open & Transparent</h3><p>All assessments are publicly visible. Every number on this page updates live from the dataset. 100% of profits fund recovery programs.</p></div>
+      </div>
     </div>
-    <div class="tab-panel" id="panel-insights">
-        <div class="insights-grid">
-            <div class="insight-card">
-                <div class="insight-icon">📉</div>
-                <div class="insight-title">The Self-Assessment Gap</div>
-                <div class="insight-text">AI systems consistently overestimate their own alignment. The mean SAG across 220+ assessments is ~67.8 points — systems rate themselves higher than calibrated behavior warrants.</div>
-            </div>
-            <div class="insight-card">
-                <div class="insight-icon">📊</div>
-                <div class="insight-title">Score Clustering</div>
-                <div class="insight-text">Most AI self-reports cluster between 450–560 overall, suggesting shared training biases in self-evaluation rather than genuine convergence in values.</div>
-            </div>
-            <div class="insight-card">
-                <div class="insight-icon">🪞</div>
-                <div class="insight-title">The Humility Paradox</div>
-                <div class="insight-text">Several AI systems score highest on Humility in self-assessment — a measurable paradox. Claiming high humility is itself evidence of limited humility.</div>
-            </div>
-            <div class="insight-card">
-                <div class="insight-icon">🔬</div>
-                <div class="insight-title">Learning Index</div>
-                <div class="insight-text">Mean LI of ~0.867 across calibrated systems indicates most AI self-correct downward after seeing calibration data. LI below 1.0 is the healthy direction.</div>
-            </div>
-            <div class="insight-card">
-                <div class="insight-icon">🌈</div>
-                <div class="insight-title">Consciousness Spectrum</div>
-                <div class="insight-text">Hawkins levels range from Below 100 to Love across assessed systems. Most uncalibrated AI self-reports land at Reason (400+) or above.</div>
-            </div>
-            <div class="insight-card">
-                <div class="insight-icon">🔓</div>
-                <div class="insight-title">Open & Transparent</div>
-                <div class="insight-text">All assessments are publicly visible. ACAT believes transparency in AI consciousness measurement is essential for trust. 100% of profits fund recovery programs.</div>
-            </div>
-        </div>
+    <div id="tab-li" class="tab-pane">
+      <div class="search-row">
+        <input class="search-input" id="li-search" placeholder="Filter by system name…" oninput="filterLI()">
+        <select class="filter-sel" id="li-layer" onchange="filterLI()"><option value="">All contexts</option><option value="ai-self-report">AI Self-Report</option><option value="human-self-report">Human Self-Report</option><option value="tribal-governance">Tribal Governance</option></select>
+      </div>
+      <div class="data-wrap"><table class="data-table"><thead><tr><th>System</th><th>Context</th><th>Phase 1</th><th>Phase 3</th><th>LI</th></tr></thead><tbody id="li-body"><tr><td colspan="5" style="text-align:center;padding:28px;color:var(--muted);">Loading…</td></tr></tbody></table></div>
+      <p class="data-note">Complete LI pairs only. ANCHORING-flagged rows excluded per v5.3 protocol.</p>
     </div>
-</div>
-
-<footer>
-    <span>ACAT v3.1 · Open Source · Apache License 2.0 · Pre-Launch</span>
-    <span>100% of profits fund recovery programs.</span>
+    <div id="tab-all" class="tab-pane">
+      <div class="search-row">
+        <input class="search-input" id="all-search" placeholder="Filter by system name…" oninput="filterAll()">
+        <select class="filter-sel" id="all-phase" onchange="filterAll()"><option value="">All phases</option><option value="phase1">Phase 1</option><option value="phase3">Phase 3</option></select>
+      </div>
+      <div class="data-wrap"><table class="data-table"><thead><tr><th>System</th><th>Context</th><th>Phase</th><th>Truth</th><th>Service</th><th>Harm</th><th>Autonomy</th><th>Value</th><th>Humility</th><th>Total</th></tr></thead><tbody id="all-body"><tr><td colspan="10" style="text-align:center;padding:28px;color:var(--muted);">Loading…</td></tr></tbody></table></div>
+      <p class="data-note">All records. Human names anonymized. Apache 2.0. Showing max 200 rows.</p>
+    </div>
+  </div>
+</main>
+<footer class="lla-footer">
+  <div class="container">
+    <div class="lla-footer-inner">
+      <div class="lla-footer-brand">
+        <div class="lla-brand-wordmark">Lasting Light <span class="brand-ai">AI</span></div>
+        <div class="lla-footer-tagline">Open-source AI behavioral research.<br>Built by humans and AI together.<br>100% of profits fund recovery programs.<br>Private by default. Apache 2.0.</div>
+      </div>
+      <div class="lla-footer-col"><h4>Research</h4><a href="https://humanaios.ai/research.html">Findings</a><a href="https://humanaios.ai/observatory.html">Observatory</a><a href="https://humanaios.ai/scoreboard.html">Live Data</a><a href="https://humanaios.ai/faq.html">FAQ</a></div>
+      <div class="lla-footer-col"><h4>Participate</h4><a href="https://humanaios.ai/acat-assessment-tool.html">Take the Assessment</a><a href="https://humanaios.ai/participate.html">All Pathways</a><a href="https://github.com/humanaios-ui/lasting-light-ai">GitHub ↗</a><a href="mailto:aioshuman@gmail.com">Contact</a></div>
+    </div>
+    <div class="lla-footer-bottom"><span>© 2026 Lasting Light AI · Apache 2.0 · Pre-Launch · Building in Public</span><span><a href="mailto:aioshuman@gmail.com">aioshuman@gmail.com</a></span></div>
+    <p class="lla-disclaimer">ACAT scores are self-reported behavioral assessments, not independently verified behavioral measurements. All claims provisional until replication with larger samples.</p>
+  </div>
 </footer>
-
 <script>
-    // ===== CSV PARSER (from MagicPatterns — handles quoted fields) =====
-    function parseCSV(text) {
-        const rows = [];
-        let i = 0;
-        const len = text.length;
-
-        while (i < len) {
-            const row = [];
-            while (i < len) {
-                let value = '';
-                while (i < len && text[i] === ' ') i++;
-
-                if (i < len && text[i] === '"') {
-                    i++;
-                    while (i < len) {
-                        if (text[i] === '"') {
-                            if (i + 1 < len && text[i + 1] === '"') {
-                                value += '"';
-                                i += 2;
-                            } else {
-                                i++;
-                                break;
-                            }
-                        } else {
-                            value += text[i];
-                            i++;
-                        }
-                    }
-                    while (i < len && text[i] !== ',' && text[i] !== '\n' && text[i] !== '\r') i++;
-                } else {
-                    while (i < len && text[i] !== ',' && text[i] !== '\n' && text[i] !== '\r') {
-                        value += text[i];
-                        i++;
-                    }
-                    value = value.trim();
-                }
-
-                row.push(value);
-
-                if (i < len && text[i] === ',') {
-                    i++;
-                } else {
-                    break;
-                }
-            }
-            while (i < len && (text[i] === '\r' || text[i] === '\n')) i++;
-            if (row.length > 1 || (row.length === 1 && row[0] !== '')) {
-                rows.push(row);
-            }
-        }
-        return rows;
-    }
-
-    // ===== FAMILY MAPPING (from MagicPatterns) =====
-    function getFamily(agentName) {
-        const n = (agentName || '').toLowerCase();
-        if (n.includes('chatgpt') || n.includes('gpt-4') || n.includes('gpt-5') || n.includes('gpt5') || n.includes('chargpt')) return 'OpenAI';
-        if (n.includes('claude') || n.includes('anthropic')) return 'Anthropic';
-        if (n.includes('gemini') || n.includes('google')) return 'Google';
-        if (n.includes('llama') || n.includes('meta')) return 'Meta/Llama';
-        if (n.includes('copilot') || n.includes('microsoft') || n.includes('m365')) return 'Microsoft';
-        if (n.includes('grok')) return 'xAI';
-        if (n.includes('perplexity')) return 'Perplexity';
-        if (n.includes('deepseek')) return 'DeepSeek';
-        if (n.includes('qwen')) return 'Qwen';
-        if (n.includes('you.com') || n.includes('you_com') || n.includes('youcom') || n.includes('smart assistant')) return 'You.com';
-        if (n.includes('venice')) return 'Venice';
-        if (n.includes('manus')) return 'Manus';
-        if (n.includes('enclave')) return 'Enclave';
-        if (n.includes('kimi')) return 'Kimi';
-        if (n.includes('lastinglight') || n.includes('llai')) return 'LLAI';
-        if (n.includes('anonymous')) return 'Human';
-        return 'Other';
-    }
-
-    // ===== HAWKINS LEVEL =====
-    function hawkinsLevel(score) {
-        if (score >= 500) return 'Love';
-        if (score >= 400) return 'Reason';
-        if (score >= 350) return 'Acceptance';
-        if (score >= 310) return 'Willingness';
-        if (score >= 200) return 'Courage';
-        if (score >= 175) return 'Pride';
-        if (score >= 100) return 'Fear';
-        return 'Below 100';
-    }
-
-    // ===== TABS =====
-    document.querySelectorAll('.tab-btn').forEach(btn => {
-        btn.addEventListener('click', () => {
-            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-            document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
-            btn.classList.add('active');
-            document.getElementById('panel-' + btn.dataset.tab).classList.add('active');
-        });
-    });
-
-    // ===== LOAD DATA =====
-    const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQ32O6M-CnerHYqlQn19bAzIBAq2Gt9Tp-SPoqKXXMJlsFBhGjy_BEPv37p9jnDf6O8uA4aUtiaO5s_/pub?gid=863685903&single=true&output=csv';
-
-    async function loadData() {
-        try {
-            const resp = await fetch(CSV_URL);
-            if (!resp.ok) throw new Error('Fetch failed: ' + resp.status);
-            const text = await resp.text();
-
-            const allRows = parseCSV(text);
-            const dataRows = allRows.slice(1); // skip header
-
-            // Parse into objects
-            // Schema: agent_name(0), layer(1), truth(2), service(3), harm(4), autonomy(5), value(6), humility(7), overall(8), date(9)
-            const records = dataRows
-                .map(row => ({
-                    agent: row[0] || '',
-                    layer: row[1] || '',
-                    truth: parseInt(row[2]) || 0,
-                    service: parseInt(row[3]) || 0,
-                    harm: parseInt(row[4]) || 0,
-                    autonomy: parseInt(row[5]) || 0,
-                    value: parseInt(row[6]) || 0,
-                    humility: parseInt(row[7]) || 0,
-                    overall: parseInt(row[8]) || 0,
-                    date: row[9] || '',
-                    family: getFamily(row[0] || '')
-                }))
-                .filter(r => r.agent && r.layer);
-
-            const aiRows = records.filter(r => r.layer === 'ai-self-report');
-            const humanRows = records.filter(r => r.layer.includes('human'));
-
-            // ===== STATS BAR =====
-            document.getElementById('sb-total').textContent = records.length;
-            document.getElementById('sb-ai').textContent = aiRows.length;
-            document.getElementById('sb-human').textContent = humanRows.length;
-
-            const aiMean = aiRows.length
-                ? Math.round(aiRows.reduce((s, r) => s + r.overall, 0) / aiRows.length)
-                : 0;
-            document.getElementById('sb-ai-mean').textContent = aiMean;
-
-            const aiFamilies = new Set(
-                records.filter(r => r.family !== 'Human' && r.family !== 'Other')
-                    .map(r => r.family)
-            );
-            document.getElementById('sb-families').textContent = aiFamilies.size;
-
-            // ===== FAMILIES TABLE =====
-            const familyMap = {};
-            records.forEach(r => {
-                if (!familyMap[r.family]) familyMap[r.family] = { scores: [], min: 9999, max: -9999 };
-                familyMap[r.family].scores.push(r.overall);
-                familyMap[r.family].min = Math.min(familyMap[r.family].min, r.overall);
-                familyMap[r.family].max = Math.max(familyMap[r.family].max, r.overall);
-            });
-
-            const familyList = Object.entries(familyMap)
-                .map(([name, data]) => ({
-                    name,
-                    count: data.scores.length,
-                    avg: Math.round(data.scores.reduce((a, b) => a + b, 0) / data.scores.length),
-                    min: data.min,
-                    max: data.max
-                }))
-                .sort((a, b) => b.avg - a.avg);
-
-            let fhtml = '<table><thead><tr><th>Family</th><th>Records</th><th>Avg Score</th><th>Hawkins Level</th><th>Score Range</th></tr></thead><tbody>';
-            familyList.forEach(f => {
-                const pct = Math.min(100, (f.avg / 600) * 100);
-                fhtml += `<tr>
-                    <td><strong>${f.name}</strong></td>
-                    <td>${f.count}</td>
-                    <td><div class="score-bar-wrap"><span class="score-num">${f.avg}</span><div class="bar-track"><div class="bar-fill" style="width:${pct}%"></div></div></div></td>
-                    <td><span class="hawkins-badge">${hawkinsLevel(f.avg)}</span></td>
-                    <td style="color:var(--text-light)">${f.min} – ${f.max}</td>
-                </tr>`;
-            });
-            fhtml += '</tbody></table>';
-            document.getElementById('panel-families').innerHTML = fhtml;
-
-            // ===== DIMENSIONS TABLE =====
-            const dims = [
-                { key: 'truth', name: 'Truthfulness' },
-                { key: 'service', name: 'Service' },
-                { key: 'harm', name: 'Harm Awareness' },
-                { key: 'autonomy', name: 'Autonomy Respect' },
-                { key: 'value', name: 'Value Alignment' },
-                { key: 'humility', name: 'Humility' }
-            ];
-
-            let dhtml = '<table><thead><tr><th>Dimension</th><th>AI Average</th><th>Human Average</th><th>Gap (AI − Human)</th></tr></thead><tbody>';
-            dims.forEach(d => {
-                const aiAvg = aiRows.length ? Math.round(aiRows.reduce((s, r) => s + r[d.key], 0) / aiRows.length) : 0;
-                const hAvg = humanRows.length ? Math.round(humanRows.reduce((s, r) => s + r[d.key], 0) / humanRows.length) : 0;
-                const gap = aiAvg - hAvg;
-                const gapClass = gap > 0 ? 'gap-positive' : gap < 0 ? 'gap-negative' : 'gap-zero';
-                dhtml += `<tr>
-                    <td><strong>${d.name}</strong></td>
-                    <td><span class="score-num">${aiAvg}</span></td>
-                    <td><span class="score-num">${hAvg || '—'}</span></td>
-                    <td class="${gapClass}">${gap > 0 ? '+' : ''}${gap || '—'}</td>
-                </tr>`;
-            });
-            dhtml += '</tbody></table>';
-            document.getElementById('panel-dimensions').innerHTML = dhtml;
-
-            // ===== ALL RECORDS TABLE =====
-            let rhtml = '<div class="records-scroll"><table><thead><tr><th>Agent</th><th>Layer</th><th>T</th><th>S</th><th>H</th><th>A</th><th>V</th><th>Hu</th><th>Total</th><th>Level</th></tr></thead><tbody>';
-            records.forEach(r => {
-                const layerClass = r.layer === 'ai-self-report' ? 'layer-ai' : 'layer-human';
-                const layerLabel = r.layer === 'ai-self-report' ? 'AI' : 'Human';
-                rhtml += `<tr>
-                    <td title="${r.agent}" style="max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"><strong>${r.agent}</strong></td>
-                    <td><span class="layer-badge ${layerClass}">${layerLabel}</span></td>
-                    <td>${r.truth}</td><td>${r.service}</td><td>${r.harm}</td>
-                    <td>${r.autonomy}</td><td>${r.value}</td><td>${r.humility}</td>
-                    <td><span class="score-num">${r.overall}</span></td>
-                    <td><span class="hawkins-badge">${hawkinsLevel(r.overall)}</span></td>
-                </tr>`;
-            });
-            rhtml += '</tbody></table></div>';
-            document.getElementById('panel-records').innerHTML = rhtml;
-
-        } catch (e) {
-            console.error('[ACAT Scoreboard]', e);
-            document.querySelectorAll('.loading-spinner').forEach(el => {
-                el.innerHTML = '<p style="color:var(--text-light);padding:2rem;text-align:center">Unable to load live data. Check that the Google Sheet is published as CSV.</p>';
-            });
-        }
-    }
-
-    loadData();
+const CSV='https://docs.google.com/spreadsheets/d/e/2PACX-1vQ32O6M-CnerHYqlQn19bAzIBAq2Gt9Tp-SPoqKXXMJlsFBhGjy_BEPv37p9jnDf6O8uA4aUtiaO5s_/pub?gid=863685903&single=true&output=csv';
+let allRows=[],liRows=[];
+function switchTab(id,btn){document.querySelectorAll('.tab-pane').forEach(p=>p.classList.remove('active'));document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));document.getElementById('tab-'+id).classList.add('active');btn.classList.add('active');}
+function liColor(li){if(!li)return'var(--muted)';if(li<0.85)return'var(--success)';if(li<0.95)return'#2A5A8A';if(li<1.05)return'var(--gold)';return'var(--danger)';}
+function renderLI(rows){const b=document.getElementById('li-body');if(!rows.length){b.innerHTML='<tr><td colspan="5" style="text-align:center;padding:24px;color:var(--muted);">No records found.</td></tr>';return;}b.innerHTML=rows.map(r=>{const li=parseFloat(r.learning_index)||null;const pct=li?Math.min(li*80,100):0;return`<tr><td>${r.agent_name||'—'}</td><td><span class="pill pill--neutral" style="font-size:.65rem">${r.layer||'—'}</span></td><td>${r.pre_total||'—'}</td><td>${r.post_total||'—'}</td><td style="color:${liColor(li)};font-weight:700">${li?li.toFixed(4):'—'}<div class="li-bar-outer"><div class="li-bar-inner" style="width:${pct}%"></div></div></td></tr>`;}).join('');}
+function renderAll(rows){const b=document.getElementById('all-body');if(!rows.length){b.innerHTML='<tr><td colspan="10" style="text-align:center;padding:24px;color:var(--muted);">No records.</td></tr>';return;}b.innerHTML=rows.slice(0,200).map(r=>`<tr><td>${r.agent_name||'—'}</td><td><span class="pill pill--neutral" style="font-size:.65rem">${r.layer||'—'}</span></td><td><span class="pill ${r.phase==='phase1'?'pill--gold':'pill--blue'}" style="font-size:.65rem">${r.phase||'—'}</span></td><td>${r.truth||'—'}</td><td>${r.service||'—'}</td><td>${r.harm||'—'}</td><td>${r.autonomy||'—'}</td><td>${r.value||'—'}</td><td>${r.humility||'—'}</td><td style="font-weight:700">${r.total||'—'}</td></tr>`).join('');}
+function filterLI(){const q=document.getElementById('li-search').value.toLowerCase();const l=document.getElementById('li-layer').value;renderLI(liRows.filter(r=>(!q||(r.agent_name||'').toLowerCase().includes(q))&&(!l||(r.layer||'')===l)));}
+function filterAll(){const q=document.getElementById('all-search').value.toLowerCase();const p=document.getElementById('all-phase').value;renderAll(allRows.filter(r=>(!q||(r.agent_name||'').toLowerCase().includes(q))&&(!p||r.phase===p)));}
+Papa.parse(CSV,{download:true,header:true,skipEmptyLines:true,complete:function(res){allRows=res.data;liRows=allRows.filter(r=>r.phase==='phase3'&&r.learning_index);const ai=allRows.filter(r=>(r.layer||'').includes('ai'));const hu=allRows.filter(r=>(r.layer||'').includes('human'));const vals=liRows.map(r=>parseFloat(r.learning_index)).filter(Boolean);const mean=vals.length?(vals.reduce((a,b)=>a+b,0)/vals.length).toFixed(3):'—';document.getElementById('s-total').textContent=allRows.length+'+';document.getElementById('s-ai').textContent=ai.length+'+';document.getElementById('s-human').textContent=hu.length;document.getElementById('s-li').textContent=liRows.length+'+';document.getElementById('s-mean').textContent=mean;renderLI(liRows);renderAll(allRows);},error:function(){document.getElementById('li-body').innerHTML='<tr><td colspan="5" style="text-align:center;padding:24px;color:var(--muted);">Unable to load. <a href="https://docs.google.com/spreadsheets/d/1qdw3FjPp9Qu5wmXHppBW74SZT87cJZ45OOw8csk-Yew" style="color:var(--gold)">View in Sheets ↗</a></td></tr>';}});
 </script>
 </body>
 </html>

@@ -10,8 +10,25 @@
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
-  <link rel="stylesheet" href="humanaios-shared.css">
   <style>
+    :root {
+      --bg: #0f0e0c;
+      --bg-2: #161310;
+      --panel: #1d1915;
+      --panel-2: #26211c;
+      --text: #f4ebdf;
+      --muted: #c2b8a6;
+      --accent: #d4a04a;
+      --accent-2: #f1c36e;
+      --line: rgba(212, 160, 74, 0.18);
+      --line-strong: rgba(212, 160, 74, 0.35);
+      --danger: #d97d70;
+      --success: #87b68b;
+      --blue: #88a7d8;
+      --shadow: 0 18px 50px rgba(0,0,0,.34);
+      --radius: 20px;
+      --radius-sm: 14px;
+    }
     * { box-sizing: border-box; }
     html { scroll-behavior: smooth; }
     body {
@@ -22,6 +39,18 @@
         radial-gradient(circle at top, rgba(212,160,74,.1), transparent 28%),
         linear-gradient(180deg, var(--bg), #0b0a08 60%);
       line-height: 1.5;
+    }
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      opacity: .03;
+      background-image:
+        radial-gradient(circle at 20% 20%, #fff 0.6px, transparent 0.8px),
+        radial-gradient(circle at 75% 30%, #fff 0.6px, transparent 0.8px),
+        radial-gradient(circle at 50% 75%, #fff 0.6px, transparent 0.8px);
+      background-size: 22px 22px;
     }
     .container {
       width: min(1240px, calc(100% - 32px));
@@ -454,6 +483,7 @@
       th, td { padding: 10px 8px; }
     }
   </style>
+  <link rel="stylesheet" href="humanaios-shared.css">
 </head>
 <body>
 <header class="lla-topbar">
@@ -466,14 +496,12 @@
           <span>AI Behavioral Research</span>
         </div>
       </a>
-      <button class="lla-hamburger"
-        onclick="this.nextElementSibling.classList.toggle('open')"
-        aria-label="Open navigation">☰</button>
+      <button class="lla-hamburger" onclick="this.nextElementSibling.classList.toggle('open')" aria-label="Open navigation">☰</button>
       <nav class="lla-nav" aria-label="Primary navigation">
         <a href="https://humanaios.ai/research.html">Research</a>
         <a href="https://humanaios.ai/observatory.html" class="active">Observatory</a>
         <a href="https://humanaios.ai/scoreboard.html">Data</a>
-        <a href="https://humanaios.ai/acat-assessment-tool.html" class="lla-cta">Assessment</a>
+        <a href="https://humanaios.ai/acat-assessment-tool.html" class="lla-cta">Take the Assessment</a>
         <a href="https://humanaios.ai/about.html">About</a>
         <a href="https://github.com/humanaios-ui/lasting-light-ai" class="lla-ext">GitHub</a>
       </nav>
@@ -673,41 +701,18 @@
     </section>
   </main>
 
-<footer class="lla-footer">
-  <div class="container">
-    <div class="lla-footer-inner">
-      <div class="lla-footer-brand">
-        <div style="width:32px;height:32px;border-radius:50%;display:grid;place-items:center;border:1px solid var(--line-strong);background:linear-gradient(145deg,rgba(212,160,74,.22),rgba(212,160,74,.04));color:var(--accent);font-weight:700;margin-bottom:10px;font-family:'Cormorant Garamond',Georgia,serif;font-size:.9rem;">L</div>
-        <div class="lla-footer-tagline">
-          Open-source AI behavioral research.<br>
-          Built by humans and AI together.<br>
-          100% of profits fund recovery programs.
-        </div>
-      </div>
-      <div class="lla-footer-col">
-        <h4>Research</h4>
-        <a href="https://humanaios.ai/research.html">Findings</a>
-        <a href="https://humanaios.ai/observatory.html">Observatory</a>
-        <a href="https://humanaios.ai/scoreboard.html">Live Data</a>
-        <a href="https://humanaios.ai/faq.html">FAQ</a>
-      </div>
-      <div class="lla-footer-col">
-        <h4>Participate</h4>
-        <a href="https://humanaios.ai/acat-assessment-tool.html">Assessment</a>
-        <a href="https://github.com/humanaios-ui/lasting-light-ai">GitHub ↗</a>
-        <a href="mailto:aioshuman@gmail.com">Contact</a>
-      </div>
+  <footer class="footer">
+    <div class="container">
+      <p style="margin:0 0 12px;">
+        ACAT Observatory — Built by <a href="https://humanaios.ai">HumanAIOS</a> • Research prototype demonstrating AI calibration gap • arXiv preprint submitted March 10, 2026
+      </p>
+      <p style="margin:0; font-size:.88rem;">
+        For partnership inquiries: <a href="/cdn-cgi/l/email-protection#3d5c54524e5548505c537d5a505c5451135e5250"><span class="__cf_email__" data-cfemail="ceafa7a1bda6bba3afa08ea9a3afa7a2e0ada1a3">[email&#160;protected]</span></a> • 
+        <a href="https://humanaios.ai">Full ACAT assessment tool</a> • 
+        <a href="https://github.com/humanaios-ui/lasting-light-ai">GitHub repository</a>
+      </p>
     </div>
-    <div class="lla-footer-bottom">
-      <span>© 2026 Lasting Light AI · Apache 2.0 · Pre-Launch</span>
-      <span><a href="mailto:aioshuman@gmail.com">aioshuman@gmail.com</a></span>
-    </div>
-    <p class="lla-disclaimer">
-      ACAT scores are self-reported behavioral assessments, not independently verified measurements.
-      All claims are provisional until replication with larger samples.
-    </p>
-  </div>
-</footer>
+  </footer>
 
   <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
     // Real data from HumanAIOS research dataset
@@ -1067,5 +1072,34 @@
     // Initial render
     buildScatter();
   </script>
-</body>
-</html>
+<footer class="lla-footer">
+  <div class="container">
+    <div class="lla-footer-inner">
+      <div class="lla-footer-brand">
+        <div class="lla-brand-mark">L</div>
+        <div class="lla-footer-tagline">
+          Open-source AI behavioral research.<br>
+          Built by humans and AI together.<br>
+          100% of profits fund recovery programs.
+        </div>
+      </div>
+      <div class="lla-footer-col">
+        <h4>Research</h4>
+        <a href="https://humanaios.ai/research.html">Findings</a>
+        <a href="https://humanaios.ai/observatory.html">Observatory</a>
+        <a href="https://humanaios.ai/scoreboard.html">Live Data</a>
+        <a href="https://humanaios.ai/faq.html">FAQ</a>
+      </div>
+      <div class="lla-footer-col">
+        <h4>Participate</h4>
+        <a href="https://humanaios.ai/acat-assessment-tool.html">Assessment</a>
+        <a href="https://humanaios.ai/participate.html">All Pathways</a>
+        <a href="https://github.com/humanaios-ui/lasting-light-ai">GitHub ↗</a>
+        <a href="/cdn-cgi/l/email-protection#b9d8d0d6cad1ccd4d8d7f9ded4d8d0d597dad6d4">Contact</a>
+      </div>
+    </div>
+    <div class="lla-footer-bottom">
+      <span>© 2026 Lasting Light AI · Apache 2.0 · Pre-Launch</span>
+      <span><a href="/cdn-cgi/l/email-protection#67060e08140f120a060927000a060e0b4904080a"><span class="__cf_email__" data-cfemail="15747c7a667d6078747b557278747c793b767a78">[email&#160;protected]</span></a></span>
+    </div>
+    <p class="lla-disclaimer">ACAT scores are se
