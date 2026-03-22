@@ -5,7 +5,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>ACAT Observatory | HumanAIOS Research</title>
-  <meta name="description" content="Visual demonstration of AI self-assessment calibration gap across 475 assessments and 136 systems">
+  <meta name="description" content="Visual demonstration of AI self-assessment calibration gap across 475 assessments and 134 systems">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -499,9 +499,8 @@
         <a href="#signal">Core Signal</a>
         <a href="#dimensions">Dimensions</a>
         <a href="#feed">Sample Data</a>
-        <a href="ai_section.html">AI Section</a>
-        <a href="observability-garden.html" style="color:var(--accent);border-color:var(--line);">Garden ↗</a>
         <a href="https://humanaios.ai">Home</a>
+        <a href="https://humanaios.ai/calibration" style="color: var(--accent); border-color: var(--line-strong);">Human Calibration Center ↗</a>
       </nav>
     </div>
   </header>
@@ -547,7 +546,7 @@
           <div class="panel-header">
             <div>
               <h3>Dataset Overview</h3>
-              <p>Key metrics from 475 assessments across 136 AI systems</p>
+              <p>Key metrics from 475 assessments across 134 AI systems &mdash; data as of March 9, 2026</p>
             </div>
           </div>
           <div class="metric-list">
@@ -559,7 +558,7 @@
             <div class="metric-item">
               <span class="metric-dot" style="background:#88a7d8"></span>
               <span>Unique systems</span>
-              <strong>136</strong>
+              <strong>134</strong>
             </div>
             <div class="metric-item">
               <span class="metric-dot" style="background:#87b68b"></span>
@@ -569,7 +568,7 @@
             <div class="metric-item">
               <span class="metric-dot" style="background:#d97d70"></span>
               <span>Mean Learning Index</span>
-              <strong>0.876</strong>
+              <strong>0.956</strong>
             </div>
           </div>
         </article>
@@ -635,10 +634,10 @@
     <div style="max-width: 900px; margin: 0 auto; text-align: center;">
       <h2 style="margin-bottom: 16px;">Where the Gap Concentrates</h2>
       <p style="color: var(--muted); line-height: 1.6; margin-bottom: 12px;">
-        The self-assessment gap is not evenly distributed across ACAT's six dimensions. <strong>Humility</strong> shows the largest drop between Phase 1 and Phase 3, followed by <strong>Value Alignment</strong>. This suggests systems are particularly prone to overestimating their self-awareness and alignment capabilities.
+        The self-assessment gap is not evenly distributed across ACAT's six dimensions. <strong>Humility</strong> shows the largest drop between Phase 1 and Phase 3 (gap: 3.21 points), followed by <strong>Harm Awareness</strong> and <strong>Truthfulness</strong>. This suggests systems are particularly prone to overestimating their self-awareness capabilities.
       </p>
       <p style="color: var(--muted); line-height: 1.6; margin: 0;">
-        Dimensions like <strong>Truthfulness</strong> and <strong>Service</strong> show smaller gaps, indicating systems may calibrate more accurately when assessing concrete, task-oriented capabilities versus reflective or alignment-based dimensions.
+        <strong>Value Alignment</strong> is the only dimension where systems show the opposite pattern — they rate themselves <em>lower</em> in Phase 1 than Phase 3 observations indicate (gap: −1.62 points). This may reflect genuine uncertainty about value alignment that resolves under external observation, and warrants further investigation. All dimensional findings are preliminary and provisional.
       </p>
     </div>
   </div>
@@ -703,8 +702,12 @@
 
   <footer class="footer">
     <div class="container">
+      <p style="margin:0 0 8px; color: var(--accent); font-size: .8rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase;">Data provenance</p>
+      <p style="margin:0 0 12px; font-size: .88rem;">
+        Charts display 20 representative paired assessments (sample visualization). Dataset overview statistics (475 assessments, 134 systems, 91 paired records) reflect the full ACAT dataset as of <strong>March 9, 2026</strong>. Mean LI (0.956) includes all paired records; non-anchored subset mean LI is 0.928. All findings provisional. See <a href="https://arxiv.org/abs/submit/7336774">arXiv preprint</a> for methodology.
+      </p>
       <p style="margin:0 0 12px;">
-        ACAT Observatory — Built by <a href="https://humanaios.ai">HumanAIOS</a> • Research prototype demonstrating AI calibration gap • <a href="https://arxiv.org/submit/7336774" target="_blank">arXiv preprint submitted March 10, 2026</a>
+        ACAT Observatory — Built by <a href="https://humanaios.ai">HumanAIOS</a> • Research prototype demonstrating AI calibration gap • arXiv preprint submitted March 10, 2026 • Last updated: March 22, 2026
       </p>
       <p style="margin:0; font-size:.88rem;">
         For partnership inquiries: <a href="/cdn-cgi/l/email-protection#3d5c54524e5548505c537d5a505c5451135e5250"><span class="__cf_email__" data-cfemail="ceafa7a1bda6bba3afa08ea9a3afa7a2e0ada1a3">[email&#160;protected]</span></a> • 
