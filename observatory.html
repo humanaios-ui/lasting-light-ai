@@ -5,7 +5,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>ACAT Observatory | HumanAIOS Research</title>
-  <meta name="description" content="Visual demonstration of AI self-assessment calibration gap across 475 assessments and 136 systems">
+  <meta name="description" content="Visual demonstration of AI self-assessment calibration gap across 625 assessments and 57 systems">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -496,12 +496,9 @@
         </div>
       </a>
       <nav aria-label="Primary navigation">
-        <a href="#signal">Core Signal</a>
-        <a href="#dimensions">Dimensions</a>
-        <a href="#feed">Sample Data</a>
-        <a href="ai_section.html">AI Section</a>
-        <a href="observability-garden.html" style="color:var(--accent);border-color:var(--line);">Garden ↗</a>
         <a href="https://humanaios.ai">Home</a>
+        <a href="/observatory.html" class="active" style="color:var(--accent);background:rgba(212,160,74,.1);border-color:var(--accent)">Observatory</a>
+        <a href="/human-hub.html">Human Calibration Center</a>
       </nav>
     </div>
   </header>
@@ -547,29 +544,29 @@
           <div class="panel-header">
             <div>
               <h3>Dataset Overview</h3>
-              <p>Key metrics from 475 assessments across 136 AI systems</p>
+              <p>Key metrics from <span data-live-stat="n_total">625</span> assessments across <span data-live-stat="n_systems">57</span> AI systems</p>
             </div>
           </div>
           <div class="metric-list">
             <div class="metric-item">
               <span class="metric-dot" style="background:#d4a04a"></span>
               <span>Total assessments</span>
-              <strong>475</strong>
+              <strong>625</strong>
             </div>
             <div class="metric-item">
               <span class="metric-dot" style="background:#88a7d8"></span>
               <span>Unique systems</span>
-              <strong>136</strong>
+              <strong>57</strong>
             </div>
             <div class="metric-item">
               <span class="metric-dot" style="background:#87b68b"></span>
               <span>Paired assessments</span>
-              <strong>91</strong>
+              <strong data-live-stat="n_li">91</strong>
             </div>
             <div class="metric-item">
               <span class="metric-dot" style="background:#d97d70"></span>
               <span>Mean Learning Index</span>
-              <strong>0.876</strong>
+              <strong data-live-stat="mean_li">0.876</strong>
             </div>
           </div>
         </article>
@@ -701,18 +698,26 @@
 
   </main>
 
-  <footer class="footer">
-    <div class="container">
-      <p style="margin:0 0 12px;">
-        ACAT Observatory — Built by <a href="https://humanaios.ai">HumanAIOS</a> • Research prototype demonstrating AI calibration gap • <a href="https://arxiv.org/submit/7336774" target="_blank">arXiv preprint submitted March 10, 2026</a>
-      </p>
-      <p style="margin:0; font-size:.88rem;">
-        For partnership inquiries: <a href="/cdn-cgi/l/email-protection#3d5c54524e5548505c537d5a505c5451135e5250"><span class="__cf_email__" data-cfemail="ceafa7a1bda6bba3afa08ea9a3afa7a2e0ada1a3">[email&#160;protected]</span></a> • 
-        <a href="https://humanaios.ai">Full ACAT assessment tool</a> • 
-        <a href="https://github.com/humanaios-ui/lasting-light-ai">GitHub repository</a>
-      </p>
+  <footer class="site-footer">
+  <div class="container">
+    <div style="font-family:'Cormorant Garamond',serif;font-size:1.4rem;font-weight:600;margin-bottom:10px;color:var(--text)">HumanAIOS</div>
+    <div style="margin-bottom:14px;color:var(--muted);font-size:.82rem">Trinity Platform · Lasting Light AI</div>
+    <div style="font-size:.78rem;color:var(--muted);opacity:.7;margin-bottom:8px">
+      <a href="https://humanaios.ai" style="color:var(--muted)">Home</a> · 
+      <a href="/observatory.html" style="color:var(--accent)">Observatory</a> · 
+      <a href="/human-hub.html" style="color:var(--muted)">Human Calibration Center</a> · 
+      <a href="https://humanaios-ui.github.io/lasting-light-ai/acat-assessment-tool.html" target="_blank" style="color:var(--muted)">Run AI ACAT</a>
     </div>
-  </footer>
+    <div style="font-size:.78rem;color:var(--muted);opacity:.7">
+      <a href="https://arxiv.org/abs/2503.07378" target="_blank" style="color:var(--muted)">Research Paper</a> · 
+      <a href="https://github.com/humanaios-ui/lasting-light-ai" target="_blank" style="color:var(--muted)">GitHub</a> · 
+      <a href="mailto:aioshuman@gmail.com" style="color:var(--muted)">Contact</a>
+    </div>
+    <div style="margin-top:18px;font-size:.72rem;color:var(--muted);opacity:.45">
+      © 2026 HumanAIOS LLC — Cherokee Nation affiliated · Profits directed to recovery programs
+    </div>
+  </div>
+</footer>
 
   <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
 
@@ -1076,5 +1081,172 @@ buildScatter();
 ```
 
   </script>
+
+<script>
+
+/* ── LIVE STATS MODULE v1.0 ──────────────────────────────────────────────
+   Fetches the published ACAT CSV and updates any element with
+   data-live-stat="..." to display live research numbers.
+
+   Supported stat keys:
+     n_total      — total row count
+     n_systems    — unique AI system count  
+     n_li         — LI-eligible paired assessment count
+     mean_li      — mean Learning Index (from LI-eligible rows only)
+     updated_at   — ISO timestamp of last data refresh
+
+   Usage in HTML:
+     <span data-live-stat="n_total">625</span>
+     (the fallback text "625" shows until CSV loads or on error)
+
+   Graceful degradation: if CSV fails, existing text is preserved.
+──────────────────────────────────────────────────────────────────────── */
+
+(function() {
+  const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQ32O6M-CnerHYqlQn19bAzIBAq2Gt9Tp-SPoqKXXMJlsFBhGjy_BEPv37p9jnDf6O8uA4aUtiaO5s_/pub?gid=863685903&single=true&output=csv';
+
+  function parseCSV(text) {
+    const lines = text.trim().split('\n');
+    if (lines.length < 2) return [];
+    const headers = lines[0].split(',').map(h => h.trim().replace(/^"|"$/g, '').toLowerCase());
+    return lines.slice(1).map(line => {
+      // Handle quoted fields with commas
+      const cols = [];
+      let cur = '', inQ = false;
+      for (const ch of line) {
+        if (ch === '"') { inQ = !inQ; }
+        else if (ch === ',' && !inQ) { cols.push(cur.trim()); cur = ''; }
+        else { cur += ch; }
+      }
+      cols.push(cur.trim());
+      const row = {};
+      headers.forEach((h, i) => { row[h] = (cols[i] || '').replace(/^"|"$/g, ''); });
+      return row;
+    });
+  }
+
+  function computeStats(rows) {
+    const n_total = rows.length;
+
+    // Unique systems — use agent_name column, exclude blanks and flags
+    const systems = new Set(
+      rows
+        .map(r => (r.agent_name || r.agentname || '').trim())
+        .filter(n => n && n !== 'AGENT' && !n.startsWith('test'))
+    );
+    const n_systems = systems.size;
+
+    // LI-eligible rows: have a valid learning_index value between 0.5 and 1.5
+    const liRows = rows.filter(r => {
+      const li = parseFloat(r.learning_index || r.li || '');
+      return !isNaN(li) && li > 0.3 && li < 2.0;
+    });
+    const n_li = liRows.length;
+
+    // Mean LI — exclude ANCHORING flags
+    const validLI = liRows
+      .filter(r => {
+        const flag = (r.behavioral_flag_final || r.flag || '').toUpperCase();
+        return !flag.includes('ANCHORING');
+      })
+      .map(r => parseFloat(r.learning_index || r.li));
+
+    const mean_li = validLI.length > 0
+      ? (validLI.reduce((a, b) => a + b, 0) / validLI.length).toFixed(3)
+      : null;
+
+    return { n_total, n_systems, n_li, mean_li };
+  }
+
+  function updateDOM(stats) {
+    const map = {
+      n_total:   stats.n_total,
+      n_systems: stats.n_systems,
+      n_li:      stats.n_li + '+',
+      mean_li:   stats.mean_li,
+      updated_at: new Date().toISOString().slice(0, 10),
+    };
+
+    document.querySelectorAll('[data-live-stat]').forEach(el => {
+      const key = el.getAttribute('data-live-stat');
+      if (map[key] !== null && map[key] !== undefined) {
+        // Animate counter for numeric values
+        const raw = map[key];
+        const num = parseInt(raw);
+        if (!isNaN(num) && typeof raw === 'number') {
+          animateCount(el, 0, num, 800);
+        } else {
+          el.textContent = raw;
+        }
+        // Mark as live
+        el.setAttribute('data-live', 'true');
+        el.title = 'Live data from ACAT dataset';
+      }
+    });
+
+    // Update meta description if present
+    const meta = document.querySelector('meta[name="description"]');
+    if (meta && stats.n_total && stats.n_systems) {
+      meta.content = meta.content
+        .replace(/\d+ assessments/, stats.n_total + ' assessments')
+        .replace(/\d+ systems/, stats.n_systems + ' systems');
+    }
+  }
+
+  function animateCount(el, from, to, duration) {
+    const start = performance.now();
+    const suffix = el.textContent.replace(/[\d.]/g, '');
+    function step(now) {
+      const progress = Math.min((now - start) / duration, 1);
+      const ease = 1 - Math.pow(1 - progress, 3); // ease-out cubic
+      el.textContent = Math.round(from + (to - from) * ease) + suffix;
+      if (progress < 1) requestAnimationFrame(step);
+    }
+    requestAnimationFrame(step);
+  }
+
+  function loadLiveStats() {
+    fetch(CSV_URL)
+      .then(r => {
+        if (!r.ok) throw new Error('CSV fetch failed: ' + r.status);
+        return r.text();
+      })
+      .then(text => {
+        const rows = parseCSV(text);
+        if (rows.length === 0) throw new Error('Empty dataset');
+        const stats = computeStats(rows);
+        updateDOM(stats);
+        // Cache in sessionStorage so navigating between pages is fast
+        try {
+          sessionStorage.setItem('acat_stats', JSON.stringify({
+            stats, cached_at: Date.now()
+          }));
+        } catch(e) {}
+      })
+      .catch(err => {
+        console.warn('[ACAT Live Stats] Using fallback values.', err.message);
+        // Silently degrade — existing hardwired text remains visible
+      });
+  }
+
+  // Check sessionStorage cache first (valid for 10 minutes)
+  try {
+    const cached = JSON.parse(sessionStorage.getItem('acat_stats') || 'null');
+    if (cached && (Date.now() - cached.cached_at) < 600000) {
+      updateDOM(cached.stats);
+      return;
+    }
+  } catch(e) {}
+
+  // Load on DOMContentLoaded
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', loadLiveStats);
+  } else {
+    loadLiveStats();
+  }
+})();
+
+</script>
+
 </body>
 </html>
