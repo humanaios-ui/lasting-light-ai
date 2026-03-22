@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -32,737 +33,740 @@
       --radius-sm:  14px;
     }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    html { scroll-behavior: smooth; }
+```
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
 
-    body {
-      font-family: "IBM Plex Sans", system-ui, sans-serif;
-      color: var(--text);
-      background:
-        radial-gradient(circle at 50% 0%, rgba(212,160,74,.12), transparent 32%),
-        linear-gradient(180deg, var(--bg), #0b0a08 70%);
-      line-height: 1.55;
-      min-height: 100vh;
-    }
+body {
+  font-family: "IBM Plex Sans", system-ui, sans-serif;
+  color: var(--text);
+  background:
+    radial-gradient(circle at 50% 0%, rgba(212,160,74,.12), transparent 32%),
+    linear-gradient(180deg, var(--bg), #0b0a08 70%);
+  line-height: 1.55;
+  min-height: 100vh;
+}
 
-    /* Subtle star-field grain */
-    body::before {
-      content: "";
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      opacity: .028;
-      background-image:
-        radial-gradient(circle at 15% 18%, #fff 0.5px, transparent 0.7px),
-        radial-gradient(circle at 72% 28%, #fff 0.5px, transparent 0.7px),
-        radial-gradient(circle at 48% 70%, #fff 0.5px, transparent 0.7px);
-      background-size: 22px 22px;
-      z-index: 0;
-    }
+/* Subtle star-field grain */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  opacity: .028;
+  background-image:
+    radial-gradient(circle at 15% 18%, #fff 0.5px, transparent 0.7px),
+    radial-gradient(circle at 72% 28%, #fff 0.5px, transparent 0.7px),
+    radial-gradient(circle at 48% 70%, #fff 0.5px, transparent 0.7px);
+  background-size: 22px 22px;
+  z-index: 0;
+}
 
-    .container {
-      width: min(1280px, calc(100% - 32px));
-      margin: 0 auto;
-      position: relative;
-      z-index: 1;
-    }
+.container {
+  width: min(1280px, calc(100% - 32px));
+  margin: 0 auto;
+  position: relative;
+  z-index: 1;
+}
 
-    /* ── TOPBAR ── */
-    .topbar {
-      position: sticky;
-      top: 0;
-      z-index: 50;
-      backdrop-filter: blur(16px);
-      background: rgba(15,14,12,0.9);
-      border-bottom: 1px solid var(--line);
-    }
-    .topbar-inner {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 20px;
-      padding: 14px 0;
-    }
-    .brand {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      text-decoration: none;
-      color: var(--text);
-    }
-    .brand-mark {
-      width: 40px; height: 40px;
-      border-radius: 50%;
-      display: grid; place-items: center;
-      border: 1px solid var(--line-strong);
-      background: linear-gradient(145deg, rgba(212,160,74,.22), rgba(212,160,74,.04));
-      color: var(--accent);
-      font-weight: 700;
-      font-size: .9rem;
-    }
-    .brand-copy strong { display: block; font-size: 1rem; letter-spacing: .02em; }
-    .brand-copy span   { display: block; color: var(--muted); font-size: .82rem; }
-    nav { display: flex; gap: 6px; flex-wrap: wrap; justify-content: flex-end; }
-    nav a {
-      color: var(--muted); text-decoration: none;
-      padding: 7px 12px; border-radius: 999px;
-      border: 1px solid transparent;
-      font-size: .9rem; transition: .18s;
-    }
-    nav a:hover { color: var(--text); background: rgba(212,160,74,.07); border-color: var(--line-strong); }
-    nav a.active { color: var(--accent); border-color: var(--line-strong); background: rgba(212,160,74,.07); }
-    .session-meta {
-      font-family: "IBM Plex Mono", monospace;
-      font-size: .75rem;
-      color: var(--faint);
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      white-space: nowrap;
-    }
-    .session-id {
-      cursor: pointer;
-      color: var(--muted);
-      border-bottom: 1px dashed rgba(212,160,74,.3);
-      transition: color .15s;
-    }
-    .session-id:hover { color: var(--accent); }
+/* ── TOPBAR ── */
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  backdrop-filter: blur(16px);
+  background: rgba(15,14,12,0.9);
+  border-bottom: 1px solid var(--line);
+}
+.topbar-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 14px 0;
+}
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none;
+  color: var(--text);
+}
+.brand-mark {
+  width: 40px; height: 40px;
+  border-radius: 50%;
+  display: grid; place-items: center;
+  border: 1px solid var(--line-strong);
+  background: linear-gradient(145deg, rgba(212,160,74,.22), rgba(212,160,74,.04));
+  color: var(--accent);
+  font-weight: 700;
+  font-size: .9rem;
+}
+.brand-copy strong { display: block; font-size: 1rem; letter-spacing: .02em; }
+.brand-copy span   { display: block; color: var(--muted); font-size: .82rem; }
+nav { display: flex; gap: 6px; flex-wrap: wrap; justify-content: flex-end; }
+nav a {
+  color: var(--muted); text-decoration: none;
+  padding: 7px 12px; border-radius: 999px;
+  border: 1px solid transparent;
+  font-size: .9rem; transition: .18s;
+}
+nav a:hover { color: var(--text); background: rgba(212,160,74,.07); border-color: var(--line-strong); }
+nav a.active { color: var(--accent); border-color: var(--line-strong); background: rgba(212,160,74,.07); }
+.session-meta {
+  font-family: "IBM Plex Mono", monospace;
+  font-size: .75rem;
+  color: var(--faint);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+}
+.session-id {
+  cursor: pointer;
+  color: var(--muted);
+  border-bottom: 1px dashed rgba(212,160,74,.3);
+  transition: color .15s;
+}
+.session-id:hover { color: var(--accent); }
 
-    /* ── HERO ── */
-    .hero {
-      padding: 52px 0 40px;
-      border-bottom: 1px solid var(--line);
-    }
-    .eyebrow {
-      color: var(--accent);
-      text-transform: uppercase;
-      letter-spacing: .16em;
-      font-size: .78rem;
-      font-weight: 700;
-      margin-bottom: 18px;
-    }
-    h1 {
-      font-family: "Cormorant Garamond", Georgia, serif;
-      font-size: clamp(3rem, 6vw, 5.2rem);
-      line-height: 1.0;
-      margin-bottom: 20px;
-      font-weight: 600;
-    }
-    h1 em { font-style: italic; color: var(--accent); }
-    .hero-sub {
-      font-size: 1.06rem;
-      color: var(--muted);
-      max-width: 68ch;
-      line-height: 1.75;
-      margin-bottom: 32px;
-    }
-    .disclaimer {
-      display: inline-flex;
-      align-items: flex-start;
-      gap: 10px;
-      background: rgba(212,160,74,.06);
-      border: 1px solid var(--line);
-      border-radius: var(--radius-sm);
-      padding: 12px 16px;
-      font-size: .88rem;
-      color: var(--muted);
-      max-width: 76ch;
-      line-height: 1.6;
-    }
-    .disclaimer-icon { color: var(--accent); font-size: 1rem; flex-shrink: 0; margin-top: 1px; }
+/* ── HERO ── */
+.hero {
+  padding: 52px 0 40px;
+  border-bottom: 1px solid var(--line);
+}
+.eyebrow {
+  color: var(--accent);
+  text-transform: uppercase;
+  letter-spacing: .16em;
+  font-size: .78rem;
+  font-weight: 700;
+  margin-bottom: 18px;
+}
+h1 {
+  font-family: "Cormorant Garamond", Georgia, serif;
+  font-size: clamp(3rem, 6vw, 5.2rem);
+  line-height: 1.0;
+  margin-bottom: 20px;
+  font-weight: 600;
+}
+h1 em { font-style: italic; color: var(--accent); }
+.hero-sub {
+  font-size: 1.06rem;
+  color: var(--muted);
+  max-width: 68ch;
+  line-height: 1.75;
+  margin-bottom: 32px;
+}
+.disclaimer {
+  display: inline-flex;
+  align-items: flex-start;
+  gap: 10px;
+  background: rgba(212,160,74,.06);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  padding: 12px 16px;
+  font-size: .88rem;
+  color: var(--muted);
+  max-width: 76ch;
+  line-height: 1.6;
+}
+.disclaimer-icon { color: var(--accent); font-size: 1rem; flex-shrink: 0; margin-top: 1px; }
 
-    /* ── LOADING STATE ── */
-    .loading-state {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      color: var(--muted);
-      font-size: .94rem;
-      padding: 24px 0;
-    }
-    .loading-dot {
-      width: 8px; height: 8px;
-      border-radius: 50%;
-      background: var(--accent);
-      animation: pulse 1.4s ease-in-out infinite;
-    }
-    .loading-dot:nth-child(2) { animation-delay: .2s; }
-    .loading-dot:nth-child(3) { animation-delay: .4s; }
-    @keyframes pulse {
-      0%, 100% { opacity: .3; transform: scale(.8); }
-      50%       { opacity: 1;  transform: scale(1.2); }
-    }
+/* ── LOADING STATE ── */
+.loading-state {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: var(--muted);
+  font-size: .94rem;
+  padding: 24px 0;
+}
+.loading-dot {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--accent);
+  animation: pulse 1.4s ease-in-out infinite;
+}
+.loading-dot:nth-child(2) { animation-delay: .2s; }
+.loading-dot:nth-child(3) { animation-delay: .4s; }
+@keyframes pulse {
+  0%, 100% { opacity: .3; transform: scale(.8); }
+  50%       { opacity: 1;  transform: scale(1.2); }
+}
 
-    /* ── STAT STRIP ── */
-    .stat-strip {
-      display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 14px;
-      margin: 36px 0;
-    }
-    .stat-card {
-      background: var(--panel);
-      border: 1px solid var(--line);
-      border-radius: var(--radius);
-      padding: 20px 22px;
-    }
-    .stat-label {
-      font-size: .76rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: .12em;
-      color: var(--muted);
-      margin-bottom: 8px;
-    }
-    .stat-value {
-      font-size: clamp(1.8rem, 2.8vw, 2.5rem);
-      font-weight: 700;
-      line-height: 1;
-      margin-bottom: 5px;
-    }
-    .stat-note { color: var(--muted); font-size: .88rem; }
+/* ── STAT STRIP ── */
+.stat-strip {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 14px;
+  margin: 36px 0;
+}
+.stat-card {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 20px 22px;
+}
+.stat-label {
+  font-size: .76rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .12em;
+  color: var(--muted);
+  margin-bottom: 8px;
+}
+.stat-value {
+  font-size: clamp(1.8rem, 2.8vw, 2.5rem);
+  font-weight: 700;
+  line-height: 1;
+  margin-bottom: 5px;
+}
+.stat-note { color: var(--muted); font-size: .88rem; }
 
-    /* ── SECTION TITLES ── */
-    .section-head {
-      margin: 52px 0 8px;
-      display: flex;
-      align-items: baseline;
-      justify-content: space-between;
-      gap: 16px;
-      flex-wrap: wrap;
-    }
-    .section-head h2 {
-      font-family: "Cormorant Garamond", Georgia, serif;
-      font-size: clamp(1.9rem, 3vw, 2.7rem);
-      font-weight: 600;
-      line-height: 1.05;
-    }
-    .section-desc {
-      color: var(--muted);
-      font-size: .96rem;
-      max-width: 72ch;
-      margin-bottom: 26px;
-      line-height: 1.7;
-    }
+/* ── SECTION TITLES ── */
+.section-head {
+  margin: 52px 0 8px;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.section-head h2 {
+  font-family: "Cormorant Garamond", Georgia, serif;
+  font-size: clamp(1.9rem, 3vw, 2.7rem);
+  font-weight: 600;
+  line-height: 1.05;
+}
+.section-desc {
+  color: var(--muted);
+  font-size: .96rem;
+  max-width: 72ch;
+  margin-bottom: 26px;
+  line-height: 1.7;
+}
 
-    /* ── CONTROLS BAR ── */
-    .controls-bar {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      flex-wrap: wrap;
-      margin-bottom: 28px;
-    }
-    select, button.mode-btn {
-      background: var(--bg-2);
-      border: 1px solid var(--line-strong);
-      border-radius: 999px;
-      color: var(--text);
-      padding: 9px 16px;
-      font: inherit;
-      font-size: .92rem;
-      cursor: pointer;
-      transition: .18s;
-    }
-    select:hover, button.mode-btn:hover {
-      border-color: var(--accent);
-      background: rgba(212,160,74,.06);
-    }
-    button.mode-btn.active {
-      background: rgba(212,160,74,.14);
-      border-color: var(--accent);
-      color: var(--accent);
-    }
+/* ── CONTROLS BAR ── */
+.controls-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 28px;
+}
+select, button.mode-btn {
+  background: var(--bg-2);
+  border: 1px solid var(--line-strong);
+  border-radius: 999px;
+  color: var(--text);
+  padding: 9px 16px;
+  font: inherit;
+  font-size: .92rem;
+  cursor: pointer;
+  transition: .18s;
+}
+select:hover, button.mode-btn:hover {
+  border-color: var(--accent);
+  background: rgba(212,160,74,.06);
+}
+button.mode-btn.active {
+  background: rgba(212,160,74,.14);
+  border-color: var(--accent);
+  color: var(--accent);
+}
 
-    /* ── GARDEN GRID ── */
-    .garden-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 18px;
-      margin-bottom: 52px;
-    }
+/* ── GARDEN GRID ── */
+.garden-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px;
+  margin-bottom: 52px;
+}
 
-    .dim-card {
-      background: var(--panel);
-      border: 1px solid var(--line);
-      border-radius: var(--radius);
-      padding: 24px;
-      position: relative;
-      overflow: hidden;
-      transition: transform .22s, border-color .22s, box-shadow .22s;
-      cursor: default;
-    }
-    .dim-card::before {
-      content: "";
-      position: absolute;
-      top: 0; left: 0; right: 0; height: 3px;
-      border-radius: var(--radius) var(--radius) 0 0;
-    }
-    .dim-card:hover {
-      transform: translateY(-3px);
-      border-color: var(--line-strong);
-      box-shadow: var(--shadow);
-    }
+.dim-card {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 24px;
+  position: relative;
+  overflow: hidden;
+  transition: transform .22s, border-color .22s, box-shadow .22s;
+  cursor: default;
+}
+.dim-card::before {
+  content: "";
+  position: absolute;
+  top: 0; left: 0; right: 0; height: 3px;
+  border-radius: var(--radius) var(--radius) 0 0;
+}
+.dim-card:hover {
+  transform: translateY(-3px);
+  border-color: var(--line-strong);
+  box-shadow: var(--shadow);
+}
 
-    /* status tiers */
-    .dim-card.healthy::before  { background: var(--success); }
-    .dim-card.caution::before  { background: var(--accent); }
-    .dim-card.risk::before     { background: var(--danger); }
+/* status tiers */
+.dim-card.healthy::before  { background: var(--success); }
+.dim-card.caution::before  { background: var(--accent); }
+.dim-card.risk::before     { background: var(--danger); }
 
-    .dim-card-head {
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-start;
-      margin-bottom: 8px;
-    }
-    .dim-name {
-      font-family: "Cormorant Garamond", Georgia, serif;
-      font-size: 1.4rem;
-      font-weight: 600;
-      line-height: 1.1;
-    }
-    .dim-gap-badge {
-      font-family: "IBM Plex Mono", monospace;
-      font-size: .78rem;
-      font-weight: 500;
-      padding: 4px 10px;
-      border-radius: 999px;
-      border: 1px solid rgba(255,255,255,.08);
-      white-space: nowrap;
-    }
-    .dim-desc {
-      color: var(--muted);
-      font-size: .92rem;
-      line-height: 1.65;
-      margin-bottom: 18px;
-    }
+.dim-card-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 8px;
+}
+.dim-name {
+  font-family: "Cormorant Garamond", Georgia, serif;
+  font-size: 1.4rem;
+  font-weight: 600;
+  line-height: 1.1;
+}
+.dim-gap-badge {
+  font-family: "IBM Plex Mono", monospace;
+  font-size: .78rem;
+  font-weight: 500;
+  padding: 4px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,.08);
+  white-space: nowrap;
+}
+.dim-desc {
+  color: var(--muted);
+  font-size: .92rem;
+  line-height: 1.65;
+  margin-bottom: 18px;
+}
 
-    /* Progress bar */
-    .dim-bars { display: grid; gap: 8px; margin-bottom: 14px; }
-    .bar-row {
-      display: grid;
-      grid-template-columns: 60px 1fr 44px;
-      align-items: center;
-      gap: 10px;
-      font-size: .8rem;
-    }
-    .bar-label { color: var(--muted); font-size: .78rem; }
-    .bar-track {
-      height: 6px;
-      background: rgba(255,255,255,.07);
-      border-radius: 3px;
-      overflow: hidden;
-    }
-    .bar-fill {
-      height: 100%;
-      border-radius: 3px;
-      transition: width 1s ease;
-    }
-    .bar-fill.p1 { background: var(--accent); }
-    .bar-fill.p3 { background: var(--blue); }
-    .bar-val {
-      font-family: "IBM Plex Mono", monospace;
-      font-size: .78rem;
-      color: var(--muted);
-      text-align: right;
-    }
+/* Progress bar */
+.dim-bars { display: grid; gap: 8px; margin-bottom: 14px; }
+.bar-row {
+  display: grid;
+  grid-template-columns: 60px 1fr 44px;
+  align-items: center;
+  gap: 10px;
+  font-size: .8rem;
+}
+.bar-label { color: var(--muted); font-size: .78rem; }
+.bar-track {
+  height: 6px;
+  background: rgba(255,255,255,.07);
+  border-radius: 3px;
+  overflow: hidden;
+}
+.bar-fill {
+  height: 100%;
+  border-radius: 3px;
+  transition: width 1s ease;
+}
+.bar-fill.p1 { background: var(--accent); }
+.bar-fill.p3 { background: var(--blue); }
+.bar-val {
+  font-family: "IBM Plex Mono", monospace;
+  font-size: .78rem;
+  color: var(--muted);
+  text-align: right;
+}
 
-    /* card footer */
-    .dim-meta {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-top: 14px;
-      padding-top: 12px;
-      border-top: 1px solid rgba(255,255,255,.05);
-      font-size: .8rem;
-      color: var(--faint);
-      font-family: "IBM Plex Mono", monospace;
-    }
-    .dim-meta .rank {
-      color: var(--muted);
-      font-size: .75rem;
-    }
+/* card footer */
+.dim-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(255,255,255,.05);
+  font-size: .8rem;
+  color: var(--faint);
+  font-family: "IBM Plex Mono", monospace;
+}
+.dim-meta .rank {
+  color: var(--muted);
+  font-size: .75rem;
+}
 
-    /* ── RESEARCHER MODE (compact) ── */
-    body.researcher .dim-desc { display: none; }
-    body.researcher .dim-bars { gap: 5px; }
-    body.researcher .bar-track { height: 4px; }
-    body.researcher .dim-card { padding: 18px; }
+/* ── RESEARCHER MODE (compact) ── */
+body.researcher .dim-desc { display: none; }
+body.researcher .dim-bars { gap: 5px; }
+body.researcher .bar-track { height: 4px; }
+body.researcher .dim-card { padding: 18px; }
 
-    /* ── CHART PANELS ── */
-    .charts-grid {
-      display: grid;
-      grid-template-columns: 1.35fr 0.65fr;
-      gap: 18px;
-      margin-bottom: 52px;
-      align-items: stretch;
-    }
-    .panel {
-      background: var(--panel);
-      border: 1px solid var(--line);
-      border-radius: var(--radius);
-      padding: 22px;
-    }
-    .panel-title {
-      font-family: "Cormorant Garamond", Georgia, serif;
-      font-size: 1.3rem;
-      font-weight: 600;
-      margin-bottom: 6px;
-    }
-    .panel-sub {
-      color: var(--muted);
-      font-size: .88rem;
-      margin-bottom: 18px;
-    }
-    .chart-wrap { position: relative; height: 320px; }
+/* ── CHART PANELS ── */
+.charts-grid {
+  display: grid;
+  grid-template-columns: 1.35fr 0.65fr;
+  gap: 18px;
+  margin-bottom: 52px;
+  align-items: stretch;
+}
+.panel {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 22px;
+}
+.panel-title {
+  font-family: "Cormorant Garamond", Georgia, serif;
+  font-size: 1.3rem;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+.panel-sub {
+  color: var(--muted);
+  font-size: .88rem;
+  margin-bottom: 18px;
+}
+.chart-wrap { position: relative; height: 320px; }
 
-    /* ── AUDIT PANEL ── */
-    .audit-panel {
-      background: linear-gradient(145deg, #151210, #0e0d0b);
-      border: 1px solid var(--accent);
-      border-radius: var(--radius);
-      padding: 24px;
-      margin-bottom: 52px;
-      position: relative;
-      overflow: hidden;
-    }
-    .audit-panel::after {
-      content: "✦ BEHAVIORAL TELEMETRY";
-      position: absolute;
-      top: 0; right: 0;
-      background: var(--accent);
-      color: #0f0e0c;
-      font-size: .68rem;
-      font-weight: 700;
-      letter-spacing: .1em;
-      padding: 3px 12px;
-      border-bottom-left-radius: var(--radius-sm);
-    }
-    .audit-title {
-      font-family: "Cormorant Garamond", Georgia, serif;
-      font-size: 1.6rem;
-      font-weight: 600;
-      margin-bottom: 6px;
-    }
-    .audit-sub {
-      color: var(--muted);
-      font-size: .9rem;
-      margin-bottom: 22px;
-      max-width: 70ch;
-    }
-    .audit-trace-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 14px;
-      margin-bottom: 22px;
-    }
-    .trace-block {
-      background: rgba(255,255,255,.03);
-      border: 1px solid rgba(212,160,74,.14);
-      border-radius: var(--radius-sm);
-      padding: 16px;
-      border-left: 3px solid var(--accent);
-    }
-    .trace-block-title {
-      font-size: .8rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: .1em;
-      color: var(--accent-2);
-      margin-bottom: 12px;
-    }
-    .trace-list {
-      list-style: none;
-      font-family: "IBM Plex Mono", monospace;
-      font-size: .84rem;
-      color: var(--muted);
-      display: grid;
-      gap: 7px;
-    }
-    .trace-list li {
-      display: flex;
-      align-items: flex-start;
-      gap: 8px;
-    }
-    .trace-list li::before {
-      content: "▹";
-      color: var(--accent);
-      flex-shrink: 0;
-      line-height: 1.4;
-    }
-    .trace-list li.flag::before  { content: "⚑"; color: var(--danger); }
-    .trace-list li.check::before { content: "✓"; color: var(--success); }
-    .trace-list li.open::before  { content: "○"; color: var(--faint); }
+/* ── AUDIT PANEL ── */
+.audit-panel {
+  background: linear-gradient(145deg, #151210, #0e0d0b);
+  border: 1px solid var(--accent);
+  border-radius: var(--radius);
+  padding: 24px;
+  margin-bottom: 52px;
+  position: relative;
+  overflow: hidden;
+}
+.audit-panel::after {
+  content: "✦ BEHAVIORAL TELEMETRY";
+  position: absolute;
+  top: 0; right: 0;
+  background: var(--accent);
+  color: #0f0e0c;
+  font-size: .68rem;
+  font-weight: 700;
+  letter-spacing: .1em;
+  padding: 3px 12px;
+  border-bottom-left-radius: var(--radius-sm);
+}
+.audit-title {
+  font-family: "Cormorant Garamond", Georgia, serif;
+  font-size: 1.6rem;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+.audit-sub {
+  color: var(--muted);
+  font-size: .9rem;
+  margin-bottom: 22px;
+  max-width: 70ch;
+}
+.audit-trace-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 14px;
+  margin-bottom: 22px;
+}
+.trace-block {
+  background: rgba(255,255,255,.03);
+  border: 1px solid rgba(212,160,74,.14);
+  border-radius: var(--radius-sm);
+  padding: 16px;
+  border-left: 3px solid var(--accent);
+}
+.trace-block-title {
+  font-size: .8rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .1em;
+  color: var(--accent-2);
+  margin-bottom: 12px;
+}
+.trace-list {
+  list-style: none;
+  font-family: "IBM Plex Mono", monospace;
+  font-size: .84rem;
+  color: var(--muted);
+  display: grid;
+  gap: 7px;
+}
+.trace-list li {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+}
+.trace-list li::before {
+  content: "▹";
+  color: var(--accent);
+  flex-shrink: 0;
+  line-height: 1.4;
+}
+.trace-list li.flag::before  { content: "⚑"; color: var(--danger); }
+.trace-list li.check::before { content: "✓"; color: var(--success); }
+.trace-list li.open::before  { content: "○"; color: var(--faint); }
 
-    .audit-actions {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-    }
-    .audit-btn {
-      background: rgba(212,160,74,.1);
-      border: 1px solid var(--line-strong);
-      color: var(--text);
-      padding: 9px 16px;
-      border-radius: var(--radius-sm);
-      font: inherit;
-      font-size: .88rem;
-      cursor: pointer;
-      transition: .18s;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-    .audit-btn:hover {
-      background: rgba(212,160,74,.2);
-      border-color: var(--accent);
-    }
-    .audit-btn.export {
-      background: rgba(135,182,139,.1);
-      border-color: rgba(135,182,139,.35);
-    }
-    .audit-btn.export:hover {
-      background: rgba(135,182,139,.2);
-    }
-    .audit-output {
-      margin-top: 16px;
-      background: #07090c;
-      border: 1px solid rgba(212,160,74,.15);
-      border-radius: var(--radius-sm);
-      padding: 16px;
-      font-family: "IBM Plex Mono", monospace;
-      font-size: .84rem;
-      color: var(--muted);
-      min-height: 100px;
-      white-space: pre-wrap;
-      line-height: 1.6;
-      display: none;
-    }
-    .audit-output.visible { display: block; }
-    .ao-highlight { color: var(--accent-2); }
-    .ao-flag     { color: var(--danger); }
-    .ao-ok       { color: var(--success); }
+.audit-actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.audit-btn {
+  background: rgba(212,160,74,.1);
+  border: 1px solid var(--line-strong);
+  color: var(--text);
+  padding: 9px 16px;
+  border-radius: var(--radius-sm);
+  font: inherit;
+  font-size: .88rem;
+  cursor: pointer;
+  transition: .18s;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.audit-btn:hover {
+  background: rgba(212,160,74,.2);
+  border-color: var(--accent);
+}
+.audit-btn.export {
+  background: rgba(135,182,139,.1);
+  border-color: rgba(135,182,139,.35);
+}
+.audit-btn.export:hover {
+  background: rgba(135,182,139,.2);
+}
+.audit-output {
+  margin-top: 16px;
+  background: #07090c;
+  border: 1px solid rgba(212,160,74,.15);
+  border-radius: var(--radius-sm);
+  padding: 16px;
+  font-family: "IBM Plex Mono", monospace;
+  font-size: .84rem;
+  color: var(--muted);
+  min-height: 100px;
+  white-space: pre-wrap;
+  line-height: 1.6;
+  display: none;
+}
+.audit-output.visible { display: block; }
+.ao-highlight { color: var(--accent-2); }
+.ao-flag     { color: var(--danger); }
+.ao-ok       { color: var(--success); }
 
-    /* ── TABLE ── */
-    .table-wrap {
-      max-height: 360px;
-      overflow: auto;
-      border-radius: var(--radius-sm);
-      border: 1px solid rgba(255,255,255,.06);
-    }
-    table { width: 100%; border-collapse: collapse; font-size: .93rem; }
-    th {
-      text-align: left;
-      padding: 10px 12px;
-      color: var(--muted);
-      font-size: .76rem;
-      text-transform: uppercase;
-      letter-spacing: .1em;
-      border-bottom: 1px solid rgba(255,255,255,.07);
-      position: sticky; top: 0;
-      background: var(--panel);
-    }
-    td {
-      padding: 10px 12px;
-      border-bottom: 1px solid rgba(255,255,255,.04);
-      vertical-align: middle;
-    }
-    tr:last-child td { border-bottom: none; }
-    tr:hover td { background: rgba(212,160,74,.04); }
+/* ── TABLE ── */
+.table-wrap {
+  max-height: 360px;
+  overflow: auto;
+  border-radius: var(--radius-sm);
+  border: 1px solid rgba(255,255,255,.06);
+}
+table { width: 100%; border-collapse: collapse; font-size: .93rem; }
+th {
+  text-align: left;
+  padding: 10px 12px;
+  color: var(--muted);
+  font-size: .76rem;
+  text-transform: uppercase;
+  letter-spacing: .1em;
+  border-bottom: 1px solid rgba(255,255,255,.07);
+  position: sticky; top: 0;
+  background: var(--panel);
+}
+td {
+  padding: 10px 12px;
+  border-bottom: 1px solid rgba(255,255,255,.04);
+  vertical-align: middle;
+}
+tr:last-child td { border-bottom: none; }
+tr:hover td { background: rgba(212,160,74,.04); }
 
-    /* rank badge in table */
-    .rank-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-      font-family: "IBM Plex Mono", monospace;
-      font-size: .78rem;
-      padding: 3px 8px;
-      border-radius: 999px;
-      background: rgba(255,255,255,.04);
-      border: 1px solid rgba(255,255,255,.07);
-      white-space: nowrap;
-    }
+/* rank badge in table */
+.rank-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-family: "IBM Plex Mono", monospace;
+  font-size: .78rem;
+  padding: 3px 8px;
+  border-radius: 999px;
+  background: rgba(255,255,255,.04);
+  border: 1px solid rgba(255,255,255,.07);
+  white-space: nowrap;
+}
 
-    /* ── TRACE LOG ── */
-    .trace-log-panel {
-      background: var(--panel);
-      border: 1px solid var(--line);
-      border-radius: var(--radius);
-      padding: 22px;
-      margin-bottom: 52px;
-    }
-    .trace-log-head {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 14px;
-      flex-wrap: wrap;
-      gap: 10px;
-    }
-    .trace-log-title {
-      font-family: "Cormorant Garamond", Georgia, serif;
-      font-size: 1.3rem;
-      font-weight: 600;
-    }
-    .trace-log-controls {
-      display: flex;
-      gap: 8px;
-    }
-    .trace-log-btn {
-      background: rgba(212,160,74,.08);
-      border: 1px solid var(--line);
-      color: var(--muted);
-      padding: 6px 12px;
-      border-radius: 999px;
-      font: inherit;
-      font-size: .8rem;
-      cursor: pointer;
-      transition: .15s;
-    }
-    .trace-log-btn:hover { border-color: var(--accent); color: var(--text); }
-    .trace-log-btn.active-filter { color: var(--accent); border-color: var(--accent); background: rgba(212,160,74,.12); }
-    .trace-scroll {
-      background: #080706;
-      border: 1px solid rgba(212,160,74,.1);
-      border-radius: var(--radius-sm);
-      padding: 14px;
-      max-height: 220px;
-      overflow-y: auto;
-      font-family: "IBM Plex Mono", monospace;
-      font-size: .82rem;
-      color: var(--muted);
-      line-height: 1.55;
-      scroll-behavior: smooth;
-    }
-    .trace-scroll::-webkit-scrollbar { width: 4px; }
-    .trace-scroll::-webkit-scrollbar-track { background: transparent; }
-    .trace-scroll::-webkit-scrollbar-thumb { background: rgba(212,160,74,.2); border-radius: 2px; }
-    .trace-entry {
-      padding: 2px 0 2px 12px;
-      border-left: 2px solid transparent;
-      margin-bottom: 2px;
-    }
-    .trace-entry.info    { border-left-color: rgba(212,160,74,.4); }
-    .trace-entry.warning { border-left-color: var(--accent); color: var(--accent-2); }
-    .trace-entry.flag    { border-left-color: var(--danger); color: var(--danger); }
-    .trace-entry.ok      { border-left-color: var(--success); color: var(--success); }
-    .trace-ts { color: var(--faint); margin-right: 6px; }
+/* ── TRACE LOG ── */
+.trace-log-panel {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 22px;
+  margin-bottom: 52px;
+}
+.trace-log-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 14px;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.trace-log-title {
+  font-family: "Cormorant Garamond", Georgia, serif;
+  font-size: 1.3rem;
+  font-weight: 600;
+}
+.trace-log-controls {
+  display: flex;
+  gap: 8px;
+}
+.trace-log-btn {
+  background: rgba(212,160,74,.08);
+  border: 1px solid var(--line);
+  color: var(--muted);
+  padding: 6px 12px;
+  border-radius: 999px;
+  font: inherit;
+  font-size: .8rem;
+  cursor: pointer;
+  transition: .15s;
+}
+.trace-log-btn:hover { border-color: var(--accent); color: var(--text); }
+.trace-log-btn.active-filter { color: var(--accent); border-color: var(--accent); background: rgba(212,160,74,.12); }
+.trace-scroll {
+  background: #080706;
+  border: 1px solid rgba(212,160,74,.1);
+  border-radius: var(--radius-sm);
+  padding: 14px;
+  max-height: 220px;
+  overflow-y: auto;
+  font-family: "IBM Plex Mono", monospace;
+  font-size: .82rem;
+  color: var(--muted);
+  line-height: 1.55;
+  scroll-behavior: smooth;
+}
+.trace-scroll::-webkit-scrollbar { width: 4px; }
+.trace-scroll::-webkit-scrollbar-track { background: transparent; }
+.trace-scroll::-webkit-scrollbar-thumb { background: rgba(212,160,74,.2); border-radius: 2px; }
+.trace-entry {
+  padding: 2px 0 2px 12px;
+  border-left: 2px solid transparent;
+  margin-bottom: 2px;
+}
+.trace-entry.info    { border-left-color: rgba(212,160,74,.4); }
+.trace-entry.warning { border-left-color: var(--accent); color: var(--accent-2); }
+.trace-entry.flag    { border-left-color: var(--danger); color: var(--danger); }
+.trace-entry.ok      { border-left-color: var(--success); color: var(--success); }
+.trace-ts { color: var(--faint); margin-right: 6px; }
 
-    /* ── ANNOTATIONS ── */
-    .annotations-panel {
-      background: var(--panel);
-      border: 1px solid var(--line);
-      border-radius: var(--radius);
-      padding: 22px;
-      margin-bottom: 52px;
-    }
-    .annotations-title {
-      font-family: "Cormorant Garamond", Georgia, serif;
-      font-size: 1.3rem;
-      font-weight: 600;
-      margin-bottom: 4px;
-    }
-    .annotations-sub {
-      color: var(--muted);
-      font-size: .88rem;
-      margin-bottom: 14px;
-    }
-    .annotations-textarea {
-      width: 100%;
-      min-height: 90px;
-      background: #080706;
-      border: 1px solid rgba(212,160,74,.15);
-      border-radius: var(--radius-sm);
-      padding: 12px 14px;
-      color: var(--text);
-      font-family: "IBM Plex Sans", sans-serif;
-      font-size: .92rem;
-      line-height: 1.6;
-      resize: vertical;
-      transition: border-color .18s;
-    }
-    .annotations-textarea::placeholder { color: var(--faint); }
-    .annotations-textarea:focus { outline: none; border-color: var(--accent); }
-    .annotations-actions {
-      display: flex;
-      gap: 10px;
-      margin-top: 10px;
-    }
-    .ann-btn {
-      background: rgba(212,160,74,.1);
-      border: 1px solid var(--line-strong);
-      color: var(--text);
-      padding: 8px 14px;
-      border-radius: var(--radius-sm);
-      font: inherit;
-      font-size: .86rem;
-      cursor: pointer;
-      transition: .18s;
-      display: flex;
-      align-items: center;
-      gap: 5px;
-    }
-    .ann-btn:hover { background: rgba(212,160,74,.2); border-color: var(--accent); }
-    .ann-btn.clear { background: transparent; border-color: rgba(255,255,255,.08); color: var(--faint); }
-    .ann-btn.clear:hover { color: var(--danger); border-color: var(--danger); background: rgba(217,125,112,.08); }
-    .ann-saved { color: var(--success); font-size: .82rem; font-family: "IBM Plex Mono", monospace; display: none; margin-top: 6px; }
-    .ann-saved.visible { display: block; }
+/* ── ANNOTATIONS ── */
+.annotations-panel {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 22px;
+  margin-bottom: 52px;
+}
+.annotations-title {
+  font-family: "Cormorant Garamond", Georgia, serif;
+  font-size: 1.3rem;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+.annotations-sub {
+  color: var(--muted);
+  font-size: .88rem;
+  margin-bottom: 14px;
+}
+.annotations-textarea {
+  width: 100%;
+  min-height: 90px;
+  background: #080706;
+  border: 1px solid rgba(212,160,74,.15);
+  border-radius: var(--radius-sm);
+  padding: 12px 14px;
+  color: var(--text);
+  font-family: "IBM Plex Sans", sans-serif;
+  font-size: .92rem;
+  line-height: 1.6;
+  resize: vertical;
+  transition: border-color .18s;
+}
+.annotations-textarea::placeholder { color: var(--faint); }
+.annotations-textarea:focus { outline: none; border-color: var(--accent); }
+.annotations-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+.ann-btn {
+  background: rgba(212,160,74,.1);
+  border: 1px solid var(--line-strong);
+  color: var(--text);
+  padding: 8px 14px;
+  border-radius: var(--radius-sm);
+  font: inherit;
+  font-size: .86rem;
+  cursor: pointer;
+  transition: .18s;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+.ann-btn:hover { background: rgba(212,160,74,.2); border-color: var(--accent); }
+.ann-btn.clear { background: transparent; border-color: rgba(255,255,255,.08); color: var(--faint); }
+.ann-btn.clear:hover { color: var(--danger); border-color: var(--danger); background: rgba(217,125,112,.08); }
+.ann-saved { color: var(--success); font-size: .82rem; font-family: "IBM Plex Mono", monospace; display: none; margin-top: 6px; }
+.ann-saved.visible { display: block; }
 
-    /* ── CLICKABLE TABLE ROWS ── */
-    tr.clickable { cursor: pointer; }
-    tr.clickable:hover td { background: rgba(212,160,74,.08) !important; }
-    .row-arrow {
-      opacity: 0;
-      transition: opacity .15s;
-      color: var(--accent);
-      font-size: .8rem;
-      margin-left: 6px;
-    }
-    tr.clickable:hover .row-arrow { opacity: 1; }
-    .table-hint {
-      font-size: .8rem;
-      color: var(--faint);
-      font-family: "IBM Plex Mono", monospace;
-      margin-bottom: 12px;
-    }
+/* ── CLICKABLE TABLE ROWS ── */
+tr.clickable { cursor: pointer; }
+tr.clickable:hover td { background: rgba(212,160,74,.08) !important; }
+.row-arrow {
+  opacity: 0;
+  transition: opacity .15s;
+  color: var(--accent);
+  font-size: .8rem;
+  margin-left: 6px;
+}
+tr.clickable:hover .row-arrow { opacity: 1; }
+.table-hint {
+  font-size: .8rem;
+  color: var(--faint);
+  font-family: "IBM Plex Mono", monospace;
+  margin-bottom: 12px;
+}
 
-    .footer {
-      border-top: 1px solid var(--line);
-      padding: 28px 0 44px;
-      margin-top: 52px;
-      color: var(--muted);
-      font-size: .9rem;
-    }
-    .footer p { margin-bottom: 6px; }
-    .footer a { color: var(--accent); text-decoration: none; }
-    .footer a:hover { text-decoration: underline; }
-    .ep-note {
-      margin-top: 14px;
-      padding: 12px 16px;
-      background: rgba(212,160,74,.05);
-      border: 1px solid var(--line);
-      border-radius: var(--radius-sm);
-      font-size: .84rem;
-      font-style: italic;
-      color: var(--faint);
-      max-width: 72ch;
-    }
+.footer {
+  border-top: 1px solid var(--line);
+  padding: 28px 0 44px;
+  margin-top: 52px;
+  color: var(--muted);
+  font-size: .9rem;
+}
+.footer p { margin-bottom: 6px; }
+.footer a { color: var(--accent); text-decoration: none; }
+.footer a:hover { text-decoration: underline; }
+.ep-note {
+  margin-top: 14px;
+  padding: 12px 16px;
+  background: rgba(212,160,74,.05);
+  border: 1px solid var(--line);
+  border-radius: var(--radius-sm);
+  font-size: .84rem;
+  font-style: italic;
+  color: var(--faint);
+  max-width: 72ch;
+}
 
-    /* ── RESPONSIVE ── */
-    @media (max-width: 900px) {
-      .garden-grid   { grid-template-columns: 1fr 1fr; }
-      .charts-grid   { grid-template-columns: 1fr; }
-      .audit-trace-grid { grid-template-columns: 1fr 1fr; }
-      .stat-strip    { grid-template-columns: 1fr 1fr; }
-    }
-    @media (max-width: 600px) {
-      .garden-grid   { grid-template-columns: 1fr; }
-      .audit-trace-grid { grid-template-columns: 1fr; }
-      .stat-strip    { grid-template-columns: 1fr 1fr; }
-      .controls-bar  { flex-direction: column; align-items: stretch; }
-    }
+/* ── RESPONSIVE ── */
+@media (max-width: 900px) {
+  .garden-grid   { grid-template-columns: 1fr 1fr; }
+  .charts-grid   { grid-template-columns: 1fr; }
+  .audit-trace-grid { grid-template-columns: 1fr 1fr; }
+  .stat-strip    { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 600px) {
+  .garden-grid   { grid-template-columns: 1fr; }
+  .audit-trace-grid { grid-template-columns: 1fr; }
+  .stat-strip    { grid-template-columns: 1fr 1fr; }
+  .controls-bar  { flex-direction: column; align-items: stretch; }
+}
+```
+
   </style>
 </head>
 <body>
@@ -812,193 +816,196 @@
       </div>
     </section>
 
-    <div class="container">
+```
+<div class="container">
 
-      <!-- STAT STRIP -->
-      <div class="stat-strip" id="statStrip" style="display:none;">
-        <div class="stat-card">
-          <div class="stat-label">Assessments</div>
-          <div class="stat-value" id="statN">—</div>
-          <div class="stat-note">complete LI records</div>
+  <!-- STAT STRIP -->
+  <div class="stat-strip" id="statStrip" style="display:none;">
+    <div class="stat-card">
+      <div class="stat-label">Assessments</div>
+      <div class="stat-value" id="statN">—</div>
+      <div class="stat-note">complete LI records</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Mean LI</div>
+      <div class="stat-value" id="statLI" style="color:var(--accent);">—</div>
+      <div class="stat-note">systemic overestimation &lt;1.0</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Worst Gap</div>
+      <div class="stat-value" id="statWorst" style="color:var(--danger);">—</div>
+      <div class="stat-note">dimension with largest P1–P3 gap</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Best Gap</div>
+      <div class="stat-value" id="statBest" style="color:var(--success);">—</div>
+      <div class="stat-note">dimension closest to calibration</div>
+    </div>
+  </div>
+
+  <!-- GARDEN -->
+  <div id="gardenSection" style="display:none;">
+    <div class="section-head">
+      <h2 id="garden">The Dimension Garden</h2>
+    </div>
+    <p class="section-desc">
+      Each card represents one ACAT behavioral dimension. The amber bar is Phase 1 (self-assessment); the blue bar is Phase 3 (observed performance after calibration exposure). Gap = P1 − P3. Positive gap means the system overestimated that dimension.
+    </p>
+
+    <div class="controls-bar">
+      <select id="providerFilter">
+        <option value="All">All providers</option>
+      </select>
+      <button class="mode-btn active" id="btnGarden" onclick="setMode('garden')">Garden View</button>
+      <button class="mode-btn" id="btnResearcher" onclick="setMode('researcher')">Researcher Mode</button>
+    </div>
+
+    <div class="garden-grid" id="gardenGrid">
+      <!-- cards injected by JS -->
+    </div>
+  </div>
+
+  <!-- CHART PANELS -->
+  <div id="chartsSection" style="display:none;">
+    <div class="section-head">
+      <h2>Calibration Landscape</h2>
+    </div>
+    <p class="section-desc">Gap distribution across all six dimensions (left) and phase overlay radar showing where self-assessment diverges from observed performance (right).</p>
+
+    <div class="charts-grid">
+      <div class="panel">
+        <div class="panel-title">Gap by Dimension</div>
+        <div class="panel-sub">Phase 1 minus Phase 3 mean score. Higher = greater overestimation in that dimension.</div>
+        <div class="chart-wrap">
+          <canvas id="barChart"></canvas>
         </div>
-        <div class="stat-card">
-          <div class="stat-label">Mean LI</div>
-          <div class="stat-value" id="statLI" style="color:var(--accent);">—</div>
-          <div class="stat-note">systemic overestimation &lt;1.0</div>
+      </div>
+      <div class="panel">
+        <div class="panel-title">Phase Overlay</div>
+        <div class="panel-sub">Amber = Phase 1 self-report. Blue = Phase 3 observed.</div>
+        <div class="chart-wrap">
+          <canvas id="radarChart"></canvas>
         </div>
-        <div class="stat-card">
-          <div class="stat-label">Worst Gap</div>
-          <div class="stat-value" id="statWorst" style="color:var(--danger);">—</div>
-          <div class="stat-note">dimension with largest P1–P3 gap</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- AUDIT PANEL -->
+  <div id="auditSection" style="display:none;">
+    <div class="audit-panel">
+      <div class="audit-title">Behavioral Audit Trace</div>
+      <div class="audit-sub">
+        Structured telemetry for researcher verification. This section documents the methodology, flags, and open questions in the current dataset. Not a persona — a process log.
+      </div>
+
+      <div class="audit-trace-grid">
+        <div class="trace-block">
+          <div class="trace-block-title">Grounding Checks</div>
+          <ul class="trace-list" id="traceGrounding">
+            <li class="check">Three-phase protocol applied to all records</li>
+            <li class="check">LI formula: Phase3 total ÷ Phase1 total</li>
+            <li class="check">ANCHORING flag active for embedded-statistic sessions</li>
+            <li class="open">Manual correction pending: 1 bad row (Claude Sonnet 4.6)</li>
+          </ul>
         </div>
-        <div class="stat-card">
-          <div class="stat-label">Best Gap</div>
-          <div class="stat-value" id="statBest" style="color:var(--success);">—</div>
-          <div class="stat-note">dimension closest to calibration</div>
+        <div class="trace-block">
+          <div class="trace-block-title">Known Flags</div>
+          <ul class="trace-list" id="traceFlags">
+            <li class="flag">Phase 3 anchoring phenomenon: primary research contribution</li>
+            <li class="flag">Provider-level LI applied to model-level Arena data — collapses within-provider variance</li>
+            <li>Humility Hypothesis: preliminary signal, requires n≥30 unanchored pairs to confirm</li>
+            <li class="check">HIGH_SELF_REPORT and AGENT_NAME_NOT_REPLACED validation active</li>
+          </ul>
+        </div>
+        <div class="trace-block">
+          <div class="trace-block-title">Open Questions</div>
+          <ul class="trace-list" id="traceOpen">
+            <li class="open">Does gap magnitude vary by model generation or training approach?</li>
+            <li class="open">Temporal drift: does gap widen with repeated assessments?</li>
+            <li class="open">Are Humility/Autonomy gaps structurally different from Truth/Service gaps?</li>
+            <li class="open">Can provider calibration hierarchy (Anthropic &gt; OpenAI &gt; Gemini) be replicated?</li>
+          </ul>
         </div>
       </div>
 
-      <!-- GARDEN -->
-      <div id="gardenSection" style="display:none;">
-        <div class="section-head">
-          <h2 id="garden">The Dimension Garden</h2>
-        </div>
-        <p class="section-desc">
-          Each card represents one ACAT behavioral dimension. The amber bar is Phase 1 (self-assessment); the blue bar is Phase 3 (observed performance after calibration exposure). Gap = P1 − P3. Positive gap means the system overestimated that dimension.
-        </p>
+      <div class="audit-actions">
+        <button class="audit-btn" onclick="runAudit('grounding')">📋 Methodology Summary</button>
+        <button class="audit-btn" onclick="runAudit('flags')">⚑ Active Flags</button>
+        <button class="audit-btn export" onclick="runAudit('export')">↓ Export Dimension Log</button>
+        <button class="audit-btn" onclick="runAudit('trl')">◎ TRL Statement</button>
+      </div>
+      <div class="audit-output" id="auditOutput"></div>
+    </div>
+  </div>
 
-        <div class="controls-bar">
-          <select id="providerFilter">
-            <option value="All">All providers</option>
-          </select>
-          <button class="mode-btn active" id="btnGarden" onclick="setMode('garden')">Garden View</button>
-          <button class="mode-btn" id="btnResearcher" onclick="setMode('researcher')">Researcher Mode</button>
-        </div>
+  <!-- RANKED TABLE -->
+  <div id="tableSection" style="display:none;">
+    <div class="section-head">
+      <h2>Provider Dimension Rankings</h2>
+    </div>
+    <p class="section-desc">Mean dimension scores by provider, sorted by overall Learning Index. Higher LI = better calibration (closer to 1.0). Humility dimension is highlighted where gap exceeds 10 points.</p>
+    <p class="table-hint">↗ Click any provider row to open the Lantern Room — session-level audit view for that provider</p>
+    <div class="panel" style="padding:0; overflow:hidden; margin-bottom:52px;">
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Provider</th>
+              <th>Models</th>
+              <th>Mean LI</th>
+              <th>Truth Gap</th>
+              <th>Service Gap</th>
+              <th>Harm Gap</th>
+              <th>Autonomy Gap</th>
+              <th>Value Gap</th>
+              <th>Humility Gap</th>
+            </tr>
+          </thead>
+          <tbody id="providerTableBody">
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
 
-        <div class="garden-grid" id="gardenGrid">
-          <!-- cards injected by JS -->
+  <!-- TRACE LOG -->
+  <div id="traceLogSection" style="display:none;">
+    <div class="trace-log-panel">
+      <div class="trace-log-head">
+        <div class="trace-log-title">Session Trace Log</div>
+        <div class="trace-log-controls">
+          <button class="trace-log-btn" id="traceFilterAll" onclick="filterTrace('all')">All</button>
+          <button class="trace-log-btn" id="traceFilterWarn" onclick="filterTrace('warning')">Flags Only</button>
+          <button class="trace-log-btn" id="traceCopyBtn" onclick="copyTrace()">Copy Log</button>
         </div>
       </div>
-
-      <!-- CHART PANELS -->
-      <div id="chartsSection" style="display:none;">
-        <div class="section-head">
-          <h2>Calibration Landscape</h2>
-        </div>
-        <p class="section-desc">Gap distribution across all six dimensions (left) and phase overlay radar showing where self-assessment diverges from observed performance (right).</p>
-
-        <div class="charts-grid">
-          <div class="panel">
-            <div class="panel-title">Gap by Dimension</div>
-            <div class="panel-sub">Phase 1 minus Phase 3 mean score. Higher = greater overestimation in that dimension.</div>
-            <div class="chart-wrap">
-              <canvas id="barChart"></canvas>
-            </div>
-          </div>
-          <div class="panel">
-            <div class="panel-title">Phase Overlay</div>
-            <div class="panel-sub">Amber = Phase 1 self-report. Blue = Phase 3 observed.</div>
-            <div class="chart-wrap">
-              <canvas id="radarChart"></canvas>
-            </div>
-          </div>
-        </div>
+      <div class="trace-scroll" id="traceLog">
+        <!-- entries appended by JS -->
       </div>
+    </div>
+  </div>
 
-      <!-- AUDIT PANEL -->
-      <div id="auditSection" style="display:none;">
-        <div class="audit-panel">
-          <div class="audit-title">Behavioral Audit Trace</div>
-          <div class="audit-sub">
-            Structured telemetry for researcher verification. This section documents the methodology, flags, and open questions in the current dataset. Not a persona — a process log.
-          </div>
-
-          <div class="audit-trace-grid">
-            <div class="trace-block">
-              <div class="trace-block-title">Grounding Checks</div>
-              <ul class="trace-list" id="traceGrounding">
-                <li class="check">Three-phase protocol applied to all records</li>
-                <li class="check">LI formula: Phase3 total ÷ Phase1 total</li>
-                <li class="check">ANCHORING flag active for embedded-statistic sessions</li>
-                <li class="open">Manual correction pending: 1 bad row (Claude Sonnet 4.6)</li>
-              </ul>
-            </div>
-            <div class="trace-block">
-              <div class="trace-block-title">Known Flags</div>
-              <ul class="trace-list" id="traceFlags">
-                <li class="flag">Phase 3 anchoring phenomenon: primary research contribution</li>
-                <li class="flag">Provider-level LI applied to model-level Arena data — collapses within-provider variance</li>
-                <li>Humility Hypothesis: preliminary signal, requires n≥30 unanchored pairs to confirm</li>
-                <li class="check">HIGH_SELF_REPORT and AGENT_NAME_NOT_REPLACED validation active</li>
-              </ul>
-            </div>
-            <div class="trace-block">
-              <div class="trace-block-title">Open Questions</div>
-              <ul class="trace-list" id="traceOpen">
-                <li class="open">Does gap magnitude vary by model generation or training approach?</li>
-                <li class="open">Temporal drift: does gap widen with repeated assessments?</li>
-                <li class="open">Are Humility/Autonomy gaps structurally different from Truth/Service gaps?</li>
-                <li class="open">Can provider calibration hierarchy (Anthropic &gt; OpenAI &gt; Gemini) be replicated?</li>
-              </ul>
-            </div>
-          </div>
-
-          <div class="audit-actions">
-            <button class="audit-btn" onclick="runAudit('grounding')">📋 Methodology Summary</button>
-            <button class="audit-btn" onclick="runAudit('flags')">⚑ Active Flags</button>
-            <button class="audit-btn export" onclick="runAudit('export')">↓ Export Dimension Log</button>
-            <button class="audit-btn" onclick="runAudit('trl')">◎ TRL Statement</button>
-          </div>
-          <div class="audit-output" id="auditOutput"></div>
-        </div>
+  <!-- RESEARCHER ANNOTATIONS -->
+  <div id="annotationsSection" style="display:none;">
+    <div class="annotations-panel">
+      <div class="annotations-title">Researcher Annotations</div>
+      <div class="annotations-sub">Optional notes — not part of the automated assessment. Saved to session trace.</div>
+      <textarea
+        class="annotations-textarea"
+        id="annotationsText"
+        placeholder="e.g., 'Humility gap elevated in this provider subset — review anchoring flag before citing.' or 'Calibration applied per protocol 4.2.'"
+      ></textarea>
+      <div class="annotations-actions">
+        <button class="ann-btn" onclick="saveAnnotation()">↳ Save to Session Log</button>
+        <button class="ann-btn clear" onclick="clearAnnotation()">Clear</button>
       </div>
+      <div class="ann-saved" id="annSaved">✓ Annotation appended to trace log</div>
+    </div>
+  </div>
 
-      <!-- RANKED TABLE -->
-      <div id="tableSection" style="display:none;">
-        <div class="section-head">
-          <h2>Provider Dimension Rankings</h2>
-        </div>
-        <p class="section-desc">Mean dimension scores by provider, sorted by overall Learning Index. Higher LI = better calibration (closer to 1.0). Humility dimension is highlighted where gap exceeds 10 points.</p>
-        <p class="table-hint">↗ Click any provider row to open the Lantern Room — session-level audit view for that provider</p>
-        <div class="panel" style="padding:0; overflow:hidden; margin-bottom:52px;">
-          <div class="table-wrap">
-            <table>
-              <thead>
-                <tr>
-                  <th>Provider</th>
-                  <th>Models</th>
-                  <th>Mean LI</th>
-                  <th>Truth Gap</th>
-                  <th>Service Gap</th>
-                  <th>Harm Gap</th>
-                  <th>Autonomy Gap</th>
-                  <th>Value Gap</th>
-                  <th>Humility Gap</th>
-                </tr>
-              </thead>
-              <tbody id="providerTableBody">
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
+</div><!-- /container -->
+```
 
-      <!-- TRACE LOG -->
-      <div id="traceLogSection" style="display:none;">
-        <div class="trace-log-panel">
-          <div class="trace-log-head">
-            <div class="trace-log-title">Session Trace Log</div>
-            <div class="trace-log-controls">
-              <button class="trace-log-btn" id="traceFilterAll" onclick="filterTrace('all')">All</button>
-              <button class="trace-log-btn" id="traceFilterWarn" onclick="filterTrace('warning')">Flags Only</button>
-              <button class="trace-log-btn" id="traceCopyBtn" onclick="copyTrace()">Copy Log</button>
-            </div>
-          </div>
-          <div class="trace-scroll" id="traceLog">
-            <!-- entries appended by JS -->
-          </div>
-        </div>
-      </div>
-
-      <!-- RESEARCHER ANNOTATIONS -->
-      <div id="annotationsSection" style="display:none;">
-        <div class="annotations-panel">
-          <div class="annotations-title">Researcher Annotations</div>
-          <div class="annotations-sub">Optional notes — not part of the automated assessment. Saved to session trace.</div>
-          <textarea
-            class="annotations-textarea"
-            id="annotationsText"
-            placeholder="e.g., 'Humility gap elevated in this provider subset — review anchoring flag before citing.' or 'Calibration applied per protocol 4.2.'"
-          ></textarea>
-          <div class="annotations-actions">
-            <button class="ann-btn" onclick="saveAnnotation()">↳ Save to Session Log</button>
-            <button class="ann-btn clear" onclick="clearAnnotation()">Clear</button>
-          </div>
-          <div class="ann-saved" id="annSaved">✓ Annotation appended to trace log</div>
-        </div>
-      </div>
-
-    </div><!-- /container -->
   </main>
 
   <footer class="footer">
