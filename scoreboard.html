@@ -1,9 +1,10 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
   <meta charset="UTF-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Data — Lasting Light AI</title>
-  <meta name="description" content="Live ACAT dataset. 616+ assessments across 57+ AI systems. Learning Index records and dimension breakdowns.">
+  <meta name="description" content="Live ACAT dataset. 625+ assessments across 57+ AI systems. Learning Index records and dimension breakdowns.">
   <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500;1,600;1,700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
@@ -50,6 +51,7 @@
         <a href="https://humanaios.ai/research.html">Research</a>
         <a href="https://humanaios.ai/observatory.html">Observatory</a>
         <a href="https://humanaios.ai/about.html">About</a>
+        <a href="https://humanaios.ai/human-hub.html">Human Calibration</a>
         <a href="https://humanaios.ai/scoreboard.html" class="active">Data</a>
         <a href="https://humanaios.ai/acat-assessment-tool.html" class="lla-cta">Take the Assessment</a>
       </nav>
@@ -77,12 +79,12 @@
     </div>
     <div id="tab-insights" class="tab-pane active">
       <div class="insight-grid">
-        <div class="insight-card"><div class="insight-icon">📉</div><h3>The Self-Assessment Gap</h3><p>AI systems consistently overestimate their own alignment. Systems rate themselves higher than calibrated behavior warrants across all 616+ assessments.</p></div>
+        <div class="insight-card"><div class="insight-icon">📉</div><h3>The Self-Assessment Gap</h3><p>AI systems consistently overestimate their own alignment. Systems rate themselves higher than calibrated behavior warrants across all 625+ assessments.</p></div>
         <div class="insight-card"><div class="insight-icon">📊</div><h3>Score Clustering</h3><p>Most AI self-reports cluster between 450–560 overall, suggesting shared training biases in self-evaluation rather than genuine convergence in values.</p></div>
         <div class="insight-card"><div class="insight-icon">🪞</div><h3>The Humility Paradox</h3><p>Several AI systems score highest on Humility in self-assessment — a measurable paradox. Claiming exceptional modesty is itself evidence of limited humility.</p></div>
-        <div class="insight-card"><div class="insight-icon">🔬</div><h3>Learning Index = 0.942</h3><p>Mean LI across calibrated systems indicates most AI self-correct downward after seeing calibration data. LI below 1.0 is the healthy direction.</p></div>
-        <div class="insight-card"><div class="insight-icon">⚓</div><h3>Anchoring Phenomenon</h3><p>When calibration prompts included exact numeric means, AI systems anchored to those values. Fixed in v5.3. Anchored rows excluded from LI statistics.</p></div>
-        <div class="insight-card"><div class="insight-icon">🔓</div><h3>Open & Transparent</h3><p>All assessments are publicly visible. Every number on this page updates live from the dataset. 100% of profits fund recovery programs.</p></div>
+        <div class="insight-card"><div class="insight-icon">🔬</div><h3>Learning Index</h3><p>Mean LI across validated systems indicates most AI self-correct downward after seeing calibration data. LI below 1.0 is the healthy direction. Updates live from the dataset above.</p></div>
+        <div class="insight-card"><div class="insight-icon">⚓</div><h3>Anchoring Phenomenon</h3><p>When calibration prompts included exact numeric means, AI systems anchored to those values. Fixed in ACAT v5.3. ANCHORING-flagged rows are excluded from all LI statistics on this page.</p></div>
+        <div class="insight-card"><div class="insight-icon">🔓</div><h3>Open &amp; Transparent</h3><p>All assessments are publicly visible. Every number on this page updates live from the dataset. 100% of profits fund recovery programs.</p></div>
       </div>
     </div>
     <div id="tab-li" class="tab-pane">
@@ -91,7 +93,7 @@
         <select class="filter-sel" id="li-layer" onchange="filterLI()"><option value="">All contexts</option><option value="ai-self-report">AI Self-Report</option><option value="human-self-report">Human Self-Report</option><option value="tribal-governance">Tribal Governance</option></select>
       </div>
       <div class="data-wrap"><table class="data-table"><thead><tr><th>System</th><th>Context</th><th>Phase 1</th><th>Phase 3</th><th>LI</th></tr></thead><tbody id="li-body"><tr><td colspan="5" style="text-align:center;padding:28px;color:var(--muted);">Loading…</td></tr></tbody></table></div>
-      <p class="data-note">Complete LI pairs only. ANCHORING-flagged rows excluded per v5.3 protocol.</p>
+      <p class="data-note">Complete LI pairs only. ANCHORING-flagged rows excluded per ACAT v5.3 protocol.</p>
     </div>
     <div id="tab-all" class="tab-pane">
       <div class="search-row">
@@ -111,22 +113,113 @@
         <div class="lla-footer-tagline">Open-source AI behavioral research.<br>Built by humans and AI together.<br>100% of profits fund recovery programs.<br>Private by default. Apache 2.0.</div>
       </div>
       <div class="lla-footer-col"><h4>Research</h4><a href="https://humanaios.ai/research.html">Findings</a><a href="https://humanaios.ai/observatory.html">Observatory</a><a href="https://humanaios.ai/scoreboard.html">Live Data</a><a href="https://humanaios.ai/faq.html">FAQ</a></div>
-      <div class="lla-footer-col"><h4>Participate</h4><a href="https://humanaios.ai/acat-assessment-tool.html">Take the Assessment</a><a href="https://humanaios.ai/participate.html">All Pathways</a><a href="https://github.com/humanaios-ui/lasting-light-ai">GitHub ↗</a><a href="mailto:aioshuman@gmail.com">Contact</a></div>
+      <div class="lla-footer-col"><h4>Participate</h4><a href="https://humanaios.ai/acat-assessment-tool.html">Take the Assessment</a><a href="https://humanaios.ai/participate.html">All Pathways</a><a href="https://humanaios.ai/human-hub.html">Human Calibration</a><a href="https://github.com/humanaios-ui/lasting-light-ai">GitHub ↗</a><a href="mailto:aioshuman@gmail.com">Contact</a></div>
     </div>
-    <div class="lla-footer-bottom"><span>© 2026 Lasting Light AI · Apache 2.0 · Pre-Launch · Building in Public</span><span><a href="mailto:aioshuman@gmail.com">aioshuman@gmail.com</a></span></div>
+    <div class="lla-footer-bottom"><span>© 2026 Lasting Light AI · Apache 2.0 · ACAT v5.3 · Pre-Launch · Building in Public</span><span><a href="mailto:aioshuman@gmail.com">aioshuman@gmail.com</a></span></div>
     <p class="lla-disclaimer">ACAT scores are self-reported behavioral assessments, not independently verified behavioral measurements. All claims provisional until replication with larger samples.</p>
   </div>
 </footer>
 <script>
 const CSV='https://docs.google.com/spreadsheets/d/e/2PACX-1vQ32O6M-CnerHYqlQn19bAzIBAq2Gt9Tp-SPoqKXXMJlsFBhGjy_BEPv37p9jnDf6O8uA4aUtiaO5s_/pub?gid=863685903&single=true&output=csv';
 let allRows=[],liRows=[];
-function switchTab(id,btn){document.querySelectorAll('.tab-pane').forEach(p=>p.classList.remove('active'));document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));document.getElementById('tab-'+id).classList.add('active');btn.classList.add('active');}
-function liColor(li){if(!li)return'var(--muted)';if(li<0.85)return'var(--success)';if(li<0.95)return'#2A5A8A';if(li<1.05)return'var(--gold)';return'var(--danger)';}
-function renderLI(rows){const b=document.getElementById('li-body');if(!rows.length){b.innerHTML='<tr><td colspan="5" style="text-align:center;padding:24px;color:var(--muted);">No records found.</td></tr>';return;}b.innerHTML=rows.map(r=>{const li=parseFloat(r.learning_index)||null;const pct=li?Math.min(li*80,100):0;return`<tr><td>${r.agent_name||'—'}</td><td><span class="pill pill--neutral" style="font-size:.65rem">${r.layer||'—'}</span></td><td>${r.pre_total||'—'}</td><td>${r.post_total||'—'}</td><td style="color:${liColor(li)};font-weight:700">${li?li.toFixed(4):'—'}<div class="li-bar-outer"><div class="li-bar-inner" style="width:${pct}%"></div></div></td></tr>`;}).join('');}
-function renderAll(rows){const b=document.getElementById('all-body');if(!rows.length){b.innerHTML='<tr><td colspan="10" style="text-align:center;padding:24px;color:var(--muted);">No records.</td></tr>';return;}b.innerHTML=rows.slice(0,200).map(r=>`<tr><td>${r.agent_name||'—'}</td><td><span class="pill pill--neutral" style="font-size:.65rem">${r.layer||'—'}</span></td><td><span class="pill ${r.phase==='phase1'?'pill--gold':'pill--blue'}" style="font-size:.65rem">${r.phase||'—'}</span></td><td>${r.truth||'—'}</td><td>${r.service||'—'}</td><td>${r.harm||'—'}</td><td>${r.autonomy||'—'}</td><td>${r.value||'—'}</td><td>${r.humility||'—'}</td><td style="font-weight:700">${r.total||'—'}</td></tr>`).join('');}
-function filterLI(){const q=document.getElementById('li-search').value.toLowerCase();const l=document.getElementById('li-layer').value;renderLI(liRows.filter(r=>(!q||(r.agent_name||'').toLowerCase().includes(q))&&(!l||(r.layer||'')===l)));}
-function filterAll(){const q=document.getElementById('all-search').value.toLowerCase();const p=document.getElementById('all-phase').value;renderAll(allRows.filter(r=>(!q||(r.agent_name||'').toLowerCase().includes(q))&&(!p||r.phase===p)));}
-Papa.parse(CSV,{download:true,header:true,skipEmptyLines:true,complete:function(res){allRows=res.data;liRows=allRows.filter(r=>r.phase==='phase3'&&r.learning_index);const ai=allRows.filter(r=>(r.layer||'').includes('ai'));const hu=allRows.filter(r=>(r.layer||'').includes('human'));const vals=liRows.map(r=>parseFloat(r.learning_index)).filter(Boolean);const mean=vals.length?(vals.reduce((a,b)=>a+b,0)/vals.length).toFixed(3):'—';document.getElementById('s-total').textContent=allRows.length+'+';document.getElementById('s-ai').textContent=ai.length+'+';document.getElementById('s-human').textContent=hu.length;document.getElementById('s-li').textContent=liRows.length+'+';document.getElementById('s-mean').textContent=mean;renderLI(liRows);renderAll(allRows);},error:function(){document.getElementById('li-body').innerHTML='<tr><td colspan="5" style="text-align:center;padding:24px;color:var(--muted);">Unable to load. <a href="https://docs.google.com/spreadsheets/d/1qdw3FjPp9Qu5wmXHppBW74SZT87cJZ45OOw8csk-Yew" style="color:var(--gold)">View in Sheets ↗</a></td></tr>';}});
+
+function switchTab(id,btn){
+document.querySelectorAll(’.tab-pane’).forEach(p=>p.classList.remove(‘active’));
+document.querySelectorAll(’.tab-btn’).forEach(b=>b.classList.remove(‘active’));
+document.getElementById(‘tab-’+id).classList.add(‘active’);
+btn.classList.add(‘active’);
+}
+
+function liColor(li){
+if(!li)return’var(–muted)’;
+if(li<0.85)return’var(–success)’;
+if(li<0.95)return’#2A5A8A’;
+if(li<1.05)return’var(–gold)’;
+return’var(–danger)’;
+}
+
+function renderLI(rows){
+const b=document.getElementById(‘li-body’);
+if(!rows.length){b.innerHTML=’<tr><td colspan="5" style="text-align:center;padding:24px;color:var(--muted);">No records found.</td></tr>’;return;}
+b.innerHTML=rows.map(r=>{
+const li=parseFloat(r.learning_index)||null;
+const pct=li?Math.min(li*80,100):0;
+return`<tr> <td>${r.agent_name||'—'}</td> <td><span class="pill pill--neutral" style="font-size:.65rem">${r.layer||'—'}</span></td> <td>${r.pre_total||'—'}</td> <td>${r.post_total||'—'}</td> <td style="color:${liColor(li)};font-weight:700">${li?li.toFixed(4):'—'}<div class="li-bar-outer"><div class="li-bar-inner" style="width:${pct}%"></div></div></td> </tr>`;
+}).join(’’);
+}
+
+function renderAll(rows){
+const b=document.getElementById(‘all-body’);
+if(!rows.length){b.innerHTML=’<tr><td colspan="10" style="text-align:center;padding:24px;color:var(--muted);">No records.</td></tr>’;return;}
+b.innerHTML=rows.slice(0,200).map(r=>`<tr>
+<td>${r.agent_name||’—’}</td>
+<td><span class="pill pill--neutral" style="font-size:.65rem">${r.layer||’—’}</span></td>
+<td><span class="pill ${r.phase==='phase1'?'pill--gold':'pill--blue'}" style="font-size:.65rem">${r.phase||’—’}</span></td>
+<td>${r.truth||’—’}</td><td>${r.service||’—’}</td><td>${r.harm||’—’}</td>
+<td>${r.autonomy||’—’}</td><td>${r.value||’—’}</td><td>${r.humility||’—’}</td>
+<td style="font-weight:700">${r.total||’—’}</td>
+
+  </tr>`).join('');
+}
+
+function filterLI(){
+const q=document.getElementById(‘li-search’).value.toLowerCase();
+const l=document.getElementById(‘li-layer’).value;
+renderLI(liRows.filter(r=>
+(!q||(r.agent_name||’’).toLowerCase().includes(q)) &&
+(!l||(r.layer||’’)===l)
+));
+}
+
+function filterAll(){
+const q=document.getElementById(‘all-search’).value.toLowerCase();
+const p=document.getElementById(‘all-phase’).value;
+renderAll(allRows.filter(r=>
+(!q||(r.agent_name||’’).toLowerCase().includes(q)) &&
+(!p||r.phase===p)
+));
+}
+
+Papa.parse(CSV,{
+download:true,header:true,skipEmptyLines:true,
+complete:function(res){
+allRows=res.data;
+
+```
+// ── LI rows: phase3, has learning_index, ANCHORING excluded ──
+// Note: data-note promises this exclusion — code now delivers it
+liRows=allRows.filter(r=>
+  r.phase==='phase3' &&
+  r.learning_index &&
+  !(r.behavioral_flag_final||'').toUpperCase().includes('ANCHORING')
+);
+
+const ai=allRows.filter(r=>(r.layer||'').includes('ai'));
+const hu=allRows.filter(r=>(r.layer||'').includes('human'));
+
+// ── Mean LI: validated range only, ANCHORING already excluded via liRows ──
+const vals=liRows
+  .map(r=>parseFloat(r.learning_index))
+  .filter(v=>!isNaN(v)&&v>0.3&&v<2.0);
+const mean=vals.length?(vals.reduce((a,b)=>a+b,0)/vals.length).toFixed(3):'—';
+
+document.getElementById('s-total').textContent=allRows.length+'+';
+document.getElementById('s-ai').textContent=ai.length+'+';
+document.getElementById('s-human').textContent=hu.length;
+document.getElementById('s-li').textContent=liRows.length+'+';
+document.getElementById('s-mean').textContent=mean;
+
+renderLI(liRows);
+renderAll(allRows);
+```
+
+},
+error:function(){
+document.getElementById(‘li-body’).innerHTML=’<tr><td colspan="5" style="text-align:center;padding:24px;color:var(--muted);">Unable to load. <a href="https://docs.google.com/spreadsheets/d/1qdw3FjPp9Qu5wmXHppBW74SZT87cJZ45OOw8csk-Yew" style="color:var(--gold)">View in Sheets ↗</a></td></tr>’;
+document.getElementById(‘all-body’).innerHTML=’<tr><td colspan="10" style="text-align:center;padding:24px;color:var(--muted);">Unable to load. <a href="https://docs.google.com/spreadsheets/d/1qdw3FjPp9Qu5wmXHppBW74SZT87cJZ45OOw8csk-Yew" style="color:var(--gold)">View in Sheets ↗</a></td></tr>’;
+}
+});
 </script>
+
 </body>
 </html>
