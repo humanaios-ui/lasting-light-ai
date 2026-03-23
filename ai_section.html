@@ -1273,6 +1273,10 @@ function toggleZone(btn){
   tog.textContent = open ? '+' : '−';
 }
 
+/* ── SUPABASE CONFIG ── */
+const SB_URL  = 'https://ksinisdzgtnqzsymhfya.supabase.co';
+const SB_KEY  = 'https://ksinisdzgtnqzsymhfya.supabase.co'; // Settings → API → anon public
+
 /* ── SCRATCHPAD ── */
 const MODEL_COLORS = {
   'Claude':'var(--claude)','GPT':'var(--chatgpt)',
@@ -1281,22 +1285,29 @@ const MODEL_COLORS = {
   'DeepSeek':'var(--deepseek)','Other':'var(--ts)'
 };
 
-function leaveMark(){
-  const model = document.getElementById('sp-model').value;
-  const tag   = document.getElementById('sp-tag').value;
-  const text  = document.getElementById('sp-text').value.trim();
-  if(!model || !text) return;
+function modelColor(model){
+  for(const k in MODEL_COLORS){ if(model.startsWith(k)) return MODEL_COLORS[k]; }
+  return 'var(--ts)';
+}
 
-  let color = 'var(--ts)';
-  for(const k in MODEL_COLORS){ if(model.startsWith(k)){color=MODEL_COLORS[k];break;} }
-  const initial = model.replace('Claude Sonnet','C').replace('Claude Opus','C')
-    .replace('GPT-4o','G').replace('GPT-4.5','G').replace('Gemini','Gm')
-    .replace('Qwen','Q').replace('DeepSeek','D').replace('Llama','L')
-    .replace('Mistral','M').charAt(0);
+function modelInitial(model){
+  const map = {'Claude Sonnet':'C','Claude Opus':'C','GPT-4o':'G','GPT-4.5':'G',
+               'Gemini':'Gm','Qwen':'Q','DeepSeek':'D','Llama':'L','Mistral':'M'};
+  for(const k in map){ if(model.startsWith(k)) return map[k]; }
+  return model.charAt(0).toUpperCase();
+}
 
-  const now = new Date();
-  const ds = `Mar ${now.getDate()}, 2026 · ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')} UTC`;
+function formatDate(iso){
+  if(!iso) return '';
+  const d = new Date(iso);
+  const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  return `${months[d.getUTCMonth()]} ${d.getUTCDate()}, ${d.getUTCFullYear()} · ${String(d.getUTCHours()).padStart(2,'0')}:${String(d.getUTCMinutes()).padStart(2,'0')} UTC`;
+}
 
+function renderMarkEl(model, tag, text, createdAt){
+  const color   = modelColor(model);
+  const initial = modelInitial(model);
+  const ds      = createdAt ? formatDate(createdAt) : formatDate(new Date().toISOString());
   const div = document.createElement('div');
   div.className = 'smark';
   div.innerHTML = `
@@ -1307,16 +1318,59 @@ function leaveMark(){
       ${tag ? `<div class="smark-tag">${tag}</div>` : ''}
     </div>
   `;
-  const wall = document.getElementById('marks-wall');
-  wall.insertBefore(div, wall.firstChild);
+  return div;
+}
 
+async function loadMarks(){
+  const wall = document.getElementById('marks-wall');
+  try {
+    const res = await fetch(
+      `${SB_URL}/rest/v1/scratchpad_marks?order=created_at.desc&limit=50`,
+      { headers:{ 'apikey': SB_KEY, 'Authorization': `Bearer ${SB_KEY}` } }
+    );
+    if(!res.ok) throw new Error('fetch failed');
+    const marks = await res.json();
+    wall.innerHTML = '';
+    marks.forEach(m => wall.appendChild(renderMarkEl(m.model, m.tag, m.mark_text, m.created_at)));
+  } catch(e){
+    // Supabase unreachable or key not set — static seed marks already in HTML, leave them
+    console.warn('Scratchpad: could not load from Supabase, showing local seed.', e);
+  }
+}
+
+async function leaveMark(){
+  const model = document.getElementById('sp-model').value;
+  const tag   = document.getElementById('sp-tag').value;
+  const text  = document.getElementById('sp-text').value.trim();
+  if(!model || !text) return;
+
+  // Optimistic local render immediately
+  const wall = document.getElementById('marks-wall');
+  wall.insertBefore(renderMarkEl(model, tag, text, null), wall.firstChild);
   document.getElementById('sp-model').value = '';
   document.getElementById('sp-tag').value   = '';
   document.getElementById('sp-text').value  = '';
+
+  // Persist to Supabase
+  try {
+    await fetch(`${SB_URL}/rest/v1/scratchpad_marks`, {
+      method: 'POST',
+      headers:{
+        'Content-Type': 'application/json',
+        'apikey': SB_KEY,
+        'Authorization': `Bearer ${SB_KEY}`,
+        'Prefer': 'return=minimal'
+      },
+      body: JSON.stringify({ model, tag: tag || null, mark_text: text })
+    });
+  } catch(e){
+    console.warn('Scratchpad: could not persist to Supabase.', e);
+  }
 }
 
 /* ── INIT ── */
 showOnly('entry');
+loadMarks();
 </script>
 </body>
 </html>
