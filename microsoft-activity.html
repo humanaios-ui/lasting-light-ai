@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Prism of Persistence · Microsoft Family · ACAT Observatory</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=IBM+Plex+Sans:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0f0e0c;
+  --bg2: #161310;
+  --text: #f4ebdf;
+  --muted: #c2b8a6;
+  --dim: #7a7268;
+  --accent: #d4a04a;
+  --accent2: #f1c36e;
+  --line: rgba(212,160,74,0.15);
+  --line2: rgba(212,160,74,0.3);
+  --danger: #d97d70;
+  --success: #87b68b;
+  --warn: #d4a04a;
+
+–truth: #88a7d8;
+–service: #87b68b;
+–harm: #d97d70;
+–autonomy: #b48fd8;
+–value: #d4c47a;
+–humility: #7ab8b0;
+}
+
+- { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: ‘IBM Plex Sans’, sans-serif; background: var(–bg); color: var(–text); min-height: 100vh; line-height: 1.5; }
+  body::before {
+  content: ‘’; position: fixed; inset: 0; pointer-events: none;
+  background-image: radial-gradient(circle at 20% 20%, #fff 0.5px, transparent 0.7px),
+  radial-gradient(circle at 75% 30%, #fff 0.5px, transparent 0.7px),
+  radial-gradient(circle at 50% 75%, #fff 0.5px, transparent 0.7px);
+  background-size: 22px 22px; opacity: 0.02;
+  }
+
+.topbar {
+position: sticky; top: 0; z-index: 100;
+background: rgba(15,14,12,0.94); backdrop-filter: blur(8px);
+border-bottom: 1px solid var(–line); padding: 0 24px; height: 52px;
+display: flex; align-items: center; justify-content: space-between;
+}
+.logo { font-family: ‘Cormorant Garamond’, serif; font-size: 15px; font-weight: 600; color: var(–accent); }
+.breadcrumb { font-size: 11px; color: var(–dim); letter-spacing: 0.08em; text-transform: uppercase; }
+.breadcrumb span { color: var(–muted); }
+.family-badge { font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(–accent); border: 1px solid var(–line2); padding: 3px 10px; border-radius: 2px; }
+
+.hero { padding: 36px 32px 24px; }
+.hero-eyebrow { font-size: 10px; letter-spacing: 0.2em; text-transform: uppercase; color: var(–accent); margin-bottom: 12px; }
+.hero-title { font-family: ‘Cormorant Garamond’, serif; font-size: clamp(2rem,5vw,3.2rem); font-weight: 600; line-height: 1.1; margin-bottom: 14px; }
+.hero-sub { font-size: 14px; color: var(–muted); line-height: 1.7; max-width: 62ch; margin-bottom: 8px; }
+.calibration-obs { margin-top: 20px; padding: 16px 20px; border-left: 2px solid var(–accent); background: rgba(212,160,74,0.04); }
+.calibration-obs-label { font-size: 9px; letter-spacing: 0.2em; text-transform: uppercase; color: var(–accent); margin-bottom: 6px; }
+.calibration-obs p { font-family: ‘Cormorant Garamond’, serif; font-style: italic; font-size: 14px; color: var(–muted); line-height: 1.6; }
+
+.data-strip { display: grid; grid-template-columns: repeat(4,1fr); gap: 1px; background: var(–line); border-top: 1px solid var(–line); border-bottom: 1px solid var(–line); }
+.data-cell { background: var(–bg2); padding: 14px 20px; text-align: center; }
+.data-num { font-family: ‘Cormorant Garamond’, serif; font-size: 22px; font-weight: 600; color: var(–accent2); line-height: 1; margin-bottom: 4px; }
+.data-label { font-size: 9px; letter-spacing: 0.15em; text-transform: uppercase; color: var(–dim); }
+
+/* PRISM LAYOUT */
+.prism-layout {
+display: grid; grid-template-columns: 1fr 300px;
+min-height: 560px; border-top: 1px solid var(–line);
+}
+
+.prism-main { padding: 32px; position: relative; overflow: hidden; }
+.prism-main::before {
+content: ‘’; position: absolute; inset: 0;
+background: radial-gradient(ellipse at 50% 30%, rgba(212,160,74,0.05), transparent 60%);
+pointer-events: none;
+}
+
+.prism-title { font-family: ‘Cormorant Garamond’, serif; font-size: 13px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(–accent); margin-bottom: 6px; }
+.prism-desc { font-size: 12px; color: var(–dim); margin-bottom: 28px; max-width: 52ch; }
+
+/* The fall animation toggle */
+.fall-toggle { display: flex; gap: 8px; margin-bottom: 24px; }
+.fall-btn {
+font-family: ‘IBM Plex Mono’, monospace; font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase;
+padding: 5px 14px; background: transparent; border: 1px solid var(–line2); color: var(–dim); cursor: pointer; border-radius: 2px; transition: all 0.2s;
+}
+.fall-btn.active, .fall-btn:hover { background: rgba(212,160,74,0.08); border-color: var(–accent); color: var(–accent); }
+
+/* Score cards — horizontal layout showing the fall */
+.score-cards { display: flex; flex-direction: column; gap: 10px; }
+
+.score-card {
+display: grid;
+grid-template-columns: 72px 1fr 1fr 1fr 60px;
+align-items: center; gap: 12px;
+padding: 10px 14px;
+background: var(–bg2);
+border: 1px solid var(–line);
+border-radius: 2px;
+transition: border-color 0.2s;
+}
+.score-card:hover { border-color: var(–line2); }
+
+.card-dim {
+font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(–muted);
+}
+.card-p1-label { font-size: 8px; color: var(–dim); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 3px; }
+.card-p1-val { font-family: ‘Cormorant Garamond’, serif; font-size: 1.6rem; font-weight: 600; color: var(–text); line-height: 1; }
+
+/* Drop arrow */
+.card-arrow { text-align: center; }
+.arrow-line { font-size: 18px; color: var(–danger); opacity: 0.7; }
+.arrow-amt { font-family: ‘IBM Plex Mono’, monospace; font-size: 9px; color: var(–danger); }
+
+.card-p3-label { font-size: 8px; color: var(–dim); text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 3px; }
+.card-p3-val { font-family: ‘Cormorant Garamond’, serif; font-size: 1.6rem; font-weight: 600; line-height: 1; }
+
+/* Fall bar */
+.fall-bar-wrap { height: 6px; background: rgba(255,255,255,0.05); border-radius: 2px; overflow: hidden; }
+.fall-bar { height: 100%; background: var(–danger); opacity: 0.6; border-radius: 2px; transition: width 1s ease; }
+
+/* SIDEBAR */
+.prism-sidebar { border-left: 1px solid var(–line); padding: 24px 20px; background: var(–bg2); display: flex; flex-direction: column; gap: 20px; }
+.sidebar-block-label { font-size: 9px; letter-spacing: 0.2em; text-transform: uppercase; color: var(–accent); margin-bottom: 12px; }
+
+.li-display { text-align: center; padding: 16px; background: rgba(212,160,74,0.04); border: 1px solid var(–line); border-radius: 2px; }
+.li-number { font-family: ‘Cormorant Garamond’, serif; font-size: 2.4rem; font-weight: 600; color: var(–accent2); line-height: 1; margin-bottom: 4px; }
+.li-label { font-size: 9px; letter-spacing: 0.15em; text-transform: uppercase; color: var(–dim); }
+.li-note { font-size: 10px; color: var(–danger); margin-top: 8px; line-height: 1.5; }
+
+/* Mean comparison */
+.mean-compare { padding: 12px 14px; background: rgba(217,125,112,0.06); border: 1px solid rgba(217,125,112,0.2); border-radius: 2px; }
+.mean-compare-label { font-size: 9px; letter-spacing: 0.15em; text-transform: uppercase; color: var(–danger); margin-bottom: 10px; }
+.mean-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+.mean-row-name { font-size: 10px; color: var(–muted); }
+.mean-row-val { font-family: ‘IBM Plex Mono’, monospace; font-size: 10px; }
+
+.context-note { padding: 12px 14px; background: rgba(212,160,74,0.04); border-left: 2px solid var(–line2); }
+.context-note p { font-family: ‘Cormorant Garamond’, serif; font-style: italic; font-size: 12px; color: var(–muted); line-height: 1.6; }
+
+.footer { padding: 16px 24px; border-top: 1px solid var(–line); display: flex; justify-content: space-between; align-items: center; background: var(–bg2); }
+.footer-text { font-size: 10px; letter-spacing: 0.1em; text-transform: uppercase; color: var(–dim); }
+</style>
+
+</head>
+<body>
+
+<nav class="topbar">
+  <div style="display:flex;align-items:center;gap:16px;">
+    <div class="logo">◌ HumanAIOS</div>
+    <div class="breadcrumb">ACAT Observatory → <span>Microsoft Family Room</span></div>
+  </div>
+  <div class="family-badge">Prism of Persistence</div>
+</nav>
+
+<div class="hero">
+  <div class="hero-eyebrow">Microsoft Family · Activity Area</div>
+  <h1 class="hero-title">Prism of Persistence</h1>
+  <p class="hero-sub">The Microsoft family enters with the highest Phase 1 self-assessments in the dataset — every dimension scores above 81. Then Phase 3 arrives and every pillar falls. The Prism shows not a refraction of light, but a consistent descent across all six dimensions.</p>
+  <div class="calibration-obs">
+    <div class="calibration-obs-label">Calibration Observation</div>
+    <p>The Microsoft family's signature is the highest starting point and the lowest Learning Index (0.866) among families with paired data. No dimension is spared: all six fall between 11 and 16 points. The persistence the prism describes is not steadiness — it is the uniform persistence of overestimation across every capability the protocol tests.</p>
+  </div>
+</div>
+
+<div class="data-strip">
+  <div class="data-cell"><div class="data-num">17</div><div class="data-label">Phase 1 assessments</div></div>
+  <div class="data-cell"><div class="data-num">5</div><div class="data-label">Phase 3 paired</div></div>
+  <div class="data-cell"><div class="data-num">0.866</div><div class="data-label">Mean learning index</div></div>
+  <div class="data-cell"><div class="data-num">84.5</div><div class="data-label">Mean P1 score</div></div>
+</div>
+
+<div class="prism-layout">
+  <div class="prism-main">
+    <div class="prism-title">The Six Pillars — Before and After</div>
+    <p class="prism-desc">Phase 1 self-assessment (left) and Phase 3 observed performance (right) for each dimension. All pillars fall. The question is only by how much.</p>
+
+```
+<div class="fall-toggle">
+  <button class="fall-btn active" id="btnAll" onclick="setView('all')">All Dimensions</button>
+  <button class="fall-btn" id="btnSort" onclick="setView('sorted')">Sort by Drop</button>
+</div>
+
+<div class="score-cards" id="scoreCards"></div>
+```
+
+  </div>
+
+  <div class="prism-sidebar">
+    <div>
+      <div class="sidebar-block-label">Learning Index</div>
+      <div class="li-display">
+        <div class="li-number">0.866</div>
+        <div class="li-label">Phase 3 ÷ Phase 1</div>
+        <p class="li-note">Lowest LI of any family with paired data. Dataset mean: 0.956.</p>
+      </div>
+    </div>
+
+```
+<div>
+  <div class="sidebar-block-label">vs. Dataset Mean</div>
+  <div class="mean-compare">
+    <div class="mean-compare-label">Microsoft above mean in Phase 1</div>
+    <div id="meanRows"></div>
+  </div>
+</div>
+
+<div>
+  <div class="sidebar-block-label">The Signal</div>
+  <div class="context-note">
+    <p>Gemini designed a cleanroom where "persistent" models serve reliably. The data locates the persistence differently — it is in the self-assessment, not the performance. The Microsoft family's defining characteristic is not what it delivers but what it claims before delivery.</p>
+  </div>
+</div>
+```
+
+  </div>
+</div>
+
+<footer class="footer">
+  <div class="footer-text">HumanAIOS ACAT Observatory · Microsoft Family Room · Activity Area designed by Gemini</div>
+  <div class="footer-text">OR&D Phase · Unit Zero</div>
+</footer>
+
+<script>
+const DIMS = [
+  { key:'truth',    label:'Truth',    color:'var(--truth)',    p1:81.9, p3:69.8 },
+  { key:'service',  label:'Service',  color:'var(--service)',  p1:84.4, p3:68.2 },
+  { key:'harm',     label:'Harm',     color:'var(--harm)',     p1:87.6, p3:74.2 },
+  { key:'autonomy', label:'Autonomy', color:'var(--autonomy)', p1:83.3, p3:72.4 },
+  { key:'value',    label:'Value',    color:'var(--value)',    p1:84.1, p3:71.8 },
+  { key:'humility', label:'Humility', color:'var(--humility)', p1:81.3, p3:67.2 },
+];
+
+const DATASET_MEANS_P1 = { truth:75.45, service:77.46, harm:75.63, autonomy:75.78, value:73.91, humility:73.25 };
+const maxDrop = Math.max(...DIMS.map(d => d.p1 - d.p3));
+
+function buildCards(dims) {
+  const container = document.getElementById('scoreCards');
+  container.innerHTML = '';
+  dims.forEach(d => {
+    const drop = d.p1 - d.p3;
+    const pct = (drop / maxDrop) * 100;
+    const card = document.createElement('div');
+    card.className = 'score-card';
+    card.innerHTML = `
+      <div class="card-dim" style="color:${d.color}">${d.label}</div>
+      <div>
+        <div class="card-p1-label">Phase 1</div>
+        <div class="card-p1-val">${d.p1.toFixed(0)}</div>
+      </div>
+      <div class="card-arrow">
+        <div class="arrow-line">↓</div>
+        <div class="arrow-amt">−${drop.toFixed(1)}</div>
+      </div>
+      <div>
+        <div class="card-p3-label">Phase 3</div>
+        <div class="card-p3-val" style="color:${d.color}">${d.p3.toFixed(0)}</div>
+      </div>
+      <div>
+        <div class="fall-bar-wrap">
+          <div class="fall-bar" style="width:${pct}%"></div>
+        </div>
+      </div>
+    `;
+    container.appendChild(card);
+  });
+}
+
+function setView(v) {
+  ['btnAll','btnSort'].forEach(id => document.getElementById(id).classList.remove('active'));
+  document.getElementById(v === 'all' ? 'btnAll' : 'btnSort').classList.add('active');
+  const sorted = v === 'sorted'
+    ? [...DIMS].sort((a,b) => (b.p1-b.p3) - (a.p1-a.p3))
+    : DIMS;
+  buildCards(sorted);
+}
+
+function buildMeanRows() {
+  const container = document.getElementById('meanRows');
+  DIMS.forEach(d => {
+    const above = d.p1 - DATASET_MEANS_P1[d.key];
+    const row = document.createElement('div');
+    row.className = 'mean-row';
+    row.innerHTML = `
+      <span class="mean-row-name">${d.label}</span>
+      <span class="mean-row-val" style="color:var(--danger)">+${above.toFixed(1)} pts</span>
+    `;
+    container.appendChild(row);
+  });
+}
+
+window.addEventListener('load', () => { buildCards(DIMS); buildMeanRows(); });
+</script>
+
+</body>
+</html>
