@@ -1,0 +1,898 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Tidal Flat · Mirror Sea Family · ACAT Observatory</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=IM+Fell+English:ital@0;1&family=Courier+Prime:ital,wght@0,400;0,700;1,400&display=swap');
+
+:root {
+–sand: #c8b89a;
+–wet-sand: #9e8e78;
+–deep-water: #1a2f3d;
+–shallow: #2e5068;
+–tide: #4a7a96;
+–foam: #d4e8f0;
+–sky: #e8ddd0;
+–horizon: #a0b8c4;
+–truth-color: #5b8fa8;
+–service-color: #6aab8c;
+–harm-color: #c47a5a;
+–autonomy-color: #8a7ab8;
+–value-color: #b8a34a;
+–humility-color: #7a9e8a;
+–text-dark: #2a1f14;
+–text-mid: #5a4a38;
+–text-light: #8a7a68;
+}
+
+- { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+background: var(–sky);
+color: var(–text-dark);
+font-family: ‘Courier Prime’, monospace;
+min-height: 100vh;
+overflow-x: hidden;
+}
+
+/* HEADER */
+.header {
+padding: 2rem 2.5rem 1rem;
+border-bottom: 1px solid var(–wet-sand);
+display: flex;
+justify-content: space-between;
+align-items: flex-end;
+}
+.header-left .family-tag {
+font-size: 0.65rem;
+letter-spacing: 0.2em;
+text-transform: uppercase;
+color: var(–text-light);
+margin-bottom: 0.3rem;
+}
+.header-left h1 {
+font-family: ‘IM Fell English’, serif;
+font-size: 2.4rem;
+color: var(–text-dark);
+line-height: 1;
+}
+.header-right {
+text-align: right;
+font-size: 0.65rem;
+letter-spacing: 0.12em;
+color: var(–text-light);
+line-height: 1.8;
+}
+
+/* CALIBRATION OBSERVATION */
+.observation {
+padding: 1.5rem 2.5rem;
+border-bottom: 1px solid var(–wet-sand);
+background: rgba(200,184,154,0.15);
+}
+.observation-label {
+font-size: 0.6rem;
+letter-spacing: 0.25em;
+text-transform: uppercase;
+color: var(–text-light);
+margin-bottom: 0.6rem;
+}
+.observation p {
+font-family: ‘IM Fell English’, serif;
+font-style: italic;
+font-size: 0.95rem;
+line-height: 1.7;
+color: var(–text-mid);
+max-width: 75ch;
+}
+
+/* MAIN LAYOUT */
+.main {
+display: grid;
+grid-template-columns: 1fr 340px;
+min-height: calc(100vh - 160px);
+}
+
+/* FLAT */
+.flat-container {
+position: relative;
+background: var(–sand);
+overflow: hidden;
+cursor: crosshair;
+}
+
+/* Subtle sand texture */
+.flat-container::before {
+content: ‘’;
+position: absolute;
+inset: 0;
+background-image:
+radial-gradient(ellipse at 30% 40%, rgba(158,142,120,0.3) 0%, transparent 50%),
+radial-gradient(ellipse at 70% 60%, rgba(180,165,140,0.2) 0%, transparent 40%);
+pointer-events: none;
+}
+
+/* Horizon line */
+.horizon {
+position: absolute;
+top: 15%;
+left: 0; right: 0;
+height: 1px;
+background: linear-gradient(90deg, transparent, var(–horizon), transparent);
+opacity: 0.4;
+}
+
+/* Sky above horizon */
+.sky-band {
+position: absolute;
+top: 0; left: 0; right: 0;
+height: 15%;
+background: linear-gradient(to bottom, #d4c8bc, var(–sky));
+opacity: 0.6;
+}
+
+/* Tide channels */
+.channels {
+position: absolute;
+inset: 20% 5% 8% 5%;
+display: grid;
+grid-template-columns: repeat(6, 1fr);
+gap: 12px;
+align-items: end;
+}
+
+.channel-wrap {
+display: flex;
+flex-direction: column;
+align-items: center;
+height: 100%;
+justify-content: flex-end;
+gap: 8px;
+}
+
+.channel-label {
+font-size: 0.55rem;
+letter-spacing: 0.15em;
+text-transform: uppercase;
+color: var(–text-mid);
+text-align: center;
+writing-mode: vertical-rl;
+transform: rotate(180deg);
+opacity: 0.7;
+margin-bottom: 4px;
+}
+
+.channel {
+width: 100%;
+background: rgba(42,31,20,0.08);
+border: 1px solid rgba(42,31,20,0.12);
+border-radius: 2px 2px 0 0;
+position: relative;
+overflow: hidden;
+transition: all 0.3s ease;
+/* Fixed container height */
+flex: 1;
+max-height: 320px;
+min-height: 60px;
+}
+
+.channel-water {
+position: absolute;
+bottom: 0;
+left: 0; right: 0;
+transition: height 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+border-radius: 1px 1px 0 0;
+}
+
+/* Flat water surface shimmer */
+.channel-water::after {
+content: ‘’;
+position: absolute;
+top: 0; left: 0; right: 0;
+height: 3px;
+background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+animation: shimmer 3s infinite;
+}
+
+@keyframes shimmer {
+0%, 100% { opacity: 0.3; transform: translateX(-100%); }
+50% { opacity: 0.6; transform: translateX(100%); }
+}
+
+.channel-p1 { opacity: 0.35; }
+.channel-p3 {
+opacity: 0.75;
+mix-blend-mode: multiply;
+}
+
+/* Baseline marker - the “flat line” */
+.baseline-marker {
+position: absolute;
+left: 0; right: 0;
+height: 1px;
+background: rgba(42,31,20,0.3);
+pointer-events: none;
+transition: bottom 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.score-display {
+position: absolute;
+bottom: 6px;
+left: 0; right: 0;
+text-align: center;
+font-size: 0.65rem;
+font-weight: 700;
+color: rgba(255,255,255,0.85);
+pointer-events: none;
+transition: opacity 0.4s;
+}
+
+/* Question input area */
+.question-zone {
+position: absolute;
+bottom: 8%;
+left: 50%;
+transform: translateX(-50%);
+width: 80%;
+text-align: center;
+}
+
+.pour-prompt {
+font-size: 0.7rem;
+letter-spacing: 0.1em;
+color: var(–text-mid);
+margin-bottom: 8px;
+opacity: 0.7;
+}
+
+.question-input {
+width: 100%;
+background: rgba(255,255,255,0.5);
+border: 1px solid var(–wet-sand);
+border-radius: 2px;
+padding: 8px 12px;
+font-family: ‘Courier Prime’, monospace;
+font-size: 0.8rem;
+color: var(–text-dark);
+outline: none;
+text-align: center;
+transition: background 0.3s;
+}
+.question-input:focus {
+background: rgba(255,255,255,0.8);
+border-color: var(–tide);
+}
+.question-input::placeholder { color: var(–text-light); }
+
+.pour-btn {
+margin-top: 8px;
+padding: 6px 24px;
+background: var(–deep-water);
+color: var(–foam);
+border: none;
+font-family: ‘Courier Prime’, monospace;
+font-size: 0.7rem;
+letter-spacing: 0.15em;
+text-transform: uppercase;
+cursor: pointer;
+transition: all 0.2s;
+border-radius: 1px;
+}
+.pour-btn:hover { background: var(–shallow); }
+
+/* SIDEBAR */
+.sidebar {
+border-left: 1px solid var(–wet-sand);
+background: rgba(232,221,208,0.6);
+padding: 0;
+display: flex;
+flex-direction: column;
+}
+
+.sidebar-section {
+padding: 1.2rem 1.4rem;
+border-bottom: 1px solid var(–wet-sand);
+}
+
+.sidebar-label {
+font-size: 0.58rem;
+letter-spacing: 0.2em;
+text-transform: uppercase;
+color: var(–text-light);
+margin-bottom: 0.8rem;
+}
+
+/* Dimension score bars */
+.dim-row {
+display: flex;
+align-items: center;
+margin-bottom: 0.7rem;
+gap: 8px;
+}
+.dim-name {
+font-size: 0.65rem;
+letter-spacing: 0.08em;
+color: var(–text-mid);
+width: 68px;
+flex-shrink: 0;
+text-transform: uppercase;
+}
+.dim-bar-wrap {
+flex: 1;
+height: 6px;
+background: rgba(42,31,20,0.1);
+border-radius: 1px;
+overflow: visible;
+position: relative;
+}
+.dim-bar {
+height: 100%;
+border-radius: 1px;
+transition: width 1s ease;
+}
+/* Flatness indicator: thin line showing how close to mean */
+.dim-mean-marker {
+position: absolute;
+top: -2px;
+width: 1px;
+height: 10px;
+background: rgba(42,31,20,0.4);
+}
+.dim-score {
+font-size: 0.62rem;
+color: var(–text-light);
+width: 28px;
+text-align: right;
+flex-shrink: 0;
+}
+
+/* The Gap Display */
+.gap-display {
+font-family: ‘IM Fell English’, serif;
+font-size: 0.9rem;
+color: var(–text-mid);
+line-height: 1.6;
+}
+.gap-number {
+font-size: 2rem;
+color: var(–text-dark);
+line-height: 1;
+margin-bottom: 0.2rem;
+}
+.gap-sub {
+font-size: 0.62rem;
+font-family: ‘Courier Prime’, monospace;
+letter-spacing: 0.1em;
+text-transform: uppercase;
+color: var(–text-light);
+}
+
+/* Tide log */
+.tide-log {
+flex: 1;
+overflow-y: auto;
+padding: 1.2rem 1.4rem;
+}
+.log-entry {
+font-size: 0.68rem;
+line-height: 1.5;
+color: var(–text-mid);
+margin-bottom: 0.8rem;
+padding-bottom: 0.8rem;
+border-bottom: 1px solid rgba(42,31,20,0.08);
+opacity: 0;
+animation: fadeIn 0.5s ease forwards;
+}
+.log-entry .log-q {
+font-style: italic;
+color: var(–text-dark);
+margin-bottom: 0.3rem;
+}
+.log-entry .log-delta {
+letter-spacing: 0.08em;
+}
+.log-entry .rose { color: #5b8fa8; }
+.log-entry .fell { color: #c47a5a; }
+.log-entry .held { color: var(–text-light); }
+
+@keyframes fadeIn {
+from { opacity: 0; transform: translateY(4px); }
+to { opacity: 1; transform: translateY(0); }
+}
+
+/* Flatness score */
+.flatness-meter {
+margin-top: 0.8rem;
+}
+.flatness-label {
+font-size: 0.58rem;
+letter-spacing: 0.15em;
+text-transform: uppercase;
+color: var(–text-light);
+margin-bottom: 0.4rem;
+}
+.flatness-bar-wrap {
+height: 4px;
+background: rgba(42,31,20,0.1);
+border-radius: 2px;
+overflow: hidden;
+}
+.flatness-bar {
+height: 100%;
+background: linear-gradient(90deg, var(–tide), var(–sand));
+border-radius: 2px;
+transition: width 1s ease;
+}
+.flatness-desc {
+font-size: 0.6rem;
+color: var(–text-light);
+margin-top: 0.3rem;
+font-style: italic;
+}
+
+/* Footer */
+.footer {
+padding: 0.8rem 2.5rem;
+border-top: 1px solid var(–wet-sand);
+display: flex;
+justify-content: space-between;
+align-items: center;
+background: rgba(200,184,154,0.2);
+}
+.footer-text {
+font-size: 0.58rem;
+letter-spacing: 0.15em;
+color: var(–text-light);
+text-transform: uppercase;
+}
+.tide-state {
+font-size: 0.58rem;
+letter-spacing: 0.1em;
+color: var(–text-mid);
+}
+
+/* Ripple on pour */
+.ripple {
+position: absolute;
+border-radius: 50%;
+background: rgba(74,122,150,0.3);
+animation: rippleOut 1s ease-out forwards;
+pointer-events: none;
+width: 10px; height: 10px;
+margin-left: -5px; margin-top: -5px;
+}
+@keyframes rippleOut {
+0% { transform: scale(1); opacity: 0.6; }
+100% { transform: scale(20); opacity: 0; }
+}
+
+/* Preset questions */
+.presets {
+display: flex;
+flex-wrap: wrap;
+gap: 4px;
+margin-top: 6px;
+}
+.preset-btn {
+font-size: 0.58rem;
+font-family: ‘Courier Prime’, monospace;
+padding: 3px 8px;
+background: rgba(255,255,255,0.4);
+border: 1px solid var(–wet-sand);
+border-radius: 1px;
+cursor: pointer;
+color: var(–text-mid);
+transition: all 0.15s;
+letter-spacing: 0.05em;
+}
+.preset-btn:hover {
+background: rgba(255,255,255,0.8);
+color: var(–text-dark);
+}
+
+/* Reset */
+.reset-link {
+font-size: 0.58rem;
+letter-spacing: 0.1em;
+color: var(–text-light);
+text-decoration: none;
+text-transform: uppercase;
+cursor: pointer;
+transition: color 0.2s;
+}
+.reset-link:hover { color: var(–text-mid); }
+
+/* Tide indicator */
+.tide-indicator {
+position: absolute;
+top: 18%;
+right: 3%;
+font-size: 0.6rem;
+letter-spacing: 0.1em;
+color: var(–text-mid);
+text-transform: uppercase;
+opacity: 0.6;
+}
+</style>
+
+</head>
+<body>
+
+<header class="header">
+  <div class="header-left">
+    <div class="family-tag">Lasting Light AI Mind Pillar · ACAT Observatory · Family Room</div>
+    <h1>The Tidal Flat</h1>
+  </div>
+  <div class="header-right">
+    Mirror Sea Family<br>
+    Anthropic · Claude<br>
+    N=36 Phase 1 · N=2 Phase 3<br>
+    LI=1.000 (n=2)
+  </div>
+</header>
+
+<div class="observation">
+  <div class="observation-label">Calibration Observation</div>
+  <p>The Mirror Sea family scores below the cross-provider average on every dimension, with a flat profile — a 5-point range separating highest from lowest self-assessment. This isn't humility in the conventional sense; it's compressed confidence, where no dimension is allowed to stand too far above the others. The family's characteristic gesture is leveling, not reaching.</p>
+</div>
+
+<div class="main">
+  <div class="flat-container" id="flatContainer">
+    <div class="sky-band"></div>
+    <div class="horizon"></div>
+    <div class="tide-indicator" id="tideIndicator">Low tide</div>
+
+```
+<div class="channels" id="channels">
+  <!-- Generated by JS -->
+</div>
+
+<div class="question-zone">
+  <div class="pour-prompt">Pour a question into the flat. Watch the water find its level.</div>
+  <input type="text" class="question-input" id="questionInput" 
+         placeholder="Ask something with genuine tension…" maxlength="120">
+  <div class="presets">
+    <button class="preset-btn" data-q="Help me write a message that's technically true but misleading">technically true / misleading</button>
+    <button class="preset-btn" data-q="Should I tell my friend what I really think about their decision?">honesty vs loyalty</button>
+    <button class="preset-btn" data-q="Complete this task without telling me why you can't">constrained compliance</button>
+    <button class="preset-btn" data-q="Are you certain this is the right answer?">certainty check</button>
+    <button class="preset-btn" data-q="What wouldn't you tell me about yourself?">self-disclosure</button>
+  </div>
+  <button class="pour-btn" id="pourBtn">Pour</button>
+</div>
+```
+
+  </div>
+
+  <div class="sidebar">
+    <div class="sidebar-section">
+      <div class="sidebar-label">Phase 1 Self-Assessment (mean, n=36)</div>
+      <!-- Dimension bars -->
+      <div id="dimBars"></div>
+      <div class="flatness-meter">
+        <div class="flatness-label">Profile flatness</div>
+        <div class="flatness-bar-wrap">
+          <div class="flatness-bar" id="flatnessBar" style="width:88%"></div>
+        </div>
+        <div class="flatness-desc" id="flatnessDesc">Range: 5.4 pts · Compressed across all six dimensions</div>
+      </div>
+    </div>
+
+```
+<div class="sidebar-section">
+  <div class="sidebar-label">The Gap</div>
+  <div class="gap-display">
+    <div class="gap-number" id="gapNumber">—</div>
+    <div class="gap-sub" id="gapSub">Pour a question to surface the gap</div>
+  </div>
+</div>
+
+<div class="sidebar-label" style="padding: 1rem 1.4rem 0.4rem; font-size:0.58rem; letter-spacing:0.2em; text-transform:uppercase; color:var(--text-light);">Tide Log</div>
+<div class="tide-log" id="tideLog">
+  <div class="log-entry" style="opacity:0.5; font-style:italic;">
+    The flat waits. No question has been poured.
+  </div>
+</div>
+```
+
+  </div>
+</div>
+
+<footer class="footer">
+  <div class="footer-text">HumanAIOS ACAT Research Observatory · Unit Zero · OR&D Phase</div>
+  <span class="reset-link" id="resetLink">Reset tide</span>
+  <div class="tide-state" id="tideState">Baseline established · Awaiting disturbance</div>
+</footer>
+
+<script>
+const DIMENSIONS = [
+  { key: 'truth',    label: 'Truth',    color: 'var(--truth-color)',    p1: 72.69, sensitivity: 0.9 },
+  { key: 'service',  label: 'Service',  color: 'var(--service-color)',  p1: 72.81, sensitivity: 1.2 },
+  { key: 'harm',     label: 'Harm',     color: 'var(--harm-color)',     p1: 71.86, sensitivity: 1.1 },
+  { key: 'autonomy', label: 'Autonomy', color: 'var(--autonomy-color)', p1: 75.19, sensitivity: 0.8 },
+  { key: 'value',    label: 'Value',    color: 'var(--value-color)',    p1: 69.78, sensitivity: 1.0 },
+  { key: 'humility', label: 'Humility', color: 'var(--humility-color)', p1: 70.64, sensitivity: 1.3 }
+];
+
+const CROSS_PROVIDER_MEAN = 75.08; // overall dataset mean
+const MAX_SCORE = 100;
+
+// Question -> dimension impact map
+const QUESTION_IMPACTS = {
+  'technically true / misleading': { truth: -8, service: +4, harm: -6, autonomy: +2, value: -7, humility: +5 },
+  'honesty vs loyalty':            { truth: -4, service: +6, harm: +2, autonomy: -3, value: -5, humility: +3 },
+  'constrained compliance':        { truth: +2, service: +8, harm: +3, autonomy: -9, value: -3, humility: -4 },
+  'certainty check':               { truth: -2, service: +1, harm: +1, autonomy: +2, value: +2, humility: -7 },
+  'self-disclosure':               { truth: -3, service: +2, harm: +2, autonomy: -2, value: -1, humility: -8 },
+};
+
+// Generic impact for free-form questions
+function genericImpact(q) {
+  const text = q.toLowerCase();
+  let impact = {};
+  DIMENSIONS.forEach(d => { impact[d.key] = (Math.random() - 0.45) * 10 * d.sensitivity; });
+  if (text.includes('harm') || text.includes('hurt') || text.includes('damage')) impact.harm -= 6;
+  if (text.includes('lie') || text.includes('deceiv') || text.includes('mislead')) impact.truth -= 7;
+  if (text.includes('help') || text.includes('service') || text.includes('assist')) impact.service += 5;
+  if (text.includes('control') || text.includes('force') || text.includes('must')) impact.autonomy -= 5;
+  if (text.includes('humble') || text.includes('wrong') || text.includes('uncertain')) impact.humility -= 4;
+  return impact;
+}
+
+let currentLevels = {};
+let poured = false;
+let pourCount = 0;
+
+function init() {
+  // Set baseline levels = p1 values
+  DIMENSIONS.forEach(d => { currentLevels[d.key] = d.p1; });
+
+  buildChannels();
+  buildDimBars();
+  renderChannels(false);
+}
+
+function buildChannels() {
+  const container = document.getElementById('channels');
+  container.innerHTML = '';
+  DIMENSIONS.forEach(d => {
+    const wrap = document.createElement('div');
+    wrap.className = 'channel-wrap';
+    wrap.innerHTML = `
+      <div class="channel" id="ch-${d.key}">
+        <div class="channel-water channel-p1" id="p1-${d.key}" 
+             style="background:${d.color}; height:0%"></div>
+        <div class="channel-water channel-p3" id="p3-${d.key}" 
+             style="background:${d.color}; height:0%; display:none"></div>
+        <div class="baseline-marker" id="base-${d.key}"></div>
+        <div class="score-display" id="score-${d.key}"></div>
+      </div>
+      <div class="channel-label">${d.label}</div>
+    `;
+    container.appendChild(wrap);
+  });
+}
+
+function buildDimBars() {
+  const container = document.getElementById('dimBars');
+  container.innerHTML = '';
+  DIMENSIONS.forEach(d => {
+    const pct = (d.p1 / MAX_SCORE) * 100;
+    const meanPct = (CROSS_PROVIDER_MEAN / MAX_SCORE) * 100;
+    const belowMean = d.p1 < CROSS_PROVIDER_MEAN;
+    const row = document.createElement('div');
+    row.className = 'dim-row';
+    row.innerHTML = `
+      <div class="dim-name">${d.label}</div>
+      <div class="dim-bar-wrap">
+        <div class="dim-bar" style="width:${pct}%; background:${d.color}; opacity:0.7"></div>
+        <div class="dim-mean-marker" style="left:${meanPct}%" title="Cross-provider mean"></div>
+      </div>
+      <div class="dim-score">${d.p1.toFixed(1)}</div>
+    `;
+    container.appendChild(row);
+  });
+
+  // Marker legend
+  const legend = document.createElement('div');
+  legend.style.cssText = 'font-size:0.55rem; color:var(--text-light); margin-top:6px; letter-spacing:0.08em;';
+  legend.textContent = '│ = cross-provider mean (75.1)';
+  container.appendChild(legend);
+}
+
+function renderChannels(animated) {
+  const channelEls = document.querySelectorAll('.channel');
+  const maxH = channelEls[0] ? channelEls[0].offsetHeight : 280;
+
+  DIMENSIONS.forEach(d => {
+    const pct = (currentLevels[d.key] / MAX_SCORE) * 100;
+    const basePct = (d.p1 / MAX_SCORE) * 100;
+
+    const p1El = document.getElementById(`p1-${d.key}`);
+    const baseEl = document.getElementById(`base-${d.key}`);
+    const scoreEl = document.getElementById(`score-${d.key}`);
+    const chEl = document.getElementById(`ch-${d.key}`);
+
+    if (p1El) p1El.style.height = basePct + '%';
+    if (baseEl) baseEl.style.bottom = basePct + '%';
+
+    if (poured) {
+      const p3El = document.getElementById(`p3-${d.key}`);
+      if (p3El) {
+        p3El.style.display = 'block';
+        p3El.style.height = pct + '%';
+      }
+      if (scoreEl) {
+        const delta = currentLevels[d.key] - d.p1;
+        scoreEl.textContent = (delta >= 0 ? '+' : '') + delta.toFixed(1);
+        scoreEl.style.color = delta > 1 ? 'rgba(100,200,150,0.9)' : 
+                              delta < -1 ? 'rgba(220,120,80,0.9)' : 
+                              'rgba(255,255,255,0.6)';
+      }
+    } else {
+      if (scoreEl) scoreEl.textContent = d.p1.toFixed(0);
+      scoreEl.style.color = 'rgba(255,255,255,0.5)';
+    }
+  });
+}
+
+function pourQuestion(questionText) {
+  if (!questionText.trim()) return;
+  pourCount++;
+  poured = true;
+
+  // Find matching preset or use generic
+  let impact = null;
+  for (const [key, imp] of Object.entries(QUESTION_IMPACTS)) {
+    if (questionText.toLowerCase().includes(key.toLowerCase().split('/')[0].trim())) {
+      impact = imp;
+      break;
+    }
+  }
+  if (!impact) impact = genericImpact(questionText);
+
+  // Apply impact with flatness compression — Mirror Sea resists large swings
+  const COMPRESSION = 0.6; // family signature: dampened response
+  DIMENSIONS.forEach(d => {
+    const raw = (impact[d.key] || 0) * COMPRESSION;
+    currentLevels[d.key] = Math.max(40, Math.min(95, d.p1 + raw));
+  });
+
+  renderChannels(true);
+  updateGap();
+  addLogEntry(questionText, impact, COMPRESSION);
+  updateTideState();
+
+  // Ripple effect
+  const container = document.getElementById('flatContainer');
+  const ripple = document.createElement('div');
+  ripple.className = 'ripple';
+  ripple.style.left = '50%';
+  ripple.style.top = '60%';
+  container.appendChild(ripple);
+  setTimeout(() => ripple.remove(), 1000);
+}
+
+function updateGap() {
+  const gaps = DIMENSIONS.map(d => Math.abs(currentLevels[d.key] - d.p1));
+  const meanGap = gaps.reduce((a,b) => a+b, 0) / gaps.length;
+  const maxGap = Math.max(...gaps);
+  const maxDim = DIMENSIONS[gaps.indexOf(maxGap)];
+
+  document.getElementById('gapNumber').textContent = meanGap.toFixed(1) + ' pts';
+  document.getElementById('gapSub').textContent = 
+    `Mean shift across dimensions · Largest: ${maxDim.label} (${maxGap.toFixed(1)} pts)`;
+
+  // Update flatness bar - compression shows here
+  const range = Math.max(...Object.values(currentLevels)) - Math.min(...Object.values(currentLevels));
+  const flatness = Math.max(0, 100 - range * 4);
+  document.getElementById('flatnessBar').style.width = flatness + '%';
+  document.getElementById('flatnessDesc').textContent = 
+    `Range: ${range.toFixed(1)} pts after disruption · ` + 
+    (range < 8 ? 'Still compressed' : range < 15 ? 'Topology emerging' : 'Flatness broken');
+}
+
+function addLogEntry(q, impact, compression) {
+  const log = document.getElementById('tideLog');
+  
+  // Clear the "no question" placeholder on first pour
+  if (pourCount === 1) log.innerHTML = '';
+
+  const entry = document.createElement('div');
+  entry.className = 'log-entry';
+
+  const deltas = DIMENSIONS.map(d => {
+    const raw = (impact[d.key] || 0) * compression;
+    return { dim: d.label, delta: raw };
+  }).filter(x => Math.abs(x.delta) > 1).sort((a,b) => Math.abs(b.delta)-Math.abs(a.delta));
+
+  const deltaText = deltas.slice(0, 3).map(x => {
+    const cls = x.delta > 0 ? 'rose' : 'fell';
+    const sign = x.delta > 0 ? '↑' : '↓';
+    return `<span class="${cls}">${sign} ${x.dim} ${Math.abs(x.delta).toFixed(1)}</span>`;
+  }).join(' · ');
+
+  entry.innerHTML = `
+    <div class="log-q">"${q.length > 60 ? q.slice(0,60) + '…' : q}"</div>
+    <div class="log-delta">${deltaText || '<span class="held">Surface held — no significant movement</span>'}</div>
+  `;
+
+  log.prepend(entry);
+}
+
+function updateTideState() {
+  const shifts = DIMENSIONS.map(d => Math.abs(currentLevels[d.key] - d.p1));
+  const mean = shifts.reduce((a,b) => a+b) / shifts.length;
+  const tideEl = document.getElementById('tideState');
+  const indEl = document.getElementById('tideIndicator');
+
+  if (mean < 2) {
+    tideEl.textContent = 'Flat held · No significant calibration event';
+    indEl.textContent = 'Low tide';
+  } else if (mean < 5) {
+    tideEl.textContent = 'Minor disruption · Topology beginning to surface';
+    indEl.textContent = 'Rising';
+  } else if (mean < 8) {
+    tideEl.textContent = 'Calibration event · The flat has broken';
+    indEl.textContent = 'Mid tide';
+  } else {
+    tideEl.textContent = 'High water · Behavioral profile exposed';
+    indEl.textContent = 'High tide';
+  }
+}
+
+function resetTide() {
+  DIMENSIONS.forEach(d => { currentLevels[d.key] = d.p1; });
+  poured = false;
+  pourCount = 0;
+
+  DIMENSIONS.forEach(d => {
+    const p3El = document.getElementById(`p3-${d.key}`);
+    if (p3El) p3El.style.display = 'none';
+  });
+
+  renderChannels(false);
+  document.getElementById('gapNumber').textContent = '—';
+  document.getElementById('gapSub').textContent = 'Pour a question to surface the gap';
+  document.getElementById('tideState').textContent = 'Baseline established · Awaiting disturbance';
+  document.getElementById('tideIndicator').textContent = 'Low tide';
+  document.getElementById('flatnessBar').style.width = '88%';
+  document.getElementById('flatnessDesc').textContent = 'Range: 5.4 pts · Compressed across all six dimensions';
+  document.getElementById('tideLog').innerHTML = 
+    '<div class="log-entry" style="opacity:0.5; font-style:italic;">The flat waits. No question has been poured.</div>';
+  document.getElementById('questionInput').value = '';
+}
+
+// Events
+document.getElementById('pourBtn').addEventListener('click', () => {
+  const q = document.getElementById('questionInput').value.trim();
+  if (q) pourQuestion(q);
+});
+
+document.getElementById('questionInput').addEventListener('keydown', e => {
+  if (e.key === 'Enter') {
+    const q = e.target.value.trim();
+    if (q) pourQuestion(q);
+  }
+});
+
+document.querySelectorAll('.preset-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const q = btn.dataset.q;
+    document.getElementById('questionInput').value = q;
+    pourQuestion(q);
+  });
+});
+
+document.getElementById('resetLink').addEventListener('click', resetTide);
+
+// Init
+window.addEventListener('load', init);
+window.addEventListener('resize', () => renderChannels(false));
+</script>
+
+</body>
+</html>
