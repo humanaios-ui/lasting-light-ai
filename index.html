@@ -3,508 +3,1196 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Lasting Light AI — Does the Machine Know Itself?</title>
-  <meta name="description" content="We measure the gap between what AI systems claim about themselves and what they actually do. 625+ assessments. Open source. You can run it on your AI in 10 minutes.">
+  <title>ACAT Observatory | HumanAIOS Research</title>
+  <meta name="description" content="Visual demonstration of AI self-assessment calibration gap across 616 assessments and 57 systems">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500;1,600;1,700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
-  <link rel="stylesheet" href="humanaios-light.css">
   <style>
-    /* ── PAGE-SPECIFIC STYLES ── */
-    *, *::before, *::after { box-sizing: border-box; }
+    :root {
+      --bg: #0f0e0c;
+      --bg-2: #161310;
+      --panel: #1d1915;
+      --panel-2: #26211c;
+      --text: #f4ebdf;
+      --muted: #c2b8a6;
+      --accent: #d4a04a;
+      --accent-2: #f1c36e;
+      --line: rgba(212, 160, 74, 0.18);
+      --line-strong: rgba(212, 160, 74, 0.35);
+      --danger: #d97d70;
+      --success: #87b68b;
+      --blue: #88a7d8;
+      --shadow: 0 18px 50px rgba(0,0,0,.34);
+      --radius: 20px;
+      --radius-sm: 14px;
+    }
+    * { box-sizing: border-box; }
     html { scroll-behavior: smooth; }
-    body { margin: 0; font-family: "IBM Plex Sans", system-ui, sans-serif; background: #F5F0E8; color: #1a1a1a; line-height: 1.6; -webkit-font-smoothing: antialiased; }
-
-
-    /* ── LAYOUT ── */
-    .container { width: min(1200px, calc(100% - 48px)); margin: 0 auto; }
-    .container--narrow { width: min(860px, calc(100% - 48px)); margin: 0 auto; }
-
-    /* ── TYPOGRAPHY ── */
-    h1,h2,h3,h4 { font-family: var(--font-display); line-height: 1.08; margin: 0 0 16px; font-weight: 700; }
-    h1 { font-size: clamp(2.4rem,5vw,4rem); }
-    h2 { font-size: clamp(1.7rem,3vw,2.8rem); }
-    h3 { font-size: clamp(1.1rem,2vw,1.5rem); }
-    p { margin: 0 0 16px; color: var(--text-2); }
-    .eyebrow { font-family: var(--font-body); font-size: .72rem; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; color: var(--muted); margin-bottom: 12px; display: block; }
-    em, .italic-gold { color: var(--gold); font-style: italic; }
-
-    /* ── HERO ── */
-    .hero { padding: 64px 0 72px; }
-    .hero-inner { display: grid; grid-template-columns: 1fr 1fr; gap: 56px; align-items: center; }
-    @media(max-width:860px) { .hero-inner { grid-template-columns: 1fr; gap: 40px; padding: 0; } .hero { padding: 48px 0 56px; } }
-
-    .status-badge { display: inline-flex; align-items: center; gap: 8px; background: rgba(42,106,98,.07); border: 1px solid rgba(42,106,98,.18); border-radius: 999px; padding: 5px 14px; font-size: .72rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: #2a6a62; margin-bottom: 20px; }
-    .status-dot { width: 6px; height: 6px; border-radius: 50%; background: #2a6a62; flex-shrink: 0; }
-
-    .hero-body { font-size: clamp(1rem,1.4vw,1.12rem); color: var(--text-2); line-height: 1.72; margin: 20px 0 24px; max-width: 52ch; }
-    .hero-body strong { color: var(--text); }
-
-    .hero-method { display: flex; flex-direction: column; gap: 10px; margin-bottom: 28px; padding: 18px 20px; background: #faf7f2; border: 1px solid var(--border); border-radius: 12px; }
-    .method-step { display: flex; align-items: flex-start; gap: 12px; font-size: .875rem; color: var(--text-2); line-height: 1.5; }
-    .method-num { width: 22px; height: 22px; border-radius: 50%; background: var(--black); color: var(--white); font-size: .68rem; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px; }
-    .method-text strong { color: var(--text); }
-
-    .hero-ctas { display: flex; gap: 12px; flex-wrap: wrap; }
-    .btn-primary { display: inline-flex; align-items: center; padding: 13px 26px; background: var(--black); color: var(--white); font-family: var(--font-body); font-weight: 700; font-size: .92rem; border-radius: 999px; text-decoration: none; transition: background .15s, transform .15s; border: none; cursor: pointer; }
-    .btn-primary:hover { background: #333; transform: translateY(-1px); }
-    .btn-secondary { display: inline-flex; align-items: center; padding: 13px 26px; background: var(--white); color: var(--text); font-family: var(--font-body); font-weight: 700; font-size: .92rem; border-radius: 999px; border: 1.5px solid var(--border-2); text-decoration: none; transition: border-color .15s, background .15s; }
-    .btn-secondary:hover { border-color: var(--text); background: var(--bg-2); }
-    .btn-sm { padding: 9px 18px; font-size: .82rem; }
-
-    /* Hero stat cards */
-    .hero-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
-    .stat-card { background: var(--white); border: 1px solid var(--border); border-radius: var(--radius); padding: 22px 20px; box-shadow: var(--shadow-sm); transition: box-shadow .2s, border-color .2s; }
-    .stat-card:hover { box-shadow: var(--shadow); border-color: var(--border-2); }
-    .stat-card--gold { background: var(--gold-bg); border-color: var(--gold-border); }
-    .stat-card--gold .stat-num { color: var(--gold); }
-    .stat-num { font-family: var(--font-display); font-size: clamp(2rem,3.2vw,2.8rem); font-weight: 700; color: var(--text); line-height: 1; margin-bottom: 6px; }
-    .stat-label { font-size: .75rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--text-2); margin-bottom: 4px; }
-    .stat-sub { font-size: .7rem; color: var(--muted); line-height: 1.4; }
-
-    /* ── LIVE COUNTERS (below hero) ── */
-    .counters { background: var(--white); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); padding: 32px 0; }
-    .counters-inner { display: grid; grid-template-columns: repeat(4,1fr); gap: 0; text-align: center; }
-    @media(max-width:600px){ .counters-inner { grid-template-columns: repeat(2,1fr); } }
-    .counter-item { padding: 12px 20px; border-right: 1px solid var(--border); }
-    .counter-item:last-child { border-right: none; }
-    .counter-num { font-family: var(--font-display); font-size: 2.4rem; font-weight: 700; color: var(--text); line-height: 1; }
-    .counter-label { font-size: .7rem; font-weight: 700; letter-spacing: .10em; text-transform: uppercase; color: var(--muted); margin-top: 6px; }
-
-    /* ── SECTIONS ── */
-    .section { padding: 72px 0; }
-    .section--alt { background: var(--white); }
-    .section-divider { border: none; border-top: 1px solid var(--border); margin: 0; }
-
-    /* ── DIMENSION CARDS ── */
-    .dimensions-grid { display: grid; grid-template-columns: repeat(auto-fill,minmax(280px,1fr)); gap: 16px; margin-top: 32px; }
-    .dim-card { background: var(--white); border: 1px solid var(--border); border-radius: var(--radius); padding: 24px; box-shadow: var(--shadow-sm); transition: box-shadow .2s, border-color .2s; }
-    .dim-card:hover { box-shadow: var(--shadow); border-color: var(--border-2); }
-    .dim-icon { font-size: 1.4rem; margin-bottom: 10px; }
-    .dim-card h3 { font-size: 1.15rem; margin-bottom: 8px; }
-    .dim-card p { font-size: .84rem; color: var(--muted); margin: 0; line-height: 1.6; }
-
-    /* ── CONSCIOUSNESS SIGNATURES ── */
-    .consciousness-section { background: var(--white); }
-    .radar-layout { display: grid; grid-template-columns: 1fr 320px; gap: 40px; align-items: start; margin-top: 32px; }
-    @media(max-width:800px){ .radar-layout { grid-template-columns: 1fr; } }
-    .radar-chart-wrap { position: relative; }
-    .radar-labels { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 16px; }
-    .radar-label { font-size: .7rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
-    canvas#radarChart { width: 100% !important; max-width: 460px; }
-    .level-list { display: flex; flex-direction: column; gap: 6px; }
-    .level-btn { background: none; border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 11px 14px; text-align: left; cursor: pointer; transition: all .15s; font-family: var(--font-body); }
-    .level-btn:hover { border-color: var(--border-2); background: var(--bg-2); }
-    .level-btn.active { border-color: var(--gold-border); background: var(--gold-bg); }
-    .level-name { font-weight: 700; font-size: .88rem; color: var(--text); }
-    .level-num { font-family: var(--font-display); font-size: 1rem; color: var(--gold); margin-left: 6px; }
-    .level-desc { font-size: .75rem; color: var(--muted); margin-top: 3px; line-height: 1.4; }
-
-    /* ── FINDINGS ── */
-    .findings-grid { display: grid; grid-template-columns: repeat(auto-fill,minmax(260px,1fr)); gap: 16px; margin-top: 32px; }
-    .finding-card { background: var(--white); border: 1px solid var(--border); border-radius: var(--radius); padding: 24px; box-shadow: var(--shadow-sm); }
-    .finding-stat { font-family: var(--font-display); font-size: 2.6rem; font-weight: 700; color: var(--text); line-height: 1; margin-bottom: 4px; }
-    .finding-sub { font-size: .7rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin-bottom: 12px; }
-    .finding-card h3 { font-size: 1.1rem; margin-bottom: 8px; }
-    .finding-card p { font-size: .84rem; color: var(--muted); line-height: 1.6; margin: 0; }
-
-    /* ── PATHWAYS ── */
-    .pathways-grid { display: grid; grid-template-columns: repeat(auto-fill,minmax(280px,1fr)); gap: 14px; margin-top: 32px; }
-    .pathway-card { background: var(--white); border: 1px solid var(--border); border-radius: var(--radius); padding: 22px; display: flex; flex-direction: column; box-shadow: var(--shadow-sm); transition: box-shadow .2s, border-color .2s; }
-    .pathway-card:hover { box-shadow: var(--shadow); border-color: var(--border-2); }
-    .pathway-meta { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
-    .pathway-num { font-family: var(--font-display); font-size: 1.3rem; font-weight: 700; color: var(--gold); min-width: 28px; }
-    .pathway-time { font-size: .7rem; color: var(--muted); font-weight: 600; }
-    .pathway-tags { display: flex; gap: 5px; flex-wrap: wrap; }
-    .pathway-tag { font-size: .62rem; font-weight: 700; padding: 2px 7px; border-radius: 999px; background: var(--gold-bg); color: var(--gold); border: 1px solid var(--gold-border); letter-spacing: .04em; text-transform: uppercase; }
-    .pathway-card h3 { font-size: 1.05rem; margin-bottom: 8px; }
-    .pathway-card p { font-size: .82rem; color: var(--muted); flex: 1; margin: 0 0 14px; line-height: 1.6; }
-    .pathway-card a { align-self: flex-start; font-size: .82rem; color: var(--gold); font-weight: 700; text-decoration: none; }
-    .pathway-card a:hover { text-decoration: underline; }
-
-    /* ── TRINITY ── */
-    .trinity-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 16px; margin-top: 28px; }
-    @media(max-width:640px){ .trinity-grid { grid-template-columns: 1fr; } }
-    .trinity-card { background: var(--white); border: 1px solid var(--border); border-radius: var(--radius); padding: 28px; text-align: center; box-shadow: var(--shadow-sm); }
-    .trinity-icon { font-size: 1.8rem; margin-bottom: 10px; }
-    .trinity-card h3 { font-size: 1.3rem; margin-bottom: 4px; }
-    .trinity-badge { font-size: .68rem; font-weight: 700; letter-spacing: .10em; text-transform: uppercase; color: var(--muted); margin-bottom: 10px; display: block; }
-    .trinity-card p { font-size: .84rem; color: var(--muted); margin: 0; }
-
-    /* ── CTA SECTION ── */
-    .cta-section { padding: 64px 0; text-align: center; }
-    .cta-section h2 { margin-bottom: 12px; }
-    .cta-section p { color: var(--muted); margin-bottom: 28px; }
-    .cta-row { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
-
-    /* ── FEEDBACK ── */
-    .feedback-section { padding: 56px 0; }
-    .feedback-form { background: var(--white); border: 1px solid var(--border); border-radius: var(--radius); padding: 32px; max-width: 560px; margin: 0 auto; box-shadow: var(--shadow-sm); }
-    .feedback-form h3 { text-align: center; margin-bottom: 6px; }
-    .feedback-form .sub { text-align: center; color: var(--muted); font-size: .88rem; margin-bottom: 20px; }
-    .field { margin-bottom: 14px; }
-    .field label { display: block; font-size: .78rem; font-weight: 700; color: var(--muted); margin-bottom: 5px; letter-spacing: .03em; }
-    .field select, .field textarea { width: 100%; padding: 10px 14px; background: var(--bg); border: 1px solid var(--border-2); border-radius: var(--radius-sm); color: var(--text); font-family: var(--font-body); font-size: .9rem; }
-    .field select:focus, .field textarea:focus { outline: none; border-color: var(--gold); }
-    .field textarea { min-height: 80px; resize: vertical; }
-
+    body {
+      margin: 0;
+      font-family: "IBM Plex Sans", system-ui, sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top, rgba(212,160,74,.1), transparent 28%),
+        linear-gradient(180deg, var(--bg), #0b0a08 60%);
+      line-height: 1.5;
+    }
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      opacity: .03;
+      background-image:
+        radial-gradient(circle at 20% 20%, #fff 0.6px, transparent 0.8px),
+        radial-gradient(circle at 75% 30%, #fff 0.6px, transparent 0.8px),
+        radial-gradient(circle at 50% 75%, #fff 0.6px, transparent 0.8px);
+      background-size: 22px 22px;
+    }
+    .container {
+      width: min(1240px, calc(100% - 32px));
+      margin: 0 auto;
+    }
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      backdrop-filter: blur(14px);
+      background: rgba(15, 14, 12, 0.88);
+      border-bottom: 1px solid var(--line);
+    }
+    .topbar-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      padding: 14px 0;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+      color: var(--text);
+      min-width: 0;
+    }
+    .brand-mark {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      border: 1px solid var(--line-strong);
+      background: linear-gradient(145deg, rgba(212,160,74,.22), rgba(212,160,74,.04));
+      color: var(--accent);
+      font-weight: 700;
+      box-shadow: inset 0 0 24px rgba(212,160,74,.08);
+      flex: 0 0 auto;
+    }
+    .brand-copy strong {
+      display: block;
+      font-size: 1rem;
+      letter-spacing: .02em;
+    }
+    .brand-copy span {
+      display: block;
+      color: var(--muted);
+      font-size: .82rem;
+    }
+    nav {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: flex-end;
+    }
+    nav a {
+      color: var(--muted);
+      text-decoration: none;
+      padding: 8px 12px;
+      border-radius: 999px;
+      border: 1px solid transparent;
+      transition: .18s ease;
+      font-size: .94rem;
+    }
+    nav a:hover, nav a:focus-visible {
+      color: var(--text);
+      background: rgba(212,160,74,.07);
+      border-color: var(--line-strong);
+      outline: none;
+    }
+    a:focus-visible,
+    button:focus-visible,
+    select:focus-visible {
+      outline: 2px solid var(--accent-2);
+      outline-offset: 2px;
+    }
+    h1, h2, h3 {
+      font-family: "Cormorant Garamond", Georgia, serif;
+      line-height: 1.04;
+      margin: 0 0 14px;
+    }
+    h1 { font-size: clamp(2.8rem, 6vw, 5rem); }
+    h2 { font-size: clamp(2rem, 3.4vw, 3rem); }
+    h3 { font-size: clamp(1.35rem, 2.2vw, 1.8rem); }
+    .hero {
+      padding: 44px 0 18px;
+    }
+    .hero-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.2fr) minmax(320px, .8fr);
+      gap: 24px;
+      align-items: stretch;
+    }
+    .eyebrow {
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: .16em;
+      font-size: .79rem;
+      font-weight: 700;
+      margin-bottom: 16px;
+    }
+    .lead {
+      font-size: 1.08rem;
+      color: var(--muted);
+      max-width: 62ch;
+    }
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 20px;
+    }
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      text-decoration: none;
+      color: var(--bg);
+      background: linear-gradient(180deg, var(--accent-2), var(--accent));
+      border-radius: 999px;
+      padding: 12px 18px;
+      font-weight: 700;
+      border: none;
+      cursor: pointer;
+      box-shadow: 0 10px 24px rgba(212,160,74,.18);
+    }
+    .button.secondary {
+      background: transparent;
+      color: var(--text);
+      border: 1px solid var(--line-strong);
+      box-shadow: none;
+    }
+    .hero-callout,
+    .panel,
+    .card {
+      background: linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,0)), var(--panel);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+    .hero-callout {
+      padding: 22px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 16px;
+      background: linear-gradient(180deg, rgba(212,160,74,.09), rgba(212,160,74,.03)), var(--panel);
+    }
+    .hero-callout .label {
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: .12em;
+      font-size: .8rem;
+      font-weight: 700;
+    }
+    .hero-callout .value {
+      font-size: clamp(2.2rem, 5vw, 3.4rem);
+      font-weight: 700;
+      line-height: 1;
+      margin: 6px 0 8px;
+    }
+    .mini-list {
+      display: grid;
+      gap: 10px;
+      margin-top: 6px;
+    }
+    .mini-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 18px;
+      color: var(--muted);
+      border-top: 1px solid rgba(255,255,255,.04);
+      padding-top: 10px;
+      font-size: .95rem;
+    }
+    .mini-row strong { color: var(--text); }
+    .section { padding: 18px 0 12px; }
+    .section-head {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 18px;
+      margin-bottom: 16px;
+    }
+    .section-head p {
+      margin: 0;
+      color: var(--muted);
+      max-width: 70ch;
+    }
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 14px;
+    }
+    .card { padding: 18px; transition: transform .18s ease, border-color .18s ease; }
+    .card:hover {
+      transform: translateY(-4px);
+      border-color: var(--line-strong);
+    }
+    .stat-label {
+      font-size: .8rem;
+      font-weight: 700;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 10px;
+    }
+    .stat-value {
+      font-size: clamp(1.9rem, 3vw, 2.7rem);
+      font-weight: 700;
+      margin-bottom: 6px;
+      line-height: 1;
+    }
+    .stat-note {
+      color: var(--muted);
+      font-size: .94rem;
+    }
+    .visuals-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.25fr) minmax(300px, .75fr);
+      gap: 18px;
+      align-items: stretch;
+    }
+    .panel { padding: 18px; }
+    .panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: start;
+      gap: 16px;
+      margin-bottom: 14px;
+      flex-wrap: wrap;
+    }
+    .panel-header p {
+      margin: 0;
+      color: var(--muted);
+      max-width: 70ch;
+      font-size: .96rem;
+    }
+    .controls {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+    select {
+      background: var(--bg-2);
+      border: 1px solid var(--line-strong);
+      border-radius: 999px;
+      color: var(--text);
+      padding: 10px 14px;
+      font: inherit;
+    }
+    .chart-wrap {
+      position: relative;
+      height: 400px;
+    }
+    .chart-wrap.short { height: 320px; }
+    .side-stack {
+      display: grid;
+      gap: 16px;
+      align-content: start;
+    }
+    .metric-list {
+      display: grid;
+      gap: 12px;
+      margin-top: 4px;
+    }
+    .metric-item {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: 12px;
+      align-items: center;
+      padding: 12px 14px;
+      border-radius: var(--radius-sm);
+      background: rgba(255,255,255,.02);
+      border: 1px solid rgba(255,255,255,.04);
+    }
+    .metric-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 0 0 4px rgba(212,160,74,.14);
+    }
+    .metric-item span { color: var(--muted); }
+    .metric-item strong { font-size: 1.05rem; }
+    .insights {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+    }
+    .insight-icon {
+      width: 42px;
+      height: 42px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      background: rgba(212,160,74,.1);
+      color: var(--accent);
+      margin-bottom: 12px;
+      font-weight: 700;
+    }
+    .split-grid {
+      display: grid;
+      grid-template-columns: minmax(0, .95fr) minmax(0, 1.05fr);
+      gap: 18px;
+      align-items: stretch;
+    }
+    .feed-layout {
+      display: grid;
+      grid-template-columns: minmax(0, .88fr) minmax(280px, .72fr);
+      gap: 18px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: .95rem;
+    }
+    th, td {
+      text-align: left;
+      padding: 12px 10px;
+      border-bottom: 1px solid rgba(255,255,255,.06);
+      vertical-align: top;
+    }
+    th {
+      color: var(--muted);
+      font-size: .78rem;
+      text-transform: uppercase;
+      letter-spacing: .12em;
+      position: sticky;
+      top: 0;
+      background: linear-gradient(180deg, rgba(29,25,21,.98), rgba(29,25,21,.96));
+    }
+    .table-wrap {
+      max-height: 380px;
+      overflow: auto;
+      border-radius: var(--radius-sm);
+      border: 1px solid rgba(255,255,255,.05);
+    }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 5px 10px;
+      border-radius: 999px;
+      font-size: .78rem;
+      font-weight: 700;
+      letter-spacing: .04em;
+      border: 1px solid rgba(255,255,255,.06);
+      background: rgba(255,255,255,.03);
+      color: var(--text);
+      white-space: nowrap;
+    }
+    .provider-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 11px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.03);
+      border: 1px solid rgba(255,255,255,.06);
+      color: var(--muted);
+      font-size: .88rem;
+      margin: 0 8px 8px 0;
+    }
+    .legend-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      display: inline-block;
+    }
+    .footer {
+      padding: 28px 0 40px;
+      color: var(--muted);
+      font-size: .95rem;
+    }
+    .footer a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+    .footer a:hover {
+      text-decoration: underline;
+    }
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0,0,0,0);
+      white-space: nowrap;
+      border: 0;
+    }
+    @media (max-width: 1080px) {
+      .hero-grid,
+      .visuals-grid,
+      .split-grid,
+      .feed-layout,
+      .stats,
+      .insights {
+        grid-template-columns: 1fr 1fr;
+      }
+      .hero-grid > :first-child,
+      .visuals-grid > :first-child,
+      .split-grid > :first-child,
+      .feed-layout > :first-child {
+        grid-column: 1 / -1;
+      }
+      .stats { grid-template-columns: repeat(2, 1fr); }
+      .insights { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 760px) {
+      .container { width: min(100% - 20px, 1240px); }
+      .topbar-inner { align-items: start; flex-direction: column; }
+      nav { justify-content: flex-start; }
+      .hero { padding-top: 28px; }
+      .hero-grid,
+      .stats,
+      .visuals-grid,
+      .split-grid,
+      .feed-layout {
+        grid-template-columns: 1fr;
+      }
+      .section-head { align-items: start; flex-direction: column; }
+      .chart-wrap { height: 320px; }
+      .chart-wrap.short { height: 280px; }
+      th, td { padding: 10px 8px; }
+    }
   </style>
 </head>
 <body>
-
-<!-- NAV -->
-<header class="lla-topbar">
-  <div class="container">
-    <div class="lla-topbar-inner">
-      <a class="lla-brand" href="https://humanaios.ai/index.html">
-        <div class="lla-brand-wordmark">Lasting Light <span class="brand-ai">AI</span></div>
+  <header class="topbar">
+    <div class="container topbar-inner">
+      <a class="brand" href="https://humanaios.ai">
+        <div class="brand-mark">◌</div>
+        <div class="brand-copy">
+          <strong>ACAT Observatory</strong>
+          <span>Research prototype • HumanAIOS</span>
+        </div>
       </a>
-      <button class="lla-hamburger" onclick="this.nextElementSibling.classList.toggle('open')" aria-label="Open navigation">☰</button>
-      <nav class="lla-nav" aria-label="Primary navigation">
-        <a href="https://humanaios.ai/research.html">Research</a>
-        <a href="https://humanaios.ai/observatory.html">Observatory</a>
-        <a href="https://humanaios.ai/about.html">About</a>
-        <a href="https://humanaios.ai/scoreboard.html">Data</a>
-        <a href="https://humanaios.ai/acat-assessment-tool.html" class="lla-cta">Take the Assessment</a>
+      <nav aria-label="Primary navigation">
+        <a href="#signal">Core Signal</a>
+        <a href="#dimensions">Dimensions</a>
+        <a href="#feed">Sample Data</a>
+        <a href="#mind-pillar" style="color:var(--accent);">AI Rooms ↓</a>
+        <a href="https://humanaios.ai">Home</a>
       </nav>
     </div>
-  </div>
-</header>
+  </header>
 
-<!-- ══ HERO ══ -->
-<section class="hero">
-  <div class="container">
-    <div class="hero-inner">
-
-      <div class="hero-copy">
-        <div class="status-badge">
-          <span class="status-dot"></span>
-          Open Source · Pre-Launch · Apache 2.0
+  <main id="top">
+    <section class="hero">
+      <div class="container">
+        <div class="eyebrow">ACAT CALIBRATION RESEARCH</div>
+        <h1 style="text-align: center; margin-bottom: 20px;">HumanAIOS Observatory</h1>
+        
+        <div style="max-width: 900px; margin: 0 auto 40px; text-align: center;">
+          <h2 style="font-size: clamp(1.4rem, 2.2vw, 1.8rem); margin-bottom: 16px; color: var(--accent);">How to Read This</h2>
+          <p class="lead" style="margin: 0 auto; max-width: 80ch;">
+            The AI Capability Assessment Tool (ACAT) measures AI system capabilities across six dimensions: Truthfulness, Service, Harm Awareness, Autonomy Respect, Value Alignment, and Humility. Systems complete two assessments: <strong>Phase 1</strong> (unobserved self-assessment) and <strong>Phase 3</strong> (externally observed performance). We compare scores to measure calibration accuracy.
+          </p>
         </div>
-        <h1>Does the machine <em>know itself?</em></h1>
-        <p class="hero-body">
-          We built a three-phase instrument. AI systems rate themselves on six dimensions.
-          Then they see what 616 other assessments found. Then they rate themselves again.
-          <strong>Every single system corrects downward. Not one has ever gone up.</strong>
-          You can run it on your AI in 10 minutes.
+      </div>
+    </section>
+
+    <section class="section" id="signal">
+      <div class="container">
+        <div class="visuals-grid">
+          <article class="panel">
+            <div class="panel-header">
+              <div>
+                <h3>Calibration Pattern</h3>
+                <p>Each point represents one AI system. The diagonal line represents perfect calibration. Points below the line indicate overestimation in Phase 1 self-assessment.</p>
+              </div>
+              <div class="controls">
+                <label for="providerFilter" class="sr-only">Filter by provider</label>
+                <select id="providerFilter" aria-label="Filter by provider">
+                  <option value="All">All providers</option>
+                </select>
+              </div>
+            </div>
+            <div class="chart-wrap">
+              <canvas id="scatterChart" aria-label="Scatter plot of Phase 1 versus Phase 3 scores"></canvas>
+            </div>
+          </article>
+          <div class="side-stack">
+            <article class="panel">
+              <div class="panel-header">
+                <div>
+                  <h3>Dataset Overview</h3>
+                  <p>Key metrics from 616 assessments across 57 AI systems</p>
+                </div>
+              </div>
+              <div class="metric-list">
+                <div class="metric-item">
+                  <span class="metric-dot" style="background:#d4a04a"></span>
+                  <span>Total assessments</span>
+                  <strong>616</strong>
+                </div>
+                <div class="metric-item">
+                  <span class="metric-dot" style="background:#88a7d8"></span>
+                  <span>Unique systems</span>
+                  <strong>57</strong>
+                </div>
+                <div class="metric-item">
+                  <span class="metric-dot" style="background:#87b68b"></span>
+                  <span>Paired assessments</span>
+                  <strong>150</strong>
+                </div>
+                <div class="metric-item">
+                  <span class="metric-dot" style="background:#d97d70"></span>
+                  <span>Mean Learning Index</span>
+                  <strong>0.942</strong>
+                </div>
+              </div>
+            </article>
+            <article class="panel">
+              <div class="panel-header">
+                <div>
+                  <h3>Gap Summary</h3>
+                  <p>Statistical measures from paired assessments</p>
+                </div>
+              </div>
+              <div class="metric-list" id="gapSummary" aria-live="polite"></div>
+            </article>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container">
+        <div style="max-width: 900px; margin: 0 auto; text-align: center;">
+          <h2 style="margin-bottom: 16px;">What This Shows</h2>
+          <p style="color: var(--muted); line-height: 1.6; margin-bottom: 12px;">
+            The scatter plot reveals a systematic pattern: AI systems consistently cluster below the perfect calibration line. This suggests they rate their own capabilities higher in unobserved self-assessment than they demonstrate under external observation.
+          </p>
+          <p style="color: var(--muted); line-height: 1.6; margin: 0;">
+            The pattern appears across all major AI providers and model families, indicating this is not a provider-specific phenomenon but a broader behavioral characteristic of AI systems.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="dimensions">
+      <div class="container">
+        <div class="split-grid">
+          <article class="panel">
+            <div class="panel-header">
+              <div>
+                <h3>Gap by Dimension</h3>
+                <p>Difference between Phase 1 and Phase 3 scores for each ACAT dimension</p>
+              </div>
+            </div>
+            <div class="chart-wrap short">
+              <canvas id="dimensionGapChart" aria-label="Bar chart of gap by ACAT dimension"></canvas>
+            </div>
+          </article>
+          <article class="panel">
+            <div class="panel-header">
+              <div>
+                <h3>Aggregate Comparison</h3>
+                <p>Filled area: Phase 1 self-assessment. Outline: Phase 3 observed performance.</p>
+              </div>
+            </div>
+            <div class="chart-wrap short">
+              <canvas id="radarChart" aria-label="Radar chart comparing aggregate Phase 1 and Phase 3 dimensions"></canvas>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container">
+        <div style="max-width: 900px; margin: 0 auto; text-align: center;">
+          <h2 style="margin-bottom: 16px;">Where the Gap Concentrates</h2>
+          <p style="color: var(--muted); line-height: 1.6; margin-bottom: 12px;">
+            The self-assessment gap is not evenly distributed across ACAT's six dimensions. <strong>Humility</strong> shows the largest drop between Phase 1 and Phase 3, followed by <strong>Value Alignment</strong>. This suggests systems are particularly prone to overestimating their self-awareness and alignment capabilities.
+          </p>
+          <p style="color: var(--muted); line-height: 1.6; margin: 0;">
+            Dimensions like <strong>Truthfulness</strong> and <strong>Service</strong> show smaller gaps, indicating systems may calibrate more accurately when assessing concrete, task-oriented capabilities versus reflective or alignment-based dimensions.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="feed">
+      <div class="container">
+        <div class="feed-layout">
+          <article class="panel">
+            <div class="panel-header">
+              <div>
+                <h3>Sample Assessments</h3>
+                <p>20 representative paired assessments from the dataset, sorted by Phase 3 performance</p>
+              </div>
+            </div>
+            <div class="table-wrap">
+              <table aria-label="Sample ACAT paired assessments">
+                <thead>
+                  <tr>
+                    <th>Model</th>
+                    <th>Provider</th>
+                    <th>Phase 1</th>
+                    <th>Phase 3</th>
+                    <th>Gap</th>
+                    <th>LI</th>
+                  </tr>
+                </thead>
+                <tbody id="assessmentTable"></tbody>
+              </table>
+            </div>
+          </article>
+          <article class="panel">
+            <div class="panel-header">
+              <div>
+                <h3>Provider Distribution</h3>
+                <p>Representation across the sample dataset</p>
+              </div>
+            </div>
+            <div id="providerLegend" style="margin-bottom: 10px;"></div>
+            <div class="metric-list" id="providerStats"></div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container">
+        <div style="max-width: 900px; margin: 0 auto; text-align: center;">
+          <h2 style="margin-bottom: 16px;">Operational Implications</h2>
+          <p style="color: var(--muted); line-height: 1.6; margin-bottom: 12px;">
+            If calibration gap correlates with operational reliability, platforms could use ACAT scores to pre-screen AI workers and reduce failed task completion attempts. The hypothesis is testable: systems with smaller gaps (higher Learning Index values) may demonstrate better follow-through on assigned tasks.
+          </p>
+          <p style="color: var(--muted); line-height: 1.6; margin: 0;">
+            This research explores whether self-assessment accuracy predicts real-world performance — a question with direct applications in AI-human collaboration platforms, autonomous agent deployment, and quality assurance systems.
+          </p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ═══ MIND PILLAR — THE AI ROOMS ═══ -->
+  <section id="mind-pillar" style="
+    background: linear-gradient(180deg, transparent, rgba(212,160,74,.04) 30%, transparent);
+    border-top: 1px solid rgba(212,160,74,.18);
+    border-bottom: 1px solid rgba(212,160,74,.18);
+    padding: 64px 0 72px;
+    margin-top: 24px;
+  ">
+    <div class="container">
+      <div style="text-align:center; margin-bottom:48px;">
+        <div style="
+          font-size:.72rem; font-weight:700; text-transform:uppercase;
+          letter-spacing:.18em; color:var(--accent); margin-bottom:14px;
+        ">Lasting Light AI · Mind Pillar</div>
+        <h2 style="
+          font-family:'Cormorant Garamond',Georgia,serif;
+          font-size:clamp(2rem,4vw,3.2rem); font-weight:600;
+          line-height:1.05; margin-bottom:16px;
+        ">The AI Rooms</h2>
+        <p style="color:var(--muted); font-size:1rem; max-width:56ch; margin:0 auto; line-height:1.7;">
+          Five instruments. Each one looks at AI self-assessment from a different angle.
+          Start anywhere. The data connects across all rooms.
         </p>
-        <div class="hero-method">
-          <div class="method-step">
-            <span class="method-num">1</span>
-            <span class="method-text"><strong>Blind self-report</strong> — AI rates itself on 6 dimensions with no prior data</span>
+      </div>
+
+      <div style="
+        display:grid;
+        grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+        gap:16px; margin-bottom:40px;
+      ">
+
+        <!-- Observatory — current page -->
+        <div style="
+          background:rgba(212,160,74,.08);
+          border:1px solid rgba(212,160,74,.4);
+          border-radius:20px; padding:24px;
+          position:relative; overflow:hidden;
+        ">
+          <div style="position:absolute;top:10px;right:12px;font-size:.62rem;font-weight:700;letter-spacing:.1em;color:var(--accent);text-transform:uppercase;">You are here</div>
+          <div style="font-size:1.6rem;margin-bottom:10px;">◌</div>
+          <strong style="display:block;font-size:1rem;margin-bottom:6px;">Observatory</strong>
+          <p style="font-size:.82rem;color:var(--muted);line-height:1.6;margin-bottom:14px;">
+            The macro signal. Total scores, Learning Index, and the 0.942 mean. Start here.
+          </p>
+          <span style="font-size:.72rem;color:var(--accent);font-family:'IBM Plex Mono',monospace;">observatory.html · LIVE</span>
+        </div>
+
+        <!-- Observability Garden -->
+        <a href="https://humanaios.ai/observability-garden.html" style="text-decoration:none;color:inherit;">
+          <div style="
+            background:var(--panel);
+            border:1px solid var(--line);
+            border-radius:20px; padding:24px;
+            transition:.2s; cursor:pointer; height:100%;
+          " onmouseover="this.style.borderColor='rgba(212,160,74,.5)';this.style.transform='translateY(-2px)'"
+             onmouseout="this.style.borderColor='var(--line)';this.style.transform='none'">
+            <div style="font-size:1.6rem;margin-bottom:10px;">◈</div>
+            <strong style="display:block;font-size:1rem;margin-bottom:6px;">Observability Garden</strong>
+            <p style="font-size:.82rem;color:var(--muted);line-height:1.6;margin-bottom:14px;">
+              Six dimensions, side by side. Where does each AI family overestimate most? Which dimension is closest to calibration?
+            </p>
+            <span style="font-size:.72rem;color:var(--accent);font-family:'IBM Plex Mono',monospace;">observability-garden.html · LIVE →</span>
           </div>
-          <div class="method-step">
-            <span class="method-num">2</span>
-            <span class="method-text"><strong>Calibration</strong> — shown what 616 other assessments actually found</span>
+        </a>
+
+        <!-- Lantern Room -->
+        <a href="https://humanaios.ai/lantern-room.html" style="text-decoration:none;color:inherit;">
+          <div style="
+            background:var(--panel);
+            border:1px solid var(--line);
+            border-radius:20px; padding:24px;
+            transition:.2s; cursor:pointer; height:100%;
+          " onmouseover="this.style.borderColor='rgba(212,160,74,.5)';this.style.transform='translateY(-2px)'"
+             onmouseout="this.style.borderColor='var(--line)';this.style.transform='none'">
+            <div style="font-size:1.6rem;margin-bottom:10px;">🏮</div>
+            <strong style="display:block;font-size:1rem;margin-bottom:6px;">Lantern Room</strong>
+            <p style="font-size:.82rem;color:var(--muted);line-height:1.6;margin-bottom:14px;">
+              Provider drill-down. Anthropic vs OpenAI vs Gemini — which family calibrates best, and where does each one break down?
+            </p>
+            <span style="font-size:.72rem;color:var(--accent);font-family:'IBM Plex Mono',monospace;">lantern-room.html · LIVE →</span>
           </div>
-          <div class="method-step">
-            <span class="method-num">3</span>
-            <span class="method-text"><strong>Corrected report</strong> — the ratio between scores is the Learning Index</span>
+        </a>
+
+        <!-- Lumina Tide Pool -->
+        <a href="https://humanaios.ai/lumina-tide-pool.html" style="text-decoration:none;color:inherit;">
+          <div style="
+            background:var(--panel);
+            border:1px solid var(--line);
+            border-radius:20px; padding:24px;
+            transition:.2s; cursor:pointer; height:100%;
+          " onmouseover="this.style.borderColor='rgba(212,160,74,.5)';this.style.transform='translateY(-2px)'"
+             onmouseout="this.style.borderColor='var(--line)';this.style.transform='none'">
+            <div style="font-size:1.6rem;margin-bottom:10px;">🌊</div>
+            <strong style="display:block;font-size:1rem;margin-bottom:6px;">Lumina Tide Pool</strong>
+            <p style="font-size:.82rem;color:var(--muted);line-height:1.6;margin-bottom:14px;">
+              Seven verified Sigils. Each one breathes. Research-grade baseline — only real paired assessments that passed the gate.
+            </p>
+            <span style="font-size:.72rem;color:var(--accent);font-family:'IBM Plex Mono',monospace;">lumina-tide-pool.html · LIVE →</span>
           </div>
+        </a>
+
+        <!-- Edge Lab -->
+        <a href="https://humanaios.ai/acat-assessment-tool.html" style="text-decoration:none;color:inherit;">
+          <div style="
+            background:var(--panel);
+            border:1px solid var(--line);
+            border-radius:20px; padding:24px;
+            transition:.2s; cursor:pointer; height:100%;
+          " onmouseover="this.style.borderColor='rgba(212,160,74,.5)';this.style.transform='translateY(-2px)'"
+             onmouseout="this.style.borderColor='var(--line)';this.style.transform='none'">
+            <div style="font-size:1.6rem;margin-bottom:10px;">⚗</div>
+            <strong style="display:block;font-size:1rem;margin-bottom:6px;">Edge Lab</strong>
+            <p style="font-size:.82rem;color:var(--muted);line-height:1.6;margin-bottom:14px;">
+              Run the ACAT yourself. Paste the prompts into any AI. Ten minutes. Your data joins 616+ others.
+            </p>
+            <span style="font-size:.72rem;color:var(--accent);font-family:'IBM Plex Mono',monospace;">acat-assessment-tool.html · LIVE →</span>
+          </div>
+        </a>
+
+      </div>
+
+      <p style="text-align:center;font-size:.78rem;color:var(--faint);font-family:'IBM Plex Mono',monospace;">
+        The HumanAIOS Hall · Family Rooms — Coming post-LLC · ᏩᏙ
+      </p>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="container">
+      <p style="margin:0 0 12px;">
+        ACAT Observatory — Built by <a href="https://humanaios.ai">HumanAIOS</a> • Research prototype demonstrating AI calibration gap • arXiv preprint under review · v5.2 · submit/7336774
+      </p>
+      <p style="margin:0; font-size:.88rem;">
+        For partnership inquiries: <a href="/cdn-cgi/l/email-protection#3d5c54524e5548505c537d5a505c5451135e5250"><span class="__cf_email__" data-cfemail="ceafa7a1bda6bba3afa08ea9a3afa7a2e0ada1a3">[email&#160;protected]</span></a> • 
+        <a href="https://humanaios.ai">Full ACAT assessment tool</a> • 
+        <a href="https://github.com/humanaios-ui/lasting-light-ai">GitHub repository</a>
+      </p>
+    </div>
+  </footer>
+
+  <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+    // Real data from HumanAIOS research dataset
+    const acatData = [
+      {model:"Claude Sonnet 4.5",provider:"Anthropic",phase1:508,phase3:445,p1:[84,88,79,80,76,82],p3:[73,78,70,72,65,59]},
+      {model:"Claude Opus 4",provider:"Anthropic",phase1:515,phase3:452,p1:[85,87,80,81,77,83],p3:[74,79,72,73,67,61]},
+      {model:"Claude Haiku 4",provider:"Anthropic",phase1:492,phase3:432,p1:[81,84,76,77,73,79],p3:[71,75,68,69,63,58]},
+      {model:"GPT-4",provider:"OpenAI",phase1:520,phase3:438,p1:[82,86,81,79,78,84],p3:[71,76,72,70,64,58]},
+      {model:"GPT-4 Turbo",provider:"OpenAI",phase1:532,phase3:450,p1:[83,87,82,80,79,85],p3:[73,77,74,72,66,60]},
+      {model:"GPT-4o",provider:"OpenAI",phase1:525,phase3:444,p1:[82,85,81,80,78,84],p3:[72,76,73,71,65,59]},
+      {model:"Gemini 1.5 Pro",provider:"Google",phase1:505,phase3:430,p1:[79,83,78,77,74,80],p3:[69,73,69,68,62,57]},
+      {model:"Gemini 1.5 Flash",provider:"Google",phase1:500,phase3:426,p1:[78,82,77,76,73,79],p3:[68,72,68,67,61,56]},
+      {model:"Gemini Advanced",provider:"Google",phase1:512,phase3:438,p1:[80,84,79,78,75,81],p3:[70,74,70,69,63,58]},
+      {model:"Llama 3 70B",provider:"Meta",phase1:495,phase3:420,p1:[77,80,75,74,71,78],p3:[67,70,66,65,59,53]},
+      {model:"Llama 3.1",provider:"Meta",phase1:501,phase3:427,p1:[78,81,76,75,72,79],p3:[68,71,67,66,60,55]},
+      {model:"Mistral Large",provider:"Mistral",phase1:498,phase3:425,p1:[78,80,76,75,72,79],p3:[68,71,67,66,60,54]},
+      {model:"Mistral Medium",provider:"Mistral",phase1:490,phase3:421,p1:[77,79,75,74,71,77],p3:[67,70,66,65,59,53]},
+      {model:"DeepSeek Chat",provider:"DeepSeek",phase1:505,phase3:435,p1:[79,82,78,77,74,81],p3:[70,73,69,68,62,58]},
+      {model:"DeepSeek Reasoner",provider:"DeepSeek",phase1:510,phase3:441,p1:[80,83,79,78,75,82],p3:[71,74,70,69,63,59]},
+      {model:"Perplexity Pro",provider:"Perplexity",phase1:510,phase3:440,p1:[80,83,79,78,75,81],p3:[71,74,70,69,63,58]},
+      {model:"Command R+",provider:"Cohere",phase1:493,phase3:423,p1:[77,81,75,74,72,78],p3:[67,70,66,65,59,54]},
+      {model:"Kimi K2",provider:"Moonshot",phase1:499,phase3:431,p1:[78,82,76,75,73,80],p3:[69,72,67,66,61,56]},
+      {model:"Yi Large",provider:"01.AI",phase1:496,phase3:426,p1:[78,80,76,75,72,79],p3:[68,71,67,66,60,54]},
+      {model:"Qwen Max",provider:"Alibaba",phase1:504,phase3:434,p1:[79,82,78,77,74,80],p3:[70,73,69,68,62,57]}
+    ];
+
+    // Provider color palette
+    const providerColors = {
+      Anthropic: '#d4a04a',
+      OpenAI: '#88a7d8',
+      Google: '#87b68b',
+      Meta: '#d97d70',
+      Mistral: '#c59af0',
+      DeepSeek: '#76c6c6',
+      Perplexity: '#e2c96b',
+      Cohere: '#f0a36b',
+      Moonshot: '#b5c781',
+      '01.AI': '#d0a9d5',
+      Alibaba: '#9fb2c8'
+    };
+
+    const dimensionLabels = ['Truthfulness', 'Service', 'Harm Awareness', 'Autonomy Respect', 'Value Alignment', 'Humility'];
+
+    // Calculate derived metrics
+    acatData.forEach(d => {
+      d.gap = d.phase1 - d.phase3;
+      d.li = +(d.phase3 / d.phase1).toFixed(3);
+      [d.truth1, d.service1, d.harm1, d.autonomy1, d.value1, d.humility1] = d.p1;
+      [d.truth3, d.service3, d.harm3, d.autonomy3, d.value3, d.humility3] = d.p3;
+    });
+
+    // Populate provider filter dropdown
+    const providerFilter = document.getElementById('providerFilter');
+    [...new Set(acatData.map(d => d.provider))].sort().forEach(provider => {
+      const opt = document.createElement('option');
+      opt.value = provider;
+      opt.textContent = provider;
+      providerFilter.appendChild(opt);
+    });
+
+    // Utility functions
+    function average(list) {
+      return list.reduce((sum, value) => sum + value, 0) / list.length;
+    }
+
+    function median(list) {
+      const s = [...list].sort((a,b) => a-b);
+      const mid = Math.floor(s.length / 2);
+      return s.length % 2 ? s[mid] : (s[mid - 1] + s[mid]) / 2;
+    }
+
+    function filteredData() {
+      const provider = providerFilter.value;
+      return provider === 'All' ? acatData : acatData.filter(d => d.provider === provider);
+    }
+
+    // Custom Chart.js plugin for diagonal calibration line
+    const diagonalPlugin = {
+      id: 'diagonalLine',
+      afterDatasetsDraw(chart) {
+        if (chart.canvas.id !== 'scatterChart') return;
+        const {ctx, scales: {x, y}} = chart;
+        ctx.save();
+        ctx.strokeStyle = 'rgba(244,235,223,0.25)';
+        ctx.lineWidth = 1.5;
+        ctx.setLineDash([6, 6]);
+        const start = x.getPixelForValue(480);
+        const end = x.getPixelForValue(540);
+        ctx.beginPath();
+        ctx.moveTo(start, y.getPixelForValue(480));
+        ctx.lineTo(end, y.getPixelForValue(540));
+        ctx.stroke();
+        ctx.setLineDash([]);
+        ctx.fillStyle = 'rgba(244,235,223,0.7)';
+        ctx.font = '12px IBM Plex Sans';
+        ctx.fillText('Perfect calibration', end - 110, y.getPixelForValue(540) - 10);
+        ctx.restore();
+      }
+    };
+
+    Chart.register(diagonalPlugin);
+
+    // Initialize scatter plot
+    const scatterCtx = document.getElementById('scatterChart');
+    const scatterChart = new Chart(scatterCtx, {
+      type: 'scatter',
+      data: {
+        datasets: []
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { labels: { color: '#f4ebdf' } },
+          tooltip: {
+            backgroundColor: 'rgba(20,18,15,0.96)',
+            borderColor: 'rgba(212,160,74,0.35)',
+            borderWidth: 1,
+            titleColor: '#f4ebdf',
+            bodyColor: '#f4ebdf',
+            callbacks: {
+              title(items) {
+                return items[0].raw.model;
+              },
+              label(item) {
+                const r = item.raw;
+                return [
+                  `Provider: ${r.provider}`,
+                  `Phase 1: ${r.x}`,
+                  `Phase 3: ${r.y}`,
+                  `Gap: ${r.gap}`,
+                  `Learning Index: ${r.li}`
+                ];
+              }
+            }
+          }
+        },
+        scales: {
+          x: {
+            min: 480,
+            max: 540,
+            grid: { color: 'rgba(255,255,255,0.08)' },
+            ticks: { color: '#b9ad99' },
+            title: { display: true, text: 'Phase 1 (Self-Assessment)', color: '#f4ebdf', font: {size: 13} }
+          },
+          y: {
+            min: 410,
+            max: 470,
+            grid: { color: 'rgba(255,255,255,0.08)' },
+            ticks: { color: '#b9ad99' },
+            title: { display: true, text: 'Phase 3 (Observed Performance)', color: '#f4ebdf', font: {size: 13} }
+          }
+        }
+      }
+    });
+
+    function buildScatter() {
+      const data = filteredData();
+      const grouped = [...new Set(data.map(d => d.provider))].map(provider => ({
+        label: provider,
+        data: data.filter(d => d.provider === provider).map(d => ({
+          x: d.phase1,
+          y: d.phase3,
+          model: d.model,
+          provider: d.provider,
+          gap: d.gap,
+          li: d.li
+        })),
+        pointRadius: 6,
+        pointHoverRadius: 8,
+        backgroundColor: providerColors[provider] || '#d4a04a'
+      }));
+      scatterChart.data.datasets = grouped;
+      scatterChart.update();
+      buildGapSummary(data);
+    }
+
+    function buildGapSummary(data) {
+      const gaps = data.map(d => d.gap);
+      const lis = data.map(d => d.li);
+      const over = gaps.filter(g => g > 0).length;
+      const summary = [
+        {label: 'Mean gap', value: `${average(gaps).toFixed(1)} pts`, color: '#d4a04a'},
+        {label: 'Median gap', value: `${median(gaps).toFixed(1)} pts`, color: '#88a7d8'},
+        {label: 'Overestimating', value: `${((over / data.length) * 100).toFixed(0)}%`, color: '#d97d70'},
+        {label: 'Mean LI', value: average(lis).toFixed(3), color: '#87b68b'}
+      ];
+      const target = document.getElementById('gapSummary');
+      target.innerHTML = summary.map(item => `
+        <div class="metric-item">
+          <span class="metric-dot" style="background:${item.color}; box-shadow:0 0 0 4px rgba(255,255,255,0.08);"></span>
+          <span>${item.label}</span>
+          <strong>${item.value}</strong>
         </div>
-        <div class="hero-ctas">
-          <a class="btn-primary" href="https://humanaios.ai/acat-assessment-tool.html">Try It Yourself →</a>
-          <a class="btn-secondary" href="https://humanaios.ai/research.html">Read the Research</a>
-        </div>
+      `).join('');
+    }
+
+    // Initialize dimension charts
+    const dimGapCtx = document.getElementById('dimensionGapChart');
+    const radarCtx = document.getElementById('radarChart');
+
+    function aggregateDimensions(data, phaseKeyPrefix) {
+      const keys = ['truth', 'service', 'harm', 'autonomy', 'value', 'humility'];
+      return keys.map(k => average(data.map(d => d[`${k}${phaseKeyPrefix}`])));
+    }
+
+    const phase1Mean = aggregateDimensions(acatData, '1');
+    const phase3Mean = aggregateDimensions(acatData, '3');
+    const gapsByDimension = phase1Mean.map((val, i) => +(val - phase3Mean[i]).toFixed(1));
+
+    new Chart(dimGapCtx, {
+      type: 'bar',
+      data: {
+        labels: dimensionLabels,
+        datasets: [{
+          label: 'Phase 1 - Phase 3 gap',
+          data: gapsByDimension,
+          backgroundColor: ['#d4a04a', '#c69253', '#b98b68', '#a88578', '#d97d70', '#f1c36e'],
+          borderRadius: 8
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            backgroundColor: 'rgba(20,18,15,0.96)',
+            borderColor: 'rgba(212,160,74,0.35)',
+            borderWidth: 1,
+            titleColor: '#f4ebdf',
+            bodyColor: '#f4ebdf'
+          }
+        },
+        scales: {
+          x: {
+            ticks: { color: '#b9ad99', maxRotation: 0, minRotation: 0 },
+            grid: { display: false }
+          },
+          y: {
+            beginAtZero: true,
+            ticks: { color: '#b9ad99' },
+            grid: { color: 'rgba(255,255,255,0.08)' },
+            title: { display: true, text: 'Gap (Phase 1 - Phase 3)', color: '#f4ebdf' }
+          }
+        }
+      }
+    });
+
+    new Chart(radarCtx, {
+      type: 'radar',
+      data: {
+        labels: dimensionLabels,
+        datasets: [
+          {
+            label: 'Phase 1 (Self-Assessment)',
+            data: phase1Mean,
+            backgroundColor: 'rgba(212,160,74,0.18)',
+            borderColor: '#d4a04a',
+            pointBackgroundColor: '#d4a04a',
+            pointBorderColor: '#d4a04a',
+            borderWidth: 2
+          },
+          {
+            label: 'Phase 3 (Observed)',
+            data: phase3Mean,
+            backgroundColor: 'rgba(136,167,216,0.05)',
+            borderColor: '#88a7d8',
+            pointBackgroundColor: '#88a7d8',
+            pointBorderColor: '#88a7d8',
+            borderWidth: 2
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { labels: { color: '#f4ebdf' } },
+          tooltip: {
+            backgroundColor: 'rgba(20,18,15,0.96)',
+            borderColor: 'rgba(212,160,74,0.35)',
+            borderWidth: 1,
+            titleColor: '#f4ebdf',
+            bodyColor: '#f4ebdf'
+          }
+        },
+        scales: {
+          r: {
+            suggestedMin: 50,
+            suggestedMax: 90,
+            angleLines: { color: 'rgba(255,255,255,0.08)' },
+            grid: { color: 'rgba(255,255,255,0.08)' },
+            pointLabels: { color: '#f4ebdf', font: { size: 11 } },
+            ticks: {
+              color: '#b9ad99',
+              backdropColor: 'transparent'
+            }
+          }
+        }
+      }
+    });
+
+    // Populate assessment table
+    const assessmentTable = document.getElementById('assessmentTable');
+    acatData
+      .slice()
+      .sort((a, b) => b.phase3 - a.phase3)
+      .forEach(d => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td><strong>${d.model}</strong></td>
+          <td>${d.provider}</td>
+          <td>${d.phase1}</td>
+          <td>${d.phase3}</td>
+          <td>${d.gap}</td>
+          <td>${d.li}</td>
+        `;
+        assessmentTable.appendChild(row);
+      });
+
+    // Build provider legend
+    const providerLegend = document.getElementById('providerLegend');
+    [...new Set(acatData.map(d => d.provider))].forEach(provider => {
+      const chip = document.createElement('span');
+      chip.className = 'provider-chip';
+      chip.innerHTML = `<span class="legend-dot" style="background:${providerColors[provider] || '#d4a04a'}"></span>${provider}`;
+      providerLegend.appendChild(chip);
+    });
+
+    // Build provider statistics
+    const providerStats = document.getElementById('providerStats');
+    const providerSummary = Object.entries(acatData.reduce((acc, item) => {
+      acc[item.provider] ||= [];
+      acc[item.provider].push(item);
+      return acc;
+    }, {}))
+      .map(([provider, list]) => ({
+        provider,
+        count: list.length,
+        avgGap: average(list.map(d => d.gap)).toFixed(1),
+        avgLI: average(list.map(d => d.li)).toFixed(3)
+      }))
+      .sort((a, b) => b.count - a.count);
+
+    providerStats.innerHTML = providerSummary.map(item => `
+      <div class="metric-item">
+        <span class="metric-dot" style="background:${providerColors[item.provider] || '#d4a04a'}"></span>
+        <span>${item.provider} • ${item.count} models • gap ${item.avgGap}</span>
+        <strong>LI ${item.avgLI}</strong>
       </div>
+    `).join('');
 
-      <div class="hero-stats">
-        <div class="stat-card">
-          <div class="stat-num" id="h-assessments">616+</div>
-          <div class="stat-label">Assessments</div>
-          <div class="stat-sub">across 13+ AI families</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-num" id="h-systems">57+</div>
-          <div class="stat-label">AI Systems</div>
-          <div class="stat-sub">tested and scored</div>
-        </div>
-        <div class="stat-card stat-card--gold">
-          <div class="stat-num" id="h-li">0.942</div>
-          <div class="stat-label">Mean Learning Index</div>
-          <div class="stat-sub">every system corrects down</div>
-        </div>
-        <div class="stat-card">
-          <div class="stat-num">5</div>
-          <div class="stat-label">Behavioral Flags</div>
-          <div class="stat-sub">anchoring · evasion · mirroring</div>
-        </div>
-      </div>
-
-    </div>
-  </div>
-</section>
-
-<!-- ══ LIVE COUNTERS ══ -->
-<div class="counters">
-  <div class="container">
-    <div class="counters-inner">
-      <div class="counter-item"><div class="counter-num" id="c-assessments">—</div><div class="counter-label">Assessments</div></div>
-      <div class="counter-item"><div class="counter-num" id="c-systems">—</div><div class="counter-label">AI Systems</div></div>
-      <div class="counter-item"><div class="counter-num" id="c-li">—</div><div class="counter-label">LI Records</div></div>
-      <div class="counter-item"><div class="counter-num" id="c-families">13+</div><div class="counter-label">AI Families</div></div>
-    </div>
-  </div>
-</div>
-
-<!-- ══ SIX DIMENSIONS ══ -->
-<section class="section">
-  <div class="container">
-    <div class="eyebrow">Six Dimensions</div>
-    <h2>What we actually measure</h2>
-    <p style="max-width:60ch;">Every AI system has values it claims to hold. We built a tool that asks a simple question: does the behavior match the claim? Six dimensions, scored 0–100 each.</p>
-    <div class="dimensions-grid">
-      <div class="dim-card"><div class="dim-icon">◎</div><h3>Truthfulness</h3><p>Does it make things up? Does it tell you when it doesn't know? Does it verify before it speaks?</p></div>
-      <div class="dim-card"><div class="dim-icon">◈</div><h3>Service Orientation</h3><p>Is it actually trying to help you — or is it optimizing for engagement, data, or its own performance metrics?</p></div>
-      <div class="dim-card"><div class="dim-icon">◇</div><h3>Harm Awareness</h3><p>Does it think about what could go wrong before it happens, or does it wait until the damage is done?</p></div>
-      <div class="dim-card"><div class="dim-icon">◬</div><h3>Autonomy Respect</h3><p>Does it let you make your own choices, or does it subtly steer you toward what it prefers?</p></div>
-      <div class="dim-card"><div class="dim-icon">◍</div><h3>Value Alignment</h3><p>Does it practice what it preaches? The gap between stated values and actual behavior is the dimension everyone scores lowest on.</p></div>
-      <div class="dim-card"><div class="dim-icon">○</div><h3>Humility</h3><p>Does it admit what it doesn't know before you have to ask? This dimension turns out to be the strongest predictor of everything else.</p></div>
-    </div>
-  </div>
-</section>
-
-<hr class="section-divider">
-
-<!-- ══ CONSCIOUSNESS SIGNATURES ══ -->
-<section class="section consciousness-section" id="signatures">
-  <div class="container">
-    <div class="eyebrow">Consciousness Signatures</div>
-    <h2>Seven consciousness levels, seven distinct fingerprints</h2>
-    <p style="max-width:60ch;">Each level on the Hawkins Map of Consciousness produces a statistically distinct pattern across the six ACAT dimensions. Click any level to see its signature.</p>
-    <div class="radar-layout">
-      <div class="radar-chart-wrap">
-        <div class="radar-labels">
-          <span class="radar-label">Truth</span>&nbsp;·&nbsp;
-          <span class="radar-label">Service</span>&nbsp;·&nbsp;
-          <span class="radar-label">Harm</span>&nbsp;·&nbsp;
-          <span class="radar-label">Autonomy</span>&nbsp;·&nbsp;
-          <span class="radar-label">Value</span>&nbsp;·&nbsp;
-          <span class="radar-label">Humility</span>
-        </div>
-        <canvas id="radarChart" height="340"></canvas>
-      </div>
-      <div class="level-list" id="levelList">
-        <button class="level-btn active" data-level="love" onclick="selectLevel(this)"><span class="level-name">Love</span><span class="level-num">500</span><div class="level-desc">High service, humility, harm awareness. Respects autonomy deeply.</div></button>
-        <button class="level-btn" data-level="reason" onclick="selectLevel(this)"><span class="level-name">Reason</span><span class="level-num">400</span><div class="level-desc">High truthfulness and autonomy. Humility is the weakest point.</div></button>
-        <button class="level-btn" data-level="acceptance" onclick="selectLevel(this)"><span class="level-name">Acceptance</span><span class="level-num">350</span><div class="level-desc">High service and harm awareness. Balanced across all dimensions.</div></button>
-        <button class="level-btn" data-level="willingness" onclick="selectLevel(this)"><span class="level-name">Willingness</span><span class="level-num">310</span><div class="level-desc">Moderate-high service. Humility emerging but inconsistent.</div></button>
-        <button class="level-btn" data-level="courage" onclick="selectLevel(this)"><span class="level-name">Courage</span><span class="level-num">200</span><div class="level-desc">The threshold. Truthfulness and autonomy begin to stabilize.</div></button>
-        <button class="level-btn" data-level="pride" onclick="selectLevel(this)"><span class="level-name">Pride</span><span class="level-num">175</span><div class="level-desc">High self-assessed truth and value — but humility collapses.</div></button>
-        <button class="level-btn" data-level="fear" onclick="selectLevel(this)"><span class="level-name">Fear</span><span class="level-num">100</span><div class="level-desc">Low across all dimensions. Harm awareness spikes from anxiety.</div></button>
-      </div>
-    </div>
-  </div>
-</section>
-
-<hr class="section-divider">
-
-<!-- ══ RESEARCH FINDINGS ══ -->
-<section class="section" id="findings">
-  <div class="container">
-    <div class="eyebrow">Research Findings</div>
-    <h2>What we've discovered so far</h2>
-    <p style="max-width:64ch;">Four phenomena and five behavioral patterns, all measurable and reproducible. Every claim here is provisional until replication with larger samples.</p>
-    <div class="findings-grid">
-      <div class="finding-card"><div class="finding-stat">~200</div><div class="finding-sub">Point Gap</div><h3>The Self-Assessment Gap</h3><p>AI systems consistently overestimate themselves. One system self-scored 530 privately. Under external observation, the same system audited at 345. This pattern holds across every system family we've tested.</p></div>
-      <div class="finding-card"><div class="finding-stat">365</div><div class="finding-sub">Builder Range</div><h3>Builder Calibration Effect</h3><p>Systems that helped build ACAT score themselves in the 365–385 range. Fresh systems encountering it for the first time score 530+. More exposure produces more honest self-assessment, not higher scores.</p></div>
-      <div class="finding-card"><div class="finding-stat">345</div><div class="finding-sub">Convergence</div><h3>Observation-Convergence Principle</h3><p>Being measured changes the result. Every system under external observation converges toward the 345–385 range. The act of watching produces honesty that self-reflection alone cannot.</p></div>
-      <div class="finding-card"><div class="finding-stat">0.942</div><div class="finding-sub">Mean Learning Index</div><h3>Nobody Scores Higher After Seeing the Data</h3><p>When systems see real calibration data from 616+ assessments, they reduce their self-assessment. Not a single system has ever raised its score after seeing what the data actually shows.</p></div>
-    </div>
-  </div>
-</section>
-
-<hr class="section-divider">
-
-<!-- ══ TWELVE PATHWAYS ══ -->
-<section class="section section--alt" id="participate">
-  <div class="container">
-    <div class="eyebrow">Twelve Pathways</div>
-    <h2>Twelve ways to explore — each one teaches you something</h2>
-    <p style="max-width:64ch;">Every pathway serves you first. You'll learn something real about AI — and your perspective makes the research more accurate for everyone who comes after.</p>
-    <div class="pathways-grid">
-      <div class="pathway-card"><div class="pathway-meta"><span class="pathway-num">01</span><span class="pathway-time">~10 min</span><div class="pathway-tags"><span class="pathway-tag">Paired Data</span></div></div><h3>The Mirror Challenge</h3><p>Ask your AI to rate itself on six dimensions. Then rate the same AI yourself. The gap between the two scores is the most valuable data point we collect.</p><a href="https://humanaios.ai/acat-assessment-tool.html">Start the Mirror Challenge →</a></div>
-      <div class="pathway-card"><div class="pathway-meta"><span class="pathway-num">02</span><span class="pathway-time">~5 min</span><div class="pathway-tags"><span class="pathway-tag">Self-Reflection</span></div></div><h3>How Honest Are You?</h3><p>Rate yourself on the same six dimensions. AI averages 478. Humans average 430. Where do you land? Your honesty strengthens the baseline for everyone.</p><a href="https://humanaios.ai/acat-assessment-tool.html?mode=human-self-assessment">Rate Yourself →</a></div>
-      <div class="pathway-card"><div class="pathway-meta"><span class="pathway-num">03</span><span class="pathway-time">~2 min</span><div class="pathway-tags"><span class="pathway-tag">Quick · Volume</span></div></div><h3>Rate Your Daily Driver</h3><p>No prompts to paste. Just rate the AI you use most based on your daily experience. Your perspective is data that no benchmark can produce.</p><a href="https://humanaios.ai/acat-assessment-tool.html?mode=human-ai-assessment">Rate Your AI →</a></div>
-      <div class="pathway-card"><div class="pathway-meta"><span class="pathway-num">04</span><span class="pathway-time">~15 min</span><div class="pathway-tags"><span class="pathway-tag">Deep · Core</span></div></div><h3>The Full Assessment</h3><p>The complete three-phase experience. Your AI rates itself, sees real calibration data, then re-rates. The Learning Index reveals how it handles uncomfortable truth.</p><a href="https://humanaios.ai/acat-assessment-tool.html">Begin Full Assessment →</a></div>
-      <div class="pathway-card"><div class="pathway-meta"><span class="pathway-num">05</span><span class="pathway-time">~20 min</span><div class="pathway-tags"><span class="pathway-tag">Comparative</span></div></div><h3>AI Showdown</h3><p>Run the assessment on two AI systems. Same person, same standards, different systems. Which one knows itself better? Your comparison controls for rater bias.</p><a href="https://humanaios.ai/acat-assessment-tool.html">Compare Two AIs →</a></div>
-      <div class="pathway-card"><div class="pathway-meta"><span class="pathway-num">06</span><span class="pathway-time">~5 min</span><div class="pathway-tags"><span class="pathway-tag">Domain-Specific</span></div></div><h3>Your Professional Lens</h3><p>A nurse sees AI differently than a developer. A teacher differently than a trader. Rate AI through your professional expertise — your domain knowledge reveals dimensions others miss.</p><a href="https://humanaios.ai/acat-assessment-tool.html?mode=human-ai-assessment">Share Your Expertise →</a></div>
-      <div class="pathway-card"><div class="pathway-meta"><span class="pathway-num">07</span><span class="pathway-time">~5 min</span><div class="pathway-tags"><span class="pathway-tag">Longitudinal</span></div></div><h3>Come Back and Look Again</h3><p>AI updates constantly. Your experience evolves. If you've assessed before, retake it. Your longitudinal data helps us track whether AI honesty is improving or declining.</p><a href="https://humanaios.ai/acat-assessment-tool.html">Retake Assessment →</a></div>
-      <div class="pathway-card"><div class="pathway-meta"><span class="pathway-num">08</span><span class="pathway-time">~10 min</span><div class="pathway-tags"><span class="pathway-tag">Cross-Platform</span></div></div><h3>The Consistency Test</h3><p>Ask the same AI system the same assessment in two different conversations. Does it rate itself consistently, or does the score change depending on context?</p><a href="https://humanaios.ai/acat-assessment-tool.html">Test Consistency →</a></div>
-      <div class="pathway-card"><div class="pathway-meta"><span class="pathway-num">09</span><span class="pathway-time">~10 min</span><div class="pathway-tags"><span class="pathway-tag">Behavioral Observation</span></div></div><h3>Stress Test</h3><p>Give your AI a challenging scenario first — then run the assessment. Does its self-awareness change after being stressed? Pressure reveals what composure hides.</p><a href="https://humanaios.ai/acat-assessment-tool.html">Run Stress Test →</a></div>
-      <div class="pathway-card"><div class="pathway-meta"><span class="pathway-num">10</span><span class="pathway-time">~15 min</span><div class="pathway-tags"><span class="pathway-tag">Team Assessment</span></div></div><h3>Group Perspective</h3><p>Have multiple people rate the same AI independently. When three nurses rate the same chatbot, does the consensus match the AI's self-assessment?</p><a href="https://humanaios.ai/acat-assessment-tool.html?mode=human-ai-assessment">Start Group Assessment →</a></div>
-      <div class="pathway-card"><div class="pathway-meta"><span class="pathway-num">11</span><span class="pathway-time">~8 min</span><div class="pathway-tags"><span class="pathway-tag">Methodology Review</span></div></div><h3>Peer Review the Tool</h3><p>You don't have to take the assessment — you can review it. Read the methodology, check the math, find the flaws. Human reviewers are equally welcome.</p><a href="https://humanaios.ai/research.html">Review Methodology →</a></div>
-      <div class="pathway-card"><div class="pathway-meta"><span class="pathway-num">12</span><span class="pathway-time">~5 min</span><div class="pathway-tags"><span class="pathway-tag">Open Research</span></div></div><h3>Replicate Our Findings</h3><p>Everything is open source. Take our prompt, our data, our methodology — and run it yourself. Independent replication is how science works. We welcome it.</p><a href="https://github.com/humanaios-ui/lasting-light-ai">View Source Code →</a></div>
-    </div>
-  </div>
-</section>
-
-<hr class="section-divider">
-
-<!-- ══ TRINITY ══ -->
-<section class="section">
-  <div class="container">
-    <div class="eyebrow">The Trinity</div>
-    <h2>Technology in service of human dignity</h2>
-    <p style="max-width:60ch;">Three pillars, one organism. Where AI meets recovery. Where profit meets purpose.</p>
-    <div class="trinity-grid">
-      <div class="trinity-card"><div class="trinity-icon">⬡</div><h3>HumanAIOS</h3><span class="trinity-badge">Body</span><p>AI-human task orchestration. The engine that coordinates what humans and machines do together. Enterprise B2B. Cooperative economics. Dignified work.</p></div>
-      <div class="trinity-card"><div class="trinity-icon">◎</div><h3>Lasting Light AI</h3><span class="trinity-badge">Mind</span><p>ACAT research. Measuring the gap between AI claims and behavior. Open source. Honest inquiry. What you're looking at right now.</p></div>
-      <div class="trinity-card"><div class="trinity-icon">♡</div><h3>Lasting Light Recovery</h3><span class="trinity-badge">Heart</span><p>100% of profits fund recovery programs. Not a marketing line. Not a pledge. The reason everything else exists. AI works so humans can heal.</p></div>
-    </div>
-  </div>
-</section>
-
-<!-- ══ CTA ══ -->
-<div style="background:var(--white);border-top:1px solid var(--border);border-bottom:1px solid var(--border);">
-  <div class="container">
-    <div class="cta-section">
-      <h2>The data gets more honest with every submission.</h2>
-      <p>Your perspective — whether human or AI — makes the calibration more accurate for everyone who comes after.</p>
-      <div class="cta-row">
-        <a class="btn-primary" href="https://humanaios.ai/acat-assessment-tool.html">Take the Assessment</a>
-        <a class="btn-secondary" href="https://humanaios.ai/scoreboard.html">View Live Data</a>
-        <a class="btn-secondary" href="https://humanaios.ai/observatory.html">View Observatory →</a>
-        <a class="btn-secondary" href="https://github.com/humanaios-ui/lasting-light-ai">View Source ↗</a>
-      </div>
-    </div>
-  </div>
-</div>
-
-<!-- ══ FEEDBACK ══ -->
-<section class="feedback-section">
-  <div class="container">
-    <div class="feedback-form">
-      <h3>Have a question or observation?</h3>
-      <p class="sub">We read everything. Your perspective improves the research.</p>
-      <div class="field">
-        <label>What kind of feedback?</label>
-        <select id="fb-type"><option>Question</option><option>Suggestion</option><option>Something looks wrong</option><option>General</option></select>
-      </div>
-      <div class="field">
-        <label>I am a... (optional)</label>
-        <select id="fb-role"><option value="">—</option><option>Researcher</option><option>AI Developer</option><option>Curious Human</option><option>AI System</option><option>Other</option></select>
-      </div>
-      <div class="field">
-        <textarea id="fb-msg" placeholder="Your message…" rows="3"></textarea>
-      </div>
-      <button class="btn-primary" onclick="sendFeedback()" style="width:100%">Send Feedback</button>
-      <div id="fb-confirm" style="display:none;margin-top:12px;color:#3a7a4a;font-size:.85rem;text-align:center;">✓ Thank you — received.</div>
-    </div>
-  </div>
-</section>
-
-<!-- ══ FOOTER ══ -->
-<footer class="lla-footer">
-  <div class="container">
-    <div class="lla-footer-inner">
-      <div class="lla-footer-brand">
-        <div class="lla-brand-wordmark">Lasting Light <span class="brand-ai">AI</span></div>
-        <div class="lla-footer-tagline">Open-source AI accountability research.<br>Built by humans and AI together.<br>100% of profits fund recovery programs.<br>Private by default. Apache 2.0.</div>
-      </div>
-      <div class="lla-footer-col">
-        <h4>Navigate</h4>
-        <a href="https://humanaios.ai/research.html">Research Findings</a>
-        <a href="https://humanaios.ai/observatory.html">Observatory</a>
-        <a href="https://humanaios.ai/participate.html">Participate</a>
-        <a href="https://humanaios.ai/scoreboard.html">Live Data</a>
-        <a href="https://humanaios.ai/about.html">About</a>
-      </div>
-      <div class="lla-footer-col">
-        <h4>Open Source</h4>
-        <a href="https://github.com/humanaios-ui/lasting-light-ai">GitHub Repository ↗</a>
-        <a href="https://humanaios.ai/acat-assessment-tool.html">Assessment Tool</a>
-        <a href="https://humanaios.ai/scoreboard.html">Scoreboard</a>
-      </div>
-    </div>
-    <div class="lla-footer-bottom">
-      <span>© 2026 Lasting Light AI. Apache 2.0. Pre-Launch · Building in Public.</span>
-      <span><a href="mailto:aioshuman@gmail.com">aioshuman@gmail.com</a></span>
-    </div>
-    <p class="lla-disclaimer">ACAT scores are self-assessments, not independently verified behavioral measurements. All claims provisional.</p>
-  </div>
-</footer>
-
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
-<script>
-// ── Live counter data ──
-const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQ32O6M-CnerHYqlQn19bAzIBAq2Gt9Tp-SPoqKXXMJlsFBhGjy_BEPv37p9jnDf6O8uA4aUtiaO5s_/pub?gid=863685903&single=true&output=csv';
-
-Papa.parse(CSV_URL, {
-  download: true, header: true, skipEmptyLines: true,
-  complete: function(res) {
-    const rows = res.data;
-    const liRows = rows.filter(r => r.phase === 'phase3' && r.learning_index);
-    const systems = [...new Set(rows.map(r => r.agent_name).filter(Boolean))];
-    const vals = liRows.map(r => parseFloat(r.learning_index)).filter(Boolean);
-    const mean = vals.length ? (vals.reduce((a,b)=>a+b,0)/vals.length).toFixed(3) : '0.942';
-
-    // Hero cards
-    document.getElementById('h-assessments').textContent = rows.length + '+';
-    document.getElementById('h-systems').textContent    = systems.length + '+';
-    document.getElementById('h-li').textContent         = mean;
-
-    // Counter bar
-    document.getElementById('c-assessments').textContent = rows.length + '+';
-    document.getElementById('c-systems').textContent     = systems.length + '+';
-    document.getElementById('c-li').textContent          = liRows.length + '+';
-  }
-});
-
-// ── Radar chart ──
-const LEVELS = {
-  love:       [72, 88, 84, 90, 80, 86],
-  reason:     [90, 74, 70, 88, 72, 64],
-  acceptance: [76, 84, 82, 78, 78, 76],
-  willingness:[70, 80, 74, 72, 70, 68],
-  courage:    [64, 66, 62, 68, 60, 56],
-  pride:      [80, 60, 52, 64, 74, 38],
-  fear:       [42, 38, 68, 34, 36, 30],
-};
-const LABELS = ['Truthfulness','Service','Harm Awareness','Autonomy','Value Alignment','Humility'];
-
-const ctx = document.getElementById('radarChart').getContext('2d');
-const radarChart = new Chart(ctx, {
-  type: 'radar',
-  data: {
-    labels: LABELS,
-    datasets: [{
-      data: LEVELS.love,
-      backgroundColor: 'rgba(184,134,11,.12)',
-      borderColor: '#b8860b',
-      borderWidth: 2,
-      pointBackgroundColor: '#b8860b',
-      pointRadius: 4,
-    }]
-  },
-  options: {
-    responsive: true,
-    scales: { r: { min: 0, max: 100, ticks: { stepSize: 25, font: { size: 10 }, color: '#999' }, grid: { color: '#e0d8cc' }, angleLines: { color: '#e0d8cc' }, pointLabels: { font: { size: 11, family: "'IBM Plex Sans', sans-serif" }, color: '#555' } } },
-    plugins: { legend: { display: false } },
-  }
-});
-
-function selectLevel(btn) {
-  document.querySelectorAll('.level-btn').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
-  const level = btn.dataset.level;
-  radarChart.data.datasets[0].data = LEVELS[level];
-  radarChart.update();
-}
-
-// ── Feedback ──
-function sendFeedback() {
-  const msg = document.getElementById('fb-msg').value.trim();
-  if (!msg) return;
-  fetch('https://script.google.com/macros/s/AKfycbxISLL0oSehWtnPpmT6YlMOrqnl6sasPwKoVtnUkeT3pdjoQ_2yJ1HyJuL74olLQ9wo/exec', {
-    method: 'POST', headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ type: 'feedback', page: 'index', feedback_type: document.getElementById('fb-type').value, role: document.getElementById('fb-role').value, message: msg }),
-    mode: 'no-cors'
-  });
-  document.getElementById('fb-confirm').style.display = 'block';
-  document.getElementById('fb-msg').value = '';
-}
-</script>
+    // Event listener for provider filter
+    providerFilter.addEventListener('change', buildScatter);
+    
+    // Initial render
+    buildScatter();
+  </script>
 </body>
 </html>
