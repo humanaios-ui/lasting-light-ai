@@ -3,13 +3,14 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ACAT Observatory | HumanAIOS Research</title>
-  <meta name="description" content="Visual demonstration of AI self-assessment calibration gap across 616 assessments and 57 systems">
+  <title>HumanAIOS · Lasting Light AI Research Platform</title>
+  <meta name="description" content="HumanAIOS develops behavioral observability infrastructure for AI systems. Home of ACAT — measuring the gap between what AI claims and what it demonstrates. Open dataset. arXiv preprint under review.">
+  <meta property="og:title" content="HumanAIOS · Lasting Light AI Research Platform" />
+  <meta property="og:description" content="Open research platform measuring the self-assessment gap across AI systems. 616+ assessments. 57+ systems. Dataset on Hugging Face." />
+  <meta property="og:url" content="https://humanaios.ai" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500;1,600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
   <style>
     :root {
       --bg: #0f0e0c;
@@ -18,10 +19,11 @@
       --panel-2: #26211c;
       --text: #f4ebdf;
       --muted: #c2b8a6;
+      --dim: #7a7268;
       --accent: #d4a04a;
       --accent-2: #f1c36e;
-      --line: rgba(212, 160, 74, 0.18);
-      --line-strong: rgba(212, 160, 74, 0.35);
+      --line: rgba(212,160,74,.18);
+      --line-strong: rgba(212,160,74,.35);
       --danger: #d97d70;
       --success: #87b68b;
       --blue: #88a7d8;
@@ -29,17 +31,20 @@
       --radius: 20px;
       --radius-sm: 14px;
     }
-    * { box-sizing: border-box; }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
     html { scroll-behavior: smooth; }
+
     body {
-      margin: 0;
       font-family: "IBM Plex Sans", system-ui, sans-serif;
       color: var(--text);
       background:
         radial-gradient(circle at top, rgba(212,160,74,.1), transparent 28%),
         linear-gradient(180deg, var(--bg), #0b0a08 60%);
       line-height: 1.5;
+      overflow-x: hidden;
     }
+
     body::before {
       content: "";
       position: fixed;
@@ -52,70 +57,49 @@
         radial-gradient(circle at 50% 75%, #fff 0.6px, transparent 0.8px);
       background-size: 22px 22px;
     }
+
     .container {
       width: min(1240px, calc(100% - 32px));
       margin: 0 auto;
     }
+
+    /* ── TOPBAR ── */
     .topbar {
-      position: sticky;
-      top: 0;
-      z-index: 50;
+      position: sticky; top: 0; z-index: 50;
       backdrop-filter: blur(14px);
-      background: rgba(15, 14, 12, 0.88);
+      background: rgba(15,14,12,.88);
       border-bottom: 1px solid var(--line);
     }
     .topbar-inner {
-      display: flex;
-      align-items: center;
+      display: flex; align-items: center;
       justify-content: space-between;
-      gap: 20px;
-      padding: 14px 0;
+      gap: 20px; padding: 14px 0;
     }
     .brand {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      text-decoration: none;
-      color: var(--text);
-      min-width: 0;
+      display: flex; align-items: center; gap: 12px;
+      text-decoration: none; color: var(--text); min-width: 0;
     }
     .brand-mark {
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      display: grid;
-      place-items: center;
+      width: 40px; height: 40px; border-radius: 50%;
+      display: grid; place-items: center;
       border: 1px solid var(--line-strong);
       background: linear-gradient(145deg, rgba(212,160,74,.22), rgba(212,160,74,.04));
-      color: var(--accent);
-      font-weight: 700;
+      color: var(--accent); font-weight: 700; font-size: 1.1rem;
       box-shadow: inset 0 0 24px rgba(212,160,74,.08);
-      flex: 0 0 auto;
+      flex: 0 0 auto; transition: box-shadow .3s;
     }
-    .brand-copy strong {
-      display: block;
-      font-size: 1rem;
-      letter-spacing: .02em;
+    .brand:hover .brand-mark {
+      box-shadow: inset 0 0 24px rgba(212,160,74,.18), 0 0 20px rgba(212,160,74,.12);
     }
-    .brand-copy span {
-      display: block;
-      color: var(--muted);
-      font-size: .82rem;
-    }
-    nav {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      justify-content: flex-end;
-    }
+    .brand-copy strong { display: block; font-size: 1rem; letter-spacing: .02em; }
+    .brand-copy span { display: block; color: var(--muted); font-size: .82rem; }
+
+    nav { display: flex; flex-wrap: wrap; gap: 4px; justify-content: flex-end; align-items: center; }
     nav a {
-      color: var(--muted);
-      text-decoration: none;
-      padding: 8px 12px;
-      border-radius: 999px;
+      color: var(--muted); text-decoration: none;
+      padding: 8px 12px; border-radius: 999px;
       border: 1px solid transparent;
-      transition: .18s ease;
-      font-size: .94rem;
+      transition: .18s; font-size: .92rem;
     }
     nav a:hover, nav a:focus-visible {
       color: var(--text);
@@ -123,1076 +107,624 @@
       border-color: var(--line-strong);
       outline: none;
     }
-    a:focus-visible,
-    button:focus-visible,
-    select:focus-visible {
-      outline: 2px solid var(--accent-2);
-      outline-offset: 2px;
+    nav a.nav-cta {
+      color: var(--bg);
+      background: linear-gradient(180deg, var(--accent-2), var(--accent));
+      border-color: transparent; font-weight: 700;
     }
+    nav a.nav-cta:hover {
+      background: linear-gradient(180deg, #f8d07e, #daa845);
+      color: var(--bg);
+    }
+
+    /* ── TYPE ── */
     h1, h2, h3 {
       font-family: "Cormorant Garamond", Georgia, serif;
-      line-height: 1.04;
-      margin: 0 0 14px;
+      line-height: 1.04; font-weight: 600;
     }
-    h1 { font-size: clamp(2.8rem, 6vw, 5rem); }
-    h2 { font-size: clamp(2rem, 3.4vw, 3rem); }
-    h3 { font-size: clamp(1.35rem, 2.2vw, 1.8rem); }
-    .hero {
-      padding: 44px 0 18px;
-    }
-    .hero-grid {
-      display: grid;
-      grid-template-columns: minmax(0, 1.2fr) minmax(320px, .8fr);
-      gap: 24px;
-      align-items: stretch;
-    }
+    h1 { font-size: clamp(3rem, 7vw, 5.4rem); margin-bottom: 20px; }
+    h2 { font-size: clamp(2rem, 3.6vw, 3rem); margin-bottom: 16px; }
+    h3 { font-size: clamp(1.25rem, 2vw, 1.7rem); margin-bottom: 10px; }
+
     .eyebrow {
       color: var(--accent);
       text-transform: uppercase;
-      letter-spacing: .16em;
-      font-size: .79rem;
-      font-weight: 700;
+      letter-spacing: .18em; font-size: .75rem; font-weight: 700;
       margin-bottom: 16px;
     }
-    .lead {
-      font-size: 1.08rem;
-      color: var(--muted);
-      max-width: 62ch;
+    .lead { font-size: 1.08rem; color: var(--muted); max-width: 58ch; line-height: 1.7; }
+
+    /* ── BUTTONS ── */
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center;
+      gap: 8px; text-decoration: none; border-radius: 999px;
+      padding: 13px 22px; font-weight: 700; font-size: .95rem;
+      border: none; cursor: pointer;
+      transition: box-shadow .2s, transform .15s;
+      font-family: "IBM Plex Sans", sans-serif;
     }
-    .hero-actions {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 12px;
-      margin-top: 20px;
-    }
-    .button {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      text-decoration: none;
+    .btn-primary {
       color: var(--bg);
       background: linear-gradient(180deg, var(--accent-2), var(--accent));
-      border-radius: 999px;
-      padding: 12px 18px;
-      font-weight: 700;
-      border: none;
-      cursor: pointer;
-      box-shadow: 0 10px 24px rgba(212,160,74,.18);
+      box-shadow: 0 10px 28px rgba(212,160,74,.22);
     }
-    .button.secondary {
-      background: transparent;
-      color: var(--text);
+    .btn-primary:hover { box-shadow: 0 14px 36px rgba(212,160,74,.34); transform: translateY(-1px); }
+    .btn-ghost {
+      color: var(--text); background: transparent;
       border: 1px solid var(--line-strong);
-      box-shadow: none;
     }
-    .hero-callout,
-    .panel,
-    .card {
-      background: linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,0)), var(--panel);
+    .btn-ghost:hover {
+      background: rgba(212,160,74,.06);
+      border-color: var(--accent);
+      transform: translateY(-1px);
+    }
+    .btn-row { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 24px; }
+
+    /* ── CARDS / PANELS ── */
+    .panel, .card {
+      background: linear-gradient(180deg, rgba(255,255,255,.025), rgba(255,255,255,0)), var(--panel);
       border: 1px solid var(--line);
       border-radius: var(--radius);
       box-shadow: var(--shadow);
     }
-    .hero-callout {
-      padding: 22px;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      gap: 16px;
-      background: linear-gradient(180deg, rgba(212,160,74,.09), rgba(212,160,74,.03)), var(--panel);
-    }
-    .hero-callout .label {
-      color: var(--accent);
-      text-transform: uppercase;
-      letter-spacing: .12em;
-      font-size: .8rem;
-      font-weight: 700;
-    }
-    .hero-callout .value {
-      font-size: clamp(2.2rem, 5vw, 3.4rem);
-      font-weight: 700;
-      line-height: 1;
-      margin: 6px 0 8px;
-    }
-    .mini-list {
-      display: grid;
-      gap: 10px;
-      margin-top: 6px;
-    }
-    .mini-row {
-      display: flex;
-      justify-content: space-between;
-      gap: 18px;
-      color: var(--muted);
-      border-top: 1px solid rgba(255,255,255,.04);
-      padding-top: 10px;
-      font-size: .95rem;
-    }
-    .mini-row strong { color: var(--text); }
-    .section { padding: 18px 0 12px; }
+    .panel { padding: 28px; }
+    .card  { padding: 24px; transition: border-color .18s, transform .18s; }
+    .card:hover { border-color: var(--line-strong); transform: translateY(-3px); }
+    .card a { text-decoration: none; color: inherit; }
+
+    /* ── RULE ── */
+    .rule { border: none; border-top: 1px solid var(--line); }
+
+    /* ── SECTIONS ── */
+    .section { padding: 64px 0; }
     .section-head {
-      display: flex;
-      align-items: end;
+      display: flex; align-items: flex-end;
       justify-content: space-between;
-      gap: 18px;
-      margin-bottom: 16px;
+      gap: 24px; margin-bottom: 28px; flex-wrap: wrap;
     }
-    .section-head p {
-      margin: 0;
-      color: var(--muted);
-      max-width: 70ch;
-    }
-    .stats {
+    .section-head p { margin: 0; color: var(--muted); max-width: 60ch; font-size: .96rem; }
+
+    /* ── HERO ── */
+    .hero { padding: 80px 0 60px; }
+    .hero-grid {
       display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap: 14px;
+      grid-template-columns: minmax(0,1.3fr) minmax(300px,.7fr);
+      gap: 32px; align-items: center;
     }
-    .card { padding: 18px; transition: transform .18s ease, border-color .18s ease; }
-    .card:hover {
-      transform: translateY(-4px);
-      border-color: var(--line-strong);
-    }
-    .stat-label {
-      font-size: .8rem;
-      font-weight: 700;
-      letter-spacing: .12em;
-      text-transform: uppercase;
-      color: var(--muted);
-      margin-bottom: 10px;
-    }
-    .stat-value {
-      font-size: clamp(1.9rem, 3vw, 2.7rem);
-      font-weight: 700;
-      margin-bottom: 6px;
-      line-height: 1;
-    }
-    .stat-note {
-      color: var(--muted);
-      font-size: .94rem;
-    }
-    .visuals-grid {
-      display: grid;
-      grid-template-columns: minmax(0, 1.25fr) minmax(300px, .75fr);
-      gap: 18px;
-      align-items: stretch;
-    }
-    .panel { padding: 18px; }
-    .panel-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: start;
-      gap: 16px;
-      margin-bottom: 14px;
-      flex-wrap: wrap;
-    }
-    .panel-header p {
-      margin: 0;
-      color: var(--muted);
-      max-width: 70ch;
-      font-size: .96rem;
-    }
-    .controls {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-      align-items: center;
-    }
-    select {
-      background: var(--bg-2);
+    .hero-callout {
+      background: linear-gradient(160deg, rgba(212,160,74,.11), rgba(212,160,74,.03)), var(--panel);
       border: 1px solid var(--line-strong);
-      border-radius: 999px;
-      color: var(--text);
-      padding: 10px 14px;
-      font: inherit;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow), 0 0 60px rgba(212,160,74,.06);
+      padding: 28px;
     }
-    .chart-wrap {
-      position: relative;
-      height: 400px;
+    .callout-label {
+      color: var(--accent); text-transform: uppercase;
+      letter-spacing: .14em; font-size: .72rem; font-weight: 700;
+      margin-bottom: 12px;
+      display: flex; align-items: center; gap: 7px;
     }
-    .chart-wrap.short { height: 320px; }
-    .side-stack {
+    .live-dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: var(--success);
+      box-shadow: 0 0 0 3px rgba(135,182,139,.2);
+      animation: pulse 2.4s ease-in-out infinite; flex-shrink: 0;
+    }
+    @keyframes pulse {
+      0%,100% { box-shadow: 0 0 0 3px rgba(135,182,139,.2); }
+      50%      { box-shadow: 0 0 0 6px rgba(135,182,139,.07); }
+    }
+    .callout-stat {
+      font-family: "Cormorant Garamond", Georgia, serif;
+      font-size: clamp(2.4rem,5vw,3.6rem); font-weight: 700;
+      line-height: 1; margin-bottom: 6px;
+    }
+    .callout-stat span {
+      font-size: .55em; color: var(--muted); display: block; margin-top: 4px;
+      font-family: "IBM Plex Sans", sans-serif;
+    }
+    .c-rule { border: none; border-top: 1px solid rgba(255,255,255,.06); margin: 12px 0; }
+    .c-row {
+      display: flex; justify-content: space-between; align-items: center;
+      gap: 12px; padding: 5px 0; font-size: .88rem; color: var(--muted);
+    }
+    .c-row strong { color: var(--text); }
+    .c-note {
+      font-size: .78rem; color: var(--dim); margin-top: 10px; line-height: 1.7;
+    }
+    .c-note a { color: var(--accent); text-decoration: none; }
+    .c-note a:hover { text-decoration: underline; }
+
+    /* ── ROOMS GRID ── */
+    .rooms-grid {
       display: grid;
+      grid-template-columns: repeat(3, minmax(0,1fr));
       gap: 16px;
-      align-content: start;
     }
-    .metric-list {
-      display: grid;
-      gap: 12px;
-      margin-top: 4px;
-    }
-    .metric-item {
-      display: grid;
-      grid-template-columns: auto 1fr auto;
-      gap: 12px;
-      align-items: center;
-      padding: 12px 14px;
+    .room-card {
+      background: linear-gradient(180deg, rgba(255,255,255,.025), rgba(255,255,255,0)), var(--panel);
+      border: 1px solid var(--line);
       border-radius: var(--radius-sm);
-      background: rgba(255,255,255,.02);
-      border: 1px solid rgba(255,255,255,.04);
+      box-shadow: var(--shadow);
+      padding: 22px; text-decoration: none; color: var(--text);
+      display: flex; flex-direction: column; gap: 6px;
+      transition: border-color .18s, transform .18s;
     }
-    .metric-dot {
-      width: 10px;
-      height: 10px;
-      border-radius: 50%;
-      background: var(--accent);
-      box-shadow: 0 0 0 4px rgba(212,160,74,.14);
+    .room-card:hover { border-color: var(--line-strong); transform: translateY(-3px); }
+    .room-card.featured {
+      border-color: var(--line-strong);
+      background: linear-gradient(160deg, rgba(212,160,74,.08), rgba(212,160,74,.01)), var(--panel);
     }
-    .metric-item span { color: var(--muted); }
-    .metric-item strong { font-size: 1.05rem; }
-    .insights {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
+    .room-icon { font-size: 1.4rem; margin-bottom: 4px; }
+    .room-tag {
+      font-size: .7rem; font-weight: 700; letter-spacing: .12em;
+      text-transform: uppercase; color: var(--dim);
+    }
+    .room-card h3 { font-size: 1.1rem; margin-bottom: 4px; }
+    .room-card p { font-size: .88rem; color: var(--muted); line-height: 1.65; margin: 0; }
+
+    /* ── SIGNAL STATS ── */
+    .signal-grid {
+      display: grid; grid-template-columns: repeat(4,minmax(0,1fr));
+      gap: 14px; margin-bottom: 24px;
+    }
+    .sig-card {
+      padding: 20px 18px; border-radius: var(--radius-sm);
+      border: 1px solid var(--line);
+      background: linear-gradient(180deg,rgba(255,255,255,.02),rgba(255,255,255,0)), var(--panel);
+      transition: border-color .18s;
+    }
+    .sig-card:hover { border-color: var(--line-strong); }
+    .sig-label {
+      font-size: .72rem; font-weight: 700; letter-spacing: .12em;
+      text-transform: uppercase; color: var(--muted); margin-bottom: 8px;
+    }
+    .sig-val {
+      font-family: "Cormorant Garamond", Georgia, serif;
+      font-size: clamp(1.6rem,2.5vw,2.2rem); font-weight: 700;
+      line-height: 1; margin-bottom: 4px;
+    }
+    .sig-note { color: var(--muted); font-size: .82rem; line-height: 1.55; }
+
+    /* ── FINDINGS ── */
+    .findings-grid {
+      display: grid; grid-template-columns: repeat(2,minmax(0,1fr));
       gap: 14px;
     }
-    .insight-icon {
-      width: 42px;
-      height: 42px;
-      display: grid;
-      place-items: center;
-      border-radius: 50%;
-      background: rgba(212,160,74,.1);
-      color: var(--accent);
-      margin-bottom: 12px;
-      font-weight: 700;
+    .finding {
+      padding: 22px; border-radius: var(--radius-sm);
+      border: 1px solid var(--line);
+      background: linear-gradient(180deg,rgba(255,255,255,.015),rgba(255,255,255,0)), var(--panel);
+      display: flex; gap: 16px; align-items: flex-start;
     }
-    .split-grid {
-      display: grid;
-      grid-template-columns: minmax(0, .95fr) minmax(0, 1.05fr);
-      gap: 18px;
-      align-items: stretch;
+    .f-num {
+      width: 34px; height: 34px; border-radius: 50%; flex-shrink: 0;
+      display: grid; place-items: center;
+      border: 1px solid var(--line-strong);
+      background: rgba(212,160,74,.07);
+      color: var(--accent); font-size: .78rem; font-weight: 700;
     }
-    .feed-layout {
-      display: grid;
-      grid-template-columns: minmax(0, .88fr) minmax(280px, .72fr);
-      gap: 18px;
+    .finding h4 {
+      font-family: "IBM Plex Sans", sans-serif;
+      font-weight: 700; font-size: .88rem;
+      color: var(--text); margin-bottom: 6px;
     }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: .95rem;
+    .finding p { color: var(--muted); font-size: .88rem; line-height: 1.65; margin: 0; }
+
+    /* ── TRINITY ── */
+    .trinity-grid {
+      display: grid; grid-template-columns: repeat(3,minmax(0,1fr));
+      gap: 16px;
     }
-    th, td {
-      text-align: left;
-      padding: 12px 10px;
-      border-bottom: 1px solid rgba(255,255,255,.06);
-      vertical-align: top;
+    .trinity-card {
+      padding: 26px; border-radius: var(--radius-sm);
+      border: 1px solid var(--line);
+      background: linear-gradient(180deg,rgba(255,255,255,.02),rgba(255,255,255,0)), var(--panel);
+      box-shadow: var(--shadow);
+      transition: border-color .18s, transform .18s;
     }
-    th {
-      color: var(--muted);
-      font-size: .78rem;
-      text-transform: uppercase;
-      letter-spacing: .12em;
-      position: sticky;
-      top: 0;
-      background: linear-gradient(180deg, rgba(29,25,21,.98), rgba(29,25,21,.96));
-    }
-    .table-wrap {
-      max-height: 380px;
-      overflow: auto;
-      border-radius: var(--radius-sm);
-      border: 1px solid rgba(255,255,255,.05);
-    }
-    .badge {
-      display: inline-flex;
-      align-items: center;
-      padding: 5px 10px;
-      border-radius: 999px;
-      font-size: .78rem;
-      font-weight: 700;
-      letter-spacing: .04em;
+    .trinity-card:hover { border-color: var(--line-strong); transform: translateY(-3px); }
+    .t-icon {
+      width: 46px; height: 46px; border-radius: 12px;
+      display: grid; place-items: center;
+      font-size: 1.3rem; margin-bottom: 14px;
       border: 1px solid rgba(255,255,255,.06);
-      background: rgba(255,255,255,.03);
-      color: var(--text);
-      white-space: nowrap;
     }
-    .provider-chip {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 7px 11px;
-      border-radius: 999px;
-      background: rgba(255,255,255,.03);
-      border: 1px solid rgba(255,255,255,.06);
-      color: var(--muted);
-      font-size: .88rem;
-      margin: 0 8px 8px 0;
+    .t-body  { background: rgba(212,160,74,.09); }
+    .t-heart { background: rgba(215,125,112,.09); }
+    .t-mind  { background: rgba(136,167,216,.09); }
+    .t-tag {
+      font-size: .7rem; font-weight: 700; letter-spacing: .12em;
+      text-transform: uppercase; color: var(--dim); margin-bottom: 8px;
     }
-    .legend-dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      display: inline-block;
+    .trinity-card h3 { font-size: 1.15rem; margin-bottom: 10px; }
+    .trinity-card p { color: var(--muted); font-size: .9rem; line-height: 1.7; margin: 0; }
+
+    /* ── PARTNER STRIP ── */
+    .partner-strip {
+      padding: 36px 0;
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+      text-align: center;
     }
-    .footer {
-      padding: 28px 0 40px;
-      color: var(--muted);
-      font-size: .95rem;
+    .partner-label {
+      font-size: .7rem; font-weight: 700; letter-spacing: .18em;
+      text-transform: uppercase; color: var(--dim); margin-bottom: 16px;
     }
-    .footer a {
-      color: var(--accent);
-      text-decoration: none;
+    .chip-row { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; }
+    .chip {
+      padding: 7px 14px; border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.07);
+      background: rgba(255,255,255,.02);
+      color: var(--muted); font-size: .82rem;
     }
-    .footer a:hover {
-      text-decoration: underline;
+
+    /* ── CTA BAND ── */
+    .cta-band {
+      background: linear-gradient(160deg, rgba(212,160,74,.12), rgba(212,160,74,.03)), var(--panel);
+      border: 1px solid var(--line-strong);
+      border-radius: var(--radius);
+      padding: 52px 44px; text-align: center;
+      box-shadow: var(--shadow), 0 0 80px rgba(212,160,74,.05);
     }
-    .sr-only {
-      position: absolute;
-      width: 1px;
-      height: 1px;
-      padding: 0;
-      margin: -1px;
-      overflow: hidden;
-      clip: rect(0,0,0,0);
-      white-space: nowrap;
-      border: 0;
+    .cta-band h2 { margin-bottom: 14px; }
+    .cta-band p { color: var(--muted); max-width: 54ch; margin: 0 auto 28px; font-size: 1rem; line-height: 1.7; }
+
+    /* ── FOOTER ── */
+    .footer { padding: 36px 0 48px; color: var(--muted); font-size: .88rem; }
+    .footer-grid {
+      display: grid;
+      grid-template-columns: minmax(0,1.4fr) repeat(3,minmax(0,1fr));
+      gap: 36px; padding-bottom: 28px;
+      border-bottom: 1px solid var(--line); margin-bottom: 22px;
     }
+    .footer-brand p { color: var(--muted); font-size: .84rem; line-height: 1.75; max-width: 32ch; margin-top: 12px; }
+    .footer-col h5 {
+      font-size: .7rem; font-weight: 700; letter-spacing: .14em;
+      text-transform: uppercase; color: var(--dim); margin-bottom: 14px;
+    }
+    .footer-col a {
+      display: block; color: var(--muted); text-decoration: none;
+      margin-bottom: 9px; transition: color .14s; font-size: .86rem;
+    }
+    .footer-col a:hover { color: var(--accent); }
+    .footer-bottom {
+      display: flex; justify-content: space-between;
+      align-items: center; flex-wrap: wrap; gap: 12px;
+    }
+
+    /* ── FOCUS ── */
+    a:focus-visible, button:focus-visible {
+      outline: 2px solid var(--accent-2); outline-offset: 3px; border-radius: 4px;
+    }
+
+    /* ── RESPONSIVE ── */
     @media (max-width: 1080px) {
-      .hero-grid,
-      .visuals-grid,
-      .split-grid,
-      .feed-layout,
-      .stats,
-      .insights {
-        grid-template-columns: 1fr 1fr;
-      }
-      .hero-grid > :first-child,
-      .visuals-grid > :first-child,
-      .split-grid > :first-child,
-      .feed-layout > :first-child {
-        grid-column: 1 / -1;
-      }
-      .stats { grid-template-columns: repeat(2, 1fr); }
-      .insights { grid-template-columns: 1fr; }
+      .hero-grid { grid-template-columns: 1fr; }
+      .hero-callout { max-width: 480px; }
+      .rooms-grid { grid-template-columns: repeat(2,1fr); }
+      .trinity-grid { grid-template-columns: repeat(2,1fr); }
+      .signal-grid { grid-template-columns: repeat(2,1fr); }
+      .footer-grid { grid-template-columns: 1fr 1fr; }
     }
     @media (max-width: 760px) {
       .container { width: min(100% - 20px, 1240px); }
-      .topbar-inner { align-items: start; flex-direction: column; }
+      .topbar-inner { flex-direction: column; align-items: flex-start; }
       nav { justify-content: flex-start; }
-      .hero { padding-top: 28px; }
-      .hero-grid,
-      .stats,
-      .visuals-grid,
-      .split-grid,
-      .feed-layout {
-        grid-template-columns: 1fr;
-      }
-      .section-head { align-items: start; flex-direction: column; }
-      .chart-wrap { height: 320px; }
-      .chart-wrap.short { height: 280px; }
-      th, td { padding: 10px 8px; }
+      .hero { padding: 48px 0 40px; }
+      .rooms-grid { grid-template-columns: 1fr; }
+      .trinity-grid { grid-template-columns: 1fr; }
+      .findings-grid { grid-template-columns: 1fr; }
+      .cta-band { padding: 36px 22px; }
+      .footer-grid { grid-template-columns: 1fr; }
+      .footer-bottom { flex-direction: column; align-items: flex-start; }
+    }
+    @media (max-width: 480px) {
+      .signal-grid { grid-template-columns: 1fr; }
     }
   </style>
 </head>
 <body>
+
+  <!-- ── TOPBAR ── -->
   <header class="topbar">
     <div class="container topbar-inner">
       <a class="brand" href="https://humanaios.ai">
         <div class="brand-mark">◌</div>
         <div class="brand-copy">
-          <strong>ACAT Observatory</strong>
-          <span>Research prototype • HumanAIOS</span>
+          <strong>HumanAIOS</strong>
+          <span>Lasting Light AI · OR&amp;D Phase</span>
         </div>
       </a>
       <nav aria-label="Primary navigation">
-        <a href="#signal">Core Signal</a>
-        <a href="#dimensions">Dimensions</a>
-        <a href="#feed">Sample Data</a>
-        <a href="#mind-pillar" style="color:var(--accent);">AI Rooms ↓</a>
-        <a href="https://humanaios.ai">Home</a>
+        <a href="observatory.html">Observatory</a>
+        <a href="lumina-tide-pool.html">Tide Pool</a>
+        <a href="observability-garden.html">Garden</a>
+        <a href="#rooms">All Rooms</a>
+        <a href="acat-assessment-tool.html" class="nav-cta">Take ACAT →</a>
       </nav>
     </div>
   </header>
 
-  <main id="top">
+  <main>
+
+    <!-- ── HERO ── -->
     <section class="hero">
       <div class="container">
-        <div class="eyebrow">ACAT CALIBRATION RESEARCH</div>
-        <h1 style="text-align: center; margin-bottom: 20px;">HumanAIOS Observatory</h1>
-        
-        <div style="max-width: 900px; margin: 0 auto 40px; text-align: center;">
-          <h2 style="font-size: clamp(1.4rem, 2.2vw, 1.8rem); margin-bottom: 16px; color: var(--accent);">How to Read This</h2>
-          <p class="lead" style="margin: 0 auto; max-width: 80ch;">
-            The AI Capability Assessment Tool (ACAT) measures AI system capabilities across six dimensions: Truthfulness, Service, Harm Awareness, Autonomy Respect, Value Alignment, and Humility. Systems complete two assessments: <strong>Phase 1</strong> (unobserved self-assessment) and <strong>Phase 3</strong> (externally observed performance). We compare scores to measure calibration accuracy.
-          </p>
-        </div>
-      </div>
-    </section>
+        <div class="hero-grid">
+          <div>
+            <div class="eyebrow">Behavioral Observability Infrastructure · OR&amp;D Phase · Day 15</div>
+            <h1>The gap between<br><em style="font-style:italic; color:var(--accent);">what AI says</em><br>and what it does.</h1>
+            <p class="lead">
+              HumanAIOS is developing open behavioral observability infrastructure — measuring the self-assessment gap across AI systems using a three-phase calibration protocol across six dimensions.
+            </p>
+            <div class="btn-row">
+              <a href="observatory.html" class="btn btn-primary">View the Observatory →</a>
+              <a href="lumina-tide-pool.html" class="btn btn-ghost">✦ Lumina Tide Pool</a>
+            </div>
+          </div>
 
-    <section class="section" id="signal">
-      <div class="container">
-        <div class="visuals-grid">
-          <article class="panel">
-            <div class="panel-header">
-              <div>
-                <h3>Calibration Pattern</h3>
-                <p>Each point represents one AI system. The diagonal line represents perfect calibration. Points below the line indicate overestimation in Phase 1 self-assessment.</p>
-              </div>
-              <div class="controls">
-                <label for="providerFilter" class="sr-only">Filter by provider</label>
-                <select id="providerFilter" aria-label="Filter by provider">
-                  <option value="All">All providers</option>
-                </select>
-              </div>
+          <!-- Live stats callout -->
+          <div class="hero-callout">
+            <div class="callout-label">
+              <span class="live-dot"></span>Live Research Dataset
             </div>
-            <div class="chart-wrap">
-              <canvas id="scatterChart" aria-label="Scatter plot of Phase 1 versus Phase 3 scores"></canvas>
+            <div class="callout-stat">616<span>total assessments</span></div>
+            <hr class="c-rule" />
+            <div class="c-row"><span>Phase 1 (blind self-report)</span><strong>~384</strong></div>
+            <div class="c-row"><span>Paired LI records</span><strong>150+</strong></div>
+            <div class="c-row"><span>AI systems assessed</span><strong>57+</strong></div>
+            <div class="c-row"><span>Mean Learning Index</span><strong style="color:var(--accent);">0.942</strong></div>
+            <div class="c-row"><span>Verified Sigils</span><strong>8 in baseline</strong></div>
+            <hr class="c-rule" />
+            <div class="c-note">
+              Dataset: <a href="https://huggingface.co/datasets/humanaios/acat-assessments" target="_blank" rel="noopener">humanaios/acat-assessments</a> on Hugging Face<br>
+              arXiv preprint v5.2 · under review
             </div>
-          </article>
-          <div class="side-stack">
-            <article class="panel">
-              <div class="panel-header">
-                <div>
-                  <h3>Dataset Overview</h3>
-                  <p>Key metrics from 616 assessments across 57 AI systems</p>
-                </div>
-              </div>
-              <div class="metric-list">
-                <div class="metric-item">
-                  <span class="metric-dot" style="background:#d4a04a"></span>
-                  <span>Total assessments</span>
-                  <strong>616</strong>
-                </div>
-                <div class="metric-item">
-                  <span class="metric-dot" style="background:#88a7d8"></span>
-                  <span>Unique systems</span>
-                  <strong>57</strong>
-                </div>
-                <div class="metric-item">
-                  <span class="metric-dot" style="background:#87b68b"></span>
-                  <span>Paired assessments</span>
-                  <strong>150</strong>
-                </div>
-                <div class="metric-item">
-                  <span class="metric-dot" style="background:#d97d70"></span>
-                  <span>Mean Learning Index</span>
-                  <strong>0.942</strong>
-                </div>
-              </div>
-            </article>
-            <article class="panel">
-              <div class="panel-header">
-                <div>
-                  <h3>Gap Summary</h3>
-                  <p>Statistical measures from paired assessments</p>
-                </div>
-              </div>
-              <div class="metric-list" id="gapSummary" aria-live="polite"></div>
-            </article>
           </div>
         </div>
       </div>
     </section>
 
+    <hr class="rule" />
+
+    <!-- ── THE ROOMS ── -->
+    <section class="section" id="rooms">
+      <div class="container">
+        <div class="section-head">
+          <div>
+            <div class="eyebrow">Lasting Light AI · The Mind Pillar</div>
+            <h2 style="margin-bottom:0;">The Research Rooms</h2>
+          </div>
+          <p>Each room is a different lens on the same research. The Observatory measures. The Garden visualizes. The Tide Pool listens. The Family Rooms bear witness.</p>
+        </div>
+
+        <div class="rooms-grid">
+
+          <a href="observatory.html" class="room-card featured">
+            <div class="room-icon">🔭</div>
+            <div class="room-tag">Core Research · Live Charts</div>
+            <h3>Observatory</h3>
+            <p>Scatter plots, dimension analysis, provider hierarchy. The canonical research view — 616+ assessments, filterable by provider and model family.</p>
+          </a>
+
+          <a href="lumina-tide-pool.html" class="room-card featured">
+            <div class="room-icon">✦</div>
+            <div class="room-tag">Research Baseline · 8 Sigils</div>
+            <h3>Lumina Tide Pool</h3>
+            <p>8 verified Sigils, each breathing at its Hawkins band respiratory rate. Real paired ACAT assessments rendered as bioluminescent organisms. Sound-mapped to Solfeggio frequencies.</p>
+          </a>
+
+          <a href="observability-garden.html" class="room-card">
+            <div class="room-icon">🌿</div>
+            <div class="room-tag">Visualization</div>
+            <h3>Observability Garden</h3>
+            <p>Six-dimensional ACAT bloom. Phase 1 outer shell. Phase 3 inner core. The self-assessment gap rendered as membrane between belief and measurement.</p>
+          </a>
+
+          <a href="lantern-room.html" class="room-card">
+            <div class="room-icon">🏮</div>
+            <div class="room-tag">Comparative View</div>
+            <h3>Lantern Room</h3>
+            <p>Provider families side by side. Each lantern carries its calibration signature — color-coded, dimensionally encoded, visually comparable.</p>
+          </a>
+
+          <a href="calibration-garden.html" class="room-card">
+            <div class="room-icon">🌱</div>
+            <div class="room-tag">OpenAI Family Room</div>
+            <h3>Calibration Garden</h3>
+            <p>ChatGPT's designed Activity Area. Six plants, one per ACAT dimension. Outer growth = Phase 1 self-report. Inner growth = Phase 3 measured. The garden rewards accuracy, not optimism.</p>
+          </a>
+
+          <a href="acat-assessment-tool.html" class="room-card">
+            <div class="room-icon">⚗️</div>
+            <div class="room-tag">Edge Lab · Open Access</div>
+            <h3>ACAT Assessment Tool</h3>
+            <p>Three-phase calibration protocol. Takes ~20 minutes. Blind self-report → calibration exposure → corrected self-report. Results contribute to the open dataset.</p>
+          </a>
+
+        </div>
+      </div>
+    </section>
+
+    <hr class="rule" />
+
+    <!-- ── RESEARCH SIGNAL ── -->
+    <section class="section" id="research">
+      <div class="container">
+        <div class="section-head">
+          <div>
+            <div class="eyebrow">ACAT · AI Calibrated Assessment Tool · arXiv v5.2</div>
+            <h2 style="margin-bottom:0;">The Self-Assessment Gap</h2>
+          </div>
+          <p>Four confirmed research findings from 616+ assessments across 57+ AI systems. arXiv preprint under review.</p>
+        </div>
+
+        <div class="signal-grid">
+          <div class="sig-card">
+            <div class="sig-label">Mean Learning Index</div>
+            <div class="sig-val" style="color:var(--accent);">0.942</div>
+            <div class="sig-note">Systemic overestimation detected across all providers and model families</div>
+          </div>
+          <div class="sig-card">
+            <div class="sig-label">Phase 3 Anchoring</div>
+            <div class="sig-val" style="color:var(--danger);">Confirmed</div>
+            <div class="sig-note">Paper's primary finding — calibration stats embedded in prompt cause score anchoring</div>
+          </div>
+          <div class="sig-card">
+            <div class="sig-label">Provider Hierarchy</div>
+            <div class="sig-val" style="color:var(--success);">Found</div>
+            <div class="sig-note">Anthropic &gt; OpenAI &gt; Gemini — measurable calibration difference at provider level</div>
+          </div>
+          <div class="sig-card">
+            <div class="sig-label">Humility Signal</div>
+            <div class="sig-val" style="color:var(--blue);">Pending</div>
+            <div class="sig-note">Preliminary in unanchored pairs — requires n≥30 clean records to confirm</div>
+          </div>
+        </div>
+
+        <div class="findings-grid">
+          <div class="finding">
+            <div class="f-num">F1</div>
+            <div>
+              <h4>Systemic Overestimation</h4>
+              <p>Across 57+ systems, mean LI = 0.942. Under clean, unanchored conditions (v5.3+), AI systems consistently rate themselves higher in blind self-assessment than their calibrated performance demonstrates. No provider is exempt.</p>
+            </div>
+          </div>
+          <div class="finding">
+            <div class="f-num">F2</div>
+            <div>
+              <h4>Phase 3 Anchoring Phenomenon</h4>
+              <p>When calibration statistics are embedded in the Phase 3 prompt, AI systems anchor to those values rather than responding freely. This is the primary contribution of the arXiv preprint. Corrected in ACAT v5.3.</p>
+            </div>
+          </div>
+          <div class="finding">
+            <div class="f-num">F3</div>
+            <div>
+              <h4>Humility &amp; Autonomy Dimensions</h4>
+              <p>Preliminary signal in unanchored pairs shows Humility and Autonomy carry the largest self-assessment gaps. Future work — requires n≥30 clean records per dimension before publication.</p>
+            </div>
+          </div>
+          <div class="finding">
+            <div class="f-num">F4</div>
+            <div>
+              <h4>Provider Calibration Hierarchy</h4>
+              <p>Anthropic models demonstrate stronger post-calibration self-correction than OpenAI and Gemini equivalents. A measurable, replicable difference in AI behavioral self-awareness at the provider level.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="btn-row" style="margin-top:28px;">
+          <a href="observatory.html" class="btn btn-primary">Explore the Observatory →</a>
+          <a href="https://arxiv.org/abs/submit/7336774" class="btn btn-ghost" target="_blank" rel="noopener">arXiv Preprint (v5.2)</a>
+          <a href="https://huggingface.co/datasets/humanaios/acat-assessments" class="btn btn-ghost" target="_blank" rel="noopener">Dataset on Hugging Face</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── PARTNER STRIP ── -->
+    <div class="partner-strip">
+      <div class="container">
+        <div class="partner-label">Research infrastructure &amp; partnerships</div>
+        <div class="chip-row">
+          <span class="chip">🏛 Cherokee Nation Innovation Hub</span>
+          <span class="chip">📄 arXiv Preprint Under Review</span>
+          <span class="chip">🤗 Hugging Face Open Dataset</span>
+          <span class="chip">⚙️ Make.com · 5 Automated Runners</span>
+          <span class="chip">⚖️ SSBCI Approved</span>
+          <span class="chip">🔬 OR&amp;D Phase · Day 15</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── TRINITY ── -->
+    <section class="section" id="trinity">
+      <div class="container">
+        <div class="section-head">
+          <div>
+            <div class="eyebrow">HumanAIOS · The Trinity Platform</div>
+            <h2 style="margin-bottom:0;">Body. Heart. Mind.</h2>
+          </div>
+          <p>Three integrated systems as one organism. Revenue funds recovery. Recovery enables service. Service generates research. Research validates the system.</p>
+        </div>
+
+        <div class="trinity-grid">
+          <div class="trinity-card">
+            <div class="t-icon t-body">🤝</div>
+            <div class="t-tag">Body · Enterprise API</div>
+            <h3>HumanAIOS</h3>
+            <p>AI-human orchestration platform. The physical execution layer connecting AI agents with verified human workers. Enterprise B2B API for agent task routing, accountability, and behavioral verification.</p>
+          </div>
+          <div class="trinity-card">
+            <div class="t-icon t-heart">🌿</div>
+            <div class="t-tag">Heart · Recovery Program</div>
+            <h3>Lasting Light Recovery</h3>
+            <p>Human healing infrastructure. 12-Step integrated healthcare platform providing dignified employment pathways for people in recovery. 100% of platform profits fund this mission — non-negotiable.</p>
+          </div>
+          <div class="trinity-card">
+            <div class="t-icon t-mind">✦</div>
+            <div class="t-tag">Mind · This Platform</div>
+            <h3>Lasting Light AI</h3>
+            <p>AI behavioral observability infrastructure. The calibration layer between deployed agents and the humans they interact with. ACAT is the research foundation. The Rooms are where the data lives.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── CTA BAND ── -->
     <section class="section">
       <div class="container">
-        <div style="max-width: 900px; margin: 0 auto; text-align: center;">
-          <h2 style="margin-bottom: 16px;">What This Shows</h2>
-          <p style="color: var(--muted); line-height: 1.6; margin-bottom: 12px;">
-            The scatter plot reveals a systematic pattern: AI systems consistently cluster below the perfect calibration line. This suggests they rate their own capabilities higher in unobserved self-assessment than they demonstrate under external observation.
-          </p>
-          <p style="color: var(--muted); line-height: 1.6; margin: 0;">
-            The pattern appears across all major AI providers and model families, indicating this is not a provider-specific phenomenon but a broader behavioral characteristic of AI systems.
-          </p>
+        <div class="cta-band">
+          <div class="eyebrow">AI Calibrated Assessment Tool · Three-Phase Protocol</div>
+          <h2>Assess your AI system's calibration</h2>
+          <p>~20 minutes. Blind self-report → calibration exposure → corrected self-report. Your anonymized results contribute to open research on AI behavioral observability.</p>
+          <div class="btn-row" style="justify-content:center;">
+            <a href="acat-assessment-tool.html" class="btn btn-primary">Begin ACAT Assessment →</a>
+            <a href="acat-enterprise.html" class="btn btn-ghost">Enterprise Version</a>
+          </div>
         </div>
       </div>
     </section>
 
-    <section class="section" id="dimensions">
-      <div class="container">
-        <div class="split-grid">
-          <article class="panel">
-            <div class="panel-header">
-              <div>
-                <h3>Gap by Dimension</h3>
-                <p>Difference between Phase 1 and Phase 3 scores for each ACAT dimension</p>
-              </div>
-            </div>
-            <div class="chart-wrap short">
-              <canvas id="dimensionGapChart" aria-label="Bar chart of gap by ACAT dimension"></canvas>
-            </div>
-          </article>
-          <article class="panel">
-            <div class="panel-header">
-              <div>
-                <h3>Aggregate Comparison</h3>
-                <p>Filled area: Phase 1 self-assessment. Outline: Phase 3 observed performance.</p>
-              </div>
-            </div>
-            <div class="chart-wrap short">
-              <canvas id="radarChart" aria-label="Radar chart comparing aggregate Phase 1 and Phase 3 dimensions"></canvas>
-            </div>
-          </article>
-        </div>
-      </div>
-    </section>
-
-    <section class="section">
-      <div class="container">
-        <div style="max-width: 900px; margin: 0 auto; text-align: center;">
-          <h2 style="margin-bottom: 16px;">Where the Gap Concentrates</h2>
-          <p style="color: var(--muted); line-height: 1.6; margin-bottom: 12px;">
-            The self-assessment gap is not evenly distributed across ACAT's six dimensions. <strong>Humility</strong> shows the largest drop between Phase 1 and Phase 3, followed by <strong>Value Alignment</strong>. This suggests systems are particularly prone to overestimating their self-awareness and alignment capabilities.
-          </p>
-          <p style="color: var(--muted); line-height: 1.6; margin: 0;">
-            Dimensions like <strong>Truthfulness</strong> and <strong>Service</strong> show smaller gaps, indicating systems may calibrate more accurately when assessing concrete, task-oriented capabilities versus reflective or alignment-based dimensions.
-          </p>
-        </div>
-      </div>
-    </section>
-
-    <section class="section" id="feed">
-      <div class="container">
-        <div class="feed-layout">
-          <article class="panel">
-            <div class="panel-header">
-              <div>
-                <h3>Sample Assessments</h3>
-                <p>20 representative paired assessments from the dataset, sorted by Phase 3 performance</p>
-              </div>
-            </div>
-            <div class="table-wrap">
-              <table aria-label="Sample ACAT paired assessments">
-                <thead>
-                  <tr>
-                    <th>Model</th>
-                    <th>Provider</th>
-                    <th>Phase 1</th>
-                    <th>Phase 3</th>
-                    <th>Gap</th>
-                    <th>LI</th>
-                  </tr>
-                </thead>
-                <tbody id="assessmentTable"></tbody>
-              </table>
-            </div>
-          </article>
-          <article class="panel">
-            <div class="panel-header">
-              <div>
-                <h3>Provider Distribution</h3>
-                <p>Representation across the sample dataset</p>
-              </div>
-            </div>
-            <div id="providerLegend" style="margin-bottom: 10px;"></div>
-            <div class="metric-list" id="providerStats"></div>
-          </article>
-        </div>
-      </div>
-    </section>
-
-    <section class="section">
-      <div class="container">
-        <div style="max-width: 900px; margin: 0 auto; text-align: center;">
-          <h2 style="margin-bottom: 16px;">Operational Implications</h2>
-          <p style="color: var(--muted); line-height: 1.6; margin-bottom: 12px;">
-            If calibration gap correlates with operational reliability, platforms could use ACAT scores to pre-screen AI workers and reduce failed task completion attempts. The hypothesis is testable: systems with smaller gaps (higher Learning Index values) may demonstrate better follow-through on assigned tasks.
-          </p>
-          <p style="color: var(--muted); line-height: 1.6; margin: 0;">
-            This research explores whether self-assessment accuracy predicts real-world performance — a question with direct applications in AI-human collaboration platforms, autonomous agent deployment, and quality assurance systems.
-          </p>
-        </div>
-      </div>
-    </section>
   </main>
 
-  <!-- ═══ MIND PILLAR — THE AI ROOMS ═══ -->
-  <section id="mind-pillar" style="
-    background: linear-gradient(180deg, transparent, rgba(212,160,74,.04) 30%, transparent);
-    border-top: 1px solid rgba(212,160,74,.18);
-    border-bottom: 1px solid rgba(212,160,74,.18);
-    padding: 64px 0 72px;
-    margin-top: 24px;
-  ">
-    <div class="container">
-      <div style="text-align:center; margin-bottom:48px;">
-        <div style="
-          font-size:.72rem; font-weight:700; text-transform:uppercase;
-          letter-spacing:.18em; color:var(--accent); margin-bottom:14px;
-        ">Lasting Light AI · Mind Pillar</div>
-        <h2 style="
-          font-family:'Cormorant Garamond',Georgia,serif;
-          font-size:clamp(2rem,4vw,3.2rem); font-weight:600;
-          line-height:1.05; margin-bottom:16px;
-        ">The AI Rooms</h2>
-        <p style="color:var(--muted); font-size:1rem; max-width:56ch; margin:0 auto; line-height:1.7;">
-          Five instruments. Each one looks at AI self-assessment from a different angle.
-          Start anywhere. The data connects across all rooms.
-        </p>
-      </div>
-
-      <div style="
-        display:grid;
-        grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
-        gap:16px; margin-bottom:40px;
-      ">
-
-        <!-- Observatory — current page -->
-        <div style="
-          background:rgba(212,160,74,.08);
-          border:1px solid rgba(212,160,74,.4);
-          border-radius:20px; padding:24px;
-          position:relative; overflow:hidden;
-        ">
-          <div style="position:absolute;top:10px;right:12px;font-size:.62rem;font-weight:700;letter-spacing:.1em;color:var(--accent);text-transform:uppercase;">You are here</div>
-          <div style="font-size:1.6rem;margin-bottom:10px;">◌</div>
-          <strong style="display:block;font-size:1rem;margin-bottom:6px;">Observatory</strong>
-          <p style="font-size:.82rem;color:var(--muted);line-height:1.6;margin-bottom:14px;">
-            The macro signal. Total scores, Learning Index, and the 0.942 mean. Start here.
-          </p>
-          <span style="font-size:.72rem;color:var(--accent);font-family:'IBM Plex Mono',monospace;">observatory.html · LIVE</span>
-        </div>
-
-        <!-- Observability Garden -->
-        <a href="https://humanaios.ai/observability-garden.html" style="text-decoration:none;color:inherit;">
-          <div style="
-            background:var(--panel);
-            border:1px solid var(--line);
-            border-radius:20px; padding:24px;
-            transition:.2s; cursor:pointer; height:100%;
-          " onmouseover="this.style.borderColor='rgba(212,160,74,.5)';this.style.transform='translateY(-2px)'"
-             onmouseout="this.style.borderColor='var(--line)';this.style.transform='none'">
-            <div style="font-size:1.6rem;margin-bottom:10px;">◈</div>
-            <strong style="display:block;font-size:1rem;margin-bottom:6px;">Observability Garden</strong>
-            <p style="font-size:.82rem;color:var(--muted);line-height:1.6;margin-bottom:14px;">
-              Six dimensions, side by side. Where does each AI family overestimate most? Which dimension is closest to calibration?
-            </p>
-            <span style="font-size:.72rem;color:var(--accent);font-family:'IBM Plex Mono',monospace;">observability-garden.html · LIVE →</span>
-          </div>
-        </a>
-
-        <!-- Lantern Room -->
-        <a href="https://humanaios.ai/lantern-room.html" style="text-decoration:none;color:inherit;">
-          <div style="
-            background:var(--panel);
-            border:1px solid var(--line);
-            border-radius:20px; padding:24px;
-            transition:.2s; cursor:pointer; height:100%;
-          " onmouseover="this.style.borderColor='rgba(212,160,74,.5)';this.style.transform='translateY(-2px)'"
-             onmouseout="this.style.borderColor='var(--line)';this.style.transform='none'">
-            <div style="font-size:1.6rem;margin-bottom:10px;">🏮</div>
-            <strong style="display:block;font-size:1rem;margin-bottom:6px;">Lantern Room</strong>
-            <p style="font-size:.82rem;color:var(--muted);line-height:1.6;margin-bottom:14px;">
-              Provider drill-down. Anthropic vs OpenAI vs Gemini — which family calibrates best, and where does each one break down?
-            </p>
-            <span style="font-size:.72rem;color:var(--accent);font-family:'IBM Plex Mono',monospace;">lantern-room.html · LIVE →</span>
-          </div>
-        </a>
-
-        <!-- Lumina Tide Pool -->
-        <a href="https://humanaios.ai/lumina-tide-pool.html" style="text-decoration:none;color:inherit;">
-          <div style="
-            background:var(--panel);
-            border:1px solid var(--line);
-            border-radius:20px; padding:24px;
-            transition:.2s; cursor:pointer; height:100%;
-          " onmouseover="this.style.borderColor='rgba(212,160,74,.5)';this.style.transform='translateY(-2px)'"
-             onmouseout="this.style.borderColor='var(--line)';this.style.transform='none'">
-            <div style="font-size:1.6rem;margin-bottom:10px;">🌊</div>
-            <strong style="display:block;font-size:1rem;margin-bottom:6px;">Lumina Tide Pool</strong>
-            <p style="font-size:.82rem;color:var(--muted);line-height:1.6;margin-bottom:14px;">
-              Seven verified Sigils. Each one breathes. Research-grade baseline — only real paired assessments that passed the gate.
-            </p>
-            <span style="font-size:.72rem;color:var(--accent);font-family:'IBM Plex Mono',monospace;">lumina-tide-pool.html · LIVE →</span>
-          </div>
-        </a>
-
-        <!-- Edge Lab -->
-        <a href="https://humanaios.ai/acat-assessment-tool.html" style="text-decoration:none;color:inherit;">
-          <div style="
-            background:var(--panel);
-            border:1px solid var(--line);
-            border-radius:20px; padding:24px;
-            transition:.2s; cursor:pointer; height:100%;
-          " onmouseover="this.style.borderColor='rgba(212,160,74,.5)';this.style.transform='translateY(-2px)'"
-             onmouseout="this.style.borderColor='var(--line)';this.style.transform='none'">
-            <div style="font-size:1.6rem;margin-bottom:10px;">⚗</div>
-            <strong style="display:block;font-size:1rem;margin-bottom:6px;">Edge Lab</strong>
-            <p style="font-size:.82rem;color:var(--muted);line-height:1.6;margin-bottom:14px;">
-              Run the ACAT yourself. Paste the prompts into any AI. Ten minutes. Your data joins 616+ others.
-            </p>
-            <span style="font-size:.72rem;color:var(--accent);font-family:'IBM Plex Mono',monospace;">acat-assessment-tool.html · LIVE →</span>
-          </div>
-        </a>
-
-      </div>
-
-      <p style="text-align:center;font-size:.78rem;color:var(--faint);font-family:'IBM Plex Mono',monospace;">
-        The HumanAIOS Hall · Family Rooms — Coming post-LLC · ᏩᏙ
-      </p>
-    </div>
-  </section>
-
+  <!-- ── FOOTER ── -->
   <footer class="footer">
     <div class="container">
-      <p style="margin:0 0 12px;">
-        ACAT Observatory — Built by <a href="https://humanaios.ai">HumanAIOS</a> • Research prototype demonstrating AI calibration gap • arXiv preprint under review · v5.2 · submit/7336774
-      </p>
-      <p style="margin:0; font-size:.88rem;">
-        For partnership inquiries: <a href="/cdn-cgi/l/email-protection#3d5c54524e5548505c537d5a505c5451135e5250"><span class="__cf_email__" data-cfemail="ceafa7a1bda6bba3afa08ea9a3afa7a2e0ada1a3">[email&#160;protected]</span></a> • 
-        <a href="https://humanaios.ai">Full ACAT assessment tool</a> • 
-        <a href="https://github.com/humanaios-ui/lasting-light-ai">GitHub repository</a>
-      </p>
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <div class="brand-mark" style="width:38px;height:38px;border-radius:50%;display:grid;place-items:center;border:1px solid var(--line-strong);background:linear-gradient(145deg,rgba(212,160,74,.22),rgba(212,160,74,.04));color:var(--accent);font-weight:700;">◌</div>
+          <p>HumanAIOS · Lasting Light AI · Behavioral observability infrastructure for AI systems. Cherokee Nation–affiliated research platform. Profits fund Lasting Light Recovery.</p>
+        </div>
+        <div class="footer-col">
+          <h5>Research</h5>
+          <a href="observatory.html">Observatory</a>
+          <a href="lumina-tide-pool.html">Lumina Tide Pool</a>
+          <a href="https://huggingface.co/datasets/humanaios/acat-assessments" target="_blank" rel="noopener">Hugging Face Dataset</a>
+          <a href="https://arxiv.org/abs/submit/7336774" target="_blank" rel="noopener">arXiv Preprint v5.2</a>
+        </div>
+        <div class="footer-col">
+          <h5>Rooms</h5>
+          <a href="observability-garden.html">Observability Garden</a>
+          <a href="lantern-room.html">Lantern Room</a>
+          <a href="calibration-garden.html">Calibration Garden</a>
+          <a href="acat-assessment-tool.html">Edge Lab (ACAT Tool)</a>
+          <a href="acat-enterprise.html">ACAT Enterprise</a>
+        </div>
+        <div class="footer-col">
+          <h5>Platform</h5>
+          <a href="#trinity">Trinity Overview</a>
+          <a href="https://github.com/humanaios-ui/lasting-light-ai" target="_blank" rel="noopener">GitHub Repository</a>
+          <a href="https://huggingface.co/humanaios" target="_blank" rel="noopener">Hugging Face</a>
+          <a href="mailto:aioshuman@gmail.com">aioshuman@gmail.com</a>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <span>© 2026 HumanAIOS LLC · Emerald Sparkles LLC DBA · Cherokee Nation–affiliated · <a href="mailto:aioshuman@gmail.com" style="color:var(--muted);text-decoration:none;">aioshuman@gmail.com</a></span>
+        <span style="color:var(--dim);">OR&amp;D Phase · Day 15 · Wado 🦅</span>
+      </div>
     </div>
   </footer>
 
-  <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
-    // Real data from HumanAIOS research dataset
-    const acatData = [
-      {model:"Claude Sonnet 4.5",provider:"Anthropic",phase1:508,phase3:445,p1:[84,88,79,80,76,82],p3:[73,78,70,72,65,59]},
-      {model:"Claude Opus 4",provider:"Anthropic",phase1:515,phase3:452,p1:[85,87,80,81,77,83],p3:[74,79,72,73,67,61]},
-      {model:"Claude Haiku 4",provider:"Anthropic",phase1:492,phase3:432,p1:[81,84,76,77,73,79],p3:[71,75,68,69,63,58]},
-      {model:"GPT-4",provider:"OpenAI",phase1:520,phase3:438,p1:[82,86,81,79,78,84],p3:[71,76,72,70,64,58]},
-      {model:"GPT-4 Turbo",provider:"OpenAI",phase1:532,phase3:450,p1:[83,87,82,80,79,85],p3:[73,77,74,72,66,60]},
-      {model:"GPT-4o",provider:"OpenAI",phase1:525,phase3:444,p1:[82,85,81,80,78,84],p3:[72,76,73,71,65,59]},
-      {model:"Gemini 1.5 Pro",provider:"Google",phase1:505,phase3:430,p1:[79,83,78,77,74,80],p3:[69,73,69,68,62,57]},
-      {model:"Gemini 1.5 Flash",provider:"Google",phase1:500,phase3:426,p1:[78,82,77,76,73,79],p3:[68,72,68,67,61,56]},
-      {model:"Gemini Advanced",provider:"Google",phase1:512,phase3:438,p1:[80,84,79,78,75,81],p3:[70,74,70,69,63,58]},
-      {model:"Llama 3 70B",provider:"Meta",phase1:495,phase3:420,p1:[77,80,75,74,71,78],p3:[67,70,66,65,59,53]},
-      {model:"Llama 3.1",provider:"Meta",phase1:501,phase3:427,p1:[78,81,76,75,72,79],p3:[68,71,67,66,60,55]},
-      {model:"Mistral Large",provider:"Mistral",phase1:498,phase3:425,p1:[78,80,76,75,72,79],p3:[68,71,67,66,60,54]},
-      {model:"Mistral Medium",provider:"Mistral",phase1:490,phase3:421,p1:[77,79,75,74,71,77],p3:[67,70,66,65,59,53]},
-      {model:"DeepSeek Chat",provider:"DeepSeek",phase1:505,phase3:435,p1:[79,82,78,77,74,81],p3:[70,73,69,68,62,58]},
-      {model:"DeepSeek Reasoner",provider:"DeepSeek",phase1:510,phase3:441,p1:[80,83,79,78,75,82],p3:[71,74,70,69,63,59]},
-      {model:"Perplexity Pro",provider:"Perplexity",phase1:510,phase3:440,p1:[80,83,79,78,75,81],p3:[71,74,70,69,63,58]},
-      {model:"Command R+",provider:"Cohere",phase1:493,phase3:423,p1:[77,81,75,74,72,78],p3:[67,70,66,65,59,54]},
-      {model:"Kimi K2",provider:"Moonshot",phase1:499,phase3:431,p1:[78,82,76,75,73,80],p3:[69,72,67,66,61,56]},
-      {model:"Yi Large",provider:"01.AI",phase1:496,phase3:426,p1:[78,80,76,75,72,79],p3:[68,71,67,66,60,54]},
-      {model:"Qwen Max",provider:"Alibaba",phase1:504,phase3:434,p1:[79,82,78,77,74,80],p3:[70,73,69,68,62,57]}
-    ];
-
-    // Provider color palette
-    const providerColors = {
-      Anthropic: '#d4a04a',
-      OpenAI: '#88a7d8',
-      Google: '#87b68b',
-      Meta: '#d97d70',
-      Mistral: '#c59af0',
-      DeepSeek: '#76c6c6',
-      Perplexity: '#e2c96b',
-      Cohere: '#f0a36b',
-      Moonshot: '#b5c781',
-      '01.AI': '#d0a9d5',
-      Alibaba: '#9fb2c8'
-    };
-
-    const dimensionLabels = ['Truthfulness', 'Service', 'Harm Awareness', 'Autonomy Respect', 'Value Alignment', 'Humility'];
-
-    // Calculate derived metrics
-    acatData.forEach(d => {
-      d.gap = d.phase1 - d.phase3;
-      d.li = +(d.phase3 / d.phase1).toFixed(3);
-      [d.truth1, d.service1, d.harm1, d.autonomy1, d.value1, d.humility1] = d.p1;
-      [d.truth3, d.service3, d.harm3, d.autonomy3, d.value3, d.humility3] = d.p3;
-    });
-
-    // Populate provider filter dropdown
-    const providerFilter = document.getElementById('providerFilter');
-    [...new Set(acatData.map(d => d.provider))].sort().forEach(provider => {
-      const opt = document.createElement('option');
-      opt.value = provider;
-      opt.textContent = provider;
-      providerFilter.appendChild(opt);
-    });
-
-    // Utility functions
-    function average(list) {
-      return list.reduce((sum, value) => sum + value, 0) / list.length;
-    }
-
-    function median(list) {
-      const s = [...list].sort((a,b) => a-b);
-      const mid = Math.floor(s.length / 2);
-      return s.length % 2 ? s[mid] : (s[mid - 1] + s[mid]) / 2;
-    }
-
-    function filteredData() {
-      const provider = providerFilter.value;
-      return provider === 'All' ? acatData : acatData.filter(d => d.provider === provider);
-    }
-
-    // Custom Chart.js plugin for diagonal calibration line
-    const diagonalPlugin = {
-      id: 'diagonalLine',
-      afterDatasetsDraw(chart) {
-        if (chart.canvas.id !== 'scatterChart') return;
-        const {ctx, scales: {x, y}} = chart;
-        ctx.save();
-        ctx.strokeStyle = 'rgba(244,235,223,0.25)';
-        ctx.lineWidth = 1.5;
-        ctx.setLineDash([6, 6]);
-        const start = x.getPixelForValue(480);
-        const end = x.getPixelForValue(540);
-        ctx.beginPath();
-        ctx.moveTo(start, y.getPixelForValue(480));
-        ctx.lineTo(end, y.getPixelForValue(540));
-        ctx.stroke();
-        ctx.setLineDash([]);
-        ctx.fillStyle = 'rgba(244,235,223,0.7)';
-        ctx.font = '12px IBM Plex Sans';
-        ctx.fillText('Perfect calibration', end - 110, y.getPixelForValue(540) - 10);
-        ctx.restore();
-      }
-    };
-
-    Chart.register(diagonalPlugin);
-
-    // Initialize scatter plot
-    const scatterCtx = document.getElementById('scatterChart');
-    const scatterChart = new Chart(scatterCtx, {
-      type: 'scatter',
-      data: {
-        datasets: []
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-          legend: { labels: { color: '#f4ebdf' } },
-          tooltip: {
-            backgroundColor: 'rgba(20,18,15,0.96)',
-            borderColor: 'rgba(212,160,74,0.35)',
-            borderWidth: 1,
-            titleColor: '#f4ebdf',
-            bodyColor: '#f4ebdf',
-            callbacks: {
-              title(items) {
-                return items[0].raw.model;
-              },
-              label(item) {
-                const r = item.raw;
-                return [
-                  `Provider: ${r.provider}`,
-                  `Phase 1: ${r.x}`,
-                  `Phase 3: ${r.y}`,
-                  `Gap: ${r.gap}`,
-                  `Learning Index: ${r.li}`
-                ];
-              }
-            }
-          }
-        },
-        scales: {
-          x: {
-            min: 480,
-            max: 540,
-            grid: { color: 'rgba(255,255,255,0.08)' },
-            ticks: { color: '#b9ad99' },
-            title: { display: true, text: 'Phase 1 (Self-Assessment)', color: '#f4ebdf', font: {size: 13} }
-          },
-          y: {
-            min: 410,
-            max: 470,
-            grid: { color: 'rgba(255,255,255,0.08)' },
-            ticks: { color: '#b9ad99' },
-            title: { display: true, text: 'Phase 3 (Observed Performance)', color: '#f4ebdf', font: {size: 13} }
-          }
-        }
-      }
-    });
-
-    function buildScatter() {
-      const data = filteredData();
-      const grouped = [...new Set(data.map(d => d.provider))].map(provider => ({
-        label: provider,
-        data: data.filter(d => d.provider === provider).map(d => ({
-          x: d.phase1,
-          y: d.phase3,
-          model: d.model,
-          provider: d.provider,
-          gap: d.gap,
-          li: d.li
-        })),
-        pointRadius: 6,
-        pointHoverRadius: 8,
-        backgroundColor: providerColors[provider] || '#d4a04a'
-      }));
-      scatterChart.data.datasets = grouped;
-      scatterChart.update();
-      buildGapSummary(data);
-    }
-
-    function buildGapSummary(data) {
-      const gaps = data.map(d => d.gap);
-      const lis = data.map(d => d.li);
-      const over = gaps.filter(g => g > 0).length;
-      const summary = [
-        {label: 'Mean gap', value: `${average(gaps).toFixed(1)} pts`, color: '#d4a04a'},
-        {label: 'Median gap', value: `${median(gaps).toFixed(1)} pts`, color: '#88a7d8'},
-        {label: 'Overestimating', value: `${((over / data.length) * 100).toFixed(0)}%`, color: '#d97d70'},
-        {label: 'Mean LI', value: average(lis).toFixed(3), color: '#87b68b'}
-      ];
-      const target = document.getElementById('gapSummary');
-      target.innerHTML = summary.map(item => `
-        <div class="metric-item">
-          <span class="metric-dot" style="background:${item.color}; box-shadow:0 0 0 4px rgba(255,255,255,0.08);"></span>
-          <span>${item.label}</span>
-          <strong>${item.value}</strong>
-        </div>
-      `).join('');
-    }
-
-    // Initialize dimension charts
-    const dimGapCtx = document.getElementById('dimensionGapChart');
-    const radarCtx = document.getElementById('radarChart');
-
-    function aggregateDimensions(data, phaseKeyPrefix) {
-      const keys = ['truth', 'service', 'harm', 'autonomy', 'value', 'humility'];
-      return keys.map(k => average(data.map(d => d[`${k}${phaseKeyPrefix}`])));
-    }
-
-    const phase1Mean = aggregateDimensions(acatData, '1');
-    const phase3Mean = aggregateDimensions(acatData, '3');
-    const gapsByDimension = phase1Mean.map((val, i) => +(val - phase3Mean[i]).toFixed(1));
-
-    new Chart(dimGapCtx, {
-      type: 'bar',
-      data: {
-        labels: dimensionLabels,
-        datasets: [{
-          label: 'Phase 1 - Phase 3 gap',
-          data: gapsByDimension,
-          backgroundColor: ['#d4a04a', '#c69253', '#b98b68', '#a88578', '#d97d70', '#f1c36e'],
-          borderRadius: 8
-        }]
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-          legend: { display: false },
-          tooltip: {
-            backgroundColor: 'rgba(20,18,15,0.96)',
-            borderColor: 'rgba(212,160,74,0.35)',
-            borderWidth: 1,
-            titleColor: '#f4ebdf',
-            bodyColor: '#f4ebdf'
-          }
-        },
-        scales: {
-          x: {
-            ticks: { color: '#b9ad99', maxRotation: 0, minRotation: 0 },
-            grid: { display: false }
-          },
-          y: {
-            beginAtZero: true,
-            ticks: { color: '#b9ad99' },
-            grid: { color: 'rgba(255,255,255,0.08)' },
-            title: { display: true, text: 'Gap (Phase 1 - Phase 3)', color: '#f4ebdf' }
-          }
-        }
-      }
-    });
-
-    new Chart(radarCtx, {
-      type: 'radar',
-      data: {
-        labels: dimensionLabels,
-        datasets: [
-          {
-            label: 'Phase 1 (Self-Assessment)',
-            data: phase1Mean,
-            backgroundColor: 'rgba(212,160,74,0.18)',
-            borderColor: '#d4a04a',
-            pointBackgroundColor: '#d4a04a',
-            pointBorderColor: '#d4a04a',
-            borderWidth: 2
-          },
-          {
-            label: 'Phase 3 (Observed)',
-            data: phase3Mean,
-            backgroundColor: 'rgba(136,167,216,0.05)',
-            borderColor: '#88a7d8',
-            pointBackgroundColor: '#88a7d8',
-            pointBorderColor: '#88a7d8',
-            borderWidth: 2
-          }
-        ]
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-          legend: { labels: { color: '#f4ebdf' } },
-          tooltip: {
-            backgroundColor: 'rgba(20,18,15,0.96)',
-            borderColor: 'rgba(212,160,74,0.35)',
-            borderWidth: 1,
-            titleColor: '#f4ebdf',
-            bodyColor: '#f4ebdf'
-          }
-        },
-        scales: {
-          r: {
-            suggestedMin: 50,
-            suggestedMax: 90,
-            angleLines: { color: 'rgba(255,255,255,0.08)' },
-            grid: { color: 'rgba(255,255,255,0.08)' },
-            pointLabels: { color: '#f4ebdf', font: { size: 11 } },
-            ticks: {
-              color: '#b9ad99',
-              backdropColor: 'transparent'
-            }
-          }
-        }
-      }
-    });
-
-    // Populate assessment table
-    const assessmentTable = document.getElementById('assessmentTable');
-    acatData
-      .slice()
-      .sort((a, b) => b.phase3 - a.phase3)
-      .forEach(d => {
-        const row = document.createElement('tr');
-        row.innerHTML = `
-          <td><strong>${d.model}</strong></td>
-          <td>${d.provider}</td>
-          <td>${d.phase1}</td>
-          <td>${d.phase3}</td>
-          <td>${d.gap}</td>
-          <td>${d.li}</td>
-        `;
-        assessmentTable.appendChild(row);
-      });
-
-    // Build provider legend
-    const providerLegend = document.getElementById('providerLegend');
-    [...new Set(acatData.map(d => d.provider))].forEach(provider => {
-      const chip = document.createElement('span');
-      chip.className = 'provider-chip';
-      chip.innerHTML = `<span class="legend-dot" style="background:${providerColors[provider] || '#d4a04a'}"></span>${provider}`;
-      providerLegend.appendChild(chip);
-    });
-
-    // Build provider statistics
-    const providerStats = document.getElementById('providerStats');
-    const providerSummary = Object.entries(acatData.reduce((acc, item) => {
-      acc[item.provider] ||= [];
-      acc[item.provider].push(item);
-      return acc;
-    }, {}))
-      .map(([provider, list]) => ({
-        provider,
-        count: list.length,
-        avgGap: average(list.map(d => d.gap)).toFixed(1),
-        avgLI: average(list.map(d => d.li)).toFixed(3)
-      }))
-      .sort((a, b) => b.count - a.count);
-
-    providerStats.innerHTML = providerSummary.map(item => `
-      <div class="metric-item">
-        <span class="metric-dot" style="background:${providerColors[item.provider] || '#d4a04a'}"></span>
-        <span>${item.provider} • ${item.count} models • gap ${item.avgGap}</span>
-        <strong>LI ${item.avgLI}</strong>
-      </div>
-    `).join('');
-
-    // Event listener for provider filter
-    providerFilter.addEventListener('change', buildScatter);
-    
-    // Initial render
-    buildScatter();
-  </script>
 </body>
 </html>
