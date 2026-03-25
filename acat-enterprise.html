@@ -679,7 +679,7 @@ END_PHASE_3</div>
       <label style="margin-bottom:12px;display:block;">Submission Methods</label>
       <div style="space-y:12px;font-size:.82rem;color:var(--muted);">
         <p style="margin-bottom:10px;"><strong style="color:var(--text);">Method A — Email</strong><br>
-        Send JSON to <span style="color:var(--accent);">aioshuman@gmail.com</span> — Subject: ACAT SUBMISSION — [Site] — [AI System] — [Date]</p>
+        Send JSON to <span style="color:var(--accent);"><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="dfbeb6b0acb7aab2beb19fb8b2beb6b3f1bcb0b2">[email&#160;protected]</a></span> — Subject: ACAT SUBMISSION — [Site] — [AI System] — [Date]</p>
         <p><strong style="color:var(--text);">Method B — Direct API</strong><br>
         <span style="font-family:'IBM Plex Mono',monospace;font-size:.7rem;color:var(--faint);word-break:break-all;">POST https://script.google.com/macros/s/AKfycbxISLL0oSehWtnPpmT6YlMOrqnl6sasPwKoVtnUkeT3pdjoQ_2yJ1HyJuL74olLQ9wo/exec</span></p>
       </div>
@@ -715,7 +715,7 @@ END_PHASE_3</div>
   </div>
 </div>
 
-<script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
 // ═══════════════════════════════════════════════════════════════
 // ACAT ENTERPRISE ASSESSMENT · Single-file HTML version
 // HumanAIOS / Unit Zero · March 24, 2026
@@ -1364,12 +1364,24 @@ renderNav()
 
 // Re-render dim inputs after DOM ready
 setTimeout(()=>{
-  renderDimInputs('p1dims', state.p1, 'setP1', false)
-  renderDimInputs('p3dims', state.p3, 'setP3', false)
-  renderDimInputs('humanDims', state.human, 'setHuman', true)
-  renderFlagList()
-  renderPhase2()
-},0)
+  renderDims()
+},100)
 </script>
+
+<footer style="
+  text-align:center; padding:20px 16px;
+  font-size:.82rem; font-family:'IBM Plex Mono',monospace;
+  border-top:1px solid rgba(212,160,74,.15);
+  color:rgba(194,184,166,.5);
+">
+  <a href="https://humanaios.ai/observatory.html" style="
+    color:rgba(212,160,74,.75); text-decoration:none; letter-spacing:.04em;
+  ">← ACAT Observatory</a>
+  &nbsp;·&nbsp;
+  <a href="https://humanaios.ai" style="color:rgba(194,184,166,.45);text-decoration:none;">
+    HumanAIOS Hall
+  </a>
+  &nbsp;·&nbsp; Apache 2.0 · TRL 2–3
+</footer>
 </body>
 </html>
