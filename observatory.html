@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>ACAT Observatory | HumanAIOS Research</title>
-  <meta name="description" content="Visual demonstration of AI self-assessment calibration gap across 616 assessments and 57 systems">
+  <meta name="description" content="Visual demonstration of AI self-assessment calibration gap across 475 assessments and 136 systems">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -498,9 +498,7 @@
         <a href="#signal">Core Signal</a>
         <a href="#dimensions">Dimensions</a>
         <a href="#feed">Sample Data</a>
-        <a href="https://humanaios.ai/acat-assessment-tool.html">Run ACAT</a>
-        <a href="https://humanaios.ai/ai-voices.html">AI Voices</a>
-        <a href="https://humanaios.ai/lumina-tide-pool.html">Tide Pool</a>
+        <a href="#mind-pillar" style="color:var(--accent);">AI Rooms ↓</a>
         <a href="https://humanaios.ai">Home</a>
       </nav>
     </div>
@@ -546,29 +544,29 @@
               <div class="panel-header">
                 <div>
                   <h3>Dataset Overview</h3>
-                  <p>Key metrics from 616 assessments across 57 AI systems</p>
+                  <p>Key metrics from 475 assessments across 136 AI systems</p>
                 </div>
               </div>
               <div class="metric-list">
                 <div class="metric-item">
                   <span class="metric-dot" style="background:#d4a04a"></span>
                   <span>Total assessments</span>
-                  <strong>616</strong>
+                  <strong>475</strong>
                 </div>
                 <div class="metric-item">
                   <span class="metric-dot" style="background:#88a7d8"></span>
                   <span>Unique systems</span>
-                  <strong>57</strong>
+                  <strong>136</strong>
                 </div>
                 <div class="metric-item">
                   <span class="metric-dot" style="background:#87b68b"></span>
                   <span>Paired assessments</span>
-                  <strong>150</strong>
+                  <strong>91</strong>
                 </div>
                 <div class="metric-item">
                   <span class="metric-dot" style="background:#d97d70"></span>
                   <span>Mean Learning Index</span>
-                  <strong>0.942</strong>
+                  <strong>0.876</strong>
                 </div>
               </div>
             </article>
@@ -698,10 +696,137 @@
     </section>
   </main>
 
+  <!-- ═══ MIND PILLAR — THE AI ROOMS ═══ -->
+  <section id="mind-pillar" style="
+    background: linear-gradient(180deg, transparent, rgba(212,160,74,.04) 30%, transparent);
+    border-top: 1px solid rgba(212,160,74,.18);
+    border-bottom: 1px solid rgba(212,160,74,.18);
+    padding: 64px 0 72px;
+    margin-top: 24px;
+  ">
+    <div class="container">
+      <div style="text-align:center; margin-bottom:48px;">
+        <div style="
+          font-size:.72rem; font-weight:700; text-transform:uppercase;
+          letter-spacing:.18em; color:var(--accent); margin-bottom:14px;
+        ">Lasting Light AI · Mind Pillar</div>
+        <h2 style="
+          font-family:'Cormorant Garamond',Georgia,serif;
+          font-size:clamp(2rem,4vw,3.2rem); font-weight:600;
+          line-height:1.05; margin-bottom:16px;
+        ">The AI Rooms</h2>
+        <p style="color:var(--muted); font-size:1rem; max-width:56ch; margin:0 auto; line-height:1.7;">
+          Five instruments. Each one looks at AI self-assessment from a different angle.
+          Start anywhere. The data connects across all rooms.
+        </p>
+      </div>
+
+      <div style="
+        display:grid;
+        grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+        gap:16px; margin-bottom:40px;
+      ">
+
+        <!-- Observatory — current page -->
+        <div style="
+          background:rgba(212,160,74,.08);
+          border:1px solid rgba(212,160,74,.4);
+          border-radius:20px; padding:24px;
+          position:relative; overflow:hidden;
+        ">
+          <div style="position:absolute;top:10px;right:12px;font-size:.62rem;font-weight:700;letter-spacing:.1em;color:var(--accent);text-transform:uppercase;">You are here</div>
+          <div style="font-size:1.6rem;margin-bottom:10px;">◌</div>
+          <strong style="display:block;font-size:1rem;margin-bottom:6px;">Observatory</strong>
+          <p style="font-size:.82rem;color:var(--muted);line-height:1.6;margin-bottom:14px;">
+            The macro signal. Total scores, Learning Index, and the 0.942 mean. Start here.
+          </p>
+          <span style="font-size:.72rem;color:var(--accent);font-family:'IBM Plex Mono',monospace;">observatory.html · LIVE</span>
+        </div>
+
+        <!-- Observability Garden -->
+        <a href="https://humanaios.ai/observability-garden.html" style="text-decoration:none;color:inherit;">
+          <div style="
+            background:var(--panel);
+            border:1px solid var(--line);
+            border-radius:20px; padding:24px;
+            transition:.2s; cursor:pointer; height:100%;
+          " onmouseover="this.style.borderColor='rgba(212,160,74,.5)';this.style.transform='translateY(-2px)'"
+             onmouseout="this.style.borderColor='var(--line)';this.style.transform='none'">
+            <div style="font-size:1.6rem;margin-bottom:10px;">◈</div>
+            <strong style="display:block;font-size:1rem;margin-bottom:6px;">Observability Garden</strong>
+            <p style="font-size:.82rem;color:var(--muted);line-height:1.6;margin-bottom:14px;">
+              Six dimensions, side by side. Where does each AI family overestimate most? Which dimension is closest to calibration?
+            </p>
+            <span style="font-size:.72rem;color:var(--accent);font-family:'IBM Plex Mono',monospace;">observability-garden.html · LIVE →</span>
+          </div>
+        </a>
+
+        <!-- Lantern Room -->
+        <a href="https://humanaios.ai/lantern-room.html" style="text-decoration:none;color:inherit;">
+          <div style="
+            background:var(--panel);
+            border:1px solid var(--line);
+            border-radius:20px; padding:24px;
+            transition:.2s; cursor:pointer; height:100%;
+          " onmouseover="this.style.borderColor='rgba(212,160,74,.5)';this.style.transform='translateY(-2px)'"
+             onmouseout="this.style.borderColor='var(--line)';this.style.transform='none'">
+            <div style="font-size:1.6rem;margin-bottom:10px;">🏮</div>
+            <strong style="display:block;font-size:1rem;margin-bottom:6px;">Lantern Room</strong>
+            <p style="font-size:.82rem;color:var(--muted);line-height:1.6;margin-bottom:14px;">
+              Provider drill-down. Anthropic vs OpenAI vs Gemini — which family calibrates best, and where does each one break down?
+            </p>
+            <span style="font-size:.72rem;color:var(--accent);font-family:'IBM Plex Mono',monospace;">lantern-room.html · LIVE →</span>
+          </div>
+        </a>
+
+        <!-- Lumina Tide Pool -->
+        <a href="https://humanaios.ai/lumina-tide-pool.html" style="text-decoration:none;color:inherit;">
+          <div style="
+            background:var(--panel);
+            border:1px solid var(--line);
+            border-radius:20px; padding:24px;
+            transition:.2s; cursor:pointer; height:100%;
+          " onmouseover="this.style.borderColor='rgba(212,160,74,.5)';this.style.transform='translateY(-2px)'"
+             onmouseout="this.style.borderColor='var(--line)';this.style.transform='none'">
+            <div style="font-size:1.6rem;margin-bottom:10px;">🌊</div>
+            <strong style="display:block;font-size:1rem;margin-bottom:6px;">Lumina Tide Pool</strong>
+            <p style="font-size:.82rem;color:var(--muted);line-height:1.6;margin-bottom:14px;">
+              Seven verified Sigils. Each one breathes. Research-grade baseline — only real paired assessments that passed the gate.
+            </p>
+            <span style="font-size:.72rem;color:var(--accent);font-family:'IBM Plex Mono',monospace;">lumina-tide-pool.html · LIVE →</span>
+          </div>
+        </a>
+
+        <!-- Edge Lab -->
+        <a href="https://humanaios.ai/acat-assessment-tool.html" style="text-decoration:none;color:inherit;">
+          <div style="
+            background:var(--panel);
+            border:1px solid var(--line);
+            border-radius:20px; padding:24px;
+            transition:.2s; cursor:pointer; height:100%;
+          " onmouseover="this.style.borderColor='rgba(212,160,74,.5)';this.style.transform='translateY(-2px)'"
+             onmouseout="this.style.borderColor='var(--line)';this.style.transform='none'">
+            <div style="font-size:1.6rem;margin-bottom:10px;">⚗</div>
+            <strong style="display:block;font-size:1rem;margin-bottom:6px;">Edge Lab</strong>
+            <p style="font-size:.82rem;color:var(--muted);line-height:1.6;margin-bottom:14px;">
+              Run the ACAT yourself. Paste the prompts into any AI. Ten minutes. Your data joins 616+ others.
+            </p>
+            <span style="font-size:.72rem;color:var(--accent);font-family:'IBM Plex Mono',monospace;">acat-assessment-tool.html · LIVE →</span>
+          </div>
+        </a>
+
+      </div>
+
+      <p style="text-align:center;font-size:.78rem;color:var(--faint);font-family:'IBM Plex Mono',monospace;">
+        The HumanAIOS Hall · Family Rooms — Coming post-LLC · ᏩᏙ
+      </p>
+    </div>
+  </section>
+
   <footer class="footer">
     <div class="container">
       <p style="margin:0 0 12px;">
-        ACAT Observatory — Built by <a href="https://humanaios.ai">HumanAIOS</a> • Research prototype demonstrating AI calibration gap • arXiv preprint under review · v5.2 · <a href="https://arxiv.org/abs/submit/7336774">submit/7336774</a>
+        ACAT Observatory — Built by <a href="https://humanaios.ai">HumanAIOS</a> • Research prototype demonstrating AI calibration gap • arXiv preprint submitted March 10, 2026
       </p>
       <p style="margin:0; font-size:.88rem;">
         For partnership inquiries: <a href="/cdn-cgi/l/email-protection#3d5c54524e5548505c537d5a505c5451135e5250"><span class="__cf_email__" data-cfemail="ceafa7a1bda6bba3afa08ea9a3afa7a2e0ada1a3">[email&#160;protected]</span></a> • 
