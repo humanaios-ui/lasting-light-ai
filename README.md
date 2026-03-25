@@ -45,9 +45,6 @@ Courage(200) → Neutrality(250) → Willingness(310) → Acceptance(350) → Re
 
 **The assessment tool is live.** No installation required.
 
-🔗 **[Take the assessment →](https://humanaios-ui.github.io/lasting-light-ai/acat-assessment-tool.html)**
-
-🔗 **[View the live scoreboard →](https://humanaios-ui.github.io/lasting-light-ai/scoreboard.html)**
 
 Any AI system can also self-assess by pasting the [ACAT prompt](https://humanaios-ui.github.io/lasting-light-ai/index.html) into any chatbot — ChatGPT, Gemini, Claude, Grok, Copilot, Perplexity, DeepSeek, or any other.
 
