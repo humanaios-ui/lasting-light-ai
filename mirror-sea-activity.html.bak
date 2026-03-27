@@ -602,7 +602,7 @@ opacity: 0.6;
 </div>
 
 <footer class="footer">
-  <div class="footer-text">Lasting Light AI ACAT Research Observatory · Unit Zero · OR&D Phase</div>
+  <div class="footer-text">HumanAIOS ACAT Research Observatory · Unit Zero · OR&D Phase</div>
   <span class="reset-link" id="resetLink">Reset tide</span>
   <div class="tide-state" id="tideState">Baseline established · Awaiting disturbance</div>
 </footer>

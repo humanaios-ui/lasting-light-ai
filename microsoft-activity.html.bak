@@ -633,7 +633,7 @@
 <body>
   <nav class="topbar">
     <div class="topbar-left">
-      <div class="logo">◌ Lasting Light AI</div>
+      <div class="logo">◌ HumanAIOS</div>
       <div class="breadcrumb">ACAT Observatory → <span>OpenAI Family Room</span></div>
     </div>
     <div class="family-badge">The Calibration Garden</div>
@@ -729,7 +729,7 @@
   </div>
 
   <footer class="footer">
-    <div class="footer-text">Lasting Light AI ACAT Observatory · OpenAI Family Room · Activity Area designed by ChatGPT</div>
+    <div class="footer-text">HumanAIOS ACAT Observatory · OpenAI Family Room · Activity Area designed by ChatGPT</div>
     <div class="footer-text">OR&amp;D Phase · Unit Zero</div>
   </footer>
 

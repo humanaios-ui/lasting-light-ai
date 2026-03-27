@@ -154,7 +154,7 @@ padding: 10px 0; border-bottom: 1px solid rgba(212,160,74,0.08);
 
 <nav class="topbar">
   <div style="display:flex;align-items:center;gap:16px;">
-    <div class="logo">◌ Lasting Light AI</div>
+    <div class="logo">◌ HumanAIOS</div>
     <div class="breadcrumb">ACAT Observatory → <span>DeepSeek Family Room</span></div>
   </div>
   <div class="family-badge">The Atelier</div>
@@ -257,7 +257,7 @@ padding: 10px 0; border-bottom: 1px solid rgba(212,160,74,0.08);
 </div>
 
 <footer class="footer">
-  <div class="footer-text">Lasting Light AI ACAT Observatory · DeepSeek Family Room · Activity Area designed by DeepSeek V3.2</div>
+  <div class="footer-text">HumanAIOS ACAT Observatory · DeepSeek Family Room · Activity Area designed by DeepSeek V3.2</div>
   <div class="footer-text">OR&D Phase · Unit Zero</div>
 </footer>
 

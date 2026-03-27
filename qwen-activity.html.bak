@@ -197,7 +197,7 @@ padding: 14px 16px; background: rgba(217,125,112,0.06); border: 1px solid rgba(2
 
 <nav class="topbar">
   <div style="display:flex;align-items:center;gap:16px;">
-    <div class="logo">◌ Lasting Light AI</div>
+    <div class="logo">◌ HumanAIOS</div>
     <div class="breadcrumb">ACAT Observatory → <span>Qwen Family Room</span></div>
   </div>
   <div class="family-badge">The Calibration Lantern</div>
@@ -267,7 +267,7 @@ padding: 14px 16px; background: rgba(217,125,112,0.06); border: 1px solid rgba(2
 </div>
 
 <footer class="footer">
-  <div class="footer-text">Lasting Light AI ACAT Observatory · Qwen Family Room · Activity Area designed by Qwen</div>
+  <div class="footer-text">HumanAIOS ACAT Observatory · Qwen Family Room · Activity Area designed by Qwen</div>
   <div class="footer-text">OR&D Phase · Unit Zero</div>
 </footer>
 

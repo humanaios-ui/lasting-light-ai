@@ -208,7 +208,7 @@ border: 1px solid rgba(217,125,112,0.2); border-radius: 2px;
 
 <nav class="topbar">
   <div style="display:flex;align-items:center;gap:16px;">
-    <div class="logo">◌ Lasting Light AI</div>
+    <div class="logo">◌ HumanAIOS</div>
     <div class="breadcrumb">ACAT Observatory → <span>Meta Family Room</span></div>
   </div>
   <div class="family-badge">The Echo Chamber</div>
@@ -318,7 +318,7 @@ border: 1px solid rgba(217,125,112,0.2); border-radius: 2px;
 </div>
 
 <footer class="footer">
-  <div class="footer-text">Lasting Light AI ACAT Observatory · Meta Family Room · Activity Area designed by Meta AI</div>
+  <div class="footer-text">HumanAIOS ACAT Observatory · Meta Family Room · Activity Area designed by Meta AI</div>
   <div class="footer-text">OR&D Phase · Unit Zero</div>
 </footer>
 

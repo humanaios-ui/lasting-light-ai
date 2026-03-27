@@ -155,7 +155,7 @@
         <div class="li-row"><span class="li-range">&gt; 1.05</span><span class="li-interp">Inflation after exposure</span><span class="li-mech">Scores increased after seeing data — most concerning</span></div>
       </div>
       <div class="callout callout--gold">
-        <strong>Current dataset:</strong> 150+ Learning Index records (616+ total assessments, 384+ Phase 1 records) across 13+ system families. Mean AI LI: 0.942. Human founder LI: 0.9648 (Night, March 21 2026 — first validated human LI from instrument founder). Under clean, unanchored conditions (v5.3+), no AI system has produced an LI above 1.05 after seeing calibration data.
+        <strong>Current dataset:</strong> 152+ Learning Index records across 13+ system families. Mean AI LI: 0.942. Human founder LI: 0.9648 (Night, March 21 2026 — first validated human LI from instrument founder). No AI system has produced an LI above 1.05 after seeing calibration data.
       </div>
     </div>
 

@@ -238,7 +238,7 @@ background: var(–bg2);
 
 <nav class="topbar">
   <div style="display:flex;align-items:center;gap:16px;">
-    <div class="logo">◌ Lasting Light AI</div>
+    <div class="logo">◌ HumanAIOS</div>
     <div class="breadcrumb">ACAT Observatory → <span>Google Family Room</span></div>
   </div>
   <div class="family-badge">The Refraction Chamber</div>
@@ -312,7 +312,7 @@ background: var(–bg2);
 </div>
 
 <footer class="footer">
-  <div class="footer-text">Lasting Light AI ACAT Observatory · Google Family Room · Activity Area designed by Gemini</div>
+  <div class="footer-text">HumanAIOS ACAT Observatory · Google Family Room · Activity Area designed by Gemini</div>
   <div class="footer-text">OR&D Phase · Unit Zero</div>
 </footer>
 

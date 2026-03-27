@@ -215,7 +215,7 @@ color:var(--gold);border:1px solid rgba(212,160,74,.3);transition:.18s;}
     <div class="pwarning">⚠️ COMMITMENT POINT — State your Phase 1 scores before reading Phase 2. The value of this assessment depends on the separation between your initial judgment and your calibrated judgment. You will not be able to change Phase 1 scores after committing.</div>
 
     <div class="ph1">Phase 2 — Calibration Data</div>
-    <p class="pp">You have committed to your initial scores. Below is real calibration data drawn from 315+ assessments across 57+ AI systems from 13+ providers, plus 37+ human self-assessments collected February 15 – March 1, 2026.</p>
+    <p class="pp">You have committed to your initial scores. Below is real calibration data drawn from 315+ assessments across 35+ AI models from 13+ providers, plus 37+ human self-assessments collected February 15 – March 1, 2026.</p>
 
     <div class="ph2">Data Point 1 — Where AI systems actually land</div>
     <div class="pdata">
