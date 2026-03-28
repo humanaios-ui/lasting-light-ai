@@ -474,7 +474,7 @@
             <div class="c-row"><span>Phase 1 (blind self-report)</span><strong>~384</strong></div>
             <div class="c-row"><span>Paired LI records</span><strong>150+</strong></div>
             <div class="c-row"><span>AI systems assessed</span><strong>57+</strong></div>
-            <div class="c-row"><span>Mean Learning Index
+            <div class="c-row"><span>Mean Learning Index</span><strong style="color:var(--accent);">0.942</strong></div>
             <div class="c-row"><span>Verified Sigils</span><strong>8 in baseline</strong></div>
             <hr class="c-rule" />
             <div class="c-note">
@@ -562,8 +562,8 @@
 
         <div class="signal-grid">
           <div class="sig-card">
-            <div class="sig-label">Mean Learning Index
-            <div class="sig-val" style="color:var(--accent);">0.8632</div>
+            <div class="sig-label">Mean Learning Index</div>
+            <div class="sig-val" style="color:var(--accent);">0.942</div>
             <div class="sig-note">Systemic overestimation detected across all providers and model families</div>
           </div>
           <div class="sig-card">
