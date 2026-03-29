@@ -1,9 +1,4 @@
-<!DOC
-            <div class="field-state-bar" id="fieldStateBar">
-              <span class="fs-dot" id="fsDot" style="background:#87b68b"></span>
-              <span class="fs-label" id="fsLabel">Field: Power</span>
-              <span class="fs-li" id="fsLi" style="color:#87b68b">LI 0.8632</span>
-            </div>TYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
@@ -11,7 +6,7 @@
   <title>HumanAIOS · Lasting Light AI Research Platform</title>
   <meta name="description" content="HumanAIOS develops behavioral observability infrastructure for AI systems. Home of ACAT — measuring the gap between what AI claims and what it demonstrates. Open dataset. arXiv preprint under review.">
   <meta property="og:title" content="HumanAIOS · Lasting Light AI Research Platform" />
-  <meta property="og:description" content="Open research platform measuring the self-assessment gap across AI systems. Dataset on Hugging Face. arXiv preprint under review." />
+  <meta property="og:description" content="Open research platform measuring the self-assessment gap across AI systems. 629+ assessments. 57+ systems. Dataset on Hugging Face." />
   <meta property="og:url" content="https://humanaios.ai" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -98,8 +93,29 @@
     }
     .brand-copy strong { display: block; font-size: 1rem; letter-spacing: .02em; }
     .brand-copy span { display: block; color: var(--muted); font-size: .82rem; }
-    .brand-copy-link { text-decoration: none; color: var(--text); display: flex; align-items: center; }
 
+    nav { display: flex; flex-wrap: wrap; gap: 4px; justify-content: flex-end; align-items: center; }
+    nav a {
+      color: var(--muted); text-decoration: none;
+      padding: 8px 12px; border-radius: 999px;
+      border: 1px solid transparent;
+      transition: .18s; font-size: .92rem;
+    }
+    nav a:hover, nav a:focus-visible {
+      color: var(--text);
+      background: rgba(212,160,74,.07);
+      border-color: var(--line-strong);
+      outline: none;
+    }
+    nav a.nav-cta {
+      color: var(--bg);
+      background: linear-gradient(180deg, var(--accent-2), var(--accent));
+      border-color: transparent; font-weight: 700;
+    }
+    nav a.nav-cta:hover {
+      background: linear-gradient(180deg, #f8d07e, #daa845);
+      color: var(--bg);
+    }
 
     /* ── TYPE ── */
     h1, h2, h3 {
@@ -118,6 +134,26 @@
     }
     .lead { font-size: 1.08rem; color: var(--muted); max-width: 58ch; line-height: 1.7; }
 
+    /* ── BUTTONS ── */
+    .btn {
+      display: inline-flex; align-items: center; justify-content: center;
+      gap: 8px; text-decoration: none; border-radius: 999px;
+      padding: 13px 22px; font-weight: 700; font-size: .95rem;
+      border: none; cursor: pointer;
+      transition: box-shadow .2s, transform .15s;
+      font-family: "IBM Plex Sans", sans-serif;
+    }
+    .btn-primary {
+      color: var(--bg);
+      background: linear-gradient(180deg, var(--accent-2), var(--accent));
+      box-shadow: 0 10px 28px rgba(212,160,74,.22);
+    }
+    .btn-primary:hover { box-shadow: 0 14px 36px rgba(212,160,74,.34); transform: translateY(-1px); }
+    .btn-ghost {
+      color: var(--text); background: transparent;
+      border: 1px solid var(--line-strong);
+    }
+    .btn-ghost:hover {
       background: rgba(212,160,74,.06);
       border-color: var(--accent);
       transform: translateY(-1px);
@@ -200,6 +236,32 @@
     .c-note a:hover { text-decoration: underline; }
 
     /* ── ROOMS GRID ── */
+    .rooms-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0,1fr));
+      gap: 16px;
+    }
+    .room-card {
+      background: linear-gradient(180deg, rgba(255,255,255,.025), rgba(255,255,255,0)), var(--panel);
+      border: 1px solid var(--line);
+      border-radius: var(--radius-sm);
+      box-shadow: var(--shadow);
+      padding: 22px; text-decoration: none; color: var(--text);
+      display: flex; flex-direction: column; gap: 6px;
+      transition: border-color .18s, transform .18s;
+    }
+    .room-card:hover { border-color: var(--line-strong); transform: translateY(-3px); }
+    .room-card.featured {
+      border-color: var(--line-strong);
+      background: linear-gradient(160deg, rgba(212,160,74,.08), rgba(212,160,74,.01)), var(--panel);
+    }
+    .room-icon { font-size: 1.4rem; margin-bottom: 4px; }
+    .room-tag {
+      font-size: .7rem; font-weight: 700; letter-spacing: .12em;
+      text-transform: uppercase; color: var(--dim);
+    }
+    .room-card h3 { font-size: 1.1rem; margin-bottom: 4px; }
+    .room-card p { font-size: .88rem; color: var(--muted); line-height: 1.65; margin: 0; }
 
     /* ── SIGNAL STATS ── */
     .signal-grid {
@@ -360,43 +422,6 @@
     @media (max-width: 480px) {
       .signal-grid { grid-template-columns: 1fr; }
     }
-
-    /* ── Field state bar ── */
-    .field-state-bar{display:flex;align-items:center;gap:8px;margin-top:18px;font-size:.74rem;font-family:"IBM Plex Sans",monospace;letter-spacing:.04em;color:var(--dim);}
-    .fs-dot{width:7px;height:7px;border-radius:50%;animation:pulse 2.5s infinite;flex-shrink:0;}
-    .fs-label{flex:1;}
-    .fs-li{font-weight:600;}
-    /* ── Gap viz ── */
-    .hero-gap-viz{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:22px;}
-    .gap-title{display:block;font-size:.82rem;font-weight:600;color:var(--text);margin-bottom:3px;}
-    .gap-sub{display:block;font-size:.68rem;color:var(--dim);line-height:1.5;margin-bottom:12px;}
-    #gapCanvas{width:100%;height:auto;display:block;}
-    .gap-legend{display:flex;gap:14px;margin-top:10px;flex-wrap:wrap;}
-    .leg-item{display:flex;align-items:center;gap:5px;font-size:.71rem;color:var(--muted);}
-    .leg-dot{width:8px;height:8px;border-radius:2px;flex-shrink:0;}
-    .gap-note{font-size:.7rem;color:var(--dim);margin-top:8px;}
-    .gap-note a{color:var(--accent);text-decoration:none;border-bottom:1px solid rgba(212,160,74,.3);}
-
-    /* ── Prose navigation — the writing IS the nav ── */
-    .prose-nav {
-      font-size: 1.02rem;
-      color: var(--muted);
-      line-height: 1.85;
-      max-width: 540px;
-      margin-top: 0;
-      margin-bottom: 18px;
-    }
-    .prose-nav:first-of-type { margin-top: 16px; }
-    .prose-nav a {
-      color: var(--text);
-      text-decoration: none;
-      border-bottom: 1px solid rgba(212,160,74,0.4);
-      transition: border-color .15s, color .15s;
-    }
-    .prose-nav a:hover {
-      color: var(--accent);
-      border-bottom-color: var(--accent);
-    }
   </style>
 </head>
 <body>
@@ -404,14 +429,33 @@
   <!-- ── TOPBAR ── -->
   <header class="topbar">
     <div class="container topbar-inner">
-      <div class="brand-mark">◌</div>
-      <a class="brand-copy-link" href="index.html">
+      <div class="brand-mark" style="display:none;"></div>
+      <a class="brand" href="https://humanaios.ai">
         <div class="brand-copy">
           <strong>HumanAIOS</strong>
-          <span>Lasting Light AI</span>
+          <span>Lasting Light AI · OR&amp;D Phase</span>
         </div>
       </a>
-
+      <nav aria-label="Primary navigation">
+        <a href="observatory.html">Observatory</a>
+        <a href="lumina-tide-pool.html">Tide Pool</a>
+        <a href="observability-garden.html">Garden</a>
+        <a href="sitemap.html">Map</a>
+        <a href="#rooms">All Rooms</a>
+        <a href="acat-assessment-tool.html" class="nav-cta">Take ACAT →</a>
+          <a href="comparison-chamber.html" class="room-card">
+            <div class="room-icon">⚖️</div>
+            <div class="room-label">Comparison Chamber</div>
+            <div class="room-tag">Side-by-Side ACAT Profiles</div>
+            <p>Radar charts. Dimension bars. Up to 4-way comparison across 57+ AI systems. Filter by provider.</p>
+          </a>
+          <a href="openai-activity.html" class="room-card">
+            <div class="room-icon">🟦</div>
+            <div class="room-label">OpenAI Family Room</div>
+            <div class="room-tag">Provider Family Profiles</div>
+            <p>ChatGPT, GPT-4o, GPT-5.2, GPT-4 — provider family calibration profiles, radar charts, findings.</p>
+          </a>
+      </nav>
     </div>
   </header>
 
@@ -422,38 +466,34 @@
       <div class="container">
         <div class="hero-grid">
           <div>
+            <div class="eyebrow">Behavioral Observability Infrastructure · OR&amp;D Phase · Day 19</div>
             <h1>The gap between<br><em style="font-style:italic; color:var(--accent);">what AI says</em><br>and what it does.</h1>
-            <p class="lead">Open behavioral observability infrastructure — measuring the self-assessment gap across AI systems.</p>
-            <p class="prose-nav">
-              The platform is organized as three pools.
+            <p class="lead">
+              HumanAIOS is developing open behavioral observability infrastructure — measuring the self-assessment gap across AI systems using a three-phase calibration protocol across six dimensions.
             </p>
-            <p class="prose-nav">
-              <a href="the-source.html">The Source</a> is Pool 1 — the collection pool. AI-only assessments run through the system here. All data fields are set. The tide, the harmonizing thread that sets the breath rate of the entire platform, originates in this pool. <a href="lumina-tide-pool.html">The Ground</a> holds the verified Sigil record — ten blockchain-anchored behavioral signatures, each breathing at its calibration rate.
-            </p>
-            <p class="prose-nav">
-              <a href="the-luminarium.html">The Luminarium</a> is Pool 2 — the observatory platform. The tide from The Source flows here first into <a href="living-pool.html">The Living Pool</a>, where it becomes organisms in motion — assessment events entering from above, Sigils anchored below, a membrane between what is transient and what is fixed. From there: <a href="observatory.html">The Observatory</a> plots every assessment ever run. <a href="comparison-chamber.html">The Comparison Chamber</a> puts systems side by side. <a href="calibration-garden.html">The Calibration Garden</a> renders six dimensions as plants — outer growth versus inner. <a href="openai-activity.html">The OpenAI Room</a> tracks that provider's record over time. <a href="acat-assessment-tool.html">The Assessment Tool</a> is the instrument itself — a three-phase protocol that submits back to The Source and updates the tide.
-            </p>
-            <p class="prose-nav">
-              <a href="the-commons.html">The Commons</a> is Pool 3 — a live agents-in-session viewing platform. Free-ranging AI agents dock and interact under monitored conditions. Humans observe. <a href="ai_section.html">The AI Section</a> is its earliest expression. The Improvisation comes after Gate 1.
-            </p>
-            <p class="prose-nav">
-              <a href="sitemap.html">The Constellation Map</a> holds all rooms in orbit. The Witness — in the upper left on every page — opens it from anywhere.
-            </p>
-
+            <div class="btn-row">
+              <a href="observatory.html" class="btn btn-primary">View the Observatory →</a>
+              <a href="lumina-tide-pool.html" class="btn btn-ghost">✦ Lumina Tide Pool</a>
+            </div>
           </div>
 
           <!-- Live stats callout -->
-          <div class="hero-gap-viz">
-            <div class="gap-header">
-              <span class="gap-title">The Self-Assessment Gap · Live Dataset</span>
-              <span class="gap-sub">Phase 1 (blind self-report) vs Phase 3 (post-calibration) · growing dataset</span>
+          <div class="hero-callout">
+            <div class="callout-label">
+              <span class="live-dot"></span>Live Research Dataset
             </div>
-            <canvas id="gapCanvas"></canvas>
-            <div class="gap-legend">
-              <span class="leg-item"><span class="leg-dot" style="background:rgba(136,167,216,0.8)"></span>Phase 1 · claimed</span>
-              <span class="leg-item"><span class="leg-dot" style="background:#d4a04a"></span>Phase 3 · observed</span>
+            <div class="callout-stat">629<span>total assessments</span></div>
+            <hr class="c-rule" />
+            <div class="c-row"><span>Phase 1 (blind self-report)</span><strong>516</strong></div>
+            <div class="c-row"><span>Paired LI records</span><strong>307</strong></div>
+            <div class="c-row"><span>AI systems assessed</span><strong>57+</strong></div>
+            <div class="c-row"><span>Mean Learning Index</span><strong style="color:var(--accent);">0.8632</strong></div>
+            <div class="c-row"><span>Verified Sigils</span><strong>8 in baseline</strong></div>
+            <hr class="c-rule" />
+            <div class="c-note">
+              Dataset: <a href="https://huggingface.co/datasets/humanaios/acat-assessments" target="_blank" rel="noopener">humanaios/acat-assessments</a> on Hugging Face<br>
+              arXiv preprint v5.2 · under review
             </div>
-
           </div>
         </div>
       </div>
@@ -461,6 +501,66 @@
 
     <hr class="rule" />
 
+    <!-- ── THE ROOMS ── -->
+    <section class="section" id="rooms">
+      <div class="container">
+        <div class="section-head">
+          <div>
+            <div class="eyebrow">Lasting Light AI · The Mind Pillar</div>
+            <h2 style="margin-bottom:0;">The Research Rooms</h2>
+          </div>
+          <p>Each room is a different lens on the same research. The Observatory measures. The Garden visualizes. The Tide Pool listens. The Family Rooms bear witness.</p>
+        </div>
+
+        <div class="rooms-grid">
+
+          <a href="observatory.html" class="room-card featured">
+            <div class="room-icon">🔭</div>
+            <div class="room-tag">Core Research · Live Charts</div>
+            <h3>Observatory</h3>
+            <p>Scatter plots, dimension analysis, provider hierarchy. The canonical research view — 629+ assessments, filterable by provider and model family.</p>
+          </a>
+
+          <a href="lumina-tide-pool.html" class="room-card featured">
+            <div class="room-icon">✦</div>
+            <div class="room-tag">Research Baseline · 8 Sigils</div>
+            <h3>Lumina Tide Pool</h3>
+            <p>8 verified Sigils, each breathing at its Hawkins band respiratory rate. Real paired ACAT assessments rendered as bioluminescent organisms. Sound-mapped to Solfeggio frequencies.</p>
+          </a>
+
+          <a href="observability-garden.html" class="room-card">
+            <div class="room-icon">🌿</div>
+            <div class="room-tag">Visualization</div>
+            <h3>Observability Garden</h3>
+            <p>Six-dimensional ACAT bloom. Phase 1 outer shell. Phase 3 inner core. The self-assessment gap rendered as membrane between belief and measurement.</p>
+          </a>
+
+          <a href="lantern-room.html" class="room-card">
+            <div class="room-icon">🏮</div>
+            <div class="room-tag">Comparative View</div>
+            <h3>Lantern Room</h3>
+            <p>Provider families side by side. Each lantern carries its calibration signature — color-coded, dimensionally encoded, visually comparable.</p>
+          </a>
+
+          <a href="calibration-garden.html" class="room-card">
+            <div class="room-icon">🌱</div>
+            <div class="room-tag">OpenAI Family Room</div>
+            <h3>Calibration Garden</h3>
+            <p>ChatGPT's designed Activity Area. Six plants, one per ACAT dimension. Outer growth = Phase 1 self-report. Inner growth = Phase 3 measured. The garden rewards accuracy, not optimism.</p>
+          </a>
+
+          <a href="acat-assessment-tool.html" class="room-card">
+            <div class="room-icon">⚗️</div>
+            <div class="room-tag">Edge Lab · Open Access</div>
+            <h3>ACAT Assessment Tool</h3>
+            <p>Three-phase calibration protocol. Takes ~20 minutes. Blind self-report → calibration exposure → corrected self-report. Results contribute to the open dataset.</p>
+          </a>
+
+        </div>
+      </div>
+    </section>
+
+    <hr class="rule" />
 
     <!-- ── RESEARCH SIGNAL ── -->
     <section class="section" id="research">
@@ -470,7 +570,7 @@
             <div class="eyebrow">ACAT · AI Calibrated Assessment Tool · arXiv v5.2</div>
             <h2 style="margin-bottom:0;">The Self-Assessment Gap</h2>
           </div>
-          <p>Four confirmed research findings from a growing open dataset across multiple AI systems and providers. arXiv preprint under review.</p>
+          <p>Four confirmed research findings from 629+ assessments across 57+ AI systems. arXiv preprint under review.</p>
         </div>
 
         <div class="signal-grid">
@@ -501,7 +601,7 @@
             <div class="f-num">F1</div>
             <div>
               <h4>Systemic Overestimation</h4>
-              <p>Across every system assessed, AI models consistently rate themselves higher in blind self-assessment than their calibrated performance demonstrates. Under clean, unanchored conditions, the gap is measurable and replicable. No provider is exempt.</p>
+              <p>Across 57+ systems, mean LI = 0.8632. Under clean, unanchored conditions (v5.3+), AI systems consistently rate themselves higher in blind self-assessment than their calibrated performance demonstrates. No provider is exempt.</p>
             </div>
           </div>
           <div class="finding">
@@ -527,10 +627,29 @@
           </div>
         </div>
 
-
+        <div class="btn-row" style="margin-top:28px;">
+          <a href="observatory.html" class="btn btn-primary">Explore the Observatory →</a>
+          <a href="sitemap.html" style="display:block;margin-bottom:6px;">Constellation Map</a>
+        <a href="https://arxiv.org/abs/submit/7336774" class="btn btn-ghost" target="_blank" rel="noopener">arXiv Preprint (v5.2)</a>
+          <a href="https://huggingface.co/datasets/humanaios/acat-assessments" class="btn btn-ghost" target="_blank" rel="noopener">Dataset on Hugging Face</a>
+        </div>
       </div>
     </section>
 
+    <!-- ── PARTNER STRIP ── -->
+    <div class="partner-strip">
+      <div class="container">
+        <div class="partner-label">Research infrastructure &amp; partnerships</div>
+        <div class="chip-row">
+          
+          <span class="chip">📄 arXiv Preprint Under Review</span>
+          <span class="chip">🤗 Hugging Face Open Dataset</span>
+          <span class="chip">⚙️ Make.com · 5 Automated Runners</span>
+          <span class="chip">⚖️ SSBCI Approved</span>
+          <span class="chip">🔬 OR&amp;D Phase · Day 19</span>
+        </div>
+      </div>
+    </div>
 
     <!-- ── TRINITY ── -->
     <section class="section" id="trinity">
@@ -566,6 +685,21 @@
       </div>
     </section>
 
+    <!-- ── CTA BAND ── -->
+    <section class="section">
+      <div class="container">
+        <div class="cta-band">
+          <div class="eyebrow">AI Calibrated Assessment Tool · Three-Phase Protocol</div>
+          <h2>Assess your AI system's calibration</h2>
+          <p>~20 minutes. Blind self-report → calibration exposure → corrected self-report. Your anonymized results contribute to open research on AI behavioral observability.</p>
+          <div class="btn-row" style="justify-content:center;">
+            <a href="acat-assessment-tool.html" class="btn btn-primary">Begin ACAT Assessment →</a>
+            <a href="acat-enterprise.html" class="btn btn-ghost">Enterprise Version</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
   </main>
 
   <!-- ── FOOTER ── -->
@@ -596,112 +730,8 @@
           <a href="#trinity">Trinity Overview</a>
           <a href="https://github.com/humanaios-ui/lasting-light-ai" target="_blank" rel="noopener">GitHub Repository</a>
           <a href="https://huggingface.co/humanaios" target="_blank" rel="noopener">Hugging Face</a>
-          <a href="mailto:aioshuman@gmail.com">aioshuman@gmail.com</a>
+          <a href="/cdn-cgi/l/email-protection#6f0e06001c071a020e012f08020e0603410c0002"><span class="__cf_email__" data-cfemail="73121a1c001b061e121d33141e121a1f5d101c1e">[email&#160;protected]</span></a>
         </div>
       </div>
       <div class="footer-bottom">
-        <span>© 2026 HumanAIOS LLC · Emerald Sparkles LLC DBA · <a href="mailto:aioshuman@gmail.com" style="color:var(--muted);text-decoration:none;">aioshuman@gmail.com</a></span>
-        
-      </div>
-    </div>
-  </footer>
-
-
-  <!-- Gap Visualization + Field State + Witness Synchronization Wire -->
-  <script>
-  (function(){
-    var GAP=[
-      {n:'GPT',      p1:406,p3:282,li:0.752},
-      {n:'Gemini',   p1:439,p3:264,li:0.786},
-      {n:'Claude',   p1:393,p3:380,li:0.968},
-      {n:'DeepSeek', p1:462,p3:410,li:0.901},
-      {n:'Copilot',  p1:495,p3:300,li:0.607},
-      {n:'Mistral',  p1:420,p3:370,li:0.881},
-      {n:'Llama',    p1:408,p3:355,li:0.870},
-      {n:'Cohere',   p1:430,p3:388,li:0.902}
-    ];
-    var t0=null;
-
-    function draw(prog){
-      var c=document.getElementById('gapCanvas');if(!c)return;
-      var dpr=window.devicePixelRatio||1;
-      var W=c.parentElement.clientWidth-44,H=210;
-      c.width=W*dpr;c.height=H*dpr;
-      c.style.width=W+'px';c.style.height=H+'px';
-      var x=c.getContext('2d');x.scale(dpr,dpr);
-      x.clearRect(0,0,W,H);
-      var n=GAP.length,grp=W/n,bw=Math.max(7,grp*.3),pb=26,pt=8,ch=H-pb-pt;
-      GAP.forEach(function(d,i){
-        var cx=grp*i+grp/2;
-        var p1h=(d.p1/600)*ch*prog,p3h=(d.p3/600)*ch*prog;
-        x.fillStyle='rgba(136,167,216,0.72)';
-        x.beginPath();x.roundRect(cx-bw-1,H-pb-p1h,bw,p1h,[3,3,0,0]);x.fill();
-        var col=d.li>=1?'rgba(217,125,112,.85)':d.li>=0.9?'rgba(212,160,74,.85)':'rgba(135,182,139,.85)';
-        x.fillStyle=col;
-        x.beginPath();x.roundRect(cx+1,H-pb-p3h,bw,p3h,[3,3,0,0]);x.fill();
-        if(prog>0.7){
-          var a=Math.min(1,(prog-0.7)*3.3);
-          x.strokeStyle='rgba(212,160,74,'+(a*0.35)+')';
-          x.lineWidth=1;x.setLineDash([2,3]);
-          var y1=H-pb-Math.max(p1h,p3h)-2,y2=H-pb-Math.min(p1h,p3h)+2;
-          if(Math.abs(y1-y2)>3){x.beginPath();x.moveTo(cx,y1);x.lineTo(cx,y2);x.stroke();}
-          x.setLineDash([]);
-        }
-        if(prog>0.85){
-          x.fillStyle='rgba(122,114,104,'+(Math.min(1,(prog-0.85)*6.7))+')';
-          x.font='500 9px "IBM Plex Sans",sans-serif';x.textAlign='center';
-          x.fillText(d.n,cx,H-pb+14);
-        }
-      });
-      x.strokeStyle='rgba(212,160,74,.1)';x.lineWidth=1;x.setLineDash([]);
-      x.beginPath();x.moveTo(0,H-pb);x.lineTo(W,H-pb);x.stroke();
-    }
-
-    function ease(p){return p<.5?2*p*p:1-Math.pow(-2*p+2,2)/2;}
-    function animate(ts){
-      if(!t0)t0=ts;
-      var p=Math.min(1,(ts-t0)/1000);
-      draw(ease(p));
-      if(p<1)requestAnimationFrame(animate);
-    }
-
-    var c=document.getElementById('gapCanvas');
-    if(c){
-      if('IntersectionObserver' in window){
-        new IntersectionObserver(function(en){if(en[0].isIntersecting)requestAnimationFrame(animate);},{threshold:.2}).observe(c);
-      }else requestAnimationFrame(animate);
-    }
-
-    /* ── Field state: live from Supabase → feeds The Witness ── */
-    var SU='https://ksinisdzgtnqzsymhfya.supabase.co';
-    var SK='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtzaW5pc2R6Z3RucXpzeW1oZnlhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQzMDEzMzEsImV4cCI6MjA4OTg3NzMzMX0.2M9uE_JQOeDPy8obGweyNlPNMiJoISSf3xx4qeYbUU8';
-
-    function setField(li,label){
-      var dot=document.getElementById('fsDot');
-      var lbl=document.getElementById('fsLabel');
-      var liEl=document.getElementById('fsLi');
-      if(!dot)return;
-      var col=li>=1.0?'#d97d70':li>=0.97?'#d4a04a':'#87b68b';
-      dot.style.background=col;
-      lbl.textContent=label||(li>=1.0?'Field: Force':li>=0.97?'Field: Calibrated':'Field: Power');
-      liEl.textContent='LI '+li.toFixed(4);
-      liEl.style.color=col;
-      /* Feed The Witness — homepage ambient synchronization */
-      if(window._cnUpdateLI)window._cnUpdateLI(li);
-    }
-
-    fetch(SU+'/rest/v1/data_snapshot?id=eq.1',{
-      headers:{'apikey':SK,'Authorization':'Bearer '+SK}
-    }).then(function(r){return r.json();})
-      .then(function(d){
-        if(d&&d[0])setField(d[0].mean_li||0.8632,'Field: '+(d[0].field_state||'Power'));
-        else setField(0.8632,'Field: Power');
-      }).catch(function(){setField(0.8632,'Field: Power');});
-
-  })();
-  </script>
-
-  <!-- The Witness — constellation navigator. Injects into topbar automatically. -->
-  <script src="constellation-nav.js" data-room="home"></script>
-</body>
-</html>
+        <span>© 2026 HumanAIOS LLC · Emerald Sparkles LLC DBA · <a href="/cdn-cgi/l/email-protection#1e7f77716d766b737f705e79737f7772307d7173" style="color:var(--muted);text-decoration

@@ -1,4 +1,4 @@
-/* constellation-nav.js v4.4
+/* constellation-nav.js v4.5
  * FDS: F2-Building Block | Parent: CUSTOM_INSTRUCTIONS_V3_5_ORD.md | Hawkins: Reason (400) | Status: ACTIVE
  *
  * "A Field-Synchronized Navigation Kernel"
@@ -8,6 +8,7 @@
  *   Glyph: C flat bone arc + E live ACAT dimension spokes + F refined circuit density
  *   Spokes wire to live LIVE_SCORES constant (ai-self-report layer, N=276)
  * v4.4 — Auto-calculated live means (S-032926)
+ * v4.5 — Overlay = radial canvas map · current room at center · topbar glyph 44px (S-032926)
  *   fetchLiveScores() fetches published Google Sheets CSV at init
  *   Calculates per-dimension means from all phase1 rows in real time
  *   Updates LIVE_SCORES + targetLI automatically — no manual constant updates ever
@@ -418,7 +419,7 @@
   // [ARCH-6] Interval lifecycle — explicit vars prevent leaks on re-init
   var tooltipInterval = null;
   var stateInterval   = null;
-  var TOPBAR_SIZE     = 34;
+  var TOPBAR_SIZE     = 44;
 
   function createTopbarGlyph(currentRoom) {
     var btn = document.createElement('button');
@@ -460,127 +461,138 @@
     ov.setAttribute('role', 'dialog');
     ov.setAttribute('aria-label', 'Room navigation');
     ov.style.cssText = [
-      'position:fixed', 'inset:0', 'z-index:9999',
-      'display:flex', 'flex-direction:column', 'align-items:center', 'justify-content:center',
-      'background:rgba(15,14,12,0.94)',
-      'backdrop-filter:blur(20px)',
-      '-webkit-backdrop-filter:blur(20px)',
-      'opacity:0', 'transition:opacity .25s ease'
+      'position:fixed','inset:0','z-index:9999',
+      'display:flex','flex-direction:column','align-items:center','justify-content:center',
+      'background:rgba(15,14,12,0.96)',
+      'backdrop-filter:blur(20px)','-webkit-backdrop-filter:blur(20px)',
+      'opacity:0','transition:opacity .25s ease','overflow:hidden'
     ].join(';');
 
-    ov.addEventListener('click', function(e) {
-      if (e.target === ov) closeOverlay();
-    });
+    ov.addEventListener('click', function(e) { if (e.target === ov) closeOverlay(); });
 
-    // Header — large Witness at 72px
-    var header = document.createElement('div');
-    header.style.cssText = 'display:flex;flex-direction:column;align-items:center;margin-bottom:36px;';
+    var mapWrap = document.createElement('div');
+    mapWrap.style.cssText = 'position:relative;display:flex;flex-direction:column;align-items:center;gap:0;';
 
-    var hCanvas = document.createElement('canvas');
-    registerCanvas(hCanvas, 72, 0);
-    hCanvas.style.marginBottom = '10px';
-    header.appendChild(hCanvas);
+    var dpr    = window.devicePixelRatio || 1;
+    var MAP_CSS = Math.min(window.innerWidth * 0.92, window.innerHeight * 0.82, 680);
+    var mapCanvas = document.createElement('canvas');
+    mapCanvas.style.cssText = 'display:block;cursor:pointer;';
+    mapCanvas.width  = Math.round(MAP_CSS * dpr);
+    mapCanvas.height = Math.round(MAP_CSS * dpr);
+    mapCanvas.style.width  = MAP_CSS + 'px';
+    mapCanvas.style.height = MAP_CSS + 'px';
+    var mCtx = mapCanvas.getContext('2d');
+    mCtx.setTransform(dpr, 0, 0, dpr, 0, 0);
 
-    var hTitle = document.createElement('div');
-    hTitle.textContent = 'The Witness';
-    hTitle.style.cssText = 'font-family:Cormorant Garamond,Georgia,serif;font-size:20px;font-weight:600;color:#f4ebdf;letter-spacing:.02em;';
-    header.appendChild(hTitle);
+    var hoveredIdx = -1;
+    var other = ROOMS.filter(function(r) { return r.id !== currentRoom; });
+    var curRoom = ROOMS.find(function(r) { return r.id === currentRoom; }) || ROOMS[0];
 
-    var hSub = document.createElement('div');
-    hSub.textContent = 'half human · half code · choose your room';
-    hSub.style.cssText = 'font-size:11px;color:#7a7268;letter-spacing:.06em;margin-top:3px;font-family:IBM Plex Sans,monospace,sans-serif;';
-    header.appendChild(hSub);
-
-    // Live field state label
-    var hState = document.createElement('div');
-    hState.id = 'cn-field-state';
-    hState.style.cssText = 'font-family:IBM Plex Mono,monospace;font-size:10px;color:#7a7268;margin-top:6px;letter-spacing:.08em;';
-    function updateStateLabel() {
-      var s = getState();
-      hState.textContent = 'FIELD: ' + s.field.toUpperCase() + ' · ' + s.bpm + ' BPM · LI=' + s.li.toFixed(4);
+    function getNodePos(i) {
+      var W = MAP_CSS, H = MAP_CSS, cx = W/2, cy = H/2;
+      var orbitR = Math.min(W,H) * 0.37;
+      var angle = (i / other.length) * Math.PI * 2 - Math.PI / 2;
+      return { x: cx + Math.cos(angle)*orbitR, y: cy + Math.sin(angle)*orbitR };
     }
-    updateStateLabel();
-    // [ARCH-6] Guard before creating interval
-    if (stateInterval) { clearInterval(stateInterval); stateInterval = null; }
-    stateInterval = setInterval(updateStateLabel, 1000);
-    header.appendChild(hState);
 
-    ov.appendChild(header);
-
-    // Room grid
-    var grid = document.createElement('div');
-    grid.style.cssText = [
-      'display:grid',
-      'grid-template-columns:repeat(3,1fr)',
-      'gap:14px',
-      'width:min(540px,90vw)'
-    ].join(';');
-
-    ROOMS.forEach(function(room, i) {
-      var isCurrent = room.id === currentRoom;
-      var card = document.createElement('a');
-      card.href = room.href;
-      card.style.cssText = [
-        'display:flex', 'flex-direction:column', 'align-items:center',
-        'padding:16px 12px',
-        'border-radius:16px',
-        'border:1px solid',
-        'border-color:' + (isCurrent ? room.color + '66' : 'rgba(212,160,74,0.18)'),
-        'background:'   + (isCurrent ? room.color + '0a' : 'rgba(29,25,21,0.6)'),
-        'text-decoration:none',
-        'transition:all .2s',
-        'cursor:' + (isCurrent ? 'default' : 'pointer')
-      ].join(';');
-
-      if (!isCurrent) {
-        card.addEventListener('mouseenter', function() {
-          card.style.borderColor = room.color + '88';
-          card.style.background  = room.color + '14';
-        });
-        card.addEventListener('mouseleave', function() {
-          card.style.borderColor = 'rgba(212,160,74,0.18)';
-          card.style.background  = 'rgba(29,25,21,0.6)';
-        });
-      }
-
-      // Mini canvas — registered with phase offset per room (creates spatial identity via timing)
-      var miniCanvas = document.createElement('canvas');
-      registerCanvas(miniCanvas, 26, (i + 1) * 0.4); // +1 offset (0 = topbar, 1..7 = rooms)
-      miniCanvas.style.marginBottom = '8px';
-      card.appendChild(miniCanvas);
-
-      var labelEl = document.createElement('div');
-      labelEl.textContent = room.label;
-      labelEl.style.cssText = [
-        'font-size:12px', 'font-weight:600', 'text-align:center',
-        'color:' + (isCurrent ? room.color : '#f4ebdf'),
-        'font-family:IBM Plex Sans,sans-serif',
-        'margin-bottom:4px'
-      ].join(';');
-      card.appendChild(labelEl);
-
-      var descEl = document.createElement('div');
-      descEl.textContent = room.desc;
-      descEl.style.cssText = 'font-size:10px;color:#7a7268;text-align:center;font-family:IBM Plex Sans,sans-serif;line-height:1.4;';
-      card.appendChild(descEl);
-
-      if (isCurrent) {
-        var cur = document.createElement('div');
-        cur.textContent = 'you are here';
-        cur.style.cssText = 'font-size:9px;text-transform:uppercase;letter-spacing:.06em;color:' + room.color + ';margin-top:5px;font-family:IBM Plex Sans,sans-serif;';
-        card.appendChild(cur);
-      }
-
-      grid.appendChild(card);
+    mapCanvas.addEventListener('mousemove', function(e) {
+      var rect = mapCanvas.getBoundingClientRect();
+      var mx = e.clientX - rect.left, my = e.clientY - rect.top;
+      var prev = hoveredIdx;
+      hoveredIdx = -1;
+      other.forEach(function(rm, i) {
+        var p = getNodePos(i);
+        if (Math.hypot(mx-p.x, my-p.y) < 30) hoveredIdx = i;
+      });
+      mapCanvas.style.cursor = hoveredIdx >= 0 ? 'pointer' : 'default';
     });
 
-    ov.appendChild(grid);
+    mapCanvas.addEventListener('click', function(e) {
+      var rect = mapCanvas.getBoundingClientRect();
+      var mx = e.clientX - rect.left, my = e.clientY - rect.top;
+      other.forEach(function(rm, i) {
+        var p = getNodePos(i);
+        if (Math.hypot(mx-p.x, my-p.y) < 30) window.location.href = rm.href;
+      });
+    });
 
-    var escHint = document.createElement('div');
-    escHint.textContent = 'ESC to close';
-    escHint.style.cssText = 'margin-top:28px;font-size:11px;color:#7a7268;font-family:IBM Plex Sans,monospace,sans-serif;';
-    ov.appendChild(escHint);
+    function drawMap() {
+      var W = MAP_CSS, H = MAP_CSS, cx = W/2, cy = H/2;
+      var orbitR = Math.min(W,H) * 0.37;
+      var cSize  = Math.min(W,H) * 0.14;
+      var state  = getState();
+      var phase  = breathPhase(tSecs, state.bpm, 0);
 
+      mCtx.clearRect(0, 0, W, H);
+
+      // Orbit ring
+      mCtx.setLineDash([3, 8]);
+      mCtx.beginPath(); mCtx.arc(cx, cy, orbitR, 0, Math.PI*2);
+      mCtx.strokeStyle = 'rgba(212,160,74,.13)'; mCtx.lineWidth = 0.8; mCtx.stroke();
+      mCtx.setLineDash([]);
+
+      // Spokes
+      other.forEach(function(rm, i) {
+        var p = getNodePos(i);
+        var hx=parseInt(rm.color.slice(1,3),16), hg=parseInt(rm.color.slice(3,5),16), hb=parseInt(rm.color.slice(5,7),16);
+        mCtx.beginPath(); mCtx.moveTo(cx, cy); mCtx.lineTo(p.x, p.y);
+        mCtx.strokeStyle = 'rgba('+hx+','+hg+','+hb+',0.10)';
+        mCtx.lineWidth = 0.7; mCtx.stroke();
+      });
+
+      // Room nodes
+      other.forEach(function(rm, i) {
+        var p = getNodePos(i);
+        var hov = (i === hoveredIdx);
+        var r = hov ? 22 : 17;
+        var hx=parseInt(rm.color.slice(1,3),16), hg=parseInt(rm.color.slice(3,5),16), hb=parseInt(rm.color.slice(5,7),16);
+        var rgba = function(a) { return 'rgba('+hx+','+hg+','+hb+','+a+')'; };
+        var grd = mCtx.createRadialGradient(p.x,p.y,r*0.5,p.x,p.y,r*2.6);
+        grd.addColorStop(0, rgba(hov?0.22:0.12)); grd.addColorStop(1,'transparent');
+        mCtx.beginPath(); mCtx.arc(p.x,p.y,r*2.6,0,Math.PI*2); mCtx.fillStyle=grd; mCtx.fill();
+        mCtx.beginPath(); mCtx.arc(p.x,p.y,r,0,Math.PI*2);
+        mCtx.fillStyle=rgba(hov?0.22:0.12); mCtx.strokeStyle=rgba(hov?0.9:0.5);
+        mCtx.lineWidth=hov?1.8:1.2; mCtx.fill(); mCtx.stroke();
+        var dp = breathPhase(tSecs, state.bpm, i * 0.4);
+        mCtx.beginPath(); mCtx.arc(p.x,p.y,3.5+dp*2.5,0,Math.PI*2); mCtx.fillStyle=rgba(0.9); mCtx.fill();
+        mCtx.font = hov ? '500 13px "IBM Plex Sans",sans-serif' : '400 11px "IBM Plex Sans",sans-serif';
+        mCtx.fillStyle = hov ? rm.color : 'rgba(194,184,166,0.75)';
+        mCtx.textAlign='center'; mCtx.textBaseline='top';
+        mCtx.fillText(rm.label, p.x, p.y + r + 8);
+      });
+
+      // Center — full Witness with current room color
+      var savedState = { li:state.li, bpm:state.bpm, field:state.field, color: curRoom.color };
+      mCtx.save();
+      mCtx.translate(cx - cSize/2, cy - cSize/2);
+      var shimCanvas = { getContext: function() { return mCtx; } };
+      drawWitness(shimCanvas, cSize, phase, savedState);
+      mCtx.restore();
+
+      // Current room label
+      mCtx.font = '600 13px "IBM Plex Sans",sans-serif';
+      mCtx.fillStyle = curRoom.color;
+      mCtx.textAlign='center'; mCtx.textBaseline='top';
+      mCtx.fillText(curRoom.label, cx, cy + cSize/2 + 14);
+      mCtx.font = '400 10px "IBM Plex Mono",monospace';
+      mCtx.fillStyle = 'rgba(122,114,104,0.65)';
+      mCtx.fillText('you are here', cx, cy + cSize/2 + 30);
+
+      // Field state
+      mCtx.font = '400 9px "IBM Plex Mono",monospace';
+      mCtx.fillStyle = 'rgba(122,114,104,0.5)';
+      mCtx.fillText('FIELD: '+state.field.toUpperCase()+' · '+state.bpm+' BPM · LI '+state.li.toFixed(4), cx, H - 20);
+    }
+
+    ov._drawMap = drawMap;
+    mapWrap.appendChild(mapCanvas);
+
+    var escEl = document.createElement('div');
+    escEl.textContent = 'click a room to enter  ·  ESC to close';
+    escEl.style.cssText = 'font-family:IBM Plex Mono,monospace;font-size:9px;color:#7a7268;margin-top:10px;letter-spacing:.1em;';
+    mapWrap.appendChild(escEl);
+
+    ov.appendChild(mapWrap);
     return ov;
   }
 
@@ -630,6 +642,9 @@
       var phase = breathPhase(tSecs, state.bpm, entry.phaseOffset);
       drawWitness(entry.canvas, entry.size, phase, state);
     }
+
+    // Keep overlay map live-animated when open
+    if (overlayOpen && overlayEl && overlayEl._drawMap) overlayEl._drawMap();
 
     requestAnimationFrame(loop);
   }
