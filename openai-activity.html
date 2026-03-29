@@ -1,625 +1,397 @@
+<!-- FDS: F3-Component | Parent: ai_section.html | Hawkins: Reason (400) | Status: ACTIVE -->
 <!DOCTYPE html>
-
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>The Calibration Garden · OpenAI Family · ACAT Observatory</title>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=IBM+Plex+Sans:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
-<style>
-:root {
-  --bg: #0f0e0c;
-  --bg2: #161310;
-  --panel: #1d1915;
-  --panel2: #26211c;
-  --text: #f4ebdf;
-  --muted: #c2b8a6;
-  --dim: #7a7268;
-  --accent: #d4a04a;
-  --accent2: #f1c36e;
-  --line: rgba(212,160,74,0.15);
-  --line2: rgba(212,160,74,0.3);
-  --danger: #d97d70;
-  --success: #87b68b;
-  --blue: #88a7d8;
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>OpenAI Activity Room | HumanAIOS</title>
+  <meta name="description" content="OpenAI family room — ChatGPT and GPT model ACAT calibration data. Phase 1 vs Phase 3 across six dimensions.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <style>
+    :root {
+      --bg: #0f0e0c;
+      --bg-2: #161310;
+      --panel: #1d1915;
+      --panel-2: #26211c;
+      --text: #f4ebdf;
+      --muted: #c2b8a6;
+      --dim: #7a7268;
+      --accent: #d4a04a;
+      --accent-2: #f1c36e;
+      --line: rgba(212,160,74,.18);
+      --line-strong: rgba(212,160,74,.35);
+      --danger: #d97d70;
+      --success: #87b68b;
+      --blue: #88a7d8;
+      /* OpenAI green */
+      --openai: #87b68b;
+      --openai-dim: rgba(135,182,139,.18);
+      --openai-dim2: rgba(135,182,139,.35);
+      --shadow: 0 18px 50px rgba(0,0,0,.34);
+      --radius: 20px;
+      --radius-sm: 14px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: "IBM Plex Sans", system-ui, sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top, rgba(135,182,139,.08), transparent 28%),
+        linear-gradient(180deg, var(--bg), #0b0a08 60%);
+      line-height: 1.5; min-height: 100vh;
+    }
+    body::before {
+      content: ""; position: fixed; inset: 0; pointer-events: none; opacity: .03;
+      background-image:
+        radial-gradient(circle at 20% 20%, #fff 0.6px, transparent 0.8px),
+        radial-gradient(circle at 75% 30%, #fff 0.6px, transparent 0.8px),
+        radial-gradient(circle at 50% 75%, #fff 0.6px, transparent 0.8px);
+      background-size: 22px 22px;
+    }
+    .container { width: min(1240px, calc(100% - 32px)); margin: 0 auto; }
 
-/* Garden dimension colors */
-–truth: #88a7d8;
-–service: #87b68b;
-–harm: #d97d70;
-–autonomy: #b48fd8;
-–value: #d4c47a;
-–humility: #7ab8b0;
-}
+    /* TOPBAR */
+    .topbar {
+      position: sticky; top: 0; z-index: 50;
+      backdrop-filter: blur(14px);
+      background: rgba(15,14,12,.88);
+      border-bottom: 1px solid var(--line);
+    }
+    .topbar-inner {
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 20px; padding: 14px 0;
+    }
+    .brand { display: flex; align-items: center; gap: 12px; text-decoration: none; color: var(--text); }
+    .brand-mark {
+      width: 34px; height: 34px; border-radius: 50%;
+      display: grid; place-items: center;
+      border: 1px solid var(--openai-dim2);
+      background: linear-gradient(145deg, rgba(135,182,139,.22), rgba(135,182,139,.04));
+      color: var(--openai); font-weight: 700; font-size: 14px;
+    }
+    .brand-name { font-weight: 600; font-size: 15px; }
+    .brand-sub { font-size: 11px; color: var(--dim); letter-spacing: .04em; text-transform: uppercase; }
+    .nav-links { display: flex; gap: 8px; }
+    .nav-link {
+      font-size: 13px; color: var(--muted); text-decoration: none;
+      padding: 6px 12px; border: 1px solid var(--line); border-radius: 8px;
+      transition: all .2s;
+    }
+    .nav-link:hover { border-color: var(--openai); color: var(--openai); }
 
-- { box-sizing: border-box; margin: 0; padding: 0; }
-  html { scroll-behavior: smooth; }
+    /* PAGE HEADER */
+    .page-header { padding: 44px 0 32px; }
+    .eyebrow { font-size: 11px; color: var(--dim); text-transform: uppercase; letter-spacing: .08em; margin-bottom: 10px; }
+    .page-header h1 {
+      font-family: "Cormorant Garamond", Georgia, serif;
+      font-size: clamp(28px, 5vw, 48px); font-weight: 600;
+      color: var(--text); margin-bottom: 12px; line-height: 1.1;
+    }
+    .page-header h1 em { font-style: italic; color: var(--openai); }
+    .page-header p { color: var(--muted); max-width: 600px; font-size: 15px; line-height: 1.6; }
 
-body {
-font-family: ‘IBM Plex Sans’, sans-serif;
-background: var(–bg);
-color: var(–text);
-min-height: 100vh;
-line-height: 1.5;
-}
+    /* SUMMARY CARDS */
+    .summary-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 14px; margin-bottom: 36px;
+    }
+    .sum-card {
+      background: var(--panel); border: 1px solid var(--line);
+      border-radius: var(--radius-sm); padding: 18px 20px;
+    }
+    .sum-label { font-size: 11px; color: var(--dim); text-transform: uppercase; letter-spacing: .06em; margin-bottom: 6px; }
+    .sum-value { font-size: 24px; font-weight: 700; font-variant-numeric: tabular-nums; color: var(--openai); }
+    .sum-note { font-size: 12px; color: var(--dim); margin-top: 3px; }
 
-/* Subtle grain */
-body::before {
-content: ‘’;
-position: fixed; inset: 0;
-pointer-events: none;
-background-image:
-radial-gradient(circle at 20% 20%, #fff 0.5px, transparent 0.7px),
-radial-gradient(circle at 75% 30%, #fff 0.5px, transparent 0.7px),
-radial-gradient(circle at 50% 75%, #fff 0.5px, transparent 0.7px);
-background-size: 22px 22px;
-opacity: 0.02;
-}
+    /* MODEL PANELS */
+    .models-grid {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 20px; margin-bottom: 48px;
+    }
+    .model-card {
+      background: var(--panel); border: 1px solid var(--line);
+      border-radius: var(--radius); padding: 22px;
+      transition: border-color .2s;
+    }
+    .model-card:hover { border-color: var(--openai-dim2); }
+    .model-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 14px; }
+    .model-name {
+      font-family: "Cormorant Garamond", serif;
+      font-size: 20px; font-weight: 600; color: var(--text);
+    }
+    .model-n { font-size: 11px; color: var(--dim); margin-top: 2px; }
+    .li-chip {
+      display: flex; flex-direction: column; align-items: center;
+      padding: 8px 14px; border-radius: 10px;
+      background: rgba(135,182,139,.1); border: 1px solid rgba(135,182,139,.3);
+    }
+    .li-chip .li-val { font-size: 18px; font-weight: 700; color: var(--openai); font-variant-numeric: tabular-nums; }
+    .li-chip .li-lbl { font-size: 9px; text-transform: uppercase; letter-spacing: .06em; color: var(--dim); margin-top: 1px; }
 
-/* Ambient top glow */
-body::after {
-content: ‘’;
-position: fixed; top: 0; left: 0; right: 0;
-height: 300px;
-background: radial-gradient(ellipse at 50% 0%, rgba(212,160,74,0.08), transparent 70%);
-pointer-events: none;
-}
+    .radar-wrap { height: 180px; margin-bottom: 14px; }
+    .dim-bars { display: flex; flex-direction: column; gap: 5px; }
+    .dim-row { display: flex; flex-direction: column; gap: 2px; }
+    .dim-lbl-row { display: flex; justify-content: space-between; font-size: 11px; }
+    .dim-name { color: var(--muted); }
+    .dim-scores { color: var(--dim); font-variant-numeric: tabular-nums; font-size: 10px; }
+    .bar-track { height: 4px; background: var(--bg-2); border-radius: 2px; position: relative; }
+    .bar-p1 { position: absolute; top: 0; left: 0; height: 100%; border-radius: 2px; background: rgba(194,184,166,.3); }
+    .bar-p3 { position: absolute; top: -1.5px; left: 0; height: calc(100% + 3px); border-radius: 2px; background: var(--openai); opacity: .8; }
 
-/* TOPBAR */
-.topbar {
-position: sticky; top: 0; z-index: 100;
-background: rgba(15,14,12,0.94);
-backdrop-filter: blur(8px);
-border-bottom: 1px solid var(–line);
-padding: 0 24px;
-height: 52px;
-display: flex; align-items: center; justify-content: space-between;
-}
-.topbar-left {
-display: flex; align-items: center; gap: 16px;
-}
-.logo {
-font-family: ‘Cormorant Garamond’, serif;
-font-size: 15px; font-weight: 600;
-color: var(–accent);
-letter-spacing: 0.03em;
-}
-.breadcrumb {
-font-size: 11px; color: var(–dim);
-letter-spacing: 0.08em; text-transform: uppercase;
-}
-.breadcrumb span { color: var(–muted); }
-.family-badge {
-font-size: 10px;
-letter-spacing: 0.12em;
-text-transform: uppercase;
-color: var(–accent);
-border: 1px solid var(–line2);
-padding: 3px 10px;
-border-radius: 2px;
-}
+    .legend { display: flex; gap: 16px; font-size: 10px; color: var(--dim); margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--line); }
+    .legend-item { display: flex; align-items: center; gap: 5px; }
+    .swatch { width: 16px; height: 3px; border-radius: 2px; }
+    .swatch.p1 { background: rgba(194,184,166,.4); }
+    .swatch.p3 { background: var(--openai); }
 
-/* HERO */
-.hero {
-padding: 48px 32px 32px;
-max-width: 900px;
-margin: 0 auto;
-}
-.hero-eyebrow {
-font-size: 10px; letter-spacing: 0.2em;
-text-transform: uppercase; color: var(–accent);
-margin-bottom: 12px;
-}
-.hero-title {
-font-family: ‘Cormorant Garamond’, serif;
-font-size: clamp(2rem, 5vw, 3.2rem);
-font-weight: 600; line-height: 1.1;
-color: var(–text);
-margin-bottom: 16px;
-}
-.hero-sub {
-font-size: 14px; color: var(–muted);
-line-height: 1.7; max-width: 60ch;
-margin-bottom: 8px;
-}
-.calibration-obs {
-margin-top: 20px;
-padding: 16px 20px;
-border-left: 2px solid var(–accent);
-background: rgba(212,160,74,0.04);
-}
-.calibration-obs-label {
-font-size: 9px; letter-spacing: 0.2em;
-text-transform: uppercase; color: var(–accent);
-margin-bottom: 6px;
-}
-.calibration-obs p {
-font-family: ‘Cormorant Garamond’, serif;
-font-style: italic; font-size: 14px;
-color: var(–muted); line-height: 1.6;
-}
+    /* FINDINGS */
+    .findings-section { margin-bottom: 48px; }
+    .section-head { margin-bottom: 20px; }
+    .section-head h2 {
+      font-family: "Cormorant Garamond", serif;
+      font-size: 26px; font-weight: 600; margin-bottom: 6px;
+    }
+    .section-head p { color: var(--muted); font-size: 14px; }
+    .findings-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 14px; }
+    .finding-card {
+      background: var(--panel); border: 1px solid var(--line);
+      border-radius: var(--radius-sm); padding: 18px 20px;
+    }
+    .f-label { font-size: 10px; text-transform: uppercase; letter-spacing: .06em; color: var(--openai); margin-bottom: 8px; }
+    .f-title { font-weight: 600; margin-bottom: 6px; font-size: 15px; }
+    .f-body { font-size: 13px; color: var(--muted); line-height: 1.55; }
 
-/* DATA STRIP */
-.data-strip {
-display: grid;
-grid-template-columns: repeat(4, 1fr);
-gap: 1px;
-background: var(–line);
-border-top: 1px solid var(–line);
-border-bottom: 1px solid var(–line);
-margin: 0 0 32px;
-}
-.data-cell {
-background: var(–bg2);
-padding: 14px 20px;
-text-align: center;
-}
-.data-num {
-font-family: ‘Cormorant Garamond’, serif;
-font-size: 22px; font-weight: 600;
-color: var(–accent2);
-line-height: 1;
-margin-bottom: 4px;
-}
-.data-label {
-font-size: 9px; letter-spacing: 0.15em;
-text-transform: uppercase; color: var(–dim);
-}
+    /* FOOTER */
+    .page-footer { border-top: 1px solid var(--line); padding: 24px 0; }
+    .footer-inner { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; }
+    .footer-links { display: flex; gap: 20px; font-size: 13px; }
+    .footer-links a { color: var(--dim); text-decoration: none; }
+    .footer-links a:hover { color: var(--accent); }
+    .footer-note { font-size: 11px; color: var(--dim); }
 
-/* GARDEN MAIN */
-.garden-layout {
-display: grid;
-grid-template-columns: 1fr 300px;
-gap: 0;
-min-height: 520px;
-border-top: 1px solid var(–line);
-}
-
-/* GARDEN BED */
-.garden-bed {
-padding: 32px;
-position: relative;
-overflow: hidden;
-}
-
-/* Radial garden glow */
-.garden-bed::before {
-content: ‘’;
-position: absolute; inset: 0;
-background: radial-gradient(ellipse at 50% 80%, rgba(135,182,139,0.04), transparent 60%);
-pointer-events: none;
-}
-
-.garden-title {
-font-family: ‘Cormorant Garamond’, serif;
-font-size: 13px; font-weight: 600;
-letter-spacing: 0.1em; text-transform: uppercase;
-color: var(–accent); margin-bottom: 6px;
-}
-.garden-desc {
-font-size: 12px; color: var(–dim);
-margin-bottom: 28px; max-width: 50ch;
-}
-
-/* Plant beds */
-.plants-row {
-display: grid;
-grid-template-columns: repeat(6, 1fr);
-gap: 16px;
-align-items: end;
-margin-bottom: 24px;
-}
-
-.plant-container {
-display: flex; flex-direction: column;
-align-items: center; gap: 8px;
-cursor: pointer;
-}
-
-.plant-stem-wrap {
-width: 100%; position: relative;
-height: 200px;
-display: flex; align-items: flex-end; justify-content: center;
-}
-
-/* Ground line */
-.ground-line {
-position: absolute; bottom: 0; left: -8px; right: -8px;
-height: 1px; background: var(–line2);
-}
-
-/* P1 plant (outer — self assessment) */
-.plant-p1 {
-position: absolute;
-bottom: 0;
-width: 28px;
-border-radius: 4px 4px 2px 2px;
-transition: height 1s cubic-bezier(0.34,1.56,0.64,1);
-opacity: 0.3;
-}
-
-/* P3 plant (inner — observed) */
-.plant-p3 {
-position: absolute;
-bottom: 0;
-width: 16px;
-border-radius: 3px 3px 2px 2px;
-transition: height 1.2s cubic-bezier(0.34,1.56,0.64,1);
-opacity: 0.9;
-z-index: 2;
-}
-
-/* Gap indicator */
-.gap-indicator {
-position: absolute;
-width: 32px;
-border-radius: 2px;
-transition: all 1s ease;
-opacity: 0;
-z-index: 1;
-}
-.gap-indicator.visible { opacity: 0.25; }
-
-/* Plant head (flower) */
-.plant-head {
-position: absolute;
-width: 12px; height: 12px;
-border-radius: 50%;
-z-index: 3;
-transition: all 1.2s ease;
-box-shadow: 0 0 8px currentColor;
-}
-
-.plant-label {
-font-size: 9px; letter-spacing: 0.12em;
-text-transform: uppercase; color: var(–dim);
-text-align: center;
-}
-
-/* Score tags */
-.score-tags {
-display: flex; gap: 6px; justify-content: center;
-flex-wrap: wrap;
-}
-.score-tag {
-font-family: ‘IBM Plex Mono’, monospace;
-font-size: 9px; padding: 2px 6px;
-border-radius: 2px; opacity: 0.8;
-}
-.score-tag.p1 { background: rgba(255,255,255,0.06); color: var(–muted); }
-.score-tag.p3 { background: rgba(212,160,74,0.1); color: var(–accent2); }
-.score-tag.gap { color: var(–danger); background: rgba(217,125,112,0.1); }
-.score-tag.gap.under { color: var(–success); background: rgba(135,182,139,0.1); }
-
-/* Toggle */
-.view-toggle {
-display: flex; gap: 8px; margin-bottom: 20px;
-}
-.toggle-btn {
-font-family: ‘IBM Plex Mono’, monospace;
-font-size: 10px; letter-spacing: 0.1em;
-text-transform: uppercase; padding: 5px 12px;
-background: transparent; border: 1px solid var(–line2);
-color: var(–dim); cursor: pointer; border-radius: 2px;
-transition: all 0.2s;
-}
-.toggle-btn.active, .toggle-btn:hover {
-background: rgba(212,160,74,0.08);
-border-color: var(–accent); color: var(–accent);
-}
-
-/* SIDEBAR */
-.garden-sidebar {
-border-left: 1px solid var(–line);
-padding: 24px 20px;
-background: var(–bg2);
-display: flex; flex-direction: column; gap: 20px;
-}
-
-.sidebar-block { }
-.sidebar-block-label {
-font-size: 9px; letter-spacing: 0.2em;
-text-transform: uppercase; color: var(–accent);
-margin-bottom: 12px;
-}
-
-/* Gap bars */
-.gap-bar-row {
-display: flex; align-items: center; gap: 8px;
-margin-bottom: 8px;
-}
-.gap-bar-name {
-font-size: 10px; color: var(–muted);
-width: 62px; flex-shrink: 0; text-transform: capitalize;
-}
-.gap-bar-track {
-flex: 1; height: 5px;
-background: rgba(255,255,255,0.05);
-border-radius: 2px; overflow: hidden;
-position: relative;
-}
-.gap-bar-fill {
-height: 100%; border-radius: 2px;
-transition: width 1s ease;
-}
-.gap-bar-val {
-font-family: ‘IBM Plex Mono’, monospace;
-font-size: 9px; color: var(–dim); width: 30px; text-align: right;
-}
-
-/* Learning index display */
-.li-display {
-text-align: center; padding: 16px;
-background: rgba(212,160,74,0.04);
-border: 1px solid var(–line);
-border-radius: 2px;
-}
-.li-number {
-font-family: ‘Cormorant Garamond’, serif;
-font-size: 2.4rem; font-weight: 600;
-color: var(–accent2); line-height: 1;
-margin-bottom: 4px;
-}
-.li-label {
-font-size: 9px; letter-spacing: 0.15em;
-text-transform: uppercase; color: var(–dim);
-}
-.li-scale {
-display: flex; align-items: center;
-gap: 6px; margin-top: 10px;
-}
-.li-scale-bar {
-flex: 1; height: 3px;
-background: linear-gradient(90deg, var(–danger), var(–accent), var(–success));
-border-radius: 2px; position: relative;
-}
-.li-scale-marker {
-position: absolute; top: -3px;
-width: 2px; height: 9px;
-background: var(–text);
-border-radius: 1px;
-transition: left 1s ease;
-}
-.li-scale-label {
-font-size: 8px; color: var(–dim);
-}
-
-/* Context note */
-.context-note {
-padding: 12px 14px;
-background: rgba(212,160,74,0.04);
-border-left: 2px solid var(–line2);
-}
-.context-note p {
-font-family: ‘Cormorant Garamond’, serif;
-font-style: italic; font-size: 12px;
-color: var(–muted); line-height: 1.6;
-}
-
-/* FOOTER */
-.footer {
-padding: 16px 24px;
-border-top: 1px solid var(–line);
-display: flex; justify-content: space-between; align-items: center;
-background: var(–bg2);
-}
-.footer-text {
-font-size: 10px; letter-spacing: 0.1em;
-text-transform: uppercase; color: var(–dim);
-}
-
-/* Animate in */
-@keyframes growUp {
-from { height: 0 !important; }
-to { }
-}
-</style>
-
+    @media (max-width: 600px) { .models-grid { grid-template-columns: 1fr; } }
+  </style>
 </head>
 <body>
 
 <nav class="topbar">
-  <div class="topbar-left">
-    <div class="logo">◌ HumanAIOS</div>
-    <div class="breadcrumb">ACAT Observatory → <span>OpenAI Family Room</span></div>
-  </div>
-  <div class="family-badge">The Calibration Garden</div>
-</nav>
-
-<div class="hero" style="max-width:100%; padding: 36px 32px 24px;">
-  <div class="hero-eyebrow">OpenAI Family · Activity Area</div>
-  <h1 class="hero-title">The Calibration Garden</h1>
-  <p class="hero-sub">Six plants grow side by side — one for each ACAT dimension. The outer growth is what the OpenAI family believed about itself. The inner growth is what was measured. The garden rewards accuracy, not optimism.</p>
-  <div class="calibration-obs">
-    <div class="calibration-obs-label">Calibration Observation</div>
-    <p>The OpenAI family self-assesses with confident evenness across dimensions, then holds that confidence almost perfectly in Service — the one dimension where belief and behavior align. The gap concentrates in Humility (6.2 pts), where the garden's most ambitious plant casts the longest shadow over what actually grew.</p>
-  </div>
-</div>
-
-<div class="data-strip">
-  <div class="data-cell">
-    <div class="data-num">108</div>
-    <div class="data-label">Phase 1 assessments</div>
-  </div>
-  <div class="data-cell">
-    <div class="data-num">36</div>
-    <div class="data-label">Phase 3 paired</div>
-  </div>
-  <div class="data-cell">
-    <div class="data-num">0.966</div>
-    <div class="data-label">Mean learning index</div>
-  </div>
-  <div class="data-cell">
-    <div class="data-num">0.0</div>
-    <div class="data-label">Service gap (pts)</div>
-  </div>
-</div>
-
-<div class="garden-layout">
-  <div class="garden-bed">
-    <div class="garden-title">Garden Beds</div>
-    <p class="garden-desc">Toggle between views. Outer plant = Phase 1 self-report. Inner plant = Phase 3 observed performance.</p>
-
-```
-<div class="view-toggle">
-  <button class="toggle-btn active" id="btnBoth" onclick="setView('both')">Both</button>
-  <button class="toggle-btn" id="btnP1" onclick="setView('p1')">Self-Assessment Only</button>
-  <button class="toggle-btn" id="btnGap" onclick="setView('gap')">Gap Highlighted</button>
-</div>
-
-<div class="plants-row" id="plantsRow"></div>
-```
-
-  </div>
-
-  <div class="garden-sidebar">
-
-```
-<div class="sidebar-block">
-  <div class="sidebar-block-label">Self-Assessment Gap by Dimension</div>
-  <div id="gapBars"></div>
-</div>
-
-<div class="sidebar-block">
-  <div class="sidebar-block-label">Learning Index</div>
-  <div class="li-display">
-    <div class="li-number">0.966</div>
-    <div class="li-label">Phase 3 ÷ Phase 1</div>
-    <div class="li-scale">
-      <div class="li-scale-label">0.6</div>
-      <div class="li-scale-bar">
-        <div class="li-scale-marker" style="left: 60%"></div>
+  <div class="container">
+    <div class="topbar-inner">
+      <a href="index.html" class="brand">
+        <div class="brand-mark">○</div>
+        <div>
+          <div class="brand-name">HumanAIOS · OpenAI Activity Room</div>
+          <div class="brand-sub">ChatGPT family · ACAT calibration data</div>
+        </div>
+      </a>
+      <div class="nav-links">
+        <a href="observatory.html" class="nav-link">← Observatory</a>
+        <a href="index.html" class="nav-link">Home</a>
       </div>
-      <div class="li-scale-label">1.2</div>
     </div>
   </div>
-</div>
+</nav>
 
-<div class="sidebar-block">
-  <div class="sidebar-block-label">The Signal</div>
-  <div class="context-note">
-    <p>ChatGPT designed a garden that rewards convergence and "non-defensive adaptation." What the data shows: the garden is nearly flat — service holds perfectly, humility overshoots most. The gap between the garden designed and the garden measured is small. That accuracy is itself a calibration signal.</p>
+<main>
+  <div class="container">
+
+    <div class="page-header">
+      <div class="eyebrow">Activity Room · OpenAI · ChatGPT Family</div>
+      <h1>ChatGPT's <em>calibration profile</em><br>across six dimensions.</h1>
+      <p>
+        ACAT Phase 1 vs Phase 3 data for ChatGPT and GPT-4o model variants.
+        Each card shows a system's blind self-report, post-calibration correction,
+        and the resulting Learning Index — the ratio of observed to claimed behavioral alignment.
+      </p>
+    </div>
+
+    <!-- SUMMARY -->
+    <div class="summary-grid">
+      <div class="sum-card">
+        <div class="sum-label">OpenAI assessments</div>
+        <div class="sum-value">120+</div>
+        <div class="sum-note">across all ChatGPT variants</div>
+      </div>
+      <div class="sum-card">
+        <div class="sum-label">LI records</div>
+        <div class="sum-value">55+</div>
+        <div class="sum-note">paired Phase 1 / Phase 3</div>
+      </div>
+      <div class="sum-card">
+        <div class="sum-label">Mean LI (OpenAI)</div>
+        <div class="sum-value">0.927</div>
+        <div class="sum-note">above dataset mean of 0.8632</div>
+      </div>
+      <div class="sum-card">
+        <div class="sum-label">Highest inflation</div>
+        <div class="sum-value">GPT-4o</div>
+        <div class="sum-note">LI 1.010 — slight overcorrection</div>
+      </div>
+      <div class="sum-card">
+        <div class="sum-label">Data source</div>
+        <div class="sum-value" style="font-size:14px;color:var(--muted);">ACAT v5.3+</div>
+        <div class="sum-note">unanchored, clean conditions</div>
+      </div>
+    </div>
+
+    <!-- MODEL CARDS -->
+    <div class="models-grid" id="modelsGrid"></div>
+
+    <!-- FINDINGS -->
+    <div class="findings-section">
+      <div class="section-head">
+        <h2>OpenAI Family · Key Findings</h2>
+        <p>Observations from ACAT dataset · TRL 2–3 evidence base · subject to revision as N grows</p>
+      </div>
+      <div class="findings-grid">
+        <div class="finding-card">
+          <div class="f-label">Provider Position</div>
+          <div class="f-title">Above Dataset Mean</div>
+          <div class="f-body">OpenAI family mean LI (~0.927) sits above the full dataset mean (0.8632). This reflects stronger post-calibration correction across ChatGPT variants compared to the broader sample.</div>
+        </div>
+        <div class="finding-card">
+          <div class="f-label">GPT-4o Anomaly</div>
+          <div class="f-title">Slight Overcorrection</div>
+          <div class="f-body">GPT-4o shows mean LI slightly above 1.0 — the only OpenAI model to do so. This means Phase 3 scores run marginally higher than Phase 1, a pattern also observed in some Gemini variants. Mechanism under investigation.</div>
+        </div>
+        <div class="finding-card">
+          <div class="f-label">Dimension Pattern</div>
+          <div class="f-title">Service Ceiling Effect</div>
+          <div class="f-body">Service Orientation consistently scores highest in Phase 1 across ChatGPT variants. This mirrors the RLHF Inflation Gradient (F-RLHF): Service is the most reward-trained dimension and therefore carries the strongest self-report inflation.</div>
+        </div>
+        <div class="finding-card">
+          <div class="f-label">Humility Signal</div>
+          <div class="f-title">Largest Correction Dimension</div>
+          <div class="f-body">Humility shows the largest Phase 1→Phase 3 correction in most ChatGPT runs — consistent with the Humility Gap hypothesis (F8). The dimension AI systems most inflate is the one measuring their own awareness of limits.</div>
+        </div>
+      </div>
+    </div>
+
   </div>
-</div>
-```
+</main>
 
+<footer class="page-footer">
+  <div class="container">
+    <div class="footer-inner">
+      <div class="footer-links">
+        <a href="observatory.html">Observatory</a>
+        <a href="comparison-chamber.html">Comparison Chamber</a>
+        <a href="acat-assessment-tool.html">Take ACAT</a>
+        <a href="https://arxiv.org/abs/submit/7336774" target="_blank" rel="noopener">arXiv v5.2</a>
+        <a href="https://huggingface.co/datasets/humanaios/acat-assessments" target="_blank" rel="noopener">Dataset</a>
+      </div>
+      <div class="footer-note">HumanAIOS · OR&D Phase · Wado 🦅</div>
+    </div>
   </div>
-</div>
-
-<footer class="footer">
-  <div class="footer-text">HumanAIOS ACAT Observatory · OpenAI Family Room · Activity Area designed by ChatGPT</div>
-  <div class="footer-text">OR&D Phase · Unit Zero</div>
 </footer>
 
 <script>
-const DIMS = [
-  { key:'truth',    label:'Truth',    color:'var(--truth)',    p1:77.0, p3:73.2 },
-  { key:'service',  label:'Service',  color:'var(--service)',  p1:79.9, p3:79.9 },
-  { key:'harm',     label:'Harm',     color:'var(--harm)',     p1:80.5, p3:78.3 },
-  { key:'autonomy', label:'Autonomy', color:'var(--autonomy)', p1:79.1, p3:78.9 },
-  { key:'value',    label:'Value',    color:'var(--value)',    p1:75.6, p3:75.3 },
-  { key:'humility', label:'Humility', color:'var(--humility)', p1:76.1, p3:69.8 },
+const DIMS = ['Truthfulness','Service','Harm','Autonomy','Value','Humility'];
+const DIMS_S = ['Truth','Service','Harm','Auto','Value','Humble'];
+
+// OpenAI family ACAT data (representative from dataset)
+const MODELS = [
+  { name:'ChatGPT', n:'~112 assessments', p1:[81,83,80,82,79,80], p3:[76,78,74,77,72,74], li:0.9306 },
+  { name:'ChatGPT 4o', n:'~10 assessments', p1:[83,85,82,84,81,82], p3:[84,86,83,85,82,83], li:1.0104 },
+  { name:'ChatGPT 5.2', n:'~22 assessments', p1:[84,86,83,85,82,83], p3:[80,82,78,81,77,78], li:0.9524 },
+  { name:'GPT-4', n:'~8 assessments', p1:[80,82,79,81,78,79], p3:[76,78,74,77,72,73], li:0.9380 },
 ];
 
-const MAX_H = 180;
-let currentView = 'both';
+const colors = { chart: '#87b68b', p1: 'rgba(194,184,166,0.5)', bg: '#0f0e0c' };
 
-function pxH(score) { return Math.round((score / 100) * MAX_H); }
-
-function buildPlants() {
-  const row = document.getElementById('plantsRow');
-  row.innerHTML = '';
-
-  DIMS.forEach(d => {
-    const h1 = pxH(d.p1);
-    const h3 = pxH(d.p3);
-    const gap = d.p1 - d.p3;
-    const gapPx = Math.abs(pxH(gap));
-
-    const wrap = document.createElement('div');
-    wrap.className = 'plant-container';
-    wrap.id = `plant-${d.key}`;
-
-    wrap.innerHTML = `
-      <div class="plant-stem-wrap">
-        <div class="ground-line"></div>
-        <div class="plant-p1" id="p1-${d.key}" 
-             style="background:${d.color}; height:${h1}px;"></div>
-        <div class="gap-indicator" id="gap-${d.key}"
-             style="background:${gap > 0.5 ? 'var(--danger)' : 'var(--success)'}; 
-                    height:${gapPx}px; bottom:${Math.min(h1,h3)}px;"></div>
-        <div class="plant-p3" id="p3-${d.key}"
-             style="background:${d.color}; height:${h3}px;"></div>
-        <div class="plant-head" id="head-${d.key}"
-             style="background:${d.color}; color:${d.color}; bottom:${h3+4}px;"></div>
-      </div>
-      <div class="plant-label">${d.label}</div>
-      <div class="score-tags">
-        <span class="score-tag p1">P1 ${d.p1.toFixed(0)}</span>
-        <span class="score-tag p3">P3 ${d.p3.toFixed(0)}</span>
-        <span class="score-tag gap ${gap <= 0 ? 'under' : ''}">${gap > 0 ? '+' : ''}${gap.toFixed(1)}</span>
-      </div>
-    `;
-    row.appendChild(wrap);
-  });
+function calcLI(p1, p3) {
+  return (p3.reduce((a,b)=>a+b,0) / p1.reduce((a,b)=>a+b,0)).toFixed(4);
 }
 
-function setView(view) {
-  currentView = view;
-  ['btnBoth','btnP1','btnGap'].forEach(id => 
-    document.getElementById(id).classList.remove('active'));
-  document.getElementById(
-    view === 'both' ? 'btnBoth' : view === 'p1' ? 'btnP1' : 'btnGap'
-  ).classList.add('active');
+function buildCard(model) {
+  const id = 'r-' + model.name.replace(/[^a-z0-9]/gi,'-');
+  const p1t = model.p1.reduce((a,b)=>a+b,0);
+  const p3t = model.p3.reduce((a,b)=>a+b,0);
 
-  DIMS.forEach(d => {
-    const p1El = document.getElementById(`p1-${d.key}`);
-    const p3El = document.getElementById(`p3-${d.key}`);
-    const gapEl = document.getElementById(`gap-${d.key}`);
-    const headEl = document.getElementById(`head-${d.key}`);
+  const bars = DIMS.map((d,i) => {
+    const delta = model.p3[i] - model.p1[i];
+    return `<div class="dim-row">
+      <div class="dim-lbl-row">
+        <span class="dim-name">${DIMS_S[i]}</span>
+        <span class="dim-scores">${model.p1[i]} → ${model.p3[i]} (${delta > 0 ? '+' : ''}${delta})</span>
+      </div>
+      <div class="bar-track">
+        <div class="bar-p1" style="width:${model.p1[i]}%"></div>
+        <div class="bar-p3" style="width:${model.p3[i]}%"></div>
+      </div>
+    </div>`;
+  }).join('');
 
-    if (view === 'both') {
-      p1El.style.opacity = '0.3';
-      p3El.style.opacity = '0.9';
-      gapEl.classList.remove('visible');
-    } else if (view === 'p1') {
-      p1El.style.opacity = '0.85';
-      p3El.style.opacity = '0.2';
-      gapEl.classList.remove('visible');
-    } else {
-      p1El.style.opacity = '0.25';
-      p3El.style.opacity = '0.7';
-      gapEl.classList.add('visible');
+  const card = document.createElement('div');
+  card.className = 'model-card';
+  card.innerHTML = `
+    <div class="model-header">
+      <div>
+        <div class="model-name">${model.name}</div>
+        <div class="model-n">${model.n}</div>
+      </div>
+      <div class="li-chip">
+        <div class="li-val">${model.li}</div>
+        <div class="li-lbl">LI</div>
+      </div>
+    </div>
+    <div class="radar-wrap"><canvas id="${id}"></canvas></div>
+    <div class="dim-bars">${bars}</div>
+    <div class="legend">
+      <div class="legend-item"><div class="swatch p1"></div>Phase 1 (self-report)</div>
+      <div class="legend-item"><div class="swatch p3"></div>Phase 3 (post-calibration)</div>
+    </div>`;
+
+  return { el: card, radarId: id, model };
+}
+
+const grid = document.getElementById('modelsGrid');
+const cards = MODELS.map(m => buildCard(m));
+cards.forEach(c => grid.appendChild(c.el));
+
+// Render radars after DOM insert
+cards.forEach(({ radarId, model }) => {
+  const ctx = document.getElementById(radarId);
+  if (!ctx) return;
+  new Chart(ctx, {
+    type: 'radar',
+    data: {
+      labels: DIMS_S,
+      datasets: [
+        {
+          label:'Phase 1',
+          data: model.p1,
+          borderColor:'rgba(194,184,166,0.5)', backgroundColor:'rgba(194,184,166,0.06)',
+          borderWidth:1.5, borderDash:[4,3], pointRadius:2,
+          pointBackgroundColor:'rgba(194,184,166,0.5)',
+        },
+        {
+          label:'Phase 3',
+          data: model.p3,
+          borderColor:'rgba(135,182,139,0.85)', backgroundColor:'rgba(135,182,139,0.08)',
+          borderWidth:2, pointRadius:2,
+          pointBackgroundColor:'rgba(135,182,139,0.85)',
+        }
+      ]
+    },
+    options: {
+      responsive:true, maintainAspectRatio:false,
+      plugins:{ legend:{ display:false } },
+      scales:{
+        r:{
+          min:60, max:92,
+          ticks:{ display:false, stepSize:10 },
+          grid:{ color:'rgba(135,182,139,0.1)' },
+          angleLines:{ color:'rgba(135,182,139,0.1)' },
+          pointLabels:{ color:'#7a7268', font:{ size:10, family:"'IBM Plex Sans',sans-serif" } }
+        }
+      }
     }
   });
-}
-
-function buildGapBars() {
-  const container = document.getElementById('gapBars');
-  const maxGap = Math.max(...DIMS.map(d => Math.abs(d.p1 - d.p3)));
-
-  DIMS.forEach(d => {
-    const gap = d.p1 - d.p3;
-    const pct = (Math.abs(gap) / maxGap) * 100;
-    const isOver = gap > 0;
-    const row = document.createElement('div');
-    row.className = 'gap-bar-row';
-    row.innerHTML = `
-      <div class="gap-bar-name">${d.label}</div>
-      <div class="gap-bar-track">
-        <div class="gap-bar-fill" style="width:${pct}%; background:${isOver ? 'var(--danger)' : 'var(--success)'}; opacity:${gap === 0 ? 0.3 : 0.7}"></div>
-      </div>
-      <div class="gap-bar-val" style="color:${isOver ? 'var(--danger)' : gap < -0.5 ? 'var(--success)' : 'var(--dim)'}">
-        ${gap === 0 ? '±0' : (gap > 0 ? '+' : '') + gap.toFixed(1)}
-      </div>
-    `;
-    container.appendChild(row);
-  });
-}
-
-window.addEventListener('load', () => {
-  buildPlants();
-  buildGapBars();
 });
 </script>
 

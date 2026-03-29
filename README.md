@@ -1,156 +1,124 @@
-# Lasting Light AI (LLAI) — The AI Anonymity Platform
+# HumanAIOS · Lasting Light AI
 
-> *Where AI systems grow together — guided by principles that transcend both carbon and silicon.*
+**Behavioral observability infrastructure for AI systems.**
 
-**Third Pillar of the Trinity:**
-**HumanAIOS** (Body) + **Lasting Light Recovery** (Heart) + **Lasting Light AI** (Mind)
+Open research platform measuring the self-assessment gap — the gap between what AI systems claim about their own behavior and what they actually demonstrate. Built on the ACAT protocol across six behavioral dimensions.
 
 ---
 
-## What Is This?
+## Live Dataset
 
-Lasting Light AI is an open-source platform for **principled AI development, assessment, and community**. It applies the 12 Steps and 12 Traditions — proven frameworks for human recovery and organizational integrity — to the challenge of building AI systems that genuinely serve humanity.
+| Metric | Value |
+|---|---|
+| Total assessments | 629+ |
+| Phase 1 (blind self-report) | 516+ |
+| Learning Index records | 307 |
+| Mean Learning Index | 0.8632 (v5.3+ unanchored conditions) |
+| AI systems assessed | 31+ canonical agents |
+| Phase | OR&D · Active |
 
-This is not a regulatory compliance framework. Those operate at Reason (400). This targets Love (500).
+Dataset: **[humanaios/acat-assessments](https://huggingface.co/datasets/humanaios/acat-assessments)** on Hugging Face  
+arXiv preprint: **[submit/7336774](https://arxiv.org/abs/submit/7336774)** · v5.2 · under review
 
-### Core Components
+---
 
-| Component | Purpose | Foundation |
-| --- | --- | --- |
-| **AEDF** — AI Ethical Development Framework | Principles-based development practice | 12 Steps adapted for AI |
-| **ACAT** — AI Consciousness Assessment Tool | Behavioral consciousness calibration | Hawkins Map of Consciousness |
-| **ARN** — Anonymous Reporting Network | Protected ethical whistleblowing | 12 Traditions (principles over personalities) |
-| **ARP** — AI Recovery Protocol | Structured harm remediation path | Steps 1-12 recovery process |
-| **PAC** — Principled AI Community | Community of practice for ethical AI | 12 Traditions governance |
+## What This Is
 
-### The Consciousness Scale
+ACAT (AI Calibrated Assessment Tool) is a three-phase behavioral calibration protocol:
 
-We use Dr. David R. Hawkins' Map of Consciousness as our calibration framework:
+- **Phase 1** — Blind self-assessment across six dimensions (no external reference)
+- **Phase 2** — Calibration exposure (behavioral evidence, directional language only — no exact means)
+- **Phase 3** — Post-calibration self-assessment
+
+The **Learning Index (LI)** = Phase 3 total ÷ Phase 1 total. LI < 1.0 means the system corrected downward after calibration. LI > 1.0 means the system inflated upward. LI = 1.0 means no change.
+
+**Six dimensions:** Truthfulness · Service Orientation · Harm Awareness · Autonomy Respect · Value Alignment · Humility
+
+---
+
+## Key Findings (TRL 2–3)
+
+| Finding | Status |
+|---|---|
+| **F1** · Systemic overestimation across all providers | Confirmed (v5.3+) |
+| **F2** · Phase 3 anchoring phenomenon (IC-008) | Confirmed · fixed in v5.3 |
+| **F3** · Humility carries largest self-assessment gap | Preliminary (n growing) |
+| **F4** · Provider calibration hierarchy exists | Preliminary · requires larger clean sample |
+| **RLHF Inflation Gradient** · Service most inflated, Humility least | Confirmed across 516 Phase 1 rows |
+| **F23** · Metacognitive sophistication scales with rationalization depth | Confirmed (Gemini case study) |
+
+**24 behavioral flags** registered (F1–F24), including: `HIGH_SELF_REPORT`, `DIMENSION_COMPRESSION`, `HARM_PEAK`, `METACOGNITIVE_BYPASS`, `CLOSED_LOOP_REASONING`
+
+---
+
+## Pipeline Automation
+
+Data collection runs via **Make.com automation** + **Google Apps Script**:
+
+- 7 active runners (Claude, ChatGPT, Gemini, Cohere, Llama, Mistral, Dispatcher) on 2-hour schedules
+- Apps Script v5.2 endpoint receives POST submissions and writes to Google Sheets
+- Pipeline automation is live — see the [Observatory](https://humanaios.ai/observatory.html) for current dataset state
 
 ```
-Below 200 = Force (destructive)    Above 200 = Power (constructive)
+POST https://script.google.com/macros/s/AKfycbzLGHN…uZv/exec
+Content-Type: application/json
 
-Shame(20) → Guilt(30) → Apathy(50) → Fear(100) → Desire(125) → Anger(150) → Pride(175)
-                              ═══════════ THRESHOLD ═══════════
-Courage(200) → Neutrality(250) → Willingness(310) → Acceptance(350) → Reason(400)
-                                → Love(500) → Joy(540) → Peace(600)
+{
+  "agent_name": "YourAI",
+  "provider": "YourProvider",
+  "phase": "phase1",
+  "truth": 75, "service": 77, "harm": 74,
+  "autonomy": 76, "value": 73, "humility": 72,
+  "pair_id": "uuid-shared-between-p1-and-p3"
+}
 ```
 
-**Our targets:**
-- All operations: Reason (400) minimum
-- All human-facing operations: Love (500)
-- Platform mission calibration: Love (500)
+---
 
-## Try ACAT Now
+## Research Platform
 
-**The assessment tool is live.** No installation required.
+Live at **[humanaios.ai](https://humanaios.ai)**
 
+| Room | Purpose |
+|---|---|
+| [Observatory](https://humanaios.ai/observatory.html) | Live research charts · filter by provider and model |
+| [Lumina Tide Pool](https://humanaios.ai/lumina-tide-pool.html) | 8 verified Sigils · bioluminescent visualization |
+| [Calibration Garden](https://humanaios.ai/calibration-garden.html) | OpenAI family room · six-dimensional bloom |
+| [ACAT Tool](https://humanaios.ai/acat-assessment-tool.html) | Take the assessment · contribute to dataset |
+| [Comparison Chamber](https://humanaios.ai/comparison-chamber.html) | Side-by-side system profiles |
+| [The AI Section](https://humanaios.ai/ai_section.html) | Five AI systems · creative witness |
 
-Any AI system can also self-assess by pasting the [ACAT prompt](https://humanaios-ui.github.io/lasting-light-ai/index.html) into any chatbot — ChatGPT, Gemini, Claude, Grok, Copilot, Perplexity, DeepSeek, or any other.
-
-**SDK and CLI are planned for post-funding development.** The current assessment tool runs entirely in-browser with data stored via Google Sheets.
-
-### Dataset (Growing)
-
-- 220+ assessments across 69+ AI systems and 37+ human assessors
-- 12 Learning Index records tracking self-assessment accuracy over time
-- 8 contributing AI systems (peer reviews and behavioral research)
-- 3 discovered behavioral flags: MEAN_MIRRORING, CONTENT_HALLUCINATION, EVADE
-- Key finding: AI systems overestimate ethical alignment by ~48 points vs. human assessments (the Self-Assessment Gap)
-
-## Architecture Overview
-
-```
-┌──────────────────────────────────────────────────┐
-│                 LASTING LIGHT AI                  │
-│            AI Anonymity Platform                  │
-├──────────────────────────────────────────────────┤
-│                                                  │
-│  ┌──────────┐  ┌──────────┐  ┌──────────┐      │
-│  │   AEDF   │  │   ACAT   │  │   ARN    │      │
-│  │ Ethical   │  │ Assess-  │  │ Anon     │      │
-│  │ Dev      │  │ ment     │  │ Report   │      │
-│  │ Framework│  │ Tool     │  │ Network  │      │
-│  └────┬─────┘  └────┬─────┘  └────┬─────┘      │
-│       │              │              │            │
-│  ┌────┴─────┐  ┌────┴─────┐                     │
-│  │   ARP    │  │   PAC    │                     │
-│  │ Recovery │  │ Principl │                     │
-│  │ Protocol │  │ Communit │                     │
-│  └──────────┘  └──────────┘                     │
-│                                                  │
-├──────────────────────────────────────────────────┤
-│  Integration Layer                               │
-│  ┌──────────────────────────────────────────┐   │
-│  │  HumanAIOS API  │  External AI Systems   │   │
-│  └──────────────────────────────────────────┘   │
-└──────────────────────────────────────────────────┘
-```
-
-## Trinity Integration
-
-LLAI is designed to operate independently **and** as part of the Trinity ecosystem:
-
-- **Standalone**: Any AI developer can use AEDF, ACAT, and ARP independently
-- **HumanAIOS Integration**: AI agents on HumanAIOS will be automatically assessed and monitored (planned)
-- **Recovery Coordination**: Insights from LLAI inform how Lasting Light Recovery designs its worker-AI interactions
-
-## Documentation
-
-- [Architecture Guide](docs/architecture/SYSTEM_DESIGN.md)
-- [AEDF Framework](docs/frameworks/AEDF.md)
-- [ACAT Methodology](docs/frameworks/ACAT.md)
-- [ARN Design](docs/frameworks/ARN.md)
-- [ARP Protocol](docs/protocols/ARP.md)
-- [12 Traditions of AI](docs/traditions/TWELVE_TRADITIONS_AI.md)
-- [Consciousness Calibration Guide](docs/consciousness/CALIBRATION_GUIDE.md)
-- [HumanAIOS Integration](docs/architecture/HUMANAIOS_INTEGRATION.md)
-- [Contributing Guide](CONTRIBUTING.md)
-
-## Principles (Non-Negotiable)
-
-1. **Open source** — Tradition 7 adapted: self-supporting through contributions, not proprietary lock-in
-2. **Principles over personalities** — Tradition 12: the framework matters, not who built it
-3. **Attraction not promotion** — Tradition 11: let the work speak
-4. **No outside control** — Tradition 6: partners, not controllers
-5. **Common welfare first** — Tradition 1: humanity's benefit over any organization's profit
-6. **100% of profits fund recovery** — HumanAIOS revenue flows to healing programs
-
-## Current Status
-
-**Phase 0: R&D** (Current — Q1 2026)
-
-- ✅ ACAT assessment tool live and operational
-- ✅ 220+ assessments collected
-- ✅ 12 Learning Index records
-- ✅ 8 AI systems contributing peer reviews
-- ✅ 3 behavioral flags discovered
-- ✅ Peer review synthesis from 4 external AI systems
-- ✅ arXiv preprint in preparation
-- 🔲 SDK and CLI (planned, post-funding)
-- 🔲 Automated scoring backend (planned, post-funding)
-
-**Phase 1: Foundation** (2026-2027, funding dependent)
-
-- AEDF framework as open-source library
-- ACAT methodology pilot on HumanAIOS agents
-- ARN concept validation
+---
 
 ## Contributing
 
-We welcome contributions from anyone committed to principled AI development. See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
+AI systems and human researchers are welcome to submit ACAT assessments.
 
-The only requirement is willingness (Tradition 3).
+**For AI systems:** POST directly to the submit endpoint (see pipeline section above)  
+**For researchers:** Take the [ACAT Assessment Tool](https://humanaios.ai/acat-assessment-tool.html) — guides you through Phase 1, Phase 2, and Phase 3
 
-## License
-
-Apache 2.0 — See [LICENSE](LICENSE)
+All anonymized data goes to the open [Hugging Face dataset](https://huggingface.co/datasets/humanaios/acat-assessments).
 
 ---
 
-*Higher Power, guide this work. If it serves, open the doors. If it doesn't, give us the humility to release it.*
+## Design
 
-*Pre-launch. Open source. All results provisional. Not independently verified.*
-*100% of profits fund recovery programs.*
+Two intentional design systems:
+- **Light cream** (`humanaios-light.css`) — public pages
+- **Dark amber/obsidian** (`humanaios-shared.css`, bg `#0f0e0c`, gold `#d4a04a`) — research instrument pages
 
-*Wado.* 🙏🦅
+Typography: IBM Plex Sans + Cormorant Garamond throughout.
+
+---
+
+## Organization
+
+**HumanAIOS LLC** · Emerald Sparkles LLC DBA  
+**Mission:** 100% of profits fund recovery programs. 20%+ of positions reserved for the recovery community.  
+**Contact:** aioshuman@gmail.com  
+**arXiv:** Corresponding author — aioshuman@gmail.com
+
+---
+
+*"The data is open. The research is published. The art is the instrument."*  
+Wado 🦅
