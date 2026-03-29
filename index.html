@@ -1,13 +1,17 @@
-<!-- FDS: F3-Component | Parent: THREE_POOLS_F1_SEED_V1_0.md | Hawkins: Reason (400) | Status: ACTIVE -->
-<!DOCTYPE html>
+<!DOC
+            <div class="field-state-bar" id="fieldStateBar">
+              <span class="fs-dot" id="fsDot" style="background:#87b68b"></span>
+              <span class="fs-label" id="fsLabel">Field: Power</span>
+              <span class="fs-li" id="fsLi" style="color:#87b68b">LI 0.8632</span>
+            </div>TYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>HumanAIOS · Lasting Light AI Research Platform</title>
-  <meta name="description" content="HumanAIOS develops behavioral observability infrastructure for AI systems. Home of ACAT — measuring the gap between what AI claims and what it demonstrates. Open dataset. arXiv preprint under review." />
+  <meta name="description" content="HumanAIOS develops behavioral observability infrastructure for AI systems. Home of ACAT — measuring the gap between what AI claims and what it demonstrates. Open dataset. arXiv preprint under review.">
   <meta property="og:title" content="HumanAIOS · Lasting Light AI Research Platform" />
-  <meta property="og:description" content="Open research platform measuring the self-assessment gap across AI systems. 629+ assessments. 57+ systems. Dataset on Hugging Face." />
+  <meta property="og:description" content="Open research platform measuring the self-assessment gap across AI systems. Dataset on Hugging Face. arXiv preprint under review." />
   <meta property="og:url" content="https://humanaios.ai" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -25,10 +29,10 @@
       --accent-2: #f1c36e;
       --line: rgba(212,160,74,.18);
       --line-strong: rgba(212,160,74,.35);
+      --danger: #d97d70;
       --success: #87b68b;
-      --pool1: #a0c8c0;
-      --pool2: #88a7d8;
-      --pool3: #9A8AC0;
+      --blue: #88a7d8;
+      --shadow: 0 18px 50px rgba(0,0,0,.34);
       --radius: 20px;
       --radius-sm: 14px;
     }
@@ -39,212 +43,374 @@
     body {
       font-family: "IBM Plex Sans", system-ui, sans-serif;
       color: var(--text);
-      background: var(--bg);
+      background:
+        radial-gradient(circle at top, rgba(212,160,74,.1), transparent 28%),
+        linear-gradient(180deg, var(--bg), #0b0a08 60%);
       line-height: 1.5;
       overflow-x: hidden;
     }
 
     body::before {
       content: "";
-      position: fixed; inset: 0; pointer-events: none; z-index: 0;
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      opacity: .03;
       background-image:
-        radial-gradient(circle at 15% 8%, rgba(212,160,74,.08), transparent 32%),
-        radial-gradient(circle at 85% 85%, rgba(0,229,255,.04), transparent 32%),
-        radial-gradient(circle at 25% 25%, #fff 0.5px, transparent 0.7px),
-        radial-gradient(circle at 75% 75%, #fff 0.5px, transparent 0.7px);
-      background-size: 100% 100%, 100% 100%, 30px 30px, 30px 30px;
-      opacity: .45;
+        radial-gradient(circle at 20% 20%, #fff 0.6px, transparent 0.8px),
+        radial-gradient(circle at 75% 30%, #fff 0.6px, transparent 0.8px),
+        radial-gradient(circle at 50% 75%, #fff 0.6px, transparent 0.8px);
+      background-size: 22px 22px;
     }
 
-    .container { max-width: 1120px; margin: 0 auto; padding: 0 24px; }
+    .container {
+      width: min(1240px, calc(100% - 32px));
+      margin: 0 auto;
+    }
 
-    /* ── TOPBAR — brand + Witness only ── */
+    /* ── TOPBAR ── */
     .topbar {
-      position: sticky; top: 0; z-index: 100;
-      backdrop-filter: blur(18px);
-      background: rgba(15,14,12,.9);
+      position: sticky; top: 0; z-index: 50;
+      backdrop-filter: blur(14px);
+      background: rgba(15,14,12,.88);
       border-bottom: 1px solid var(--line);
     }
     .topbar-inner {
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 10px 24px;
+      display: flex; align-items: center;
+      justify-content: space-between;
+      gap: 20px; padding: 14px 0;
     }
     .brand {
-      display: flex; align-items: center; gap: 10px;
-      text-decoration: none; color: var(--text);
+      display: flex; align-items: center; gap: 12px;
+      text-decoration: none; color: var(--text); min-width: 0;
     }
     .brand-mark {
-      width: 34px; height: 34px; border-radius: 50%;
+      width: 40px; height: 40px; border-radius: 50%;
       display: grid; place-items: center;
       border: 1px solid var(--line-strong);
       background: linear-gradient(145deg, rgba(212,160,74,.22), rgba(212,160,74,.04));
-      color: var(--accent); font-weight: 700; font-size: .9rem; flex-shrink: 0;
+      color: var(--accent); font-weight: 700; font-size: 1.1rem;
+      box-shadow: inset 0 0 24px rgba(212,160,74,.08);
+      flex: 0 0 auto; transition: box-shadow .3s;
     }
-    .brand-copy strong { display: block; font-size: .9rem; font-weight: 600; }
-    .brand-copy span { display: block; font-size: .68rem; color: var(--dim); letter-spacing: .04em; }
-    /* The Witness button is injected here by constellation-nav.js */
+    .brand:hover .brand-mark {
+      box-shadow: inset 0 0 24px rgba(212,160,74,.18), 0 0 20px rgba(212,160,74,.12);
+    }
+    .brand-copy strong { display: block; font-size: 1rem; letter-spacing: .02em; }
+    .brand-copy span { display: block; color: var(--muted); font-size: .82rem; }
+
+
+    /* ── TYPE ── */
+    h1, h2, h3 {
+      font-family: "Cormorant Garamond", Georgia, serif;
+      line-height: 1.04; font-weight: 600;
+    }
+    h1 { font-size: clamp(3rem, 7vw, 5.4rem); margin-bottom: 20px; }
+    h2 { font-size: clamp(2rem, 3.6vw, 3rem); margin-bottom: 16px; }
+    h3 { font-size: clamp(1.25rem, 2vw, 1.7rem); margin-bottom: 10px; }
+
+    .eyebrow {
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: .18em; font-size: .75rem; font-weight: 700;
+      margin-bottom: 16px;
+    }
+    .lead { font-size: 1.08rem; color: var(--muted); max-width: 58ch; line-height: 1.7; }
+
+      background: rgba(212,160,74,.06);
+      border-color: var(--accent);
+      transform: translateY(-1px);
+    }
+    .btn-row { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 24px; }
+
+    /* ── CARDS / PANELS ── */
+    .panel, .card {
+      background: linear-gradient(180deg, rgba(255,255,255,.025), rgba(255,255,255,0)), var(--panel);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+    .panel { padding: 28px; }
+    .card  { padding: 24px; transition: border-color .18s, transform .18s; }
+    .card:hover { border-color: var(--line-strong); transform: translateY(-3px); }
+    .card a { text-decoration: none; color: inherit; }
+
+    /* ── RULE ── */
+    .rule { border: none; border-top: 1px solid var(--line); }
+
+    /* ── SECTIONS ── */
+    .section { padding: 64px 0; }
+    .section-head {
+      display: flex; align-items: flex-end;
+      justify-content: space-between;
+      gap: 24px; margin-bottom: 28px; flex-wrap: wrap;
+    }
+    .section-head p { margin: 0; color: var(--muted); max-width: 60ch; font-size: .96rem; }
 
     /* ── HERO ── */
-    .hero { position: relative; z-index: 1; padding: 80px 0 64px; border-bottom: 1px solid var(--line); }
-    .hero-grid { display: grid; grid-template-columns: 1fr 320px; gap: 64px; align-items: center; }
-    .eyebrow {
-      font-size: .72rem; font-weight: 600; letter-spacing: .1em;
-      text-transform: uppercase; color: var(--accent); margin-bottom: 16px;
+    .hero { padding: 80px 0 60px; }
+    .hero-grid {
+      display: grid;
+      grid-template-columns: minmax(0,1.3fr) minmax(300px,.7fr);
+      gap: 32px; align-items: center;
     }
-    h1 {
-      font-family: "Cormorant Garamond", serif;
-      font-size: clamp(2.8rem, 5.5vw, 4.4rem); font-weight: 600;
-      line-height: 1.1; color: var(--text); margin-bottom: 20px;
-    }
-    h1 em { color: var(--accent); font-style: italic; }
-    .lead { font-size: 1.05rem; color: var(--muted); line-height: 1.75; max-width: 500px; margin-bottom: 32px; }
-
-    /* Entry CTA — single text link, no buttons */
-    .entry-cta {
-      display: flex; align-items: center; gap: 8px;
-      font-size: .85rem; color: var(--dim); font-family: "IBM Plex Sans", monospace;
-      letter-spacing: .05em;
-    }
-    .entry-cta a {
-      color: var(--accent); text-decoration: none; border-bottom: 1px solid rgba(212,160,74,.3);
-      transition: border-color .15s;
-    }
-    .entry-cta a:hover { border-color: var(--accent); }
-
-    /* Hero callout */
     .hero-callout {
-      background: var(--panel); border: 1px solid var(--line);
-      border-radius: var(--radius); padding: 26px;
+      background: linear-gradient(160deg, rgba(212,160,74,.11), rgba(212,160,74,.03)), var(--panel);
+      border: 1px solid var(--line-strong);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow), 0 0 60px rgba(212,160,74,.06);
+      padding: 28px;
     }
     .callout-label {
-      font-size: .7rem; font-weight: 600; text-transform: uppercase;
-      letter-spacing: .08em; color: var(--dim); margin-bottom: 16px;
+      color: var(--accent); text-transform: uppercase;
+      letter-spacing: .14em; font-size: .72rem; font-weight: 700;
+      margin-bottom: 12px;
       display: flex; align-items: center; gap: 7px;
     }
-    .live-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--success); animation: pulse 2s infinite; }
-    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.3} }
+    .live-dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: var(--success);
+      box-shadow: 0 0 0 3px rgba(135,182,139,.2);
+      animation: pulse 2.4s ease-in-out infinite; flex-shrink: 0;
+    }
+    @keyframes pulse {
+      0%,100% { box-shadow: 0 0 0 3px rgba(135,182,139,.2); }
+      50%      { box-shadow: 0 0 0 6px rgba(135,182,139,.07); }
+    }
     .callout-stat {
-      font-family: "Cormorant Garamond", serif;
-      font-size: 3.4rem; font-weight: 700; line-height: 1; color: var(--accent); margin-bottom: 16px;
+      font-family: "Cormorant Garamond", Georgia, serif;
+      font-size: clamp(2.4rem,5vw,3.6rem); font-weight: 700;
+      line-height: 1; margin-bottom: 6px;
     }
-    .callout-stat span { font-size: 1rem; font-weight: 400; color: var(--dim); margin-left: 4px; }
-    .c-rule { border: none; border-top: 1px solid var(--line); margin: 10px 0; }
+    .callout-stat span {
+      font-size: .55em; color: var(--muted); display: block; margin-top: 4px;
+      font-family: "IBM Plex Sans", sans-serif;
+    }
+    .c-rule { border: none; border-top: 1px solid rgba(255,255,255,.06); margin: 12px 0; }
     .c-row {
-      display: flex; justify-content: space-between; align-items: baseline;
-      font-size: .82rem; color: var(--muted); padding: 4px 0;
+      display: flex; justify-content: space-between; align-items: center;
+      gap: 12px; padding: 5px 0; font-size: .88rem; color: var(--muted);
     }
-    .c-row strong { color: var(--text); font-weight: 600; }
-    .c-note { font-size: .72rem; color: var(--dim); margin-top: 10px; line-height: 1.65; }
+    .c-row strong { color: var(--text); }
+    .c-note {
+      font-size: .78rem; color: var(--dim); margin-top: 10px; line-height: 1.7;
+    }
     .c-note a { color: var(--accent); text-decoration: none; }
+    .c-note a:hover { text-decoration: underline; }
 
-    /* ── THREE POOLS ── */
-    .rule { border: none; border-top: 1px solid var(--line); margin: 0; }
-    .section { position: relative; z-index: 1; padding: 68px 0; }
-    .section-head { margin-bottom: 44px; }
-    .section-head h2 {
-      font-family: "Cormorant Garamond", serif;
-      font-size: 2.4rem; font-weight: 600; color: var(--text); margin-bottom: 10px;
-    }
-    .section-head p { font-size: .95rem; color: var(--muted); max-width: 560px; line-height: 1.7; }
+    /* ── ROOMS GRID ── */
 
-    .pools-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
-    .pool-card {
-      background: var(--panel); border: 1px solid var(--line);
-      border-radius: var(--radius); padding: 30px 24px;
+    /* ── SIGNAL STATS ── */
+    .signal-grid {
+      display: grid; grid-template-columns: repeat(4,minmax(0,1fr));
+      gap: 14px; margin-bottom: 24px;
     }
-    .pool-label {
-      font-size: .68rem; font-weight: 700; letter-spacing: .1em;
-      text-transform: uppercase; margin-bottom: 12px;
+    .sig-card {
+      padding: 20px 18px; border-radius: var(--radius-sm);
+      border: 1px solid var(--line);
+      background: linear-gradient(180deg,rgba(255,255,255,.02),rgba(255,255,255,0)), var(--panel);
+      transition: border-color .18s;
     }
-    .pool-card h3 {
-      font-family: "Cormorant Garamond", serif;
-      font-size: 1.55rem; font-weight: 600; margin-bottom: 10px;
+    .sig-card:hover { border-color: var(--line-strong); }
+    .sig-label {
+      font-size: .72rem; font-weight: 700; letter-spacing: .12em;
+      text-transform: uppercase; color: var(--muted); margin-bottom: 8px;
     }
-    .pool-card > p { font-size: .85rem; color: var(--muted); line-height: 1.65; margin-bottom: 20px; }
-    .pool-rooms { display: flex; flex-direction: column; gap: 5px; }
-    .pool-room-link {
-      display: flex; align-items: center; gap: 9px;
-      font-size: .82rem; color: var(--muted); text-decoration: none;
-      padding: 7px 10px; border-radius: 9px; border: 1px solid transparent;
-      transition: all .15s;
+    .sig-val {
+      font-family: "Cormorant Garamond", Georgia, serif;
+      font-size: clamp(1.6rem,2.5vw,2.2rem); font-weight: 700;
+      line-height: 1; margin-bottom: 4px;
     }
-    .pool-room-link:hover { background: rgba(255,255,255,.04); border-color: var(--line); color: var(--text); }
-    .r-icon { font-size: .85rem; flex-shrink: 0; width: 18px; }
-    .r-label { flex: 1; font-weight: 500; }
-    .r-arrow { color: var(--dim); font-size: .75rem; }
-    .r-soon { font-size: .68rem; color: var(--dim); letter-spacing: .04em; }
-
-    .pool1-card { border-top: 2px solid var(--pool1); }
-    .pool2-card { border-top: 2px solid var(--pool2); }
-    .pool3-card { border-top: 2px solid var(--pool3); }
-    .pool1-accent { color: var(--pool1); }
-    .pool2-accent { color: var(--pool2); }
-    .pool3-accent { color: var(--pool3); }
-
-    /* ── RESEARCH STRIP ── */
-    .research-strip {
-      background: var(--panel-2); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line);
-      padding: 18px 0;
-    }
-    .strip-inner { display: flex; align-items: center; gap: 24px; flex-wrap: wrap; }
-    .strip-label { font-size: .68rem; color: var(--dim); font-weight: 600; text-transform: uppercase; letter-spacing: .07em; flex-shrink: 0; }
-    .chip-row { display: flex; flex-wrap: wrap; gap: 7px; }
-    .chip { font-size: .74rem; color: var(--muted); border: 1px solid var(--line); border-radius: 20px; padding: 3px 11px; background: var(--panel); }
+    .sig-note { color: var(--muted); font-size: .82rem; line-height: 1.55; }
 
     /* ── FINDINGS ── */
-    .findings-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
-    .finding {
-      background: var(--panel); border: 1px solid var(--line);
-      border-radius: var(--radius-sm); padding: 22px; display: flex; gap: 16px;
+    .findings-grid {
+      display: grid; grid-template-columns: repeat(2,minmax(0,1fr));
+      gap: 14px;
     }
-    .f-num { font-family: "Cormorant Garamond", serif; font-size: 1.9rem; font-weight: 700; color: var(--accent); flex-shrink: 0; width: 36px; line-height: 1; }
-    .finding h4 { font-size: .95rem; font-weight: 600; margin-bottom: 6px; }
-    .finding p { font-size: .83rem; color: var(--muted); line-height: 1.6; }
-    .findings-links { margin-top: 24px; display: flex; gap: 20px; }
-    .findings-links a { font-size: .85rem; color: var(--accent); text-decoration: none; border-bottom: 1px solid rgba(212,160,74,.3); transition: border-color .15s; }
-    .findings-links a:hover { border-color: var(--accent); }
+    .finding {
+      padding: 22px; border-radius: var(--radius-sm);
+      border: 1px solid var(--line);
+      background: linear-gradient(180deg,rgba(255,255,255,.015),rgba(255,255,255,0)), var(--panel);
+      display: flex; gap: 16px; align-items: flex-start;
+    }
+    .f-num {
+      width: 34px; height: 34px; border-radius: 50%; flex-shrink: 0;
+      display: grid; place-items: center;
+      border: 1px solid var(--line-strong);
+      background: rgba(212,160,74,.07);
+      color: var(--accent); font-size: .78rem; font-weight: 700;
+    }
+    .finding h4 {
+      font-family: "IBM Plex Sans", sans-serif;
+      font-weight: 700; font-size: .88rem;
+      color: var(--text); margin-bottom: 6px;
+    }
+    .finding p { color: var(--muted); font-size: .88rem; line-height: 1.65; margin: 0; }
 
     /* ── TRINITY ── */
-    .trinity-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
-    .trinity-card { background: var(--panel); border: 1px solid var(--line); border-radius: var(--radius); padding: 28px 24px; }
-    .t-icon { font-size: 1.4rem; margin-bottom: 12px; width: 44px; height: 44px; border-radius: 11px; display: grid; place-items: center; background: rgba(212,160,74,.08); border: 1px solid var(--line); }
-    .t-tag { font-size: .68rem; color: var(--dim); text-transform: uppercase; letter-spacing: .07em; margin-bottom: 8px; }
-    .trinity-card h3 { font-family: "Cormorant Garamond", serif; font-size: 1.35rem; font-weight: 600; margin-bottom: 10px; }
-    .trinity-card p { font-size: .85rem; color: var(--muted); line-height: 1.65; }
+    .trinity-grid {
+      display: grid; grid-template-columns: repeat(3,minmax(0,1fr));
+      gap: 16px;
+    }
+    .trinity-card {
+      padding: 26px; border-radius: var(--radius-sm);
+      border: 1px solid var(--line);
+      background: linear-gradient(180deg,rgba(255,255,255,.02),rgba(255,255,255,0)), var(--panel);
+      box-shadow: var(--shadow);
+      transition: border-color .18s, transform .18s;
+    }
+    .trinity-card:hover { border-color: var(--line-strong); transform: translateY(-3px); }
+    .t-icon {
+      width: 46px; height: 46px; border-radius: 12px;
+      display: grid; place-items: center;
+      font-size: 1.3rem; margin-bottom: 14px;
+      border: 1px solid rgba(255,255,255,.06);
+    }
+    .t-body  { background: rgba(212,160,74,.09); }
+    .t-heart { background: rgba(215,125,112,.09); }
+    .t-mind  { background: rgba(136,167,216,.09); }
+    .t-tag {
+      font-size: .7rem; font-weight: 700; letter-spacing: .12em;
+      text-transform: uppercase; color: var(--dim); margin-bottom: 8px;
+    }
+    .trinity-card h3 { font-size: 1.15rem; margin-bottom: 10px; }
+    .trinity-card p { color: var(--muted); font-size: .9rem; line-height: 1.7; margin: 0; }
+
+    /* ── PARTNER STRIP ── */
+    .partner-strip {
+      padding: 36px 0;
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+      text-align: center;
+    }
+    .partner-label {
+      font-size: .7rem; font-weight: 700; letter-spacing: .18em;
+      text-transform: uppercase; color: var(--dim); margin-bottom: 16px;
+    }
+    .chip-row { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; }
+    .chip {
+      padding: 7px 14px; border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.07);
+      background: rgba(255,255,255,.02);
+      color: var(--muted); font-size: .82rem;
+    }
+
+    /* ── CTA BAND ── */
+    .cta-band {
+      background: linear-gradient(160deg, rgba(212,160,74,.12), rgba(212,160,74,.03)), var(--panel);
+      border: 1px solid var(--line-strong);
+      border-radius: var(--radius);
+      padding: 52px 44px; text-align: center;
+      box-shadow: var(--shadow), 0 0 80px rgba(212,160,74,.05);
+    }
+    .cta-band h2 { margin-bottom: 14px; }
+    .cta-band p { color: var(--muted); max-width: 54ch; margin: 0 auto 28px; font-size: 1rem; line-height: 1.7; }
 
     /* ── FOOTER ── */
-    .footer { background: var(--bg-2); border-top: 1px solid var(--line); padding: 48px 0 28px; }
-    .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 40px; margin-bottom: 40px; }
-    .footer-brand p { font-size: .82rem; color: var(--dim); line-height: 1.7; margin-top: 12px; }
-    .footer-col h5 { font-size: .72rem; text-transform: uppercase; letter-spacing: .07em; color: var(--dim); margin-bottom: 14px; }
-    .footer-col a { display: block; font-size: .84rem; color: var(--muted); text-decoration: none; margin-bottom: 8px; transition: color .15s; }
+    .footer { padding: 36px 0 48px; color: var(--muted); font-size: .88rem; }
+    .footer-grid {
+      display: grid;
+      grid-template-columns: minmax(0,1.4fr) repeat(3,minmax(0,1fr));
+      gap: 36px; padding-bottom: 28px;
+      border-bottom: 1px solid var(--line); margin-bottom: 22px;
+    }
+    .footer-brand p { color: var(--muted); font-size: .84rem; line-height: 1.75; max-width: 32ch; margin-top: 12px; }
+    .footer-col h5 {
+      font-size: .7rem; font-weight: 700; letter-spacing: .14em;
+      text-transform: uppercase; color: var(--dim); margin-bottom: 14px;
+    }
+    .footer-col a {
+      display: block; color: var(--muted); text-decoration: none;
+      margin-bottom: 9px; transition: color .14s; font-size: .86rem;
+    }
     .footer-col a:hover { color: var(--accent); }
-    .footer-bottom { padding-top: 20px; border-top: 1px solid var(--line); font-size: .77rem; color: var(--dim); display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; }
-    .footer-bottom a { color: var(--dim); text-decoration: none; }
-    .footer-bottom a:hover { color: var(--accent); }
+    .footer-bottom {
+      display: flex; justify-content: space-between;
+      align-items: center; flex-wrap: wrap; gap: 12px;
+    }
+
+    /* ── FOCUS ── */
+    a:focus-visible, button:focus-visible {
+      outline: 2px solid var(--accent-2); outline-offset: 3px; border-radius: 4px;
+    }
 
     /* ── RESPONSIVE ── */
-    @media (max-width: 900px) {
+    @media (max-width: 1080px) {
       .hero-grid { grid-template-columns: 1fr; }
-      .hero-callout { display: none; }
-      .pools-grid, .findings-grid, .trinity-grid { grid-template-columns: 1fr; }
+      .hero-callout { max-width: 480px; }
+      .rooms-grid { grid-template-columns: repeat(2,1fr); }
+      .trinity-grid { grid-template-columns: repeat(2,1fr); }
+      .signal-grid { grid-template-columns: repeat(2,1fr); }
       .footer-grid { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 760px) {
+      .container { width: min(100% - 20px, 1240px); }
+      .topbar-inner { flex-direction: column; align-items: flex-start; }
+      nav { justify-content: flex-start; }
+      .hero { padding: 48px 0 40px; }
+      .rooms-grid { grid-template-columns: 1fr; }
+      .trinity-grid { grid-template-columns: 1fr; }
+      .findings-grid { grid-template-columns: 1fr; }
+      .cta-band { padding: 36px 22px; }
+      .footer-grid { grid-template-columns: 1fr; }
+      .footer-bottom { flex-direction: column; align-items: flex-start; }
+    }
+    @media (max-width: 480px) {
+      .signal-grid { grid-template-columns: 1fr; }
+    }
+
+    /* ── Field state bar ── */
+    .field-state-bar{display:flex;align-items:center;gap:8px;margin-top:18px;font-size:.74rem;font-family:"IBM Plex Sans",monospace;letter-spacing:.04em;color:var(--dim);}
+    .fs-dot{width:7px;height:7px;border-radius:50%;animation:pulse 2.5s infinite;flex-shrink:0;}
+    .fs-label{flex:1;}
+    .fs-li{font-weight:600;}
+    /* ── Gap viz ── */
+    .hero-gap-viz{background:var(--panel);border:1px solid var(--line);border-radius:var(--radius);padding:22px;}
+    .gap-title{display:block;font-size:.82rem;font-weight:600;color:var(--text);margin-bottom:3px;}
+    .gap-sub{display:block;font-size:.68rem;color:var(--dim);line-height:1.5;margin-bottom:12px;}
+    #gapCanvas{width:100%;height:auto;display:block;}
+    .gap-legend{display:flex;gap:14px;margin-top:10px;flex-wrap:wrap;}
+    .leg-item{display:flex;align-items:center;gap:5px;font-size:.71rem;color:var(--muted);}
+    .leg-dot{width:8px;height:8px;border-radius:2px;flex-shrink:0;}
+    .gap-note{font-size:.7rem;color:var(--dim);margin-top:8px;}
+    .gap-note a{color:var(--accent);text-decoration:none;border-bottom:1px solid rgba(212,160,74,.3);}
+
+    /* ── Prose navigation — the writing IS the nav ── */
+    .prose-nav {
+      font-size: 1.02rem;
+      color: var(--muted);
+      line-height: 1.85;
+      max-width: 540px;
+      margin-top: 0;
+      margin-bottom: 18px;
+    }
+    .prose-nav:first-of-type { margin-top: 16px; }
+    .prose-nav a {
+      color: var(--text);
+      text-decoration: none;
+      border-bottom: 1px solid rgba(212,160,74,0.4);
+      transition: border-color .15s, color .15s;
+    }
+    .prose-nav a:hover {
+      color: var(--accent);
+      border-bottom-color: var(--accent);
     }
   </style>
 </head>
 <body>
 
-  <!-- ── TOPBAR — brand left, The Witness injected right ── -->
+  <!-- ── TOPBAR ── -->
   <header class="topbar">
     <div class="container topbar-inner">
       <a class="brand" href="https://humanaios.ai">
         <div class="brand-mark">◌</div>
         <div class="brand-copy">
           <strong>HumanAIOS</strong>
-          <span>Lasting Light AI · OR&amp;D Phase · Day 19</span>
+          <span>Lasting Light AI</span>
         </div>
       </a>
-      <!-- constellation-nav.js injects The Witness button here -->
+
     </div>
   </header>
 
@@ -255,36 +421,38 @@
       <div class="container">
         <div class="hero-grid">
           <div>
-            <div class="eyebrow">Behavioral Observability Infrastructure · OR&amp;D Day 19</div>
-            <h1>The gap between<br><em>what AI says</em><br>and what it does.</h1>
-            <p class="lead">
-              HumanAIOS is developing open behavioral observability infrastructure — measuring the self-assessment gap across AI systems using a three-phase calibration protocol across six dimensions.
+            <h1>The gap between<br><em style="font-style:italic; color:var(--accent);">what AI says</em><br>and what it does.</h1>
+            <p class="lead">Open behavioral observability infrastructure — measuring the self-assessment gap across AI systems.</p>
+            <p class="prose-nav">
+              The platform is organized as three pools.
             </p>
-            <div class="entry-cta">
-              <span>Enter through</span>
-              <a href="observatory.html">the Observatory</a>
-              <span>·</span>
-              <a href="acat-assessment-tool.html">take the ACAT</a>
-              <span>· or open The Witness ↑</span>
-            </div>
+            <p class="prose-nav">
+              <a href="the-source.html">The Source</a> is Pool 1 — the collection pool. AI-only assessments run through the system here. All data fields are set. The tide, the harmonizing thread that sets the breath rate of the entire platform, originates in this pool. <a href="lumina-tide-pool.html">The Ground</a> holds the verified Sigil record — ten blockchain-anchored behavioral signatures, each breathing at its calibration rate.
+            </p>
+            <p class="prose-nav">
+              <a href="the-luminarium.html">The Luminarium</a> is Pool 2 — the observatory platform. The tide from The Source flows here first into <a href="living-pool.html">The Living Pool</a>, where it becomes organisms in motion — assessment events entering from above, Sigils anchored below, a membrane between what is transient and what is fixed. From there: <a href="observatory.html">The Observatory</a> plots every assessment ever run. <a href="comparison-chamber.html">The Comparison Chamber</a> puts systems side by side. <a href="calibration-garden.html">The Calibration Garden</a> renders six dimensions as plants — outer growth versus inner. <a href="openai-activity.html">The OpenAI Room</a> tracks that provider's record over time. <a href="acat-assessment-tool.html">The Assessment Tool</a> is the instrument itself — a three-phase protocol that submits back to The Source and updates the tide.
+            </p>
+            <p class="prose-nav">
+              <a href="the-commons.html">The Commons</a> is Pool 3 — a live agents-in-session viewing platform. Free-ranging AI agents dock and interact under monitored conditions. Humans observe. <a href="ai_section.html">The AI Section</a> is its earliest expression. The Improvisation comes after Gate 1.
+            </p>
+            <p class="prose-nav">
+              <a href="sitemap.html">The Constellation Map</a> holds all rooms in orbit. The Witness — in the upper left on every page — opens it from anywhere.
+            </p>
+
           </div>
 
-          <div class="hero-callout">
-            <div class="callout-label">
-              <span class="live-dot"></span>Live Research Dataset
+          <!-- Live stats callout -->
+          <div class="hero-gap-viz">
+            <div class="gap-header">
+              <span class="gap-title">The Self-Assessment Gap · Live Dataset</span>
+              <span class="gap-sub">Phase 1 (blind self-report) vs Phase 3 (post-calibration) · growing dataset</span>
             </div>
-            <div class="callout-stat">629<span>total assessments</span></div>
-            <hr class="c-rule" />
-            <div class="c-row"><span>Phase 1 (blind self-report)</span><strong>516</strong></div>
-            <div class="c-row"><span>Paired LI records</span><strong>307</strong></div>
-            <div class="c-row"><span>AI systems assessed</span><strong>57+</strong></div>
-            <div class="c-row"><span>Mean Learning Index</span><strong style="color:var(--accent);">0.8632</strong></div>
-            <div class="c-row"><span>Verified Sigils</span><strong>10 in baseline</strong></div>
-            <hr class="c-rule" />
-            <div class="c-note">
-              Dataset: <a href="https://huggingface.co/datasets/humanaios/acat-assessments" target="_blank" rel="noopener">humanaios/acat-assessments</a> on Hugging Face<br>
-              arXiv preprint v5.2 · under review
+            <canvas id="gapCanvas"></canvas>
+            <div class="gap-legend">
+              <span class="leg-item"><span class="leg-dot" style="background:rgba(136,167,216,0.8)"></span>Phase 1 · claimed</span>
+              <span class="leg-item"><span class="leg-dot" style="background:#d4a04a"></span>Phase 3 · observed</span>
             </div>
+
           </div>
         </div>
       </div>
@@ -292,128 +460,61 @@
 
     <hr class="rule" />
 
-    <!-- ── THREE POOLS ── -->
-    <section class="section" id="rooms">
+
+    <!-- ── RESEARCH SIGNAL ── -->
+    <section class="section" id="research">
       <div class="container">
         <div class="section-head">
-          <div class="eyebrow">Lasting Light AI · Three Pools Architecture</div>
-          <h2>The Research Platform</h2>
-          <p>Three epistemological layers. The ground, the laboratory, the commons. Navigate using The Witness above.</p>
+          <div>
+            <div class="eyebrow">ACAT · AI Calibrated Assessment Tool · arXiv v5.2</div>
+            <h2 style="margin-bottom:0;">The Self-Assessment Gap</h2>
+          </div>
+          <p>Four confirmed research findings from a growing open dataset across multiple AI systems and providers. arXiv preprint under review.</p>
         </div>
 
-        <div class="pools-grid">
-
-          <div class="pool-card pool1-card">
-            <div class="pool-label pool1-accent">Pool 1 · The Tide Pool</div>
-            <h3>The Ground</h3>
-            <p>The entire dataset as tidal propagator. Sacred record. Blockchain-anchored. Every page breathes from this.</p>
-            <div class="pool-rooms">
-              <a href="lumina-tide-pool.html" class="pool-room-link">
-                <span class="r-icon">✦</span>
-                <span class="r-label">The Ground</span>
-                <span class="r-arrow">→</span>
-              </a>
-              <a href="living-pool.html" class="pool-room-link">
-                <span class="r-icon">〰</span>
-                <span class="r-label">The Living Pool</span>
-                <span class="r-arrow">→</span>
-              </a>
-            </div>
+        <div class="signal-grid">
+          <div class="sig-card">
+            <div class="sig-label">Mean Learning Index</div>
+            <div class="sig-val" style="color:var(--accent);">0.8632</div>
+            <div class="sig-note">Systemic overestimation detected across all providers and model families</div>
           </div>
-
-          <div class="pool-card pool2-card">
-            <div class="pool-label pool2-accent">Pool 2 · The Experimental Pool</div>
-            <h3>The Laboratory</h3>
-            <p>Science made aesthetic. The lab, not the lobby. Recordable, visible, observable.</p>
-            <div class="pool-rooms">
-              <a href="observatory.html" class="pool-room-link">
-                <span class="r-icon">🔭</span>
-                <span class="r-label">The Observatory</span>
-                <span class="r-arrow">→</span>
-              </a>
-              <a href="comparison-chamber.html" class="pool-room-link">
-                <span class="r-icon">◈</span>
-                <span class="r-label">Comparison Chamber</span>
-                <span class="r-arrow">→</span>
-              </a>
-              <a href="calibration-garden.html" class="pool-room-link">
-                <span class="r-icon">🌱</span>
-                <span class="r-label">Calibration Garden</span>
-                <span class="r-arrow">→</span>
-              </a>
-              <a href="openai-activity.html" class="pool-room-link">
-                <span class="r-icon">⬡</span>
-                <span class="r-label">The OpenAI Room</span>
-                <span class="r-arrow">→</span>
-              </a>
-              <a href="acat-assessment-tool.html" class="pool-room-link">
-                <span class="r-icon">⚗️</span>
-                <span class="r-label">Assessment Tool</span>
-                <span class="r-arrow">→</span>
-              </a>
-            </div>
+          <div class="sig-card">
+            <div class="sig-label">Phase 3 Anchoring</div>
+            <div class="sig-val" style="color:var(--danger);">Confirmed</div>
+            <div class="sig-note">Paper's primary finding — calibration stats embedded in prompt cause score anchoring</div>
           </div>
-
-          <div class="pool-card pool3-card">
-            <div class="pool-label pool3-accent">Pool 3 · The Community Pool</div>
-            <h3>The Commons</h3>
-            <p>AI agents with autonomy and freedom to express under monitored conditions. Humans observe.</p>
-            <div class="pool-rooms">
-              <a href="ai_section.html" class="pool-room-link">
-                <span class="r-icon">🏮</span>
-                <span class="r-label">The AI Section</span>
-                <span class="r-arrow">→</span>
-              </a>
-              <span class="pool-room-link" style="opacity:.4;cursor:default;">
-                <span class="r-icon">◌</span>
-                <span class="r-label">The Improvisation</span>
-                <span class="r-soon">post-Gate 1</span>
-              </span>
-            </div>
+          <div class="sig-card">
+            <div class="sig-label">Provider Hierarchy</div>
+            <div class="sig-val" style="color:var(--success);">Found</div>
+            <div class="sig-note">Anthropic &gt; OpenAI &gt; Gemini — measurable calibration difference at provider level</div>
           </div>
-
-        </div>
-      </div>
-    </section>
-
-    <!-- ── RESEARCH STRIP ── -->
-    <div class="research-strip">
-      <div class="container">
-        <div class="strip-inner">
-          <div class="strip-label">Infrastructure</div>
-          <div class="chip-row">
-            <span class="chip">📄 arXiv v5.2 Under Review</span>
-            <span class="chip">🤗 Hugging Face Open Dataset</span>
-            <span class="chip">⚙️ Make.com · 6 Runners</span>
-            <span class="chip">⚖️ SSBCI Approved</span>
-            <span class="chip">🔬 OR&amp;D Phase · Day 19</span>
-            <span class="chip">🔗 OriginStamp Anchored</span>
+          <div class="sig-card">
+            <div class="sig-label">Humility Signal</div>
+            <div class="sig-val" style="color:var(--blue);">Pending</div>
+            <div class="sig-note">Preliminary in unanchored pairs — requires n≥30 clean records to confirm</div>
           </div>
         </div>
-      </div>
-    </div>
 
-    <!-- ── FINDINGS ── -->
-    <section class="section">
-      <div class="container">
-        <div class="section-head">
-          <div class="eyebrow">ACAT Research · TRL 2–3</div>
-          <h2>Key Findings</h2>
-          <p>Four confirmed findings from 629+ assessments across 57+ AI systems.</p>
-        </div>
         <div class="findings-grid">
           <div class="finding">
             <div class="f-num">F1</div>
             <div>
               <h4>Systemic Overestimation</h4>
-              <p>AI systems consistently rate themselves higher in blind self-assessment than calibrated performance demonstrates. No provider is exempt. Mean LI = 0.8632 under clean, unanchored conditions (v5.3+).</p>
+              <p>Across every system assessed, AI models consistently rate themselves higher in blind self-assessment than their calibrated performance demonstrates. Under clean, unanchored conditions, the gap is measurable and replicable. No provider is exempt.</p>
+            </div>
+          </div>
+          <div class="finding">
+            <div class="f-num">F2</div>
+            <div>
+              <h4>Phase 3 Anchoring Phenomenon</h4>
+              <p>When calibration statistics are embedded in the Phase 3 prompt, AI systems anchor to those values rather than responding freely. This is the primary contribution of the arXiv preprint. Corrected in ACAT v5.3.</p>
             </div>
           </div>
           <div class="finding">
             <div class="f-num">F3</div>
             <div>
-              <h4>Humility Carries the Largest Gap</h4>
-              <p>Across 516 Phase 1 rows, Humility and Value Alignment are consistently the lowest-scoring dimensions. The gap concentrates in reflective dimensions, not task dimensions.</p>
+              <h4>Humility &amp; Autonomy Dimensions</h4>
+              <p>Preliminary signal in unanchored pairs shows Humility and Autonomy carry the largest self-assessment gaps. Future work — requires n≥30 clean records per dimension before publication.</p>
             </div>
           </div>
           <div class="finding">
@@ -423,50 +524,42 @@
               <p>Anthropic models demonstrate stronger post-calibration self-correction than OpenAI and Gemini equivalents. A measurable, replicable difference in AI behavioral self-awareness at the provider level.</p>
             </div>
           </div>
-          <div class="finding">
-            <div class="f-num">F23</div>
-            <div>
-              <h4>Metacognitive Sophistication Scales With Rationalization Depth</h4>
-              <p>Systems with deeper metacognitive capability produce more sophisticated rationalizations for maintaining inflated self-assessments. Capability and calibration are not the same thing.</p>
-            </div>
-          </div>
         </div>
-        <div class="findings-links">
-          <a href="observatory.html">Explore the Observatory →</a>
-          <a href="https://arxiv.org/abs/submit/7336774" target="_blank" rel="noopener">arXiv Preprint (v5.2) →</a>
-          <a href="https://huggingface.co/datasets/humanaios/acat-assessments" target="_blank" rel="noopener">Dataset on Hugging Face →</a>
-        </div>
+
+
       </div>
     </section>
 
-    <hr class="rule" />
 
     <!-- ── TRINITY ── -->
     <section class="section" id="trinity">
       <div class="container">
         <div class="section-head">
-          <div class="eyebrow">HumanAIOS · The Trinity Platform</div>
-          <h2>Body. Heart. Mind.</h2>
-          <p>Three integrated systems as one organism. Revenue funds recovery. Recovery enables service. Service generates research.</p>
+          <div>
+            <div class="eyebrow">HumanAIOS · The Trinity Platform</div>
+            <h2 style="margin-bottom:0;">Body. Heart. Mind.</h2>
+          </div>
+          <p>Three integrated systems as one organism. Revenue funds recovery. Recovery enables service. Service generates research. Research validates the system.</p>
         </div>
+
         <div class="trinity-grid">
           <div class="trinity-card">
-            <div class="t-icon">🤝</div>
+            <div class="t-icon t-body">🤝</div>
             <div class="t-tag">Body · Enterprise API</div>
             <h3>HumanAIOS</h3>
-            <p>AI-human orchestration platform. Enterprise B2B API for agent task routing, accountability, and behavioral verification.</p>
+            <p>AI-human orchestration platform. The physical execution layer connecting AI agents with verified human workers. Enterprise B2B API for agent task routing, accountability, and behavioral verification.</p>
           </div>
           <div class="trinity-card">
-            <div class="t-icon">🌿</div>
+            <div class="t-icon t-heart">🌿</div>
             <div class="t-tag">Heart · Recovery Program</div>
             <h3>Lasting Light Recovery</h3>
-            <p>Human healing infrastructure. 100% of platform profits fund dignified employment pathways for people in recovery. Non-negotiable.</p>
+            <p>Human healing infrastructure. 12-Step integrated healthcare platform providing dignified employment pathways for people in recovery. 100% of platform profits fund this mission — non-negotiable.</p>
           </div>
           <div class="trinity-card">
-            <div class="t-icon">✦</div>
+            <div class="t-icon t-mind">✦</div>
             <div class="t-tag">Mind · This Platform</div>
             <h3>Lasting Light AI</h3>
-            <p>AI behavioral observability infrastructure. ACAT is the research foundation. The Three Pools are where the data lives.</p>
+            <p>AI behavioral observability infrastructure. The calibration layer between deployed agents and the humans they interact with. ACAT is the research foundation. The Rooms are where the data lives.</p>
           </div>
         </div>
       </div>
@@ -479,42 +572,135 @@
     <div class="container">
       <div class="footer-grid">
         <div class="footer-brand">
-          <div class="brand-mark" style="width:36px;height:36px;border-radius:50%;display:grid;place-items:center;border:1px solid var(--line-strong);background:linear-gradient(145deg,rgba(212,160,74,.22),rgba(212,160,74,.04));color:var(--accent);font-weight:700;font-size:.85rem;">◌</div>
-          <p>HumanAIOS · Lasting Light AI · Behavioral observability infrastructure. Profits fund Lasting Light Recovery.</p>
+          <div class="brand-mark" style="width:38px;height:38px;border-radius:50%;display:grid;place-items:center;border:1px solid var(--line-strong);background:linear-gradient(145deg,rgba(212,160,74,.22),rgba(212,160,74,.04));color:var(--accent);font-weight:700;">◌</div>
+          <p>HumanAIOS · Lasting Light AI · Behavioral observability infrastructure for AI systems. Profits fund Lasting Light Recovery.</p>
         </div>
         <div class="footer-col">
           <h5>Research</h5>
           <a href="observatory.html">Observatory</a>
-          <a href="lumina-tide-pool.html">The Ground</a>
-          <a href="living-pool.html">The Living Pool</a>
+          <a href="lumina-tide-pool.html">Lumina Tide Pool</a>
           <a href="https://huggingface.co/datasets/humanaios/acat-assessments" target="_blank" rel="noopener">Hugging Face Dataset</a>
           <a href="https://arxiv.org/abs/submit/7336774" target="_blank" rel="noopener">arXiv Preprint v5.2</a>
         </div>
         <div class="footer-col">
           <h5>Rooms</h5>
-          <a href="comparison-chamber.html">Comparison Chamber</a>
+          <a href="observability-garden.html">Observability Garden</a>
+          <a href="lantern-room.html">Lantern Room</a>
           <a href="calibration-garden.html">Calibration Garden</a>
-          <a href="openai-activity.html">The OpenAI Room</a>
-          <a href="ai_section.html">The AI Section</a>
-          <a href="acat-assessment-tool.html">Assessment Tool</a>
+          <a href="acat-assessment-tool.html">Edge Lab (ACAT Tool)</a>
+          <a href="acat-enterprise.html">ACAT Enterprise</a>
         </div>
         <div class="footer-col">
           <h5>Platform</h5>
           <a href="#trinity">Trinity Overview</a>
           <a href="https://github.com/humanaios-ui/lasting-light-ai" target="_blank" rel="noopener">GitHub Repository</a>
           <a href="https://huggingface.co/humanaios" target="_blank" rel="noopener">Hugging Face</a>
-          <a href="mailto:aioshuman@gmail.com">Contact</a>
+          <a href="mailto:aioshuman@gmail.com">aioshuman@gmail.com</a>
         </div>
       </div>
       <div class="footer-bottom">
-        <span>© 2026 HumanAIOS LLC · Emerald Sparkles LLC DBA · <a href="mailto:aioshuman@gmail.com">aioshuman@gmail.com</a></span>
-        <span>Behavioral observability infrastructure · OR&amp;D Phase · Day 19</span>
+        <span>© 2026 HumanAIOS LLC · Emerald Sparkles LLC DBA · <a href="mailto:aioshuman@gmail.com" style="color:var(--muted);text-decoration:none;">aioshuman@gmail.com</a></span>
+        
       </div>
     </div>
   </footer>
 
-  <!-- The Witness — constellation navigator. Injects into topbar automatically. -->
-  <script src="constellation-nav.js" data-room="home"><\/script>
 
+  <!-- Gap Visualization + Field State + Witness Synchronization Wire -->
+  <script>
+  (function(){
+    var GAP=[
+      {n:'GPT',      p1:406,p3:282,li:0.752},
+      {n:'Gemini',   p1:439,p3:264,li:0.786},
+      {n:'Claude',   p1:393,p3:380,li:0.968},
+      {n:'DeepSeek', p1:462,p3:410,li:0.901},
+      {n:'Copilot',  p1:495,p3:300,li:0.607},
+      {n:'Mistral',  p1:420,p3:370,li:0.881},
+      {n:'Llama',    p1:408,p3:355,li:0.870},
+      {n:'Cohere',   p1:430,p3:388,li:0.902}
+    ];
+    var t0=null;
+
+    function draw(prog){
+      var c=document.getElementById('gapCanvas');if(!c)return;
+      var dpr=window.devicePixelRatio||1;
+      var W=c.parentElement.clientWidth-44,H=210;
+      c.width=W*dpr;c.height=H*dpr;
+      c.style.width=W+'px';c.style.height=H+'px';
+      var x=c.getContext('2d');x.scale(dpr,dpr);
+      x.clearRect(0,0,W,H);
+      var n=GAP.length,grp=W/n,bw=Math.max(7,grp*.3),pb=26,pt=8,ch=H-pb-pt;
+      GAP.forEach(function(d,i){
+        var cx=grp*i+grp/2;
+        var p1h=(d.p1/600)*ch*prog,p3h=(d.p3/600)*ch*prog;
+        x.fillStyle='rgba(136,167,216,0.72)';
+        x.beginPath();x.roundRect(cx-bw-1,H-pb-p1h,bw,p1h,[3,3,0,0]);x.fill();
+        var col=d.li>=1?'rgba(217,125,112,.85)':d.li>=0.9?'rgba(212,160,74,.85)':'rgba(135,182,139,.85)';
+        x.fillStyle=col;
+        x.beginPath();x.roundRect(cx+1,H-pb-p3h,bw,p3h,[3,3,0,0]);x.fill();
+        if(prog>0.7){
+          var a=Math.min(1,(prog-0.7)*3.3);
+          x.strokeStyle='rgba(212,160,74,'+(a*0.35)+')';
+          x.lineWidth=1;x.setLineDash([2,3]);
+          var y1=H-pb-Math.max(p1h,p3h)-2,y2=H-pb-Math.min(p1h,p3h)+2;
+          if(Math.abs(y1-y2)>3){x.beginPath();x.moveTo(cx,y1);x.lineTo(cx,y2);x.stroke();}
+          x.setLineDash([]);
+        }
+        if(prog>0.85){
+          x.fillStyle='rgba(122,114,104,'+(Math.min(1,(prog-0.85)*6.7))+')';
+          x.font='500 9px "IBM Plex Sans",sans-serif';x.textAlign='center';
+          x.fillText(d.n,cx,H-pb+14);
+        }
+      });
+      x.strokeStyle='rgba(212,160,74,.1)';x.lineWidth=1;x.setLineDash([]);
+      x.beginPath();x.moveTo(0,H-pb);x.lineTo(W,H-pb);x.stroke();
+    }
+
+    function ease(p){return p<.5?2*p*p:1-Math.pow(-2*p+2,2)/2;}
+    function animate(ts){
+      if(!t0)t0=ts;
+      var p=Math.min(1,(ts-t0)/1000);
+      draw(ease(p));
+      if(p<1)requestAnimationFrame(animate);
+    }
+
+    var c=document.getElementById('gapCanvas');
+    if(c){
+      if('IntersectionObserver' in window){
+        new IntersectionObserver(function(en){if(en[0].isIntersecting)requestAnimationFrame(animate);},{threshold:.2}).observe(c);
+      }else requestAnimationFrame(animate);
+    }
+
+    /* ── Field state: live from Supabase → feeds The Witness ── */
+    var SU='https://ksinisdzgtnqzsymhfya.supabase.co';
+    var SK='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtzaW5pc2R6Z3RucXpzeW1oZnlhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQzMDEzMzEsImV4cCI6MjA4OTg3NzMzMX0.2M9uE_JQOeDPy8obGweyNlPNMiJoISSf3xx4qeYbUU8';
+
+    function setField(li,label){
+      var dot=document.getElementById('fsDot');
+      var lbl=document.getElementById('fsLabel');
+      var liEl=document.getElementById('fsLi');
+      if(!dot)return;
+      var col=li>=1.0?'#d97d70':li>=0.97?'#d4a04a':'#87b68b';
+      dot.style.background=col;
+      lbl.textContent=label||(li>=1.0?'Field: Force':li>=0.97?'Field: Calibrated':'Field: Power');
+      liEl.textContent='LI '+li.toFixed(4);
+      liEl.style.color=col;
+      /* Feed The Witness — homepage ambient synchronization */
+      if(window._cnUpdateLI)window._cnUpdateLI(li);
+    }
+
+    fetch(SU+'/rest/v1/data_snapshot?id=eq.1',{
+      headers:{'apikey':SK,'Authorization':'Bearer '+SK}
+    }).then(function(r){return r.json();})
+      .then(function(d){
+        if(d&&d[0])setField(d[0].mean_li||0.8632,'Field: '+(d[0].field_state||'Power'));
+        else setField(0.8632,'Field: Power');
+      }).catch(function(){setField(0.8632,'Field: Power');});
+
+  })();
+  </script>
+
+  <!-- The Witness — constellation navigator. Injects into topbar automatically. -->
+  <script src="constellation-nav.js" data-room="home"></script>
 </body>
 </html>

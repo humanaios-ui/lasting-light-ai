@@ -321,15 +321,19 @@
   ───────────────────────────────────────────────────────────────── */
 
   var ROOMS = [
-    { id:'home',               label:'Home',              href:'index.html',                color:'#d4a04a', icon:'◌',   desc:'HumanAIOS · Lasting Light AI research platform.' },
-    { id:'tide-pool',          label:'The Ground',        href:'lumina-tide-pool.html',    color:'#a0c8c0', icon:'✦',   desc:'10 verified Sigils. Pool 1. The anchor.' },
-    { id:'living-pool',        label:'The Living Pool',   href:'living-pool.html',          color:'#00e5ff', icon:'〰',  desc:'Three Pools unified. AIquarium. Tidal propagator.' },
-    { id:'observatory',        label:'Observatory',       href:'observatory.html',          color:'#88a7d8', icon:'🔭',  desc:'Live research data. Filter by provider and model.' },
-    { id:'comparison-chamber', label:'Comparison Chamber',href:'comparison-chamber.html',   color:'#9A8AC0', icon:'◈',   desc:'Side-by-side ACAT profiles. Radar charts.' },
-    { id:'calibration-garden', label:'Calibration Garden',href:'calibration-garden.html',  color:'#7ab085', icon:'🌱',  desc:'OpenAI family room. Six plants, one per dimension.' },
-    { id:'openai-activity',    label:'The OpenAI Room',   href:'openai-activity.html',      color:'#76c6c6', icon:'⬡',   desc:'ChatGPT, GPT-4o, GPT-5.2 — provider profiles.' },
-    { id:'acat-tool',          label:'Assessment Tool',   href:'acat-assessment-tool.html', color:'#87b68b', icon:'⚗️', desc:'Three-phase calibration protocol. ~20 minutes.' },
-    { id:'ai-section',         label:'The AI Section',    href:'ai_section.html',           color:'#c4703a', icon:'🏮',  desc:'Five lanterns. Five AI systems. Creative witness.' }
+    { id:'home',               label:'Home',              href:'index.html',                color:'#d4a04a', icon:'◌',   desc:'HumanAIOS · Lasting Light AI.' },
+    { id:'the-source',         label:'The Source',        href:'the-source.html',           color:'#a0c8c0', icon:'〜',  desc:'Pool 1 · The collection pool. The tide originates here.' },
+    { id:'tide-pool',          label:'The Ground',        href:'lumina-tide-pool.html',     color:'#a0c8c0', icon:'✦',   desc:'Verified Sigils. Blockchain-anchored. Pool 1.' },
+    { id:'the-luminarium',     label:'The Luminarium',    href:'the-luminarium.html',       color:'#88a7d8', icon:'◎',   desc:'Pool 2 · The observatory platform. Science made aesthetic.' },
+    { id:'living-pool',        label:'The Living Pool',   href:'living-pool.html',          color:'#00e5ff', icon:'〰',  desc:'Tide visualized as organisms. Pool 2 entry.' },
+    { id:'observatory',        label:'Observatory',       href:'observatory.html',          color:'#88a7d8', icon:'🔭',  desc:'Every assessment plotted. Live and filterable.' },
+    { id:'comparison-chamber', label:'Comparison Chamber',href:'comparison-chamber.html',   color:'#9A8AC0', icon:'◈',   desc:'Systems side by side. Provider families compared.' },
+    { id:'calibration-garden', label:'Calibration Garden',href:'calibration-garden.html',  color:'#7ab085', icon:'🌱',  desc:'Six plants, one per dimension. Outer vs inner growth.' },
+    { id:'openai-activity',    label:'The OpenAI Room',   href:'openai-activity.html',      color:'#76c6c6', icon:'⬡',   desc:'OpenAI behavioral record over time.' },
+    { id:'acat-tool',          label:'Assessment Tool',   href:'acat-assessment-tool.html', color:'#87b68b', icon:'⚗️', desc:'Three-phase protocol. ~20 min. Submits to Pool 1.' },
+    { id:'the-commons',        label:'The Commons',       href:'the-commons.html',          color:'#9A8AC0', icon:'◉',   desc:'Pool 3 · Live agents-in-session viewing platform.' },
+    { id:'ai-section',         label:'The AI Section',    href:'ai_section.html',           color:'#c4703a', icon:'🏮',  desc:'AI systems in session. Pool 3 origin.' },
+    { id:'sitemap',            label:'Constellation Map', href:'sitemap.html',              color:'#d4a04a', icon:'✧',   desc:'All rooms. Full platform map.' }
   ];
 
   var overlayEl   = null;
@@ -565,14 +569,18 @@
     var brandEl = document.querySelector('.brand, .topbar .brand-mark, .topbar');
     if (!brandEl) return; // no topbar — skip
 
-    // Insert Witness button into topbar
+    // Insert Witness as brand mark — first element in topbar-inner (left side)
     var witnessBtn  = createTopbarGlyph(currentRoom);
     var topbarInner = document.querySelector('.topbar-inner');
     if (topbarInner) {
-      var firstNav = topbarInner.querySelector('a:not(.brand)');
-      firstNav
-        ? topbarInner.insertBefore(witnessBtn, firstNav)
-        : topbarInner.appendChild(witnessBtn);
+      // Prepend: Witness sits at far left as the platform brand mark
+      var brandMarkPlaceholder = topbarInner.querySelector('.brand-mark');
+      if (brandMarkPlaceholder) {
+        // Replace the placeholder div with the Witness button
+        brandMarkPlaceholder.parentNode.replaceChild(witnessBtn, brandMarkPlaceholder);
+      } else {
+        topbarInner.insertBefore(witnessBtn, topbarInner.firstChild);
+      }
     } else {
       brandEl.appendChild(witnessBtn);
     }
