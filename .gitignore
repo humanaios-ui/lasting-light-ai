@@ -20,3 +20,4 @@ llai.config.yaml
 .mypy_cache/
 .DS_Store
 *.log
+*.bak-*
