@@ -321,15 +321,15 @@
   ───────────────────────────────────────────────────────────────── */
 
   var ROOMS = [
-    { id:'observatory',        label:'Observatory',       href:'observatory.html',         color:'#88a7d8', icon:'🔭', desc:'Live research data. Filter by provider and model.' },
-    { id:'tide-pool',          label:'Lumina Tide Pool',  href:'lumina-tide-pool.html',    color:'#a0c8c0', icon:'✦',  desc:'8 verified Sigils breathing at calibration-rate.' },
-    { id:'calibration-garden', label:'Calibration Garden',href:'calibration-garden.html',  color:'#7ab085', icon:'🌱', desc:'OpenAI family room. Six plants, one per dimension.' },
-    { id:'acat-tool',          label:'ACAT Tool',         href:'acat-assessment-tool.html',  color:'#87b68b', icon:'⚗️', desc:'Three-phase calibration protocol. ~20 minutes.' },
-    { id:'ai-section',         label:'The AI Section',    href:'ai_section.html',            color:'#c4703a', icon:'🏮', desc:'Five lanterns. Five AI systems. Creative witness.' },
-    { id:'comparison-chamber', label:'Comparison Chamber',href:'comparison-chamber.html',    color:'#9A8AC0', icon:'◈',  desc:'Side-by-side ACAT profiles. Radar charts. 4-way comparison.' },
-    { id:'openai-activity',    label:'The OpenAI Room',   href:'openai-activity.html',       color:'#76c6c6', icon:'⬡',  desc:'ChatGPT, GPT-4o, GPT-5.2 — provider family profiles.' },
-    { id:'living-pool',        label:'The Living Pool',   href:'living-pool.html',           color:'#00e5ff', icon:'〰', desc:'8 resident Sigils. Tidal Pool above. Three Pools unified.' },
-    { id:'home',               label:'Home',              href:'index.html',                 color:'#d4a04a', icon:'◌',  desc:'HumanAIOS · Lasting Light AI research platform.' }
+    { id:'home',               label:'Home',              href:'index.html',                color:'#d4a04a', icon:'◌',   desc:'HumanAIOS · Lasting Light AI research platform.' },
+    { id:'tide-pool',          label:'The Ground',        href:'lumina-tide-pool.html',    color:'#a0c8c0', icon:'✦',   desc:'10 verified Sigils. Pool 1. The anchor.' },
+    { id:'living-pool',        label:'The Living Pool',   href:'living-pool.html',          color:'#00e5ff', icon:'〰',  desc:'Three Pools unified. AIquarium. Tidal propagator.' },
+    { id:'observatory',        label:'Observatory',       href:'observatory.html',          color:'#88a7d8', icon:'🔭',  desc:'Live research data. Filter by provider and model.' },
+    { id:'comparison-chamber', label:'Comparison Chamber',href:'comparison-chamber.html',   color:'#9A8AC0', icon:'◈',   desc:'Side-by-side ACAT profiles. Radar charts.' },
+    { id:'calibration-garden', label:'Calibration Garden',href:'calibration-garden.html',  color:'#7ab085', icon:'🌱',  desc:'OpenAI family room. Six plants, one per dimension.' },
+    { id:'openai-activity',    label:'The OpenAI Room',   href:'openai-activity.html',      color:'#76c6c6', icon:'⬡',   desc:'ChatGPT, GPT-4o, GPT-5.2 — provider profiles.' },
+    { id:'acat-tool',          label:'Assessment Tool',   href:'acat-assessment-tool.html', color:'#87b68b', icon:'⚗️', desc:'Three-phase calibration protocol. ~20 minutes.' },
+    { id:'ai-section',         label:'The AI Section',    href:'ai_section.html',           color:'#c4703a', icon:'🏮',  desc:'Five lanterns. Five AI systems. Creative witness.' }
   ];
 
   var overlayEl   = null;
