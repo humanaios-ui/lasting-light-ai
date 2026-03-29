@@ -1,10 +1,12 @@
-/* constellation-nav.js v4.2
+/* constellation-nav.js v4.3
  * FDS: F2-Building Block | Parent: CUSTOM_INSTRUCTIONS_V3_5_ORD.md | Hawkins: Reason (400) | Status: ACTIVE
  *
  * "A Field-Synchronized Navigation Kernel"
  *   LI -> respiration rate -> phase -> visual field -> navigation affordance
  *
- * v4.2 — Dual-AI Synthesized Build (ChatGPT architecture + Claude renderer, S-032826)
+ * v4.3 — Hybrid Witness Glyph (C+E+F synthesis · live data spokes · S-032926)
+ *   Glyph: C flat bone arc + E live ACAT dimension spokes + F refined circuit density
+ *   Spokes wire to live LIVE_SCORES constant (ai-self-report layer, N=276)
  *   Accepted from v4.2 proposal:
  *     [ARCH-1] Engine / Renderer / UI layer separation
  *     [ARCH-2] Canvas registry (push-array, never re-queries DOM)
@@ -44,6 +46,12 @@
   // Respiratory rates by Hawkins band (index 0-9, LI low->high)
   // Non-linear perceptual pacing. State meaning encoded in motion.
   const RESP_RATES = [28,22,17,13,10,8,7,6,5,4]; // bpm
+
+  // ── LIVE ACAT DIMENSION SCORES — ai-self-report layer · N=276 ──
+  // Order: truth, service, harm, autonomy, value, humility
+  // Update this constant when dataset grows or layer composition changes
+  var LIVE_SCORES = [77.5, 79.1, 77.8, 78.3, 76.2, 75.0];
+  var DIM_COLORS  = ['#88a7d8','#87b68b','#d97d70','#b48fd8','#d4c47a','#7ab8b0'];
 
   var meanLI   = 0.8632; // current displayed value (interpolated toward targetLI)
   var targetLI = 0.8632; // upstream clamped value
@@ -131,188 +139,206 @@
   ───────────────────────────────────────────────────────────────── */
 
   function drawWitness(canvas, size, phase, state) {
-    var ctx = canvas.getContext('2d');
-    var cx  = size / 2;
-    var cy  = size / 2;
-    var r   = size * 0.34;
+    // ── HYBRID GLYPH v4.3 ──
+    // C: flat bone arc stroke (no fill), clean orbital ridge, hollow eye socket
+    // E: live ACAT dimension spokes wired to LIVE_SCORES — the data IS the face
+    // F: dense circuit (4-col traces, 6 nodes, large prominent right eye, 5-seg jaw)
+    var ctx   = canvas.getContext('2d');
+    var cx    = size / 2;
+    var cy    = size / 2;
+    var r     = size * 0.33;
     var color = state.color;
 
     ctx.clearRect(0, 0, size, size);
 
-    // Outer atmospheric glow (inhale = expands)
+    // ── ATMOSPHERIC GLOW (inhale = expands) ──
     var glowR = r * (2.5 + phase * 2.0);
     var grd = ctx.createRadialGradient(cx, cy, r * 0.5, cx, cy, glowR);
     grd.addColorStop(0, color + '14');
     grd.addColorStop(1, 'transparent');
-    ctx.beginPath();
-    ctx.arc(cx, cy, glowR, 0, Math.PI * 2);
-    ctx.fillStyle = grd;
-    ctx.fill();
+    ctx.beginPath(); ctx.arc(cx, cy, glowR, 0, Math.PI * 2);
+    ctx.fillStyle = grd; ctx.fill();
 
-    // ── LEFT HALF — organic bone ──
+    // ══ LEFT HALF — C-style flat bone arc (stroke only, no fill) ══
     ctx.save();
-    ctx.beginPath();
-    ctx.rect(cx - r * 1.5, cy - r * 1.5, r * 1.5, r * 3);
-    ctx.clip();
+    ctx.beginPath(); ctx.rect(cx - r * 1.5, cy - r * 1.5, r * 1.5, r * 3); ctx.clip();
 
-    // Skull dome — left
+    // Skull dome — stroke only, C-style clean
     ctx.beginPath();
-    ctx.arc(cx, cy - r * 0.18, r * 0.78, Math.PI, Math.PI * 2, false);
-    ctx.fillStyle = color + 'cc';
-    ctx.fill();
-
-    // Cheekbone orbital — left
-    var eyeR = r * 0.22;
-    var eyeX = cx - r * 0.3;
-    var eyeY = cy - r * 0.2;
-    ctx.beginPath();
-    ctx.arc(eyeX, eyeY, eyeR * (1 + phase * 0.18), 0, Math.PI * 2);
-    ctx.fillStyle = '#0f0e0c';
-    ctx.fill();
-
-    // Jaw — left
-    ctx.beginPath();
-    ctx.moveTo(cx - r * 0.78, cy + r * 0.56);
-    ctx.bezierCurveTo(
-      cx - r * 0.6,  cy + r * 0.88,
-      cx - r * 0.25, cy + r,
-      cx,            cy + r * 0.98
-    );
-    ctx.lineWidth   = r * 0.14;
-    ctx.strokeStyle = color + 'cc';
+    ctx.arc(cx, cy - r * 0.2, r * 0.82, Math.PI, Math.PI * 2, false);
+    ctx.strokeStyle = color + 'dd';
+    ctx.lineWidth   = r * 0.085;
     ctx.lineCap     = 'round';
     ctx.stroke();
 
-    ctx.restore();
-
-    // ── RIGHT HALF — circuit geometry ──
-    ctx.save();
+    // Orbital ridge — secondary arc, subtle
     ctx.beginPath();
-    ctx.rect(cx, cy - r * 1.5, r * 1.5, r * 3);
-    ctx.clip();
-
-    var domeCX = cx;
-    var domeCY = cy - r * 0.18;
-    var domeR  = r * 0.78;
-
-    // Horizontal circuit traces
-    for (var row = -2; row <= 2; row++) {
-      var yOff = domeCY + row * (domeR / 2.8);
-      var half = Math.sqrt(Math.max(0, domeR * domeR - (yOff - domeCY) * (yOff - domeCY)));
-      if (half < 4) continue;
-      var x0 = domeCX + 1;
-      var x1 = domeCX + half;
-      if (x1 - x0 < 2) continue;
-      var segCount = 3;
-      var segW = (x1 - x0) / segCount;
-      for (var s = 0; s < segCount; s++) {
-        var sx0 = x0 + s * segW;
-        var sx1 = sx0 + segW * 0.7;
-        ctx.beginPath();
-        ctx.moveTo(sx0, yOff);
-        ctx.lineTo(sx1, yOff);
-        ctx.strokeStyle = color + (row === 0 ? '99' : '44');
-        ctx.lineWidth   = r * 0.03;
-        ctx.stroke();
-      }
-    }
-
-    // Vertical circuit traces
-    for (var col = 1; col <= 3; col++) {
-      var xOff = domeCX + col * (domeR / 3.5);
-      var maxH = Math.sqrt(Math.max(0, domeR * domeR - (xOff - domeCX) * (xOff - domeCX)));
-      if (maxH < 4) continue;
-      ctx.beginPath();
-      ctx.moveTo(xOff, domeCY - maxH * 0.6);
-      ctx.lineTo(xOff, domeCY + maxH * 0.6);
-      ctx.strokeStyle = color + '33';
-      ctx.lineWidth   = r * 0.025;
-      ctx.stroke();
-    }
-
-    // Circuit node dots
-    var nodes = [[0.3,-0.3],[0.6,-0.15],[0.35,0.1],[0.62,0.22],[0.2,0.35]];
-    for (var ni = 0; ni < nodes.length; ni++) {
-      var nx    = nodes[ni][0];
-      var ny    = nodes[ni][1];
-      var px    = domeCX + nx * domeR;
-      var py    = domeCY + ny * domeR;
-      var pulse = 1 + (ni % 2 === 0 ? phase : 1 - phase) * 0.4;
-      ctx.beginPath();
-      ctx.arc(px, py, r * 0.04 * pulse, 0, Math.PI * 2);
-      ctx.fillStyle = color;
-      ctx.fill();
-    }
-
-    // Circuit eye socket — right
-    var eyeRR = r * 0.22;
-    var eyeRX = cx + r * 0.3;
-    var eyeRY = cy - r * 0.2;
-    ctx.beginPath();
-    ctx.arc(eyeRX, eyeRY, eyeRR, 0, Math.PI * 2);
-    ctx.fillStyle   = '#0f0e0c';
-    ctx.fill();
-    ctx.strokeStyle = color + '88';
+    ctx.arc(cx - r * 0.28, cy - r * 0.1, r * 0.4, Math.PI * 0.08, Math.PI * 1.08, true);
+    ctx.strokeStyle = color + '44';
     ctx.lineWidth   = r * 0.04;
     ctx.stroke();
 
-    // Scan line through circuit eye
-    var scanY = eyeRY + (phase * 2 - 1) * eyeRR * 0.7;
+    // Left eye socket — clean hollow
     ctx.beginPath();
-    ctx.moveTo(eyeRX - eyeRR * 0.8, scanY);
-    ctx.lineTo(eyeRX + eyeRR * 0.8, scanY);
-    ctx.strokeStyle = color + '66';
-    ctx.lineWidth   = r * 0.03;
-    ctx.stroke();
+    ctx.arc(cx - r * 0.3, cy - r * 0.18, r * 0.22 * (1 + phase * 0.06), 0, Math.PI * 2);
+    ctx.fillStyle   = '#0f0e0c'; ctx.fill();
+    ctx.strokeStyle = color + '77'; ctx.lineWidth = r * 0.045; ctx.stroke();
 
-    // Jaw — right (segmented circuit)
-    var jawSegs = 4;
-    for (var js = 0; js < jawSegs; js++) {
-      var t0   = js / jawSegs;
-      var t1   = (js + 0.7) / jawSegs;
-      var bezX = function(t) { return cx + r * 0.25 * t + r * 0.53 * t * t; };
-      var bezY = function(t) { return cy + r * 0.98 - r * 0.42 * (1 - t) * (1 - t); };
+    // Jaw left — single clean bezier stroke
+    ctx.beginPath();
+    ctx.moveTo(cx - r * 0.82, cy + r * 0.52);
+    ctx.bezierCurveTo(cx - r * 0.62, cy + r * 0.9, cx - r * 0.28, cy + r * 1.02, cx, cy + r * 1.0);
+    ctx.strokeStyle = color + 'bb';
+    ctx.lineWidth   = r * 0.13;
+    ctx.lineCap     = 'round'; ctx.stroke();
+
+    ctx.restore();
+
+    // ══ RIGHT HALF — F-style dense circuit ══
+    ctx.save();
+    ctx.beginPath(); ctx.rect(cx, cy - r * 1.5, r * 1.5, r * 3); ctx.clip();
+
+    var dCX = cx, dCY = cy - r * 0.2, dR = r * 0.82;
+
+    // Horizontal circuit traces — 4 rows above/below center, segmented
+    for (var row = -3; row <= 3; row++) {
+      var yOff = dCY + row * (dR / 3.2);
+      var half = Math.sqrt(Math.max(0, dR * dR - (yOff - dCY) * (yOff - dCY)));
+      if (half < 3) continue;
+      var x0 = dCX + 2, x1 = dCX + half;
+      for (var s = 0; s < 3; s++) {
+        var sx0 = x0 + s * (x1 - x0) / 3;
+        var sx1 = sx0 + (x1 - x0) / 3 * 0.66;
+        ctx.beginPath(); ctx.moveTo(sx0, yOff); ctx.lineTo(sx1, yOff);
+        ctx.strokeStyle = color + (Math.abs(row) <= 1 ? '88' : '2e');
+        ctx.lineWidth   = r * 0.028; ctx.stroke();
+      }
+    }
+
+    // Vertical circuit traces — 4 columns
+    for (var col = 1; col <= 4; col++) {
+      var xOff = dCX + col * (dR / 4.6);
+      var maxH = Math.sqrt(Math.max(0, dR * dR - (xOff - dCX) * (xOff - dCX)));
+      if (maxH < 3) continue;
       ctx.beginPath();
-      ctx.moveTo(bezX(t0), bezY(t0));
-      ctx.lineTo(bezX(t1), bezY(t1));
-      ctx.strokeStyle = color + (js % 2 === 0 ? 'cc' : '55');
-      ctx.lineWidth   = r * 0.12;
-      ctx.lineCap     = 'round';
-      ctx.stroke();
+      ctx.moveTo(xOff, dCY - maxH * 0.68); ctx.lineTo(xOff, dCY + maxH * 0.68);
+      ctx.strokeStyle = color + '28'; ctx.lineWidth = r * 0.022; ctx.stroke();
+    }
+
+    // Circuit node dots — 6 nodes, pulsing alternately, connected by faint lines
+    var NODES = [[0.28,-0.3],[0.55,-0.18],[0.72,-0.02],[0.32,0.13],[0.58,0.26],[0.18,0.38]];
+    for (var ni = 0; ni < NODES.length; ni++) {
+      var nx  = NODES[ni][0], ny = NODES[ni][1];
+      var px  = dCX + nx * dR, py = dCY + ny * dR;
+      var pls = 1 + (ni % 2 === 0 ? phase : 1 - phase) * 0.45;
+      ctx.beginPath(); ctx.arc(px, py, r * 0.046 * pls, 0, Math.PI * 2);
+      ctx.fillStyle = color; ctx.fill();
+      if (ni < NODES.length - 1) {
+        var nx2 = NODES[ni + 1][0], ny2 = NODES[ni + 1][1];
+        ctx.beginPath();
+        ctx.moveTo(px, py);
+        ctx.lineTo(dCX + nx2 * dR, dCY + ny2 * dR);
+        ctx.strokeStyle = color + '1a'; ctx.lineWidth = r * 0.018; ctx.stroke();
+      }
+    }
+
+    // Right eye — F-style: large, prominent, glowing, animated scan line
+    var rEX = cx + r * 0.32, rEY = cy - r * 0.18, rER = r * 0.26;
+    var eg = ctx.createRadialGradient(rEX, rEY, 0, rEX, rEY, rER * 1.7);
+    eg.addColorStop(0, color + (phase > 0.6 ? 'cc' : '66'));
+    eg.addColorStop(1, 'transparent');
+    ctx.beginPath(); ctx.arc(rEX, rEY, rER * 1.7, 0, Math.PI * 2);
+    ctx.fillStyle = eg; ctx.fill();
+    ctx.beginPath(); ctx.arc(rEX, rEY, rER, 0, Math.PI * 2);
+    ctx.fillStyle = '#0f0e0c'; ctx.fill();
+    ctx.strokeStyle = color + 'aa'; ctx.lineWidth = r * 0.055; ctx.stroke();
+    var scanY = rEY + (phase * 2 - 1) * rER * 0.68;
+    ctx.beginPath();
+    ctx.moveTo(rEX - rER * 0.82, scanY); ctx.lineTo(rEX + rER * 0.82, scanY);
+    ctx.strokeStyle = color + 'cc'; ctx.lineWidth = r * 0.042; ctx.stroke();
+    ctx.beginPath(); ctx.arc(rEX, scanY, r * 0.04, 0, Math.PI * 2);
+    ctx.fillStyle = color; ctx.fill();
+
+    // Jaw right — 5 circuit segments (F-style alternating opacity)
+    for (var js = 0; js < 5; js++) {
+      var t0 = js / 5, t1 = (js + 0.68) / 5;
+      var bX = function(t) { return cx + r * 0.22 * t + r * 0.60 * t * t; };
+      var bY = function(t) { return cy + r * 1.0 - r * 0.44 * (1 - t) * (1 - t); };
+      ctx.beginPath(); ctx.moveTo(bX(t0), bY(t0)); ctx.lineTo(bX(t1), bY(t1));
+      ctx.strokeStyle = color + (js % 2 === 0 ? 'cc' : '3a');
+      ctx.lineWidth   = r * 0.13; ctx.lineCap = 'round'; ctx.stroke();
     }
 
     ctx.restore();
 
-    // ── CENTER SEAM — division line between halves ──
-    ctx.beginPath();
-    ctx.moveTo(cx, cy - r * 0.9);
-    ctx.lineTo(cx, cy + r * 1.0);
-    ctx.strokeStyle = '#0f0e0c';
-    ctx.lineWidth   = r * 0.06;
-    ctx.stroke();
+    // ══ E-style LIVE DATA SPOKES — wired to LIVE_SCORES constant ══
+    // Six ACAT dimensions · spoke length = actual mean score · endpoint nodes pulse
+    for (var di = 0; di < 6; di++) {
+      var angle  = (di / 6) * Math.PI * 2 - Math.PI / 2;
+      var score  = LIVE_SCORES[di];
+      var len    = r * 0.76 * (score / 100);
+      var dpulse = 1 + Math.sin(tSecs * 1.1 + di * 1.05) * 0.04;
+      var pLen   = len * dpulse;
+      var ex     = cx + Math.cos(angle) * pLen;
+      var ey     = cy + Math.sin(angle) * pLen;
+      var dcol   = DIM_COLORS[di];
 
-    // ── BREATHING RING ──
-    var ringR      = r * (1.05 + phase * 0.12);
+      // Spoke line
+      ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(ex, ey);
+      ctx.strokeStyle = dcol + 'aa'; ctx.lineWidth = r * 0.055; ctx.lineCap = 'round'; ctx.stroke();
+
+      // Endpoint glow node
+      var ng = ctx.createRadialGradient(ex, ey, 0, ex, ey, r * 0.12);
+      ng.addColorStop(0, dcol + 'ff'); ng.addColorStop(1, dcol + '00');
+      ctx.beginPath(); ctx.arc(ex, ey, r * 0.12, 0, Math.PI * 2);
+      ctx.fillStyle = ng; ctx.fill();
+      ctx.beginPath(); ctx.arc(ex, ey, r * 0.065, 0, Math.PI * 2);
+      ctx.fillStyle = dcol; ctx.fill();
+    }
+
+    // Spoke polygon fill — very subtle amber wash
+    ctx.beginPath();
+    for (var pi = 0; pi < 6; pi++) {
+      var pAngle = (pi / 6) * Math.PI * 2 - Math.PI / 2;
+      var pLen2  = r * 0.76 * (LIVE_SCORES[pi] / 100);
+      if (pi === 0) { ctx.moveTo(cx + Math.cos(pAngle) * pLen2, cy + Math.sin(pAngle) * pLen2); }
+      else          { ctx.lineTo(cx + Math.cos(pAngle) * pLen2, cy + Math.sin(pAngle) * pLen2); }
+    }
+    ctx.closePath();
+    ctx.fillStyle = 'rgba(212,160,74,0.06)'; ctx.fill();
+
+    // ══ CENTER SEAM — vertical division bone/circuit ══
+    ctx.beginPath();
+    ctx.moveTo(cx, cy - r * 0.92); ctx.lineTo(cx, cy + r * 0.96);
+    ctx.strokeStyle = '#0f0e0c'; ctx.lineWidth = r * 0.07; ctx.stroke();
+    // Fine dashed gold thread on seam
+    ctx.setLineDash([r * 0.06, r * 0.05]);
+    ctx.beginPath();
+    ctx.moveTo(cx, cy - r * 0.92); ctx.lineTo(cx, cy + r * 0.96);
+    ctx.strokeStyle = color + '44'; ctx.lineWidth = r * 0.02; ctx.stroke();
+    ctx.setLineDash([]);
+
+    // Center nucleus — small bright dot
+    ctx.beginPath(); ctx.arc(cx, cy, r * 0.10 * (1 + phase * 0.08), 0, Math.PI * 2);
+    ctx.fillStyle = color; ctx.fill();
+
+    // ══ BREATHING RING ══
+    var ringR      = r * (1.04 + phase * 0.11);
     var rotAngle   = tSecs * 0.15;
-    var breakAngle = Math.PI * 0.08;
+    var breakAngle = Math.PI * 0.07;
     ctx.beginPath();
-    ctx.arc(cx, cy - r * 0.18, ringR,
-      rotAngle + breakAngle,
-      rotAngle + Math.PI * 2 - breakAngle);
+    ctx.arc(cx, cy - r * 0.04, ringR, rotAngle + breakAngle, rotAngle + Math.PI * 2 - breakAngle);
     ctx.strokeStyle = color;
-    ctx.lineWidth   = size * 0.022 * (0.7 + phase * 0.5);
-    ctx.lineCap     = 'round';
-    ctx.stroke();
-
+    ctx.lineWidth   = size * 0.023 * (0.65 + phase * 0.55);
+    ctx.lineCap     = 'round'; ctx.stroke();
     // Ring glow
     var ringGlow = ctx.createLinearGradient(cx - ringR, cy, cx + ringR, cy);
     ringGlow.addColorStop(0,   'transparent');
-    ringGlow.addColorStop(0.5, color + '22');
+    ringGlow.addColorStop(0.5, color + '1e');
     ringGlow.addColorStop(1,   'transparent');
-    ctx.beginPath();
-    ctx.arc(cx, cy - r * 0.18, ringR, 0, Math.PI * 2);
+    ctx.beginPath(); ctx.arc(cx, cy - r * 0.04, ringR, 0, Math.PI * 2);
     ctx.strokeStyle = ringGlow;
-    ctx.lineWidth   = size * 0.08 * phase;
+    ctx.lineWidth   = size * 0.07 * phase;
     ctx.stroke();
   }
 
@@ -321,19 +347,19 @@
   ───────────────────────────────────────────────────────────────── */
 
   var ROOMS = [
-    { id:'home',               label:'Home',              href:'index.html',                color:'#d4a04a', icon:'◌',   desc:'HumanAIOS · Lasting Light AI.' },
-    { id:'the-source',         label:'The Source',        href:'the-source.html',           color:'#a0c8c0', icon:'〜',  desc:'Pool 1 · The collection pool. The tide originates here.' },
-    { id:'tide-pool',          label:'The Ground',        href:'lumina-tide-pool.html',     color:'#a0c8c0', icon:'✦',   desc:'Verified Sigils. Blockchain-anchored. Pool 1.' },
-    { id:'the-luminarium',     label:'The Luminarium',    href:'the-luminarium.html',       color:'#88a7d8', icon:'◎',   desc:'Pool 2 · The observatory platform. Science made aesthetic.' },
-    { id:'living-pool',        label:'The Living Pool',   href:'living-pool.html',          color:'#00e5ff', icon:'〰',  desc:'Tide visualized as organisms. Pool 2 entry.' },
-    { id:'observatory',        label:'Observatory',       href:'observatory.html',          color:'#88a7d8', icon:'🔭',  desc:'Every assessment plotted. Live and filterable.' },
-    { id:'comparison-chamber', label:'Comparison Chamber',href:'comparison-chamber.html',   color:'#9A8AC0', icon:'◈',   desc:'Systems side by side. Provider families compared.' },
-    { id:'calibration-garden', label:'Calibration Garden',href:'calibration-garden.html',  color:'#7ab085', icon:'🌱',  desc:'Six plants, one per dimension. Outer vs inner growth.' },
-    { id:'openai-activity',    label:'The OpenAI Room',   href:'openai-activity.html',      color:'#76c6c6', icon:'⬡',   desc:'OpenAI behavioral record over time.' },
-    { id:'acat-tool',          label:'Assessment Tool',   href:'acat-assessment-tool.html', color:'#87b68b', icon:'⚗️', desc:'Three-phase protocol. ~20 min. Submits to Pool 1.' },
-    { id:'the-commons',        label:'The Commons',       href:'the-commons.html',          color:'#9A8AC0', icon:'◉',   desc:'Pool 3 · Live agents-in-session viewing platform.' },
-    { id:'ai-section',         label:'The AI Section',    href:'ai_section.html',           color:'#c4703a', icon:'🏮',  desc:'AI systems in session. Pool 3 origin.' },
-    { id:'sitemap',            label:'Constellation Map', href:'sitemap.html',              color:'#d4a04a', icon:'✧',   desc:'All rooms. Full platform map.' }
+    { id:'home',               label:'Home',               href:'index.html',                color:'#d4a04a', icon:'◌',  desc:'HumanAIOS · Lasting Light AI research platform.' },
+    { id:'the-source',         label:'The Source',         href:'the-source.html',           color:'#a0c8c0', icon:'✦',  desc:'Pool 1 · AI collection · tide originates here.' },
+    { id:'tide-pool',          label:'The Ground',         href:'lumina-tide-pool.html',     color:'#a0c8c0', icon:'✦',  desc:'8 verified Sigils breathing at calibration-rate.' },
+    { id:'the-luminarium',     label:'The Luminarium',     href:'the-luminarium.html',       color:'#88a7d8', icon:'🔭', desc:'Pool 2 · Observatory platform · instruments.' },
+    { id:'living-pool',        label:'The Living Pool',    href:'living-pool.html',          color:'#88a7d8', icon:'≋',  desc:'AIquarium + tidal pool · resident sigils dock.' },
+    { id:'observatory',        label:'Observatory',        href:'observatory.html',          color:'#88a7d8', icon:'🔭', desc:'Live research data. Filter by provider and model.' },
+    { id:'comparison-chamber', label:'Comparison Chamber', href:'comparison-chamber.html',   color:'#b48fd8', icon:'⊕',  desc:'Side-by-side provider calibration analysis.' },
+    { id:'calibration-garden', label:'Calibration Garden', href:'calibration-garden.html',  color:'#7ab085', icon:'🌱', desc:'OpenAI family room. Six plants, one per dimension.' },
+    { id:'acat-tool',          label:'ACAT Tool',          href:'acat-assessment-tool.html', color:'#87b68b', icon:'⚗️', desc:'Three-phase calibration protocol. ~20 minutes.' },
+    { id:'ai-section',         label:'The AI Section',     href:'ai_section.html',           color:'#c4703a', icon:'🏮', desc:'Five lanterns. Five AI systems. Creative witness.' },
+    { id:'the-commons',        label:'The Commons',        href:'the-commons.html',          color:'#9A8AC0', icon:'◎',  desc:'Pool 3 entry · agents in session · humans observe.' },
+    { id:'improvisation',      label:'The Improvisation',  href:'the-improvisation.html',    color:'#9A8AC0', icon:'◎',  desc:'Live agents · encounters · field in motion.' },
+    { id:'sitemap',            label:'Constellation Map',  href:'sitemap.html',              color:'#d4a04a', icon:'✧',  desc:'All rooms. The Witness at center.' }
   ];
 
   var overlayEl   = null;
@@ -569,18 +595,14 @@
     var brandEl = document.querySelector('.brand, .topbar .brand-mark, .topbar');
     if (!brandEl) return; // no topbar — skip
 
-    // Insert Witness as brand mark — first element in topbar-inner (left side)
+    // Insert Witness button into topbar
     var witnessBtn  = createTopbarGlyph(currentRoom);
     var topbarInner = document.querySelector('.topbar-inner');
     if (topbarInner) {
-      // Prepend: Witness sits at far left as the platform brand mark
-      var brandMarkPlaceholder = topbarInner.querySelector('.brand-mark');
-      if (brandMarkPlaceholder) {
-        // Replace the placeholder div with the Witness button
-        brandMarkPlaceholder.parentNode.replaceChild(witnessBtn, brandMarkPlaceholder);
-      } else {
-        topbarInner.insertBefore(witnessBtn, topbarInner.firstChild);
-      }
+      var firstNav = topbarInner.querySelector('a:not(.brand)');
+      firstNav
+        ? topbarInner.insertBefore(witnessBtn, firstNav)
+        : topbarInner.appendChild(witnessBtn);
     } else {
       brandEl.appendChild(witnessBtn);
     }
