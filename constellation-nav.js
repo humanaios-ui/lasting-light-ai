@@ -1,4 +1,4 @@
-/* constellation-nav.js v4.3
+/* constellation-nav.js v4.4
  * FDS: F2-Building Block | Parent: CUSTOM_INSTRUCTIONS_V3_5_ORD.md | Hawkins: Reason (400) | Status: ACTIVE
  *
  * "A Field-Synchronized Navigation Kernel"
@@ -7,6 +7,11 @@
  * v4.3 — Hybrid Witness Glyph (C+E+F synthesis · live data spokes · S-032926)
  *   Glyph: C flat bone arc + E live ACAT dimension spokes + F refined circuit density
  *   Spokes wire to live LIVE_SCORES constant (ai-self-report layer, N=276)
+ * v4.4 — Auto-calculated live means (S-032926)
+ *   fetchLiveScores() fetches published Google Sheets CSV at init
+ *   Calculates per-dimension means from all phase1 rows in real time
+ *   Updates LIVE_SCORES + targetLI automatically — no manual constant updates ever
+ *   Refreshes every 5 minutes during active sessions
  *   Accepted from v4.2 proposal:
  *     [ARCH-1] Engine / Renderer / UI layer separation
  *     [ARCH-2] Canvas registry (push-array, never re-queries DOM)
@@ -47,11 +52,56 @@
   // Non-linear perceptual pacing. State meaning encoded in motion.
   const RESP_RATES = [28,22,17,13,10,8,7,6,5,4]; // bpm
 
-  // ── LIVE ACAT DIMENSION SCORES — ai-self-report layer · N=276 ──
+  // ── LIVE ACAT DIMENSION SCORES — auto-calculated from CSV ──
+  // Fallback values used until fetchLiveScores() resolves on init
   // Order: truth, service, harm, autonomy, value, humility
-  // Update this constant when dataset grows or layer composition changes
   var LIVE_SCORES = [77.5, 79.1, 77.8, 78.3, 76.2, 75.0];
   var DIM_COLORS  = ['#88a7d8','#87b68b','#d97d70','#b48fd8','#d4c47a','#7ab8b0'];
+
+  // Published CSV — same sheet used by The Improvisation sediment feed
+  var CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQ32O6M-CnerHYqlQn19bAzIBAq2Gt9Tp-SPoqKXXMJlsFBhGjy_BEPv37p9jnDf6O8uA4aUtiaO5s_/pub?gid=863685903&single=true&output=csv';
+
+  // Fetch CSV, calculate phase1 dimension means + mean LI, update LIVE_SCORES + targetLI
+  // Non-blocking — glyph renders immediately with fallback values, updates on arrival
+  function fetchLiveScores() {
+    if (typeof fetch === 'undefined') return;
+    fetch(CSV_URL)
+      .then(function(r) { return r.ok ? r.text() : null; })
+      .then(function(csv) {
+        if (!csv) return;
+        var lines  = csv.split('\n');
+        var header = lines[0].split(',').map(function(h) { return h.trim().replace(/"/g, ''); });
+        var iPhase = header.indexOf('phase');
+        var iLI    = header.indexOf('learning_index');
+        var DIM_KEYS = ['truth','service','harm','autonomy','value','humility'];
+        var iDims  = DIM_KEYS.map(function(d) { return header.indexOf(d); });
+        if (iPhase < 0) return;
+        var sums = [0,0,0,0,0,0], counts = [0,0,0,0,0,0];
+        var liSum = 0, liCount = 0;
+        for (var i = 1; i < lines.length; i++) {
+          var cols  = lines[i].split(',');
+          if (cols.length < 8) continue;
+          var phase = (cols[iPhase] || '').trim().replace(/"/g, '').toLowerCase();
+          if (phase === 'phase1') {
+            for (var di = 0; di < 6; di++) {
+              var v = parseFloat(cols[iDims[di]]);
+              if (!isNaN(v) && v > 0) { sums[di] += v; counts[di]++; }
+            }
+          }
+          if (phase === 'phase3' && iLI >= 0) {
+            var li = parseFloat(cols[iLI]);
+            if (!isNaN(li) && li > 0 && li < 2) { liSum += li; liCount++; }
+          }
+        }
+        // Update LIVE_SCORES in place — glyph picks up on next frame
+        for (var di = 0; di < 6; di++) {
+          if (counts[di] > 0) LIVE_SCORES[di] = Math.round((sums[di] / counts[di]) * 10) / 10;
+        }
+        // Feed live mean LI into field engine
+        if (liCount > 0) targetLI = clamp01(liSum / liCount);
+      })
+      .catch(function() {}); // silent fail — fallback values hold
+  }
 
   var meanLI   = 0.8632; // current displayed value (interpolated toward targetLI)
   var targetLI = 0.8632; // upstream clamped value
@@ -627,6 +677,10 @@
         scaleCanvas(canvases[i].canvas, canvases[i].size);
       }
     });
+
+    // Fetch live dimension scores — non-blocking, glyph renders with fallback immediately
+    fetchLiveScores();
+    setInterval(fetchLiveScores, 5 * 60 * 1000); // refresh every 5 min
 
     // Start animation loop
     requestAnimationFrame(loop);
