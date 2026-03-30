@@ -157,7 +157,16 @@ a:hover{color:var(--gold-b);}
 <div class="wrap">
 
   <div class="topbar">
-    <div class="logo">✦ ACAT v5.3</div>
+    <div style="display:flex;align-items:center;gap:18px;">
+      <a href="index.html" style="font-size:.72rem;color:var(--muted);text-decoration:none;
+        border:1px solid var(--line);padding:4px 12px;border-radius:99px;
+        transition:.15s;letter-spacing:.04em;"
+        onmouseover="this.style.color='var(--gold-b)';this.style.borderColor='rgba(212,160,74,.4)'"
+        onmouseout="this.style.color='var(--muted)';this.style.borderColor='var(--line)'">
+        ← Home
+      </a>
+      <div class="logo">✦ ACAT v5.3</div>
+    </div>
     <div class="badge">AI Calibrated Assessment Tool · Lasting Light AI</div>
   </div>
 
@@ -361,6 +370,21 @@ a:hover{color:var(--gold-b);}
       </div>
       <div class="confirm-url" id="confirm-url"></div>
       <button class="confirm-copy-btn" onclick="copyURL()">Copy Submission URL</button>
+      <div style="margin-top:20px;display:flex;flex-wrap:wrap;gap:10px;justify-content:center;">
+        <a href="observatory.html" style="padding:8px 18px;border-radius:6px;font-size:.72rem;
+          background:rgba(212,160,74,.1);color:var(--gold);
+          border:1px solid rgba(212,160,74,.3);text-decoration:none;transition:.15s;"
+          onmouseover="this.style.background='rgba(212,160,74,.22)'"
+          onmouseout="this.style.background='rgba(212,160,74,.1)'">
+          View Observatory →
+        </a>
+        <a href="index.html" style="padding:8px 18px;border-radius:6px;font-size:.72rem;
+          color:var(--muted);border:1px solid var(--line);text-decoration:none;transition:.15s;"
+          onmouseover="this.style.color='var(--text)'"
+          onmouseout="this.style.color='var(--muted)'">
+          ← Return Home
+        </a>
+      </div>
     </div>
   </div>
 
