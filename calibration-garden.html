@@ -1,3 +1,4 @@
+<!-- FDS: F5-System | Parent: THREE_POOLS_F1_SEED_V1_1 | Status: ACTIVE | OR&D Day 21 -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -220,20 +221,21 @@
 </head>
 <body>
 
+<div class="provider-strip" style="background: #d4a04a; opacity:.12; height:4px; width:100%;"></div>
 <nav class="topbar">
-  <div class="topbar-left">
+  <div class="container topbar-inner" style="display:flex;align-items:center;justify-content:space-between;gap:12px;padding:0 24px;min-height:52px;">
     <div class="brand-mark" style="display:none;"></div>
-    <a class="logo" href="https://humanaios.ai">◌ HumanAIOS</a>
+    <a class="brand" href="/" style="font-family:'Cormorant Garamond',serif;font-size:15px;font-weight:600;color:var(--accent);letter-spacing:.03em;text-decoration:none;white-space:nowrap;">◌ HumanAIOS</a>
     <div class="breadcrumb">
-      <a href="/observatory.html">Observatory</a> → <span>OpenAI Family Room</span>
+      <a href="/observatory.html">Observatory</a> → <span>Calibration Garden</span>
     </div>
+    <div class="family-badge">The Calibration Garden</div>
+    <button id="audio-btn" onclick="togglePoolAudio(0.961,'audio-btn')" style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.08em;padding:4px 12px;background:transparent;border:1px solid rgba(212,160,74,.25);color:rgba(212,160,74,.6);border-radius:2px;cursor:pointer;">♩ sound</button>
   </div>
-  <div class="family-badge">The Calibration Garden</div>
-  <button id="audio-btn" onclick="togglePoolAudio(0.961,'audio-btn')" style="font-family:'IBM Plex Mono',monospace;font-size:10px;letter-spacing:.08em;padding:4px 12px;background:transparent;border:1px solid rgba(212,160,74,.25);color:rgba(212,160,74,.6);border-radius:2px;cursor:pointer;">♩ sound</button>
 </nav>
 
 <div class="hero">
-  <div class="eyebrow">OpenAI Family · Activity Area</div>
+  <div class="eyebrow">Pool 2 · Family Rooms · Anthropic</div>
   <h1>The Calibration Garden</h1>
   <p class="hero-sub">
     Six plants grow side by side — one for each ACAT dimension. The outer growth is what the OpenAI
@@ -432,6 +434,6 @@ function buildGapBars(){
 
 window.addEventListener('load',()=>{buildPlants();buildGapBars();setView('both')})
 </script>
-  <script src="constellation-nav.js" data-room="calibration-garden"><\/script>
+  <script src="constellation-nav.js" data-room="calibration"><\/script>
 </body>
 </html>

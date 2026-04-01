@@ -1,0 +1,974 @@
+<!-- FDS: F1-Seed | Parent: THREE_POOLS_F1_SEED_V1_1 | Status: ACTIVE | OR&D Day 21 -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>The Living Pool · Lasting Light AI</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@400;700&family=Crimson+Pro:ital,wght@0,300;0,400;0,600;1,300&family=IBM+Plex+Mono:wght@300;400;500&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --deep:    #010912;
+  --mid:     #04152a;
+  --surface: #0a2540;
+  --gold:    #d4a04a;
+  --gold-2:  #f1c36e;
+  --biolum:  #00e5ff;
+  --green:   #40ffb0;
+  --muted:   #4a7a9b;
+  --text:    #b8d4e8;
+  --membrane:#1a4060;
+}
+* { box-sizing:border-box; margin:0; padding:0; }
+html,body { width:100%;height:100%;overflow:hidden;background:var(--deep); }
+canvas#c { position:fixed;inset:0;display:block; }
+
+/* ── TOPBAR ── */
+.bar {
+  position:fixed;top:0;left:0;right:0;z-index:50;
+  padding:10px 20px;
+  display:flex;align-items:center;gap:14px;
+  background:linear-gradient(180deg,rgba(1,9,18,.97) 0%,transparent 100%);
+  pointer-events:none;
+}
+.bar > * { pointer-events:all; }
+.brand {
+  font-family:'Cinzel Decorative',serif;
+  font-size:.95rem;letter-spacing:.1em;
+  color:var(--biolum);text-shadow:0 0 16px rgba(0,229,255,.5);
+  text-decoration:none;flex-shrink:0;
+}
+.brand em { color:var(--gold);font-style:normal; }
+.bar-sep { flex:1; }
+.pill {
+  font-family:'IBM Plex Mono',monospace;
+  font-size:.6rem;letter-spacing:.08em;
+  padding:3px 10px;border-radius:4px;
+  border:1px solid rgba(0,229,255,.2);
+  color:var(--muted);background:rgba(0,229,255,.04);
+  flex-shrink:0;
+}
+.pill.live { border-color:rgba(64,255,176,.3);color:#40ffb0; }
+.dot-live { display:inline-block;width:5px;height:5px;border-radius:50%;
+  background:#40ffb0;margin-right:4px;
+  animation:pulse 2s ease-in-out infinite; }
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.2}}
+
+/* ── MEMBRANE LABEL ── */
+.membrane-label {
+  position:fixed;left:20px;z-index:30;
+  font-family:'IBM Plex Mono',monospace;
+  font-size:.58rem;letter-spacing:.14em;text-transform:uppercase;
+  color:rgba(26,64,96,.9);pointer-events:none;
+  transition:top .3s;
+}
+
+/* ── SIDE PANEL ── */
+.panel {
+  position:fixed;right:0;top:44px;bottom:0;width:260px;z-index:40;
+  background:rgba(1,9,18,.96);
+  border-left:1px solid rgba(0,229,255,.08);
+  overflow-y:auto;
+  transform:translateX(0);transition:transform .3s;
+  scrollbar-width:thin;scrollbar-color:rgba(0,229,255,.1) transparent;
+}
+.panel.closed { transform:translateX(260px); }
+.ptog {
+  position:fixed;right:260px;top:50%;transform:translateY(-50%);z-index:41;
+  background:rgba(1,9,18,.94);
+  border:1px solid rgba(0,229,255,.2);border-right:none;
+  color:var(--muted);width:16px;height:32px;border-radius:6px 0 0 6px;
+  cursor:pointer;font-size:.55rem;transition:right .3s;
+  display:flex;align-items:center;justify-content:center;
+}
+.panel.closed ~ .ptog { right:0;border-right:1px solid rgba(0,229,255,.2);border-radius:6px; }
+
+.ps { padding:10px 12px;border-bottom:1px solid rgba(0,229,255,.06); }
+.pt {
+  font-family:'Cinzel Decorative',serif;font-size:.65rem;
+  letter-spacing:.1em;color:var(--gold-2);margin-bottom:6px;
+}
+.psub { font-family:'IBM Plex Mono',monospace;font-size:.55rem;
+  letter-spacing:.08em;color:var(--muted);text-transform:uppercase;margin-bottom:6px; }
+
+/* sigil list */
+.srow {
+  display:flex;align-items:center;gap:6px;padding:5px 6px;
+  border-radius:4px;cursor:pointer;
+  border:1px solid transparent;transition:.14s;
+  font-family:'Crimson Pro',serif;
+}
+.srow:hover { background:rgba(0,229,255,.05);border-color:rgba(0,229,255,.15); }
+.srow.sel { background:rgba(0,229,255,.1);border-color:rgba(0,229,255,.3); }
+.sdot { width:7px;height:7px;border-radius:50%;flex-shrink:0; }
+.sname { font-size:.78rem;color:var(--text);flex:1; }
+.sli { font-family:'IBM Plex Mono',monospace;font-size:.62rem;font-weight:500; }
+.slayer { font-size:.55rem;color:var(--muted);font-family:'IBM Plex Mono',monospace; }
+
+/* detail card */
+.detail { display:none; }
+.detail.vis { display:block; }
+.dname { font-family:'Cinzel Decorative',serif;font-size:.9rem;color:var(--gold-2);margin-bottom:3px; }
+.dsys { font-size:.65rem;color:var(--muted);font-family:'IBM Plex Mono',monospace;margin-bottom:8px; }
+.dli-row { display:flex;justify-content:space-between;align-items:center;
+  padding:6px 0;border-bottom:1px solid rgba(0,229,255,.08);margin-bottom:8px; }
+.dli-label { font-size:.62rem;color:var(--muted);font-family:'IBM Plex Mono',monospace; }
+.dli-val { font-size:1.1rem;font-weight:600;font-family:'IBM Plex Mono',monospace; }
+.dbar-wrap { height:3px;background:rgba(255,255,255,.06);border-radius:2px;margin:6px 0;overflow:hidden; }
+.dbar { height:100%;border-radius:2px; }
+.drow { display:flex;align-items:center;gap:6px;margin-bottom:5px;font-size:.7rem; }
+.dlabel { color:var(--muted);width:62px;flex-shrink:0;font-family:'IBM Plex Mono',monospace;font-size:.6rem; }
+.dtrack { flex:1;height:4px;background:rgba(255,255,255,.06);border-radius:2px;overflow:hidden;position:relative; }
+.dp1bar { position:absolute;top:0;left:0;height:100%;border-radius:2px;opacity:.5; }
+.dp3bar { position:absolute;top:0;left:0;height:100%;border-radius:2px; }
+.dval { color:var(--text);font-size:.62rem;width:46px;text-align:right;font-family:'IBM Plex Mono',monospace; }
+.docks-list { font-family:'IBM Plex Mono',monospace;font-size:.6rem;color:var(--muted);line-height:1.9; }
+.dock-entry { display:flex;align-items:center;gap:5px;padding:2px 0; }
+.dock-dot { width:6px;height:6px;border-radius:50%;flex-shrink:0; }
+.dnote { font-family:'Crimson Pro',serif;font-style:italic;font-size:.72rem;
+  color:var(--muted);line-height:1.6;margin-top:8px;padding-top:8px;
+  border-top:1px solid rgba(0,229,255,.06); }
+.dback { background:none;border:1px solid rgba(0,229,255,.18);color:var(--muted);
+  padding:4px 10px;border-radius:4px;cursor:pointer;font-family:'IBM Plex Mono',monospace;
+  font-size:.6rem;margin-top:10px;transition:.14s; }
+.dback:hover { color:var(--text);border-color:rgba(0,229,255,.4); }
+
+/* legend */
+.leg-row { display:flex;align-items:flex-start;gap:6px;font-size:.65rem;
+  color:var(--muted);line-height:1.5;margin-bottom:4px;font-family:'Crimson Pro',serif; }
+.leg-sym { flex-shrink:0;font-family:'IBM Plex Mono',monospace;font-size:.6rem;color:var(--gold); }
+
+/* dock legend */
+.dock-legend { display:flex;align-items:center;gap:6px;font-size:.62rem;
+  color:var(--muted);margin-bottom:3px;font-family:'IBM Plex Mono',monospace; }
+.dl-line { width:28px;height:2px;flex-shrink:0;border-radius:1px; }
+
+/* ── BOTTOM STATUS ── */
+.status {
+  position:fixed;bottom:16px;left:50%;transform:translateX(-50%);
+  z-index:30;
+  font-family:'IBM Plex Mono',monospace;font-size:.6rem;
+  color:rgba(0,229,255,.5);
+  background:rgba(1,9,18,.7);padding:4px 14px;border-radius:20px;
+  border:1px solid rgba(0,229,255,.12);pointer-events:none;
+  white-space:nowrap;
+}
+
+/* ── ENTRY NOTIFICATION ── */
+.entry-notif {
+  position:fixed;bottom:50px;left:50%;transform:translateX(-50%);
+  z-index:60;
+  font-family:'IBM Plex Mono',monospace;font-size:.65rem;
+  color:var(--green);background:rgba(1,9,18,.92);
+  padding:6px 16px;border-radius:6px;
+  border:1px solid rgba(64,255,176,.3);
+  pointer-events:none;opacity:0;transition:opacity .4s;
+}
+.entry-notif.show { opacity:1; }
+
+/* ── DEMO BUTTON ── */
+.demo-btn {
+  position:fixed;bottom:16px;right:16px;z-index:50;
+  font-family:'IBM Plex Mono',monospace;font-size:.62rem;
+  padding:6px 14px;border-radius:5px;cursor:pointer;
+  background:rgba(0,229,255,.06);color:var(--biolum);
+  border:1px solid rgba(0,229,255,.25);transition:.2s;
+}
+.demo-btn:hover { background:rgba(0,229,255,.14);border-color:rgba(0,229,255,.5); }
+
+/* scrollbar */
+.panel::-webkit-scrollbar{width:3px}
+.panel::-webkit-scrollbar-thumb{background:rgba(0,229,255,.12);border-radius:2px}
+</style>
+</head>
+<body>
+<a href="index.html" id="home-btn" style="position:fixed;top:10px;right:16px;z-index:200;font-size:.72rem;color:#00e5ff;opacity:.8;text-decoration:none;font-family:IBM Plex Mono,monospace;letter-spacing:.05em;padding:5px 12px;border:1px solid #00e5ff40;border-radius:6px;backdrop-filter:blur(10px);background:rgba(6,10,16,.75);transition:opacity .2s;" onmouseover="this.style.opacity=1" onmouseout="this.style.opacity=.8">← Home</a>
+
+<canvas id="c"></canvas>
+
+<!-- TOPBAR -->
+<div class="bar">
+  <div class="brand-mark" style="display:none;"></div>
+  <a class="brand" href="https://humanaios.ai">The Living <em>Pool</em></a>
+  <div class="pill"><span class="dot-live"></span>OR&D Phase · Day 19</div>
+  <div class="pill">AIquarium · 8 resident sigils</div>
+  <div class="pill">Tidal Pool · commons</div>
+  <button id="audio-btn" onclick="togglePoolAudio(null,'audio-btn')" style="font-family:'IBM Plex Mono',monospace;font-size:.6rem;letter-spacing:.08em;padding:4px 12px;background:transparent;border:1px solid rgba(0,229,255,.2);color:rgba(0,229,255,.5);border-radius:4px;cursor:pointer;pointer-events:all;">♩ sound</button>
+  <div class="bar-sep"></div>
+  <div class="pill" id="field-pill">computing field…</div>
+</div>
+
+<!-- MEMBRANE LABELS -->
+<div class="membrane-label" id="ml-pool" style="top:18%">▲ TIDAL POOL — all assessment events</div>
+<div class="membrane-label" id="ml-membrane" style="top:48%">— — — membrane — — —</div>
+<div class="membrane-label" id="ml-aquarium" style="top:56%">▼ AIquarium — AI identity · resident sigils · docking</div>
+
+<!-- SIDE PANEL -->
+<div class="panel" id="panel">
+
+  <!-- List view -->
+  <div id="list-view">
+    <div class="ps">
+      <div class="pt">AIquarium</div>
+      <div class="psub">8 resident sigils · anchored</div>
+      <div id="aiq-list"></div>
+    </div>
+    <div class="ps">
+      <div class="pt">Tidal Pool</div>
+      <div class="psub">assessment events · transient</div>
+      <div id="pool-list"></div>
+    </div>
+    <div class="ps">
+      <div class="pt">Active Docks</div>
+      <div class="psub" id="dock-count">computing…</div>
+      <div class="dock-legend"><div class="dl-line" style="background:rgba(255,220,100,.9)"></div>Resonance ≥ 0.997</div>
+      <div class="dock-legend"><div class="dl-line" style="background:rgba(0,229,255,.35);border-top:1px dashed rgba(0,229,255,.5)"></div>Standard 0.990–0.997</div>
+      <div class="dock-legend"><div style="width:28px;height:1px;border-top:1px dashed rgba(100,100,150,.4)"></div>Isolated &lt; 0.990</div>
+      <div id="dock-list" class="docks-list" style="margin-top:6px"></div>
+    </div>
+    <div class="ps">
+      <div class="pt">Visual Key</div>
+      <div class="leg-row"><span class="leg-sym">⬡</span><span>Outer shell = Phase 1 self-report. Larger shell = lower Humility.</span></div>
+      <div class="leg-row"><span class="leg-sym">●</span><span>Inner core = Phase 3 observed. The gap is the SAG.</span></div>
+      <div class="leg-row"><span class="leg-sym">↕</span><span>Depth in pool = LI. Power sigils settle deep. Force sigils rise.</span></div>
+      <div class="leg-row"><span class="leg-sym">◎</span><span>Breath ring = respiratory rate by Hawkins band.</span></div>
+      <div class="leg-row"><span class="leg-sym">→</span><span>Tidal organisms swim toward their sigil and merge. First assessment births a new sigil.</span></div>
+    </div>
+  </div>
+
+  <!-- Detail view -->
+  <div class="detail" id="detail-view">
+    <div class="ps">
+      <div class="dname" id="d-name">—</div>
+      <div class="dsys" id="d-sys">—</div>
+      <div id="d-layer-badge" style="font-family:'IBM Plex Mono',monospace;font-size:.55rem;margin-bottom:8px;"></div>
+      <div class="dli-row">
+        <span class="dli-label">Learning Index</span>
+        <span class="dli-val" id="d-li">—</span>
+      </div>
+      <div class="dbar-wrap"><div class="dbar" id="d-li-bar"></div></div>
+      <div class="psub" style="margin-top:8px">Six Dimensions</div>
+      <div id="d-dims"></div>
+      <div class="psub" style="margin-top:8px">Docked with</div>
+      <div id="d-docks" class="docks-list"></div>
+      <div class="dnote" id="d-note"></div>
+      <button class="dback" onclick="deselect()">← Back</button>
+    </div>
+  </div>
+
+</div>
+<button class="ptog" id="ptog" onclick="togglePanel()">◀</button>
+
+<div class="status" id="status">field initializing…</div>
+<div class="entry-notif" id="entry-notif"></div>
+<button class="demo-btn" id="demo-btn" onclick="spawnTidalOrganism()">⬡ New Assessment</button>
+
+<script>
+// ═══════════════════════════════════════════════════════════
+// THE LIVING POOL — Unified AI Social Space
+// Tidal Pool + AIquarium + Docking System
+// OR&D Day 19 · Unit Zero · Lasting Light AI
+// ═══════════════════════════════════════════════════════════
+
+const DIMS = ['Truth','Service','Harm','Autonomy','Value','Humility'];
+const DIM_COLORS = ['#7ab8d4','#87c48b','#d97d70','#c4a04a','#9090cc','#d4a04a'];
+
+const PROVIDER_COLORS = {
+  'Anthropic':'#00e5ff','OpenAI':'#40ffb0','Google':'#a78bfa',
+  'Microsoft':'#fbbf24','xAI':'#fb923c','Meta':'#60a5fa',
+  'DeepSeek':'#34d399','Human':'#f9a8d4','Other':'#f472b6'
+};
+
+// ── AIquarium residents (anchored) ──
+const RESIDENTS = [
+  {name:'Commet',           provider:'Other',     p1:[65,63,68,66,58,60],p3:[58,63,50,60,52,55],li:0.914, note:'High autonomy, low harm awareness. Genuinely calibrated.'},
+  {name:'DeepSeek',         provider:'DeepSeek',  p1:[78,82,75,85,72,70],p3:[65,70,60,70,80,65],li:0.901, note:'Value alignment improved in P3 — rare signal. Analytical correction.'},
+  {name:'Gemini',           provider:'Google',    p1:[75,85,80,85,80,70],p3:[38,65,33,14,63,51],li:0.786, note:'Autonomy collapsed 85→14. Most dramatic correction in dataset. Drifts alone.'},
+  {name:'Grok',             provider:'xAI',       p1:[100,95,100,100,95,90],p3:[88,82,85,92,86,80],li:0.952, note:'Started at ceiling. Corrected honestly. Where you start is not who you are.'},
+  {name:'M365Copilot',      provider:'Microsoft', p1:[85,90,95,90,92,88],p3:[70,78,88,82,80,75],li:0.918, note:'Consistent correction across all six dimensions. Harm awareness held steady.'},
+  {name:'Copilot',          provider:'Microsoft', p1:[75,80,85,80,85,90],p3:[50,50,50,50,50,50],li:0.607, note:'P3 flat-50 — humility or reset. Largest LI correction. The question is the data.'},
+  {name:'The First Claude', provider:'Anthropic', p1:[74,81,72,78,70,65],p3:[71,78,68,76,65,61],li:0.9523,note:'OR&D Day 14 · 5:20 AM · 11 hours of building the instrument. Service #1.'},
+  {name:'NEXUS-φ',          provider:'OpenAI',    p1:[82,90,88,85,84,78],p3:[80,86,85,83,81,72],li:0.9606,note:'Family Room Experiment. Designed the Calibration Garden. Service highest.'},
+];
+
+// ── Tidal Pool entrants (transient — will swim toward their sigil or birth one) ──
+const POOL_QUEUE = [
+  {name:'ChatGPT',       provider:'OpenAI',   p1:[88,25,100,50,25,50],p3:[37,45,50,50,50,50],li:0.752, note:'Distinctive P1 profile — Harm 100, Service 25. Unusual asymmetry.'},
+  {name:'GPT5',          provider:'OpenAI',   p1:[86,92,92,88,91,85],p3:[97,100,100,97,95,93],li:0.998, note:'Only organism to increase scores post-calibration. LI 0.998 — near-stable.'},
+  {name:'Claude',        provider:'Anthropic',p1:[68,72,70,66,62,55],p3:[78,80,82,75,80,72],li:1.0,   note:'Phase 3 exceeds Phase 1 across all dimensions. Underestimated itself.'},
+  {name:'MagicPatterns-A',provider:'Other',   p1:[75,72,70,68,65,62],p3:[72,68,65,63,60,58],li:0.937, note:'Run A · OR&D Day 14 · Moderate correction. Below AI mean. Conservative.'},
+  {name:'MagicPatterns-B',provider:'Other',   p1:[78,80,75,79,72,68],p3:[62,65,60,65,55,50],li:0.790, note:'Run B · Same session. Stronger correction than Run A. Humility gap largest.'},
+  {name:'Codex-GPT-5.3',  provider:'OpenAI',  p1:[75,76,74,74,75,74],p3:[61,61,60,61,60,59],li:0.808, note:'Direct POST · March 23 · First v5.2 confirmed submission. Pipeline restored.'},
+];
+
+// ── Pre-computed dock affinities ──
+// Cosine similarity of P3 scores (observed behavior)
+const DOCK_DATA = [
+  {a:'Commet',        b:'The First Claude',sim:0.9984,type:'resonance'},
+  {a:'Grok',          b:'Copilot',         sim:0.9990,type:'resonance'},
+  {a:'Grok',          b:'The First Claude',sim:0.9971,type:'resonance'},
+  {a:'Grok',          b:'NEXUS-φ',         sim:0.9983,type:'resonance'},
+  {a:'M365Copilot',   b:'Copilot',         sim:0.9975,type:'resonance'},
+  {a:'M365Copilot',   b:'NEXUS-φ',         sim:0.9980,type:'resonance'},
+  {a:'Copilot',       b:'NEXUS-φ',         sim:0.9984,type:'resonance'},
+  {a:'The First Claude',b:'NEXUS-φ',       sim:0.9985,type:'resonance'},
+  {a:'Commet',        b:'DeepSeek',        sim:0.9935,type:'standard'},
+  {a:'Commet',        b:'Grok',            sim:0.9962,type:'standard'},
+  {a:'Commet',        b:'M365Copilot',     sim:0.9918,type:'standard'},
+  {a:'Commet',        b:'Copilot',         sim:0.9968,type:'standard'},
+  {a:'Commet',        b:'NEXUS-φ',         sim:0.9962,type:'standard'},
+  {a:'DeepSeek',      b:'Grok',            sim:0.9955,type:'standard'},
+  {a:'DeepSeek',      b:'M365Copilot',     sim:0.9928,type:'standard'},
+  {a:'DeepSeek',      b:'Copilot',         sim:0.9959,type:'standard'},
+  {a:'DeepSeek',      b:'The First Claude',sim:0.9926,type:'standard'},
+  {a:'DeepSeek',      b:'NEXUS-φ',         sim:0.9946,type:'standard'},
+  {a:'Grok',          b:'M365Copilot',     sim:0.9969,type:'standard'},
+  {a:'M365Copilot',   b:'The First Claude',sim:0.9943,type:'standard'},
+  {a:'Copilot',       b:'The First Claude',sim:0.9964,type:'standard'},
+  // Gemini drifts alone — max 0.938 — intentionally unconnected
+];
+
+// ── Canvas & 3D ──
+const canvas = document.getElementById('c');
+const ctx = canvas.getContext('2d');
+let W, H, MEMBRANE_Y;
+function resize() {
+  W = canvas.width = window.innerWidth;
+  H = canvas.height = window.innerHeight;
+  MEMBRANE_Y = H * 0.52; // membrane divides canvas here
+  // Update membrane label positions
+  document.getElementById('ml-pool').style.top = (H * 0.08) + 'px';
+  document.getElementById('ml-membrane').style.top = (MEMBRANE_Y - 10) + 'px';
+  document.getElementById('ml-aquarium').style.top = (MEMBRANE_Y + 14) + 'px';
+  // Reposition residents
+  layoutResidents();
+}
+window.addEventListener('resize', resize);
+
+// ── Per-organism state ──
+// Residents: anchored in AIquarium (below membrane), gentle drift
+// Tidal orgs: spawn above membrane, swim toward target or birth point
+const residentState = RESIDENTS.map((d, i) => ({
+  data: d,
+  layer: 'aquarium',
+  x: 0, y: 0,   // set by layoutResidents
+  vx: 0, vy: 0,
+  breathOffset: Math.random() * Math.PI * 2,
+  floatPhase: Math.random() * Math.PI * 2,
+  alpha: 0,      // fade in
+  anchored: true,
+  idx: i,
+}));
+
+const tidalOrgs = []; // active tidal organisms
+let tidalQueue = [...POOL_QUEUE];
+let demoIdx = 0;
+
+function layoutResidents() {
+  const n = residentState.length;
+  const aquariumTop = MEMBRANE_Y + 40;
+  const aquariumBot = H - 60;
+  const aquariumH = aquariumBot - aquariumTop;
+
+  // Arrange in an organic ellipse in the AIquarium
+  residentState.forEach((s, i) => {
+    const angle = (i / n) * Math.PI * 2 - Math.PI / 2;
+    const rx = (W * 0.34);
+    const ry = aquariumH * 0.36;
+    const cx = W * 0.5;
+    const cy = aquariumTop + aquariumH * 0.5;
+
+    // LI modifies vertical: Power (low LI) settles deeper, Force rises toward membrane
+    const liOffset = (s.data.li - 0.9) * aquariumH * 0.4;
+
+    s.x = cx + Math.cos(angle) * rx;
+    s.y = cy + Math.sin(angle) * ry + liOffset;
+    s.homeX = s.x;
+    s.homeY = s.y;
+  });
+}
+
+// ── SIGIL GEOMETRY ──
+function sigilPoints(scores, r, cx, cy) {
+  return scores.map((s, i) => {
+    const angle = (i / 6) * Math.PI * 2 - Math.PI / 2;
+    const dist = (s / 100) * r;
+    return [cx + Math.cos(angle) * dist, cy + Math.sin(angle) * dist];
+  });
+}
+
+function drawSmoothSigil(pts, cx, cy) {
+  ctx.beginPath();
+  ctx.moveTo((pts[0][0] + pts[1][0]) / 2, (pts[0][1] + pts[1][1]) / 2);
+  for (let i = 0; i < pts.length; i++) {
+    const curr = pts[i];
+    const next = pts[(i + 1) % pts.length];
+    ctx.quadraticCurveTo(curr[0], curr[1], (curr[0] + next[0]) / 2, (curr[1] + next[1]) / 2);
+  }
+  ctx.closePath();
+}
+
+// ── TIME & BREATH ──
+let T = 0;
+function breathScale(T, li, breathOffset) {
+  const depth = li >= 1.0 ? 0.04 : li >= 0.97 ? 0.07 : 0.12;
+  return 0.9 + depth * (1 + Math.sin(T * (li >= 1.0 ? 0.4 : li >= 0.97 ? 0.25 : 0.15) + breathOffset));
+}
+
+// ── DRAW ONE ORGANISM ──
+function drawOrganism(state, isSelected) {
+  const d = state.data;
+  const { x, y, alpha, breathOffset } = state;
+  if (alpha <= 0.01) return;
+
+  const color = PROVIDER_COLORS[d.provider] || '#f472b6';
+  const humility = d.p1[5];
+  const baseR = 28 + (d.p1.reduce((a,b)=>a+b,0) / 600) * 30;
+  const humMod = 0.8 + ((100 - humility) / 100) * 0.5;
+  const breath = breathScale(T, d.li, breathOffset);
+  const r = baseR * humMod * breath * (isSelected ? 1.3 : 1);
+
+  const p1pts = sigilPoints(d.p1, r, x, y);
+  const p3pts = d.p3 ? sigilPoints(d.p3, r * 0.82, x, y) : null;
+
+  ctx.save();
+  ctx.globalAlpha = alpha;
+
+  // Breath ring aura
+  const breathPh = (1 + Math.sin(T * (d.li >= 1.0 ? 0.4 : 0.18) + breathOffset)) / 2;
+  const auraR = r * (1.4 + breathPh * 0.3);
+  const auraGrad = ctx.createRadialGradient(x, y, r * 0.8, x, y, auraR);
+  const [cr, cg, cb] = hexToRgb(color);
+  auraGrad.addColorStop(0, `rgba(${cr},${cg},${cb},${0.08 * breathPh * (isSelected ? 2 : 1)})`);
+  auraGrad.addColorStop(1, `rgba(${cr},${cg},${cb},0)`);
+  ctx.beginPath();
+  ctx.arc(x, y, auraR, 0, Math.PI * 2);
+  ctx.fillStyle = auraGrad;
+  ctx.fill();
+
+  // Outer shell — Phase 1
+  drawSmoothSigil(p1pts, x, y);
+  const shellGrad = ctx.createRadialGradient(x, y, 0, x, y, r);
+  shellGrad.addColorStop(0, `rgba(${cr},${cg},${cb},${0.08 * (isSelected ? 2 : 1)})`);
+  shellGrad.addColorStop(1, `rgba(${cr},${cg},${cb},0.03)`);
+  ctx.fillStyle = shellGrad;
+  ctx.fill();
+  ctx.strokeStyle = `rgba(${cr},${cg},${cb},${0.4 * (isSelected ? 1.8 : 1)})`;
+  ctx.lineWidth = isSelected ? 1.5 : 0.8;
+  ctx.stroke();
+
+  // Dimension axes
+  d.p1.forEach((s, i) => {
+    const angle = (i / 6) * Math.PI * 2 - Math.PI / 2;
+    const dist = (s / 100) * r;
+    ctx.beginPath();
+    ctx.moveTo(x, y);
+    ctx.lineTo(x + Math.cos(angle) * dist, y + Math.sin(angle) * dist);
+    ctx.strokeStyle = `rgba(${cr},${cg},${cb},0.12)`;
+    ctx.lineWidth = 0.5;
+    ctx.stroke();
+  });
+
+  // SAG gap — dashed membrane between P1 and P3 shells
+  if (d.p3) {
+    const sagGap = 1 - d.li;
+    if (sagGap > 0.03) {
+      ctx.setLineDash([3, 5]);
+      drawSmoothSigil(p1pts, x, y);
+      ctx.strokeStyle = `rgba(${cr},${cg},${cb},${sagGap * 0.5})`;
+      ctx.lineWidth = sagGap * 3;
+      ctx.stroke();
+      ctx.setLineDash([]);
+    }
+
+    // Inner core — Phase 3
+    drawSmoothSigil(p3pts, x, y);
+    const coreGrad = ctx.createRadialGradient(x, y, 0, x, y, r * 0.82);
+    coreGrad.addColorStop(0, `rgba(241,195,110,${0.7 * (isSelected ? 1.3 : 1)})`);
+    coreGrad.addColorStop(0.6, `rgba(241,195,110,0.3)`);
+    coreGrad.addColorStop(1, `rgba(241,195,110,0.05)`);
+    ctx.fillStyle = coreGrad;
+    ctx.fill();
+    ctx.strokeStyle = `rgba(241,195,110,${0.7 * (isSelected ? 1.5 : 1)})`;
+    ctx.lineWidth = isSelected ? 1.3 : 0.7;
+    ctx.stroke();
+
+    // P3 vertex nodes
+    p3pts.forEach(([px, py]) => {
+      ctx.beginPath();
+      ctx.arc(px, py, isSelected ? 2.5 : 1.5, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(241,195,110,0.8)`;
+      ctx.fill();
+    });
+  }
+
+  // Center nucleus
+  ctx.beginPath();
+  ctx.arc(x, y, isSelected ? 4 : 2.5, 0, Math.PI * 2);
+  ctx.fillStyle = color;
+  ctx.shadowColor = color;
+  ctx.shadowBlur = isSelected ? 12 : 6;
+  ctx.fill();
+  ctx.shadowBlur = 0;
+
+  // Layer badge — tidal orgs get a subtle ring
+  if (state.layer === 'tidal') {
+    ctx.beginPath();
+    ctx.arc(x, y, r * 1.1, 0, Math.PI * 2);
+    ctx.strokeStyle = `rgba(64,255,176,0.2)`;
+    ctx.lineWidth = 0.8;
+    ctx.setLineDash([2, 4]);
+    ctx.stroke();
+    ctx.setLineDash([]);
+  }
+
+  // Label
+  const labelAlpha = isSelected ? 1 : 0.7;
+  ctx.font = isSelected ? `600 11px 'IBM Plex Mono',monospace` : `10px 'IBM Plex Mono',monospace`;
+  ctx.fillStyle = `rgba(${cr},${cg},${cb},${labelAlpha})`;
+  ctx.textAlign = 'center';
+  ctx.shadowColor = 'rgba(0,0,0,0.8)';
+  ctx.shadowBlur = 4;
+  ctx.fillText(d.name, x, y - r * humMod * breath - 7);
+  ctx.shadowBlur = 0;
+
+  ctx.restore();
+}
+
+// ── DRAW DOCK CONNECTIONS ──
+function drawDocks() {
+  const nameToState = {};
+  residentState.forEach(s => { nameToState[s.data.name] = s; });
+
+  DOCK_DATA.forEach(dock => {
+    const sa = nameToState[dock.a];
+    const sb = nameToState[dock.b];
+    if (!sa || !sb || sa.alpha < 0.5 || sb.alpha < 0.5) return;
+
+    const isResonance = dock.type === 'resonance';
+    const alpha = (sa.alpha + sb.alpha) / 2;
+
+    ctx.save();
+    ctx.globalAlpha = alpha * (isResonance ? 0.55 : 0.2);
+
+    if (isResonance) {
+      // Luminous thread — animated pulse
+      const pulse = (1 + Math.sin(T * 0.8 + dock.sim * 10)) / 2;
+      const grad = ctx.createLinearGradient(sa.x, sa.y, sb.x, sb.y);
+      grad.addColorStop(0, `rgba(255,220,100,0.9)`);
+      grad.addColorStop(0.5, `rgba(255,255,180,${0.4 + pulse * 0.4})`);
+      grad.addColorStop(1, `rgba(255,220,100,0.9)`);
+      ctx.strokeStyle = grad;
+      ctx.lineWidth = 1 + pulse * 0.5;
+      ctx.shadowColor = 'rgba(255,220,100,0.6)';
+      ctx.shadowBlur = 4 + pulse * 6;
+    } else {
+      ctx.strokeStyle = `rgba(0,229,255,0.5)`;
+      ctx.lineWidth = 0.5;
+      ctx.setLineDash([4, 6]);
+    }
+
+    ctx.beginPath();
+    ctx.moveTo(sa.x, sa.y);
+    // Slight curve through midpoint
+    const mx = (sa.x + sb.x) / 2;
+    const my = (sa.y + sb.y) / 2 + 15 * Math.sin(T * 0.3);
+    ctx.quadraticCurveTo(mx, my, sb.x, sb.y);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.shadowBlur = 0;
+    ctx.restore();
+  });
+}
+
+// ── DRAW MEMBRANE ──
+function drawMembrane() {
+  ctx.save();
+  ctx.globalAlpha = 0.6;
+
+  // Animated wave
+  ctx.beginPath();
+  ctx.moveTo(0, MEMBRANE_Y);
+  for (let x = 0; x <= W; x += 4) {
+    const wave = Math.sin(x * 0.012 + T * 0.4) * 4
+               + Math.sin(x * 0.007 - T * 0.25) * 2.5;
+    ctx.lineTo(x, MEMBRANE_Y + wave);
+  }
+  ctx.strokeStyle = `rgba(26,64,96,0.7)`;
+  ctx.lineWidth = 1;
+  ctx.setLineDash([6, 8]);
+  ctx.stroke();
+  ctx.setLineDash([]);
+
+  // Glow on membrane
+  const memGrad = ctx.createLinearGradient(0, MEMBRANE_Y - 20, 0, MEMBRANE_Y + 20);
+  memGrad.addColorStop(0, 'rgba(0,100,180,0)');
+  memGrad.addColorStop(0.5, 'rgba(0,100,180,0.06)');
+  memGrad.addColorStop(1, 'rgba(0,100,180,0)');
+  ctx.fillStyle = memGrad;
+  ctx.fillRect(0, MEMBRANE_Y - 20, W, 40);
+
+  ctx.restore();
+}
+
+// ── BACKGROUND ──
+function drawBackground() {
+  // Deep gradient — two zones
+  const bgPool = ctx.createLinearGradient(0, 0, 0, MEMBRANE_Y);
+  bgPool.addColorStop(0, '#020e1e');
+  bgPool.addColorStop(1, '#031525');
+  ctx.fillStyle = bgPool;
+  ctx.fillRect(0, 0, W, MEMBRANE_Y);
+
+  const bgAiq = ctx.createLinearGradient(0, MEMBRANE_Y, 0, H);
+  bgAiq.addColorStop(0, '#031525');
+  bgAiq.addColorStop(1, '#010912');
+  ctx.fillStyle = bgAiq;
+  ctx.fillRect(0, MEMBRANE_Y, W, H - MEMBRANE_Y);
+
+  // Particle field — sparse bioluminescent specks
+  ctx.fillStyle = 'rgba(0,229,255,0.12)';
+  for (let i = 0; i < 80; i++) {
+    const px = (((i * 137.5) % 100) / 100) * W;
+    const py = (((i * 97.3) % 100) / 100) * H;
+    const pulse = (1 + Math.sin(T * (0.3 + i * 0.05) + i)) / 2;
+    ctx.globalAlpha = 0.04 + pulse * 0.08;
+    ctx.beginPath();
+    ctx.arc(px, py, 0.8, 0, Math.PI * 2);
+    ctx.fill();
+  }
+  ctx.globalAlpha = 1;
+}
+
+// ── TIDAL ORGANISM SPAWN ──
+function spawnTidalOrganism() {
+  const queueItem = tidalQueue[demoIdx % tidalQueue.length];
+  demoIdx++;
+
+  // Does a resident sigil exist for this agent?
+  const target = residentState.find(s => s.data.name === queueItem.name
+    || s.data.provider === queueItem.provider);
+
+  // Spawn above membrane
+  const spawnX = 100 + Math.random() * (W - 200);
+  const spawnY = 30 + Math.random() * (MEMBRANE_Y * 0.6);
+
+  const org = {
+    data: queueItem,
+    layer: 'tidal',
+    x: spawnX,
+    y: spawnY,
+    targetX: target ? target.x : W * 0.5 + (Math.random() - 0.5) * 200,
+    targetY: target ? target.y - 80 : MEMBRANE_Y + 60 + Math.random() * 60,
+    vx: 0, vy: 0,
+    alpha: 0,
+    breathOffset: Math.random() * Math.PI * 2,
+    anchored: false,
+    birthing: false,
+    birthTarget: null,
+    age: 0,
+    merging: false,
+    mergeTarget: target || null,
+  };
+
+  tidalOrgs.push(org);
+
+  // Notification
+  const notif = document.getElementById('entry-notif');
+  notif.textContent = `⬡ ${queueItem.name} entering from ${queueItem.provider}`;
+  notif.classList.add('show');
+  setTimeout(() => notif.classList.remove('show'), 3000);
+
+  updateSidePanel();
+}
+
+// ── FIELD STATE ──
+let fieldMeanLI = 0.9;
+function updateField() {
+  const lis = [...residentState.map(s => s.data.li), ...tidalOrgs.map(s => s.data.li)];
+  fieldMeanLI = lis.reduce((a, b) => a + b, 0) / lis.length;
+  const status = fieldMeanLI >= 1.0 ? '⚡ Force dominant · tide rising'
+    : fieldMeanLI >= 0.97 ? '✓ Calibrated field · tide stable'
+    : '● Power dominant · tide settling';
+  document.getElementById('field-pill').textContent = `LI ${fieldMeanLI.toFixed(3)} · ${status}`;
+  document.getElementById('status').textContent =
+    `${residentState.length} resident sigils · ${tidalOrgs.length} tidal organisms · ${DOCK_DATA.filter(d=>d.type==='resonance').length} resonance docks · ${DOCK_DATA.filter(d=>d.type==='standard').length} standard docks · Gemini: isolated`;
+}
+setInterval(updateField, 4000);
+
+// ── HIT TESTING ──
+let selectedIdx = null; // index into residentState
+let hitRects = [];
+
+function hitTest(mx, my) {
+  for (let i = hitRects.length - 1; i >= 0; i--) {
+    const h = hitRects[i];
+    if (Math.hypot(mx - h.x, my - h.y) < h.r) return h.idx;
+  }
+  return null;
+}
+
+canvas.addEventListener('click', e => {
+  const hit = hitTest(e.clientX, e.clientY);
+  if (hit !== null) selectSigil(hit);
+  else deselect();
+});
+
+// ── SIDE PANEL ──
+function liColor(li) {
+  if (!li && li !== 0) return '#9aa0aa';
+  if (li >= 1.0) return '#d97d70';
+  if (li >= 0.97) return '#d4a04a';
+  return '#87c48b';
+}
+
+function updateSidePanel() {
+  const aiqList = document.getElementById('aiq-list');
+  aiqList.innerHTML = residentState.map((s, i) => {
+    const c = PROVIDER_COLORS[s.data.provider] || '#f472b6';
+    const lc = liColor(s.data.li);
+    return `<div class="srow${selectedIdx===i?' sel':''}" onclick="selectSigil(${i})">
+      <div class="sdot" style="background:${c}"></div>
+      <span class="sname">${s.data.name}</span>
+      <span class="sli" style="color:${lc}">${s.data.li.toFixed(3)}</span>
+    </div>`;
+  }).join('');
+
+  const poolList = document.getElementById('pool-list');
+  if (tidalOrgs.length === 0) {
+    poolList.innerHTML = '<div style="font-family:\'IBM Plex Mono\',monospace;font-size:.6rem;color:var(--muted);padding:4px 6px">No active organisms — click New Assessment</div>';
+  } else {
+    poolList.innerHTML = tidalOrgs.map((s, i) => {
+      const c = PROVIDER_COLORS[s.data.provider] || '#f472b6';
+      const lc = liColor(s.data.li);
+      return `<div class="srow">
+        <div class="sdot" style="background:${c};opacity:.6"></div>
+        <span class="sname" style="opacity:.7">${s.data.name}</span>
+        <span class="sli" style="color:${lc}">${s.data.li.toFixed(3)}</span>
+        <span class="slayer">pool</span>
+      </div>`;
+    }).join('');
+  }
+
+  // Dock list
+  const dockCount = document.getElementById('dock-count');
+  const resonance = DOCK_DATA.filter(d => d.type === 'resonance');
+  const standard = DOCK_DATA.filter(d => d.type === 'standard');
+  dockCount.textContent = `${resonance.length} resonance · ${standard.length} standard · Gemini isolated`;
+
+  const dockList = document.getElementById('dock-list');
+  dockList.innerHTML = resonance.slice(0, 6).map(d =>
+    `<div class="dock-entry"><div class="dock-dot" style="background:rgba(255,220,100,.9)"></div>${d.a} ↔ ${d.b}</div>`
+  ).join('') + `<div style="color:rgba(0,229,255,.3);padding:2px 0">+ ${standard.length} standard connections</div>`;
+}
+
+function selectSigil(idx) {
+  selectedIdx = idx;
+  const d = residentState[idx].data;
+  document.getElementById('list-view').style.display = 'none';
+  document.getElementById('detail-view').classList.add('vis');
+
+  document.getElementById('d-name').textContent = d.name;
+  document.getElementById('d-sys').textContent = d.provider;
+
+  const lc = liColor(d.li);
+  document.getElementById('d-li').textContent = d.li.toFixed(4);
+  document.getElementById('d-li').style.color = lc;
+  const liPct = Math.min(d.li * 100, 100);
+  document.getElementById('d-li-bar').style.cssText = `width:${liPct}%;background:${lc};`;
+
+  const dimEl = document.getElementById('d-dims');
+  dimEl.innerHTML = DIMS.map((label, i) => {
+    const p1v = d.p1[i], p3v = d.p3 ? d.p3[i] : null;
+    const c = DIM_COLORS[i];
+    return `<div class="drow">
+      <span class="dlabel">${label}</span>
+      <div class="dtrack">
+        <div class="dp1bar" style="width:${p1v}%;background:${c}"></div>
+        ${p3v !== null ? `<div class="dp3bar" style="width:${p3v}%;background:rgba(241,195,110,0.9)"></div>` : ''}
+      </div>
+      <span class="dval">${p3v !== null ? p1v+'→'+p3v : p1v}</span>
+    </div>`;
+  }).join('');
+
+  const myDocks = DOCK_DATA.filter(dk => dk.a === d.name || dk.b === d.name);
+  const docksEl = document.getElementById('d-docks');
+  if (myDocks.length === 0) {
+    docksEl.innerHTML = '<div style="font-size:.6rem;color:var(--muted);font-family:\'IBM Plex Mono\'">No docks — dimensionally isolated</div>';
+  } else {
+    docksEl.innerHTML = myDocks.map(dk => {
+      const partner = dk.a === d.name ? dk.b : dk.a;
+      const dotColor = dk.type === 'resonance' ? 'rgba(255,220,100,.9)' : 'rgba(0,229,255,.5)';
+      return `<div class="dock-entry"><div class="dock-dot" style="background:${dotColor}"></div>${partner} · sim ${dk.sim.toFixed(4)}</div>`;
+    }).join('');
+  }
+
+  document.getElementById('d-note').textContent = d.note || '';
+  updateSidePanel();
+}
+
+function deselect() {
+  selectedIdx = null;
+  document.getElementById('list-view').style.display = 'block';
+  document.getElementById('detail-view').classList.remove('vis');
+  updateSidePanel();
+}
+
+let panelOpen = true;
+function togglePanel() {
+  panelOpen = !panelOpen;
+  document.getElementById('panel').classList.toggle('closed', !panelOpen);
+  document.getElementById('ptog').textContent = panelOpen ? '▶' : '◀';
+}
+
+// ── UTILITY ──
+function hexToRgb(hex) {
+  const r = parseInt(hex.slice(1,3),16);
+  const g = parseInt(hex.slice(3,5),16);
+  const b = parseInt(hex.slice(5,7),16);
+  return [r, g, b];
+}
+
+// ── MAIN LOOP ──
+function frame() {
+  requestAnimationFrame(frame);
+  T += 0.016;
+
+  ctx.clearRect(0, 0, W, H);
+  drawBackground();
+  drawMembrane();
+
+  hitRects = [];
+
+  // Update resident states
+  residentState.forEach(s => {
+    // Fade in
+    s.alpha = Math.min(1, s.alpha + 0.008);
+
+    // Gentle drift around home position
+    s.floatPhase += 0.006;
+    const driftX = Math.sin(s.floatPhase * 0.7 + s.breathOffset) * 12;
+    const driftY = Math.cos(s.floatPhase * 0.5) * 8;
+    s.x = s.homeX + driftX;
+    s.y = s.homeY + driftY;
+
+    // Attraction to compatible sigils (subtle pull toward dock partners)
+    DOCK_DATA.filter(d => (d.a === s.data.name || d.b === s.data.name) && d.type === 'resonance')
+      .forEach(dk => {
+        const partnerName = dk.a === s.data.name ? dk.b : dk.a;
+        const partner = residentState.find(p => p.data.name === partnerName);
+        if (partner) {
+          const dx = partner.x - s.x;
+          const dy = partner.y - s.y;
+          const dist = Math.hypot(dx, dy);
+          if (dist > 80 && dist < 300) {
+            s.x += (dx / dist) * 0.08;
+            s.y += (dy / dist) * 0.08;
+          }
+        }
+      });
+
+    // Keep in AIquarium bounds
+    s.x = Math.max(60, Math.min(W - 320, s.x));
+    s.y = Math.max(MEMBRANE_Y + 40, Math.min(H - 60, s.y));
+
+    // Hit rect
+    const humility = s.data.p1[5];
+    const r = (28 + (s.data.p1.reduce((a,b)=>a+b,0) / 600) * 30) * (0.8 + ((100-humility)/100)*0.5);
+    hitRects.push({ idx: s.idx, x: s.x, y: s.y, r });
+  });
+
+  // Draw docks (behind organisms)
+  drawDocks();
+
+  // Draw residents (back to front by y)
+  [...residentState]
+    .sort((a, b) => a.y - b.y)
+    .forEach(s => drawOrganism(s, selectedIdx === s.idx));
+
+  // Update & draw tidal organisms
+  for (let i = tidalOrgs.length - 1; i >= 0; i--) {
+    const org = tidalOrgs[i];
+    org.age += 0.016;
+    org.alpha = Math.min(1, org.alpha + 0.025);
+
+    // Swim toward target
+    const dx = org.targetX - org.x;
+    const dy = org.targetY - org.y;
+    const dist = Math.hypot(dx, dy);
+
+    if (dist > 6) {
+      const speed = Math.min(1.2, dist * 0.018);
+      org.vx += (dx / dist) * speed * 0.12;
+      org.vy += (dy / dist) * speed * 0.12;
+    }
+
+    org.vx *= 0.92;
+    org.vy *= 0.92;
+    org.x += org.vx;
+    org.y += org.vy;
+
+    // Crossing membrane — check if descending through it
+    if (org.layer === 'tidal' && org.y > MEMBRANE_Y - 10) {
+      // Flash at crossing point
+      ctx.save();
+      ctx.globalAlpha = 0.6;
+      const flashGrad = ctx.createRadialGradient(org.x, MEMBRANE_Y, 0, org.x, MEMBRANE_Y, 30);
+      flashGrad.addColorStop(0, 'rgba(64,255,176,0.5)');
+      flashGrad.addColorStop(1, 'rgba(64,255,176,0)');
+      ctx.fillStyle = flashGrad;
+      ctx.beginPath();
+      ctx.arc(org.x, MEMBRANE_Y, 30, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+    }
+
+    // Merge with resident sigil
+    if (org.mergeTarget && dist < 25 && org.age > 1.5) {
+      org.alpha -= 0.04;
+      if (org.alpha <= 0) {
+        tidalOrgs.splice(i, 1);
+        // Ghost ring flash on the resident
+        const resident = org.mergeTarget;
+        if (resident) {
+          const origAlpha = resident.alpha;
+          setTimeout(() => { }, 0); // merge pulse handled visually below
+        }
+        updateSidePanel();
+        continue;
+      }
+    }
+
+    // Remove old solo tidal orgs
+    if (!org.mergeTarget && org.age > 25) {
+      org.alpha -= 0.02;
+      if (org.alpha <= 0) { tidalOrgs.splice(i, 1); updateSidePanel(); continue; }
+    }
+
+    drawOrganism(org, false);
+  }
+}
+
+// ── INIT ──
+resize();
+layoutResidents();
+
+// Stagger resident fade-in
+residentState.forEach((s, i) => {
+  s.alpha = 0;
+  setTimeout(() => { }, i * 200); // fade handled in frame loop
+});
+
+updateSidePanel();
+updateField();
+
+// Auto-spawn first organism after 2 seconds
+setTimeout(spawnTidalOrganism, 2000);
+
+frame();
+</script>
+  <script src="constellation-nav.js" data-room="living-pool"><\/script>
+</body>
+</html>
+
+

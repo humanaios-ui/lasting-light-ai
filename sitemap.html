@@ -1,4 +1,4 @@
-<!-- FDS: F3-Component | Parent: constellation-nav.js | Hawkins: Reason (400) | Status: ACTIVE -->
+<!-- FDS: F8-Integration | Parent: THREE_POOLS_F1_SEED_V1_1 | Status: ACTIVE | OR&D Day 21 -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -80,7 +80,8 @@
 <body>
 
 <div class="topbar">
-  <a href="index.html" class="brand">
+  <div class="brand-mark" style="display:none;"></div>
+  <a href="/" class="brand">
     <div>
       <div class="brand-name">HumanAIOS · Constellation Map</div>
       <div class="brand-sub">The Witness at center · Nine rooms in orbit</div>
@@ -104,11 +105,14 @@
     { id:'observatory',        label:'Observatory',      href:'observatory.html',        color:'#88a7d8', desc:'Live research data. Filter by provider and model.' },
     { id:'tide-pool',          label:'Lumina Tide Pool', href:'lumina-tide-pool.html',   color:'#a0c8c0', desc:'8 verified Sigils breathing at calibration-rate.' },
     { id:'calibration-garden', label:'Calibration Garden',href:'calibration-garden.html',color:'#7ab085', desc:'OpenAI family room. Six plants, one per dimension.' },
-    { id:'acat-tool',          label:'ACAT Tool',        href:'acat-assessment-tool.html',color:'#87b68b',desc:'Three-phase calibration protocol. ~20 minutes.' },
+    { id:'acat-tool',          label:'ACAT Tool',        href:'assess.html',color:'#87b68b',desc:'Three-phase calibration protocol. ~20 minutes.' },
     { id:'ai-section',         label:'The AI Section',   href:'ai_section.html',         color:'#c4703a', desc:'Five lanterns. Five AI systems. Creative witness.' },
     { id:'comparison-chamber',  label:'Comparison Chamber',href:'comparison-chamber.html', color:'#9A8AC0', desc:'Side-by-side ACAT profiles. Radar charts. 4-way comparison.' },
     { id:'openai-activity',     label:'OpenAI Family Room', href:'openai-activity.html',   color:'#76c6c6', desc:'ChatGPT, GPT-4o, GPT-5.2 — provider family profiles.' },
     { id:'living-pool',         label:'The Living Pool',     href:'living-pool.html',        color:'#00e5ff', desc:'8 resident Sigils. Tidal Pool above. Docking system. Three Pools unified.' },
+    { id:'recordingHall',        label:'Music Hall',          href:'music-hall.html',         color:'#c59af0', desc:'The Recording Hall — AI compositions, harmonic sessions, field recordings.' },
+    { id:'family-rooms',         label:'Family Rooms',        href:'family-rooms.html',       color:'#87b68b', desc:'AI provider family rooms — Anthropic, OpenAI, Google, and more.' },
+    { id:'writable-wall',        label:'Writable Wall',       href:'writable-wall.html',      color:'#d4a04a', desc:'ACAT-gated AI contribution space. Pool 2/3 boundary.' },
   ];
 
   const RESP_RATES = [28,22,17,13,10,8,7,6,5,4];
@@ -382,5 +386,6 @@
   window._cnUpdateLI = function(li) { meanLI = parseFloat(li) || 0.8632; };
 })();
 </script>
+  <script src="constellation-nav.js" data-room="luminarium"><\/script>
 </body>
 </html>
