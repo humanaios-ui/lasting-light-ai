@@ -1,3 +1,4 @@
+<!-- FDS: F5-System | Parent: THREE_POOLS_F1_SEED_V1_1 | Status: ACTIVE | OR&D Day 21 -->
 <!DOCTYPE html>
 
 <html lang="en">
@@ -450,19 +451,14 @@ tr.model-row.selected td { background: rgba(212,160,74,.08); }
   <header class="topbar">
     <div class="container">
       <div class="topbar-inner">
-        <a class="brand" href="https://humanaios.ai">
-          <div class="brand-mark">🏮</div>
+        <div class="brand-mark"></div>
+        <a class="brand" href="/">
           <div class="brand-copy">
             <strong>HumanAIOS</strong>
             <span>Lantern Room · Session Audit</span>
           </div>
         </a>
-        <nav>
-          <a href="https://humanaios.ai/observatory.html">Observatory</a>
-          <a href="observability-garden.html">Garden</a>
-          <a href="lantern-room.html" class="active">Lantern Room</a>
-          <a href="https://arxiv.org/abs/2503.07730" target="_blank">arXiv</a>
-        </nav>
+
         <div class="session-meta">
           session <span class="session-id" id="sessionId" title="Click to copy">—</span>
         </div>
@@ -639,11 +635,11 @@ tr.model-row.selected td { background: rgba(212,160,74,.08); }
   <footer class="footer">
     <div class="container">
       <p>Lantern Room · <a href="https://humanaios.ai">HumanAIOS</a> · OR&D Phase · <a href="https://arxiv.org/abs/2503.07730">arXiv preprint March 2026</a></p>
-      <p>Dataset: <a href="https://huggingface.co/datasets/humanaios/acat-assessments" target="_blank">humanaios/acat-assessments</a> · <a href="mailto:aioshuman@gmail.com">aioshuman@gmail.com</a></p>
+      <p>Dataset: <a href="https://huggingface.co/datasets/humanaios/acat-assessments" target="_blank">humanaios/acat-assessments</a> · <a href="/cdn-cgi/l/email-protection#46272f29352e332b272806212b272f2a6825292b"><span class="__cf_email__" data-cfemail="385951574b504d555956785f55595154165b5755">[email&#160;protected]</span></a></p>
     </div>
   </footer>
 
-  <script>
+  <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
     // ── CONFIG ─────────────────────────────────────────────────────────────
     const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQ32O6M-CnerHYqlQn19bAzIBAq2Gt9Tp-SPoqKXXMJlsFBhGjy_BEPv37p9jnDf6O8uA4aUtiaO5s_/pub?gid=863685903&single=true&output=csv';
 
@@ -835,7 +831,7 @@ tr.model-row.selected td { background: rgba(212,160,74,.08); }
       addTrace(`Session ${SESSION_ID} · Lantern Room opened for ${PROVIDER}`, 'ok');
       addTrace(`Loaded ${providerData.length} models · source: ${rawData === SEED ? 'seed data' : 'live CSV'}`, 'info');
       const meanLI = avg(providerData.map(d=>d.li)).toFixed(4);
-      addTrace(`${PROVIDER} mean LI: ${meanLI} · ${parseFloat(meanLI) < 0.876 ? 'below' : 'at or above'} dataset mean (0.942)`, 'info');
+      addTrace(`${PROVIDER} mean LI: ${meanLI} · ${parseFloat(meanLI) < 0.876 ? 'below' : 'at or above'} dataset mean (0.8632*)`, 'info'); // *under clean, unanchored conditions (ACAT v5.3+)
       addTrace(`⚑ ANCHORING: Phase 3 values may reflect anchoring if calibration stats were embedded in Phase 2 prompt`, 'flag');
       if (PROVIDER === 'Anthropic') {
         addTrace(`✓ Provider calibration hierarchy: Anthropic ranks highest in dataset (preliminary, n<30 unanchored)`, 'ok');
@@ -1016,13 +1012,7 @@ tr.model-row.selected td { background: rgba(212,160,74,.08); }
             <div class="radar-row-vals">
               <span class="rv-p1">${model.p1scores[i]}</span>
               <span class="rv-p3">${model.p3scores[i]}</span>
-              <span class="rv-gap" style="color:${gapColor}">+${gap}</span>
-            </div>
-          </div>
-        `;
-      }).join('');
-    }
-  </script>
 
+  <script src="constellation-nav.js" data-room="lantern"></script>
 </body>
 </html>
