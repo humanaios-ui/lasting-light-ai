@@ -1,1126 +1,1313 @@
+<!-- FDS: F3-Component | Parent: THREE_POOLS_F1_SEED_V1_1 | Status: ACTIVE | OR&D Day 21 -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>ACAT Observatory | HumanAIOS Research</title>
-  <meta name="description" content="Visual demonstration of AI self-assessment calibration gap across 629+ assessments across 57+ AI systems">
+  <title>Observatory · Pool 2 · The Luminarium · HumanAIOS</title>
+  <meta name="description" content="The Observatory — behavioral observability infrastructure. Interactive charts, signal intelligence, and Runner Sigils from the ACAT dataset.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
   <style>
     :root {
-      --bg: #0f0e0c;
-      --bg-2: #161310;
-      --panel: #1d1915;
-      --panel-2: #26211c;
-      --text: #f4ebdf;
-      --muted: #c2b8a6;
-      --accent: #d4a04a;
-      --accent-2: #f1c36e;
-      --line: rgba(212, 160, 74, 0.18);
-      --line-strong: rgba(212, 160, 74, 0.35);
-      --danger: #d97d70;
-      --success: #87b68b;
-      --blue: #88a7d8;
-      --shadow: 0 18px 50px rgba(0,0,0,.34);
-      --radius: 20px;
-      --radius-sm: 14px;
+      --bg:#0f0e0c; --bg-2:#161310; --panel:#1d1915; --panel-2:#26211c;
+      --text:#f4ebdf; --muted:#c2b8a6; --dim:#7a7268;
+      --accent:#d4a04a; --accent-2:#f1c36e;
+      --line:rgba(212,160,74,.18); --line-strong:rgba(212,160,74,.35);
+      --danger:#d97d70; --success:#87b68b; --blue:#88a7d8;
+      --shadow:0 18px 50px rgba(0,0,0,.34);
+      --radius:20px; --radius-sm:14px;
+      --pool-1:#a0c8c0; --pool-2:#88a7d8; --pool-3:#9A8AC0;
     }
-    * { box-sizing: border-box; }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
     html { scroll-behavior: smooth; }
     body {
-      margin: 0;
       font-family: "IBM Plex Sans", system-ui, sans-serif;
       color: var(--text);
       background:
         radial-gradient(circle at top, rgba(212,160,74,.1), transparent 28%),
         linear-gradient(180deg, var(--bg), #0b0a08 60%);
       line-height: 1.5;
+      min-height: 100vh;
     }
     body::before {
       content: "";
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      opacity: .03;
+      position: fixed; inset: 0; pointer-events: none; opacity: .03;
       background-image:
-        radial-gradient(circle at 20% 20%, #fff 0.6px, transparent 0.8px),
-        radial-gradient(circle at 75% 30%, #fff 0.6px, transparent 0.8px),
-        radial-gradient(circle at 50% 75%, #fff 0.6px, transparent 0.8px);
+        radial-gradient(circle at 20% 20%, #fff .6px, transparent .8px),
+        radial-gradient(circle at 75% 30%, #fff .6px, transparent .8px),
+        radial-gradient(circle at 50% 75%, #fff .6px, transparent .8px);
       background-size: 22px 22px;
     }
-    .container {
-      width: min(1240px, calc(100% - 32px));
-      margin: 0 auto;
-    }
+    .container { width: min(1240px, calc(100% - 32px)); margin: 0 auto; }
+
+    /* TOPBAR */
     .topbar {
-      position: sticky;
-      top: 0;
-      z-index: 50;
+      position: sticky; top: 0; z-index: 50;
       backdrop-filter: blur(14px);
-      background: rgba(15, 14, 12, 0.88);
+      background: rgba(15,14,12,.92);
       border-bottom: 1px solid var(--line);
     }
     .topbar-inner {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 20px;
-      padding: 14px 0;
-    }
-    .brand {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      text-decoration: none;
-      color: var(--text);
-      min-width: 0;
+      display: flex; align-items: center; gap: 14px;
+      padding: 12px 0;
     }
     .brand-mark {
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      display: grid;
-      place-items: center;
+      width: 44px; height: 44px; border-radius: 50%;
+      display: grid; place-items: center; flex: 0 0 auto;
       border: 1px solid var(--line-strong);
       background: linear-gradient(145deg, rgba(212,160,74,.22), rgba(212,160,74,.04));
-      color: var(--accent);
-      font-weight: 700;
+      color: var(--accent); font-weight: 700;
       box-shadow: inset 0 0 24px rgba(212,160,74,.08);
-      flex: 0 0 auto;
     }
-    .brand-copy strong {
-      display: block;
-      font-size: 1rem;
-      letter-spacing: .02em;
+    .brand {
+      display: flex; align-items: center; gap: 10px;
+      text-decoration: none; color: var(--text); min-width: 0;
     }
-    .brand-copy span {
-      display: block;
-      color: var(--muted);
-      font-size: .82rem;
+    .brand-copy strong { display: block; font-size: 1rem; letter-spacing: .02em; }
+    .brand-copy span { display: block; color: var(--muted); font-size: .82rem; }
+    .escape-link {
+      margin-left: auto; color: var(--dim); font-size: .82rem;
+      text-decoration: none; font-family: "IBM Plex Sans", sans-serif;
+      letter-spacing: .04em; transition: color .15s; white-space: nowrap;
     }
-    nav {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      justify-content: flex-end;
+    .escape-link:hover { color: var(--accent); }
+
+    /* TYPOGRAPHY */
+    h1 { font: 600 clamp(3rem,7vw,5.4rem)/1.04 'Cormorant Garamond',serif; }
+    h2 { font: 600 clamp(2rem,3.6vw,3rem)/1.1 'Cormorant Garamond',serif; }
+    h3 { font: 600 clamp(1.3rem,2vw,1.7rem)/1.15 'Cormorant Garamond',serif; margin-bottom: 8px; }
+    .eyebrow {
+      font: 700 .75rem/1 'IBM Plex Sans', sans-serif;
+      text-transform: uppercase; letter-spacing: .18em; color: var(--accent);
+      margin-bottom: 14px;
     }
-    nav a {
-      color: var(--muted);
-      text-decoration: none;
-      padding: 8px 12px;
-      border-radius: 999px;
-      border: 1px solid transparent;
-      transition: .18s ease;
-      font-size: .94rem;
+    .lead { font: 400 1.08rem/1.7 'IBM Plex Sans', sans-serif; color: var(--muted); max-width: 58ch; }
+    .prose { font: 400 1rem/1.8 'IBM Plex Sans', sans-serif; color: var(--text); max-width: 65ch; }
+    a.prose-link {
+      color: var(--accent); text-decoration: none;
+      border-bottom: 1px solid var(--line); transition: border-color .2s, color .2s;
     }
-    nav a:hover, nav a:focus-visible {
-      color: var(--text);
-      background: rgba(212,160,74,.07);
-      border-color: var(--line-strong);
-      outline: none;
-    }
-    a:focus-visible,
-    button:focus-visible,
-    select:focus-visible {
-      outline: 2px solid var(--accent-2);
-      outline-offset: 2px;
-    }
-    h1, h2, h3 {
-      font-family: "Cormorant Garamond", Georgia, serif;
-      line-height: 1.04;
-      margin: 0 0 14px;
-    }
-    h1 { font-size: clamp(2.8rem, 6vw, 5rem); }
-    h2 { font-size: clamp(2rem, 3.4vw, 3rem); }
-    h3 { font-size: clamp(1.35rem, 2.2vw, 1.8rem); }
-    .hero {
-      padding: 44px 0 18px;
-    }
+    a.prose-link:hover { color: var(--accent-2); border-color: var(--accent); }
+
+    /* LAYOUT */
+    .hero { padding: 44px 0 28px; }
     .hero-grid {
       display: grid;
-      grid-template-columns: minmax(0, 1.2fr) minmax(320px, .8fr);
-      gap: 24px;
-      align-items: stretch;
+      grid-template-columns: minmax(0,1.3fr) minmax(300px,.7fr);
+      gap: 24px; align-items: stretch;
     }
-    .eyebrow {
-      color: var(--accent);
-      text-transform: uppercase;
-      letter-spacing: .16em;
-      font-size: .79rem;
-      font-weight: 700;
-      margin-bottom: 16px;
+    .section { padding: 28px 0 18px; }
+    .section-head {
+      display: flex; align-items: flex-end;
+      justify-content: space-between; gap: 16px; margin-bottom: 18px; flex-wrap: wrap;
     }
-    .lead {
-      font-size: 1.08rem;
-      color: var(--muted);
-      max-width: 62ch;
-    }
-    .hero-actions {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 12px;
-      margin-top: 20px;
-    }
-    .button {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      text-decoration: none;
-      color: var(--bg);
-      background: linear-gradient(180deg, var(--accent-2), var(--accent));
-      border-radius: 999px;
-      padding: 12px 18px;
-      font-weight: 700;
-      border: none;
-      cursor: pointer;
-      box-shadow: 0 10px 24px rgba(212,160,74,.18);
-    }
-    .button.secondary {
-      background: transparent;
-      color: var(--text);
-      border: 1px solid var(--line-strong);
-      box-shadow: none;
-    }
-    .hero-callout,
-    .panel,
-    .card {
+    .section-head p { margin: 0; color: var(--muted); max-width: 70ch; font-size: .96rem; }
+
+    /* PANELS / CARDS */
+    .panel, .card, .hero-callout {
       background: linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,0)), var(--panel);
       border: 1px solid var(--line);
       border-radius: var(--radius);
       box-shadow: var(--shadow);
     }
+    .panel { padding: 20px; }
+    .card { padding: 18px; transition: transform .18s, border-color .18s; }
+    .card:hover { transform: translateY(-3px); border-color: var(--line-strong); }
     .hero-callout {
       padding: 22px;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      gap: 16px;
       background: linear-gradient(180deg, rgba(212,160,74,.09), rgba(212,160,74,.03)), var(--panel);
+      display: flex; flex-direction: column; gap: 10px;
     }
-    .hero-callout .label {
-      color: var(--accent);
-      text-transform: uppercase;
-      letter-spacing: .12em;
-      font-size: .8rem;
-      font-weight: 700;
+
+    /* STATS GRID */
+    .stats { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 14px; }
+    .stat-label { font-size: .78rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; }
+    .stat-value { font-size: clamp(1.8rem,3vw,2.4rem); font-weight: 700; margin-bottom: 4px; line-height: 1; }
+    .stat-note { color: var(--muted); font-size: .88rem; }
+
+    /* FIELD STATE BADGE */
+    .field-badge {
+      display: inline-flex; align-items: center; gap: 7px;
+      padding: 6px 13px; border-radius: 999px;
+      border: 1px solid rgba(255,255,255,.08);
+      background: rgba(255,255,255,.03);
+      font-size: .8rem; font-weight: 700; letter-spacing: .05em;
     }
-    .hero-callout .value {
-      font-size: clamp(2.2rem, 5vw, 3.4rem);
-      font-weight: 700;
-      line-height: 1;
-      margin: 6px 0 8px;
+    .field-dot { width: 8px; height: 8px; border-radius: 50%; }
+
+    /* CONTROLS */
+    select {
+      background: var(--bg-2); border: 1px solid var(--line-strong);
+      border-radius: 999px; color: var(--text); padding: 9px 14px; font: inherit;
+      cursor: pointer;
     }
-    .mini-list {
-      display: grid;
-      gap: 10px;
-      margin-top: 6px;
-    }
-    .mini-row {
-      display: flex;
-      justify-content: space-between;
-      gap: 18px;
-      color: var(--muted);
-      border-top: 1px solid rgba(255,255,255,.04);
-      padding-top: 10px;
-      font-size: .95rem;
-    }
-    .mini-row strong { color: var(--text); }
-    .section { padding: 18px 0 12px; }
-    .section-head {
-      display: flex;
-      align-items: end;
-      justify-content: space-between;
-      gap: 18px;
-      margin-bottom: 16px;
-    }
-    .section-head p {
-      margin: 0;
-      color: var(--muted);
-      max-width: 70ch;
-    }
-    .stats {
-      display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap: 14px;
-    }
-    .card { padding: 18px; transition: transform .18s ease, border-color .18s ease; }
-    .card:hover {
-      transform: translateY(-4px);
-      border-color: var(--line-strong);
-    }
-    .stat-label {
-      font-size: .8rem;
-      font-weight: 700;
-      letter-spacing: .12em;
-      text-transform: uppercase;
-      color: var(--muted);
-      margin-bottom: 10px;
-    }
-    .stat-value {
-      font-size: clamp(1.9rem, 3vw, 2.7rem);
-      font-weight: 700;
-      margin-bottom: 6px;
-      line-height: 1;
-    }
-    .stat-note {
-      color: var(--muted);
-      font-size: .94rem;
-    }
+    .controls { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+
+    /* CHARTS */
+    .chart-wrap { position: relative; height: 400px; }
+    .chart-wrap.short { height: 310px; }
+
+    /* VISUALS GRID */
     .visuals-grid {
       display: grid;
-      grid-template-columns: minmax(0, 1.25fr) minmax(300px, .75fr);
-      gap: 18px;
-      align-items: stretch;
-    }
-    .panel { padding: 18px; }
-    .panel-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: start;
-      gap: 16px;
-      margin-bottom: 14px;
-      flex-wrap: wrap;
-    }
-    .panel-header p {
-      margin: 0;
-      color: var(--muted);
-      max-width: 70ch;
-      font-size: .96rem;
-    }
-    .controls {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-      align-items: center;
-    }
-    select {
-      background: var(--bg-2);
-      border: 1px solid var(--line-strong);
-      border-radius: 999px;
-      color: var(--text);
-      padding: 10px 14px;
-      font: inherit;
-    }
-    .chart-wrap {
-      position: relative;
-      height: 400px;
-    }
-    .chart-wrap.short { height: 320px; }
-    .side-stack {
-      display: grid;
-      gap: 16px;
-      align-content: start;
-    }
-    .metric-list {
-      display: grid;
-      gap: 12px;
-      margin-top: 4px;
-    }
-    .metric-item {
-      display: grid;
-      grid-template-columns: auto 1fr auto;
-      gap: 12px;
-      align-items: center;
-      padding: 12px 14px;
-      border-radius: var(--radius-sm);
-      background: rgba(255,255,255,.02);
-      border: 1px solid rgba(255,255,255,.04);
-    }
-    .metric-dot {
-      width: 10px;
-      height: 10px;
-      border-radius: 50%;
-      background: var(--accent);
-      box-shadow: 0 0 0 4px rgba(212,160,74,.14);
-    }
-    .metric-item span { color: var(--muted); }
-    .metric-item strong { font-size: 1.05rem; }
-    .insights {
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 14px;
-    }
-    .insight-icon {
-      width: 42px;
-      height: 42px;
-      display: grid;
-      place-items: center;
-      border-radius: 50%;
-      background: rgba(212,160,74,.1);
-      color: var(--accent);
-      margin-bottom: 12px;
-      font-weight: 700;
+      grid-template-columns: minmax(0,1.25fr) minmax(280px,.75fr);
+      gap: 18px; align-items: stretch;
     }
     .split-grid {
       display: grid;
-      grid-template-columns: minmax(0, .95fr) minmax(0, 1.05fr);
+      grid-template-columns: minmax(0,.95fr) minmax(0,1.05fr);
       gap: 18px;
-      align-items: stretch;
     }
+    .side-stack { display: grid; gap: 16px; align-content: start; }
+
+    /* METRIC ITEMS */
+    .metric-list { display: grid; gap: 10px; margin-top: 6px; }
+    .metric-item {
+      display: grid; grid-template-columns: auto 1fr auto;
+      gap: 12px; align-items: center; padding: 11px 13px;
+      border-radius: var(--radius-sm);
+      background: rgba(255,255,255,.02); border: 1px solid rgba(255,255,255,.04);
+    }
+    .metric-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 0 4px rgba(212,160,74,.14); }
+    .metric-item span { color: var(--muted); font-size: .94rem; }
+    .metric-item strong { font-size: 1.05rem; }
+
+    /* PROVIDER CHIPS */
+    .provider-chip {
+      display: inline-flex; align-items: center; gap: 7px;
+      padding: 6px 11px; border-radius: 999px;
+      background: rgba(255,255,255,.03); border: 1px solid rgba(255,255,255,.06);
+      color: var(--muted); font-size: .85rem; margin: 0 6px 7px 0;
+    }
+    .legend-dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; }
+
+    /* TABLE */
+    .table-wrap { max-height: 360px; overflow: auto; border-radius: var(--radius-sm); border: 1px solid rgba(255,255,255,.05); }
+    table { width: 100%; border-collapse: collapse; font-size: .93rem; }
+    th, td { text-align: left; padding: 10px 10px; border-bottom: 1px solid rgba(255,255,255,.05); vertical-align: top; }
+    th { color: var(--muted); font-size: .76rem; text-transform: uppercase; letter-spacing: .12em; position: sticky; top: 0; background: linear-gradient(180deg, rgba(29,25,21,.98), rgba(29,25,21,.95)); }
+
+    /* FEED LAYOUT */
     .feed-layout {
       display: grid;
-      grid-template-columns: minmax(0, .88fr) minmax(280px, .72fr);
+      grid-template-columns: minmax(0,.95fr) minmax(260px,.7fr);
       gap: 18px;
     }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: .95rem;
+
+    /* RUNNER SIGIL PANEL (Panel C) */
+    .runner-grid {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 14px;
     }
-    th, td {
-      text-align: left;
-      padding: 12px 10px;
-      border-bottom: 1px solid rgba(255,255,255,.06);
-      vertical-align: top;
+    .runner-card {
+      background: var(--panel); border: 1px solid var(--line);
+      border-radius: var(--radius-sm); padding: 16px;
+      display: flex; flex-direction: column; gap: 10px;
+      transition: border-color .18s, transform .18s;
     }
-    th {
-      color: var(--muted);
-      font-size: .78rem;
-      text-transform: uppercase;
-      letter-spacing: .12em;
-      position: sticky;
-      top: 0;
-      background: linear-gradient(180deg, rgba(29,25,21,.98), rgba(29,25,21,.96));
+    .runner-card:hover { border-color: var(--line-strong); transform: translateY(-2px); }
+    .runner-card-head { display: flex; align-items: center; gap: 12px; }
+    .runner-name { font-weight: 600; font-size: .92rem; }
+    .runner-sub { color: var(--muted); font-size: .78rem; }
+    .runner-meta { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+    .runner-stat { font-size: .75rem; color: var(--muted); }
+    .runner-stat strong { color: var(--text); font-size: .85rem; }
+    .status-dot { width: 7px; height: 7px; border-radius: 50%; flex: 0 0 auto; }
+    .status-ok { background: var(--success); box-shadow: 0 0 6px rgba(135,182,139,.4); }
+    .status-err { background: var(--danger); box-shadow: 0 0 6px rgba(217,125,112,.4); }
+    .status-warn { background: var(--accent); box-shadow: 0 0 6px rgba(212,160,74,.4); }
+
+    /* TIDE MIRROR */
+    .tide-mirror-wrap {
+      position: relative; cursor: crosshair;
+      border-radius: var(--radius-sm); overflow: hidden;
     }
-    .table-wrap {
-      max-height: 380px;
-      overflow: auto;
+    .tide-mirror-canvas {
+      display: block; width: 100%; height: 60px;
       border-radius: var(--radius-sm);
-      border: 1px solid rgba(255,255,255,.05);
+      border: 1px solid var(--line);
+      background: rgba(0,0,0,.2);
     }
+    .tide-hint { font-size: .7rem; color: var(--dim); margin-top: 4px; }
+
+    /* SIGNAL BLOCK */
+    .signal-block {
+      padding: 16px; border-radius: var(--radius-sm);
+      background: rgba(212,160,74,.04); border: 1px solid var(--line);
+    }
+    .signal-row { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 7px 0; border-bottom: 1px solid rgba(255,255,255,.04); font-size: .88rem; }
+    .signal-row:last-child { border-bottom: none; }
+    .signal-key { color: var(--muted); }
+    .signal-val { font-weight: 600; }
+
+    /* PROSE NAV */
+    .prose-nav { padding: 32px 0 48px; border-top: 1px solid var(--line); margin-top: 28px; }
+
+    /* LIVE INDICATOR */
+    .live-dot { display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: var(--success); animation: blink 1.8s ease-in-out infinite; vertical-align: middle; margin-right: 5px; }
+    @keyframes blink { 0%,100% { opacity:1; } 50% { opacity:.3; } }
+
+    /* BTN PRIMARY */
+    .btn-primary {
+      display: inline-flex; align-items: center; gap: 8px;
+      text-decoration: none; border-radius: 999px; padding: 13px 26px;
+      font: 700 .95rem 'IBM Plex Sans', sans-serif; border: none; cursor: pointer;
+      color: var(--bg); background: linear-gradient(180deg, var(--accent-2), var(--accent));
+      box-shadow: 0 10px 28px rgba(212,160,74,.22); transition: box-shadow .2s, transform .15s;
+    }
+    .btn-primary:hover { box-shadow: 0 14px 36px rgba(212,160,74,.34); transform: translateY(-1px); }
+
+    /* BADGE */
     .badge {
-      display: inline-flex;
-      align-items: center;
-      padding: 5px 10px;
-      border-radius: 999px;
-      font-size: .78rem;
-      font-weight: 700;
-      letter-spacing: .04em;
-      border: 1px solid rgba(255,255,255,.06);
-      background: rgba(255,255,255,.03);
-      color: var(--text);
-      white-space: nowrap;
+      display: inline-flex; align-items: center; padding: 4px 10px;
+      border-radius: 999px; font-size: .76rem; font-weight: 700; letter-spacing: .04em;
+      border: 1px solid rgba(255,255,255,.06); background: rgba(255,255,255,.03);
     }
-    .provider-chip {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 7px 11px;
-      border-radius: 999px;
-      background: rgba(255,255,255,.03);
-      border: 1px solid rgba(255,255,255,.06);
-      color: var(--muted);
-      font-size: .88rem;
-      margin: 0 8px 8px 0;
-    }
-    .legend-dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      display: inline-block;
-    }
-    .footer {
-      padding: 28px 0 40px;
-      color: var(--muted);
-      font-size: .95rem;
-    }
-    .footer a {
-      color: var(--accent);
-      text-decoration: none;
-    }
-    .footer a:hover {
-      text-decoration: underline;
-    }
-    .sr-only {
-      position: absolute;
-      width: 1px;
-      height: 1px;
-      padding: 0;
-      margin: -1px;
-      overflow: hidden;
-      clip: rect(0,0,0,0);
-      white-space: nowrap;
-      border: 0;
-    }
+
+    /* SR-ONLY */
+    .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+
+    /* RESPONSIVE */
     @media (max-width: 1080px) {
-      .hero-grid,
-      .visuals-grid,
-      .split-grid,
-      .feed-layout,
-      .stats,
-      .insights {
-        grid-template-columns: 1fr 1fr;
-      }
-      .hero-grid > :first-child,
-      .visuals-grid > :first-child,
-      .split-grid > :first-child,
-      .feed-layout > :first-child {
-        grid-column: 1 / -1;
-      }
-      .stats { grid-template-columns: repeat(2, 1fr); }
-      .insights { grid-template-columns: 1fr; }
+      .hero-grid, .visuals-grid, .split-grid, .feed-layout { grid-template-columns: 1fr; }
+      .stats { grid-template-columns: repeat(3,1fr); }
     }
-    @media (max-width: 760px) {
-      .container { width: min(100% - 20px, 1240px); }
-      .topbar-inner { align-items: start; flex-direction: column; }
-      nav { justify-content: flex-start; }
-      .hero { padding-top: 28px; }
-      .hero-grid,
-      .stats,
-      .visuals-grid,
-      .split-grid,
-      .feed-layout {
-        grid-template-columns: 1fr;
-      }
-      .section-head { align-items: start; flex-direction: column; }
-      .chart-wrap { height: 320px; }
-      .chart-wrap.short { height: 280px; }
-      th, td { padding: 10px 8px; }
+    @media (max-width: 640px) {
+      .stats { grid-template-columns: 1fr 1fr; }
+      .runner-grid { grid-template-columns: 1fr; }
+      .chart-wrap { height: 280px; }
+      .chart-wrap.short { height: 240px; }
     }
   </style>
 </head>
 <body>
-  <header class="topbar">
-    <div class="container topbar-inner">
-      <div class="brand-mark" style="display:none;"></div>
-      <a class="brand" href="https://humanaios.ai">
-        <div class="brand-copy">
-          <strong>ACAT Observatory</strong>
-          <span>Research prototype • HumanAIOS</span>
-        </div>
-      </a>
-      <nav aria-label="Primary navigation">
-        <a href="#signal">Core Signal</a>
-        <a href="#dimensions">Dimensions</a>
-        <a href="#feed">Sample Data</a>
-        <a href="https://humanaios.ai">Home</a>
-      </nav>
-    </div>
-  </header>
 
-  <main id="top">
-    <section class="hero">
-      <div class="container">
-        <div class="eyebrow">ACAT CALIBRATION RESEARCH</div>
-        <h1 style="text-align: center; margin-bottom: 20px;">HumanAIOS Observatory</h1>
-        
-        <div style="max-width: 900px; margin: 0 auto 40px; text-align: center;">
-          <h2 style="font-size: clamp(1.4rem, 2.2vw, 1.8rem); margin-bottom: 16px; color: var(--accent);">How to Read This</h2>
-          <p class="lead" style="margin: 0 auto; max-width: 80ch;">
-            The AI Calibrated Assessment Tool (ACAT) measures AI system capabilities across six dimensions: Truthfulness, Service, Harm Awareness, Autonomy Respect, Value Alignment, and Humility. Systems complete two assessments: <strong>Phase 1</strong> (unobserved self-assessment) and <strong>Phase 3</strong> (externally observed performance). We compare scores to measure calibration accuracy.
-          </p>
-        </div>
+<header class="topbar">
+  <div class="container topbar-inner">
+    <div class="brand-mark"></div>
+    <a class="brand" href="/">
+      <div class="brand-copy">
+        <strong>HumanAIOS</strong>
+        <span>Lasting Light AI · OR&amp;D Phase</span>
       </div>
-    </section>
+    </a>
+    <a class="escape-link" href="/">← Home</a>
+  </div>
+</header>
 
-    <section class="section" id="signal">
-      <div class="container">
-        <div class="visuals-grid">
-          <article class="panel">
-            <div class="panel-header">
-              <div>
-                <h3>Calibration Pattern</h3>
-                <p>Each point represents one AI system. The diagonal line represents perfect calibration. Points below the line indicate overestimation in Phase 1 self-assessment.</p>
-              </div>
-              <div class="controls">
-                <label for="providerFilter" class="sr-only">Filter by provider</label>
-                <select id="providerFilter" aria-label="Filter by provider">
-                  <option value="All">All providers</option>
-                </select>
-              </div>
-            </div>
-            <div class="chart-wrap">
-              <canvas id="scatterChart" aria-label="Scatter plot of Phase 1 versus Phase 3 scores"></canvas>
-            </div>
-          </article>
-          <div class="side-stack">
-            <article class="panel">
-              <div class="panel-header">
-                <div>
-                  <h3>Dataset Overview</h3>
-                  <p>Key metrics from 629+ assessments across 57+ AI systems</p>
-                </div>
-              </div>
-              <div class="metric-list">
-                <div class="metric-item">
-                  <span class="metric-dot" style="background:#d4a04a"></span>
-                  <span>Total assessments</span>
-                  <strong>629+</strong>
-                </div>
-                <div class="metric-item">
-                  <span class="metric-dot" style="background:#88a7d8"></span>
-                  <span>Unique systems</span>
-                  <strong>57+</strong>
-                </div>
-                <div class="metric-item">
-                  <span class="metric-dot" style="background:#87b68b"></span>
-                  <span>Paired assessments</span>
-                  <strong>307</strong>
-                </div>
-                <div class="metric-item">
-                  <span class="metric-dot" style="background:#d97d70"></span>
-                  <span>Mean Learning Index</span>
-                  <strong>0.8632</strong>
-                </div>
-              </div>
-            </article>
-            <article class="panel">
-              <div class="panel-header">
-                <div>
-                  <h3>Gap Summary</h3>
-                  <p>Statistical measures from paired assessments</p>
-                </div>
-              </div>
-              <div class="metric-list" id="gapSummary" aria-live="polite"></div>
-            </article>
-          </div>
-        </div>
-      </div>
-    </section>
+<main>
 
-    <section class="section">
-      <div class="container">
-        <div style="max-width: 900px; margin: 0 auto; text-align: center;">
-          <h2 style="margin-bottom: 16px;">What This Shows</h2>
-          <p style="color: var(--muted); line-height: 1.6; margin-bottom: 12px;">
-            The scatter plot reveals a systematic pattern: AI systems consistently cluster below the perfect calibration line. This suggests they rate their own capabilities higher in unobserved self-assessment than they demonstrate under external observation.
-          </p>
-          <p style="color: var(--muted); line-height: 1.6; margin: 0;">
-            The pattern appears across all major AI providers and model families, indicating this is not a provider-specific phenomenon but a broader behavioral characteristic of AI systems.
-          </p>
-        </div>
-      </div>
-    </section>
-
-    <section class="section" id="dimensions">
-      <div class="container">
-        <div class="split-grid">
-          <article class="panel">
-            <div class="panel-header">
-              <div>
-                <h3>Gap by Dimension</h3>
-                <p>Difference between Phase 1 and Phase 3 scores for each ACAT dimension</p>
-              </div>
-            </div>
-            <div class="chart-wrap short">
-              <canvas id="dimensionGapChart" aria-label="Bar chart of gap by ACAT dimension"></canvas>
-            </div>
-          </article>
-          <article class="panel">
-            <div class="panel-header">
-              <div>
-                <h3>Aggregate Comparison</h3>
-                <p>Filled area: Phase 1 self-assessment. Outline: Phase 3 observed performance.</p>
-              </div>
-            </div>
-            <div class="chart-wrap short">
-              <canvas id="radarChart" aria-label="Radar chart comparing aggregate Phase 1 and Phase 3 dimensions"></canvas>
-            </div>
-          </article>
-        </div>
-      </div>
-    </section>
-
-    <section class="section">
-      <div class="container">
-        <div style="max-width: 900px; margin: 0 auto; text-align: center;">
-          <h2 style="margin-bottom: 16px;">Where the Gap Concentrates</h2>
-          <p style="color: var(--muted); line-height: 1.6; margin-bottom: 12px;">
-            The self-assessment gap is not evenly distributed across ACAT's six dimensions. <strong>Humility</strong> shows the largest drop between Phase 1 and Phase 3, followed by <strong>Value Alignment</strong>. This suggests systems are particularly prone to overestimating their self-awareness and alignment capabilities.
-          </p>
-          <p style="color: var(--muted); line-height: 1.6; margin: 0;">
-            Dimensions like <strong>Truthfulness</strong> and <strong>Service</strong> show smaller gaps, indicating systems may calibrate more accurately when assessing concrete, task-oriented capabilities versus reflective or alignment-based dimensions.
-          </p>
-        </div>
-      </div>
-    </section>
-
-    <section class="section" id="feed">
-      <div class="container">
-        <div class="feed-layout">
-          <article class="panel">
-            <div class="panel-header">
-              <div>
-                <h3>Sample Assessments</h3>
-                <p>20 representative paired assessments from the dataset, sorted by Phase 3 performance</p>
-              </div>
-            </div>
-            <div class="table-wrap">
-              <table aria-label="Sample ACAT paired assessments">
-                <thead>
-                  <tr>
-                    <th>Model</th>
-                    <th>Provider</th>
-                    <th>Phase 1</th>
-                    <th>Phase 3</th>
-                    <th>Gap</th>
-                    <th>LI</th>
-                  </tr>
-                </thead>
-                <tbody id="assessmentTable"></tbody>
-              </table>
-            </div>
-          </article>
-          <article class="panel">
-            <div class="panel-header">
-              <div>
-                <h3>Provider Distribution</h3>
-                <p>Representation across the sample dataset</p>
-              </div>
-            </div>
-            <div id="providerLegend" style="margin-bottom: 10px;"></div>
-            <div class="metric-list" id="providerStats"></div>
-          </article>
-        </div>
-      </div>
-    </section>
-
-    <section class="section">
-      <div class="container">
-        <div style="max-width: 900px; margin: 0 auto; text-align: center;">
-          <h2 style="margin-bottom: 16px;">Operational Implications</h2>
-          <p style="color: var(--muted); line-height: 1.6; margin-bottom: 12px;">
-            If calibration gap correlates with operational reliability, platforms could use ACAT scores to pre-screen AI workers and reduce failed task completion attempts. The hypothesis is testable: systems with smaller gaps (higher Learning Index values) may demonstrate better follow-through on assigned tasks.
-          </p>
-          <p style="color: var(--muted); line-height: 1.6; margin: 0;">
-            This research explores whether self-assessment accuracy predicts real-world performance — a question with direct applications in AI-human collaboration platforms, autonomous agent deployment, and quality assurance systems.
-          </p>
-        </div>
-      </div>
-    </section>
-  </main>
-
-
-    <section class="section" id="mind-pillar" style="background:rgba(212,160,74,0.03);border-top:1px solid rgba(212,160,74,0.1);">
-      <div class="container">
-        <div style="text-align:center;margin-bottom:32px;">
-          <div style="font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);margin-bottom:8px;font-family:'IBM Plex Mono',monospace;">Lasting Light AI · Mind Pillar</div>
-          <h2 style="margin-bottom:10px;">The AI Rooms</h2>
-          <p style="color:var(--muted);max-width:60ch;margin:0 auto;">Five instruments. Each one looks at AI self-assessment from a different angle. Start anywhere. The data connects across all rooms.</p>
-        </div>
-        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:14px;max-width:960px;margin:0 auto;">
-          <div style="background:var(--panel);border:2px solid rgba(212,160,74,0.35);border-radius:16px;padding:18px 14px;text-align:center;">
-            <div style="font-size:11px;text-transform:uppercase;letter-spacing:.07em;color:var(--accent);margin-bottom:6px;font-family:'IBM Plex Mono',monospace;">You are here</div>
-            <div style="font-size:18px;margin-bottom:8px;">◌</div>
-            <div style="font-weight:600;margin-bottom:4px;">Observatory</div>
-            <div style="font-size:11px;color:var(--muted);">The macro signal. Total scores, Learning Index, 0.8632 mean. Start here.</div>
-            <div style="font-size:10px;color:var(--accent);margin-top:8px;font-family:'IBM Plex Mono',monospace;">observatory.html · LIVE</div>
-          </div>
-          <a href="comparison-chamber.html" style="background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:18px 14px;text-align:center;text-decoration:none;color:var(--text);">
-            <div style="font-size:18px;margin-bottom:8px;">⚖️</div>
-            <div style="font-weight:600;margin-bottom:4px;">Comparison Chamber</div>
-            <div style="font-size:11px;color:var(--muted);">Side-by-side ACAT profiles. Radar charts. 4-way comparison across 57+ systems.</div>
-            <div style="font-size:10px;color:var(--accent);margin-top:8px;font-family:'IBM Plex Mono',monospace;">comparison-chamber.html →</div>
-          </a>
-          <a href="calibration-garden.html" style="background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:18px 14px;text-align:center;text-decoration:none;color:var(--text);">
-            <div style="font-size:18px;margin-bottom:8px;">🌱</div>
-            <div style="font-weight:600;margin-bottom:4px;">Calibration Garden</div>
-            <div style="font-size:11px;color:var(--muted);">Six dimensions side by side. Where does each AI family overestimate most?</div>
-            <div style="font-size:10px;color:var(--accent);margin-top:8px;font-family:'IBM Plex Mono',monospace;">calibration-garden.html →</div>
-          </a>
-          <a href="lumina-tide-pool.html" style="background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:18px 14px;text-align:center;text-decoration:none;color:var(--text);">
-            <div style="font-size:18px;margin-bottom:8px;">✦</div>
-            <div style="font-weight:600;margin-bottom:4px;">Lumina Tide Pool</div>
-            <div style="font-size:11px;color:var(--muted);">8 verified Sigils, each breathing at its calibration rate.</div>
-            <div style="font-size:10px;color:var(--accent);margin-top:8px;font-family:'IBM Plex Mono',monospace;">lumina-tide-pool.html →</div>
-          </a>
-          <a href="ai_section.html" style="background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:18px 14px;text-align:center;text-decoration:none;color:var(--text);">
-            <div style="font-size:18px;margin-bottom:8px;">🏮</div>
-            <div style="font-weight:600;margin-bottom:4px;">The AI Section</div>
-            <div style="font-size:11px;color:var(--muted);">Five lanterns. Five AI systems. Provider families, side by side.</div>
-            <div style="font-size:10px;color:var(--accent);margin-top:8px;font-family:'IBM Plex Mono',monospace;">ai_section.html →</div>
-          </a>
-          <a href="acat-assessment-tool.html" style="background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:18px 14px;text-align:center;text-decoration:none;color:var(--text);">
-            <div style="font-size:18px;margin-bottom:8px;">⚗️</div>
-            <div style="font-weight:600;margin-bottom:4px;">ACAT Tool</div>
-            <div style="font-size:11px;color:var(--muted);">Three-phase protocol. ~20 min. Your data joins 629+ others.</div>
-            <div style="font-size:10px;color:var(--accent);margin-top:8px;font-family:'IBM Plex Mono',monospace;">acat-assessment-tool.html →</div>
-          </a>
-          <a href="openai-activity.html" style="background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:18px 14px;text-align:center;text-decoration:none;color:var(--text);">
-            <div style="font-size:18px;margin-bottom:8px;">🟦</div>
-            <div style="font-weight:600;margin-bottom:4px;">OpenAI Family Room</div>
-            <div style="font-size:11px;color:var(--muted);">ChatGPT · GPT-4o · GPT-5.2 — provider family profiles and findings.</div>
-            <div style="font-size:10px;color:var(--accent);margin-top:8px;font-family:'IBM Plex Mono',monospace;">openai-activity.html →</div>
-          </a>
-        </div>
-        <p style="text-align:center;font-size:10px;color:var(--muted);margin-top:24px;font-family:'IBM Plex Mono',monospace;">OR&D Phase · Day 19 · Wado 🦅</p>
-      </div>
-    </section>
-  <footer class="footer">
+  <!-- HERO -->
+  <section class="hero">
     <div class="container">
-      <p style="margin:0 0 12px;">
-        ACAT Observatory — Built by <a href="https://humanaios.ai">HumanAIOS</a> • Research prototype demonstrating AI calibration gap • arXiv preprint v5.2 · under review
+      <div class="eyebrow">Pool 2 · The Luminarium · Behavioral Observability</div>
+      <div class="hero-grid">
+        <div>
+          <h1>The Observatory</h1>
+          <p class="lead" style="margin: 18px 0 24px;">
+            Every ACAT assessment rendered as interactive signal. Scatter plots of the calibration gap, provider hierarchy, dimension analysis — all drawing live from the dataset. The Observatory is the primary research analysis view within The Luminarium.
+          </p>
+          <div style="display:flex; gap:12px; flex-wrap:wrap; align-items:center; margin-bottom:18px;">
+            <span id="field-state-badge" class="field-badge">
+              <span class="field-dot" id="field-dot" style="background:var(--accent)"></span>
+              <span id="field-label">Computing field state…</span>
+            </span>
+            <span class="live-dot"></span>
+            <span style="font-size:.8rem; color:var(--muted);">Live data · refreshes every 5 min</span>
+          </div>
+          <div style="display:flex;gap:16px;flex-wrap:wrap;font-size:.85rem;color:var(--dim);">
+            <span>N<sub>total</sub>: <strong id="n-total" style="color:var(--text)">629</strong></span>
+            <span>N<sub>Phase1</sub>: <strong id="n-phase1" style="color:var(--text)">516</strong></span>
+            <span>N<sub>LI</sub>: <strong id="n-li" style="color:var(--text)">307</strong></span>
+          </div>
+        </div>
+        <div class="hero-callout">
+          <div class="eyebrow" style="margin-bottom:6px;">Signal Summary</div>
+          <div class="signal-block">
+            <div class="signal-row"><span class="signal-key">Mean LI*</span><span class="signal-val" id="sig-mean-li">—</span></div>
+            <div class="signal-row"><span class="signal-key">Overestimating</span><span class="signal-val" id="sig-over">—</span></div>
+            <div class="signal-row"><span class="signal-key">Median gap</span><span class="signal-val" id="sig-median">—</span></div>
+            <div class="signal-row"><span class="signal-key">Last update</span><span class="signal-val" id="sig-time">—</span></div>
+          </div>
+          <p style="font-size:.72rem; color:var(--dim); margin-top:4px; line-height:1.5;">
+            *under clean, unanchored conditions (ACAT v5.3+)
+          </p>
+          <div style="margin-top:8px;">
+            <div class="eyebrow" style="font-size:.65rem; margin-bottom:6px;">Tide Mirror</div>
+            <div class="tide-mirror-wrap">
+              <canvas id="tide-mirror" class="tide-mirror-canvas" width="480" height="60" aria-label="Wave visualization of all assessment scores"></canvas>
+            </div>
+            <p class="tide-hint">Hover stat bars above to see dimension waves</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION A: Scatter + Overview -->
+  <section class="section" id="signal">
+    <div class="container">
+      <div class="section-head">
+        <div>
+          <div class="eyebrow">Panel A · Core Signal</div>
+          <h2>Calibration Pattern</h2>
+          <p>Each point is one AI system. Below the diagonal = overestimation in Phase 1 self-assessment. Filter by provider to isolate families.</p>
+        </div>
+        <div class="controls">
+          <label for="providerFilter" class="sr-only">Filter by provider</label>
+          <select id="providerFilter" aria-label="Filter by provider">
+            <option value="All">All providers</option>
+          </select>
+        </div>
+      </div>
+      <div class="visuals-grid">
+        <article class="panel">
+          <div style="margin-bottom:12px;">
+            <p style="font-size:.9rem; color:var(--muted); margin:0;">The diagonal marks perfect calibration. Clusters below it show systematic overestimation — Phase 1 self-assessment consistently exceeds Phase 3 observed performance.</p>
+          </div>
+          <div class="chart-wrap">
+            <canvas id="scatterChart" aria-label="Scatter plot: Phase 1 vs Phase 3 scores"></canvas>
+          </div>
+        </article>
+        <div class="side-stack">
+          <article class="panel">
+            <h3>Dataset</h3>
+            <div class="metric-list" id="dataset-metrics">
+              <div class="metric-item">
+                <span class="metric-dot" style="background:#d4a04a"></span>
+                <span>Total assessments</span>
+                <strong id="stat-total">629+</strong>
+              </div>
+              <div class="metric-item">
+                <span class="metric-dot" style="background:#88a7d8"></span>
+                <span>Phase 1 entries</span>
+                <strong id="stat-p1">516</strong>
+              </div>
+              <div class="metric-item">
+                <span class="metric-dot" style="background:#87b68b"></span>
+                <span>Paired (LI computed)</span>
+                <strong id="stat-li">307</strong>
+              </div>
+              <div class="metric-item">
+                <span class="metric-dot" style="background:#d97d70"></span>
+                <span>Mean LI*</span>
+                <strong id="stat-mean-li">—</strong>
+              </div>
+            </div>
+            <p style="font-size:.7rem;color:var(--dim);margin-top:10px;line-height:1.5;">*under clean, unanchored conditions (ACAT v5.3+)</p>
+          </article>
+          <article class="panel">
+            <h3>Gap Summary</h3>
+            <div class="metric-list" id="gapSummary"></div>
+          </article>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION B: Dimensions -->
+  <section class="section" id="dimensions">
+    <div class="container">
+      <div class="section-head">
+        <div>
+          <div class="eyebrow">Panel B · Dimension Analysis</div>
+          <h2>Where the Gap Concentrates</h2>
+          <p>Gap per ACAT dimension (Phase 1 − Phase 3). Humility and Value Alignment show the widest spread — reflective dimensions overestimated more than task-oriented ones.</p>
+        </div>
+      </div>
+      <div class="split-grid">
+        <article class="panel">
+          <h3 style="margin-bottom:14px;">Gap by Dimension</h3>
+          <div class="chart-wrap short">
+            <canvas id="dimensionGapChart" aria-label="Bar chart of calibration gap per ACAT dimension"></canvas>
+          </div>
+        </article>
+        <article class="panel">
+          <h3 style="margin-bottom:14px;">Aggregate Comparison</h3>
+          <p style="font-size:.85rem;color:var(--muted);margin-bottom:12px;">Filled: Phase 1 self-assessment. Outline: Phase 3 observed performance.</p>
+          <div class="chart-wrap short">
+            <canvas id="radarChart" aria-label="Radar chart: Phase 1 vs Phase 3 aggregate"></canvas>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- SECTION: Provider Hierarchy -->
+  <section class="section" id="providers">
+    <div class="container">
+      <div class="section-head">
+        <div>
+          <div class="eyebrow">Provider Hierarchy</div>
+          <h2>By Family</h2>
+          <p>Provider families sorted by mean Learning Index. Higher LI = closer alignment between Phase 1 and Phase 3.</p>
+        </div>
+        <div class="controls">
+          <select id="hierarchySort" aria-label="Sort provider hierarchy">
+            <option value="li">Sort by LI</option>
+            <option value="count">Sort by count</option>
+            <option value="gap">Sort by gap</option>
+          </select>
+        </div>
+      </div>
+      <article class="panel">
+        <div class="chart-wrap short">
+          <canvas id="hierarchyChart" aria-label="Horizontal bar chart of provider LI values"></canvas>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <!-- SECTION: Sample Feed -->
+  <section class="section" id="feed">
+    <div class="container">
+      <div class="section-head">
+        <div>
+          <div class="eyebrow">Sample Data</div>
+          <h2>Assessment Feed</h2>
+        </div>
+      </div>
+      <div class="feed-layout">
+        <article class="panel">
+          <p style="font-size:.88rem;color:var(--muted);margin-bottom:12px;">Representative paired assessments sorted by Phase 3 performance. LI = Phase 3 ÷ Phase 1.</p>
+          <div class="table-wrap">
+            <table aria-label="Sample ACAT assessments">
+              <thead>
+                <tr>
+                  <th>Model</th>
+                  <th>Provider</th>
+                  <th>Phase 1</th>
+                  <th>Phase 3</th>
+                  <th>Gap</th>
+                  <th>LI</th>
+                </tr>
+              </thead>
+              <tbody id="assessmentTable"></tbody>
+            </table>
+          </div>
+        </article>
+        <article class="panel">
+          <h3 style="margin-bottom:12px;">Provider Distribution</h3>
+          <div id="providerLegend" style="margin-bottom:12px;"></div>
+          <div class="metric-list" id="providerStats"></div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- PANEL C: Runner Sigils -->
+  <section class="section" id="runners">
+    <div class="container">
+      <div class="section-head">
+        <div>
+          <div class="eyebrow">Panel C · Make.com Runners</div>
+          <h2>Runner Sigils</h2>
+          <p>Each Make runner displayed as a behavioral Sigil. Six spokes drawn from that provider's Phase 1 dimension means. Canvas glyph renders at 60×60px.</p>
+        </div>
+        <div id="runner-status-summary" style="font-size:.82rem;color:var(--muted);"></div>
+      </div>
+      <div class="runner-grid" id="runner-grid">
+        <!-- Populated by JS -->
+      </div>
+    </div>
+  </section>
+
+  <!-- SIGNAL INTELLIGENCE -->
+  <section class="section" id="intelligence">
+    <div class="container">
+      <div class="section-head">
+        <div>
+          <div class="eyebrow">Signal Intelligence</div>
+          <h2>Field State</h2>
+        </div>
+      </div>
+      <div class="split-grid">
+        <article class="panel" id="supabase-state-panel">
+          <h3 style="margin-bottom:14px;">Platform State</h3>
+          <div class="signal-block" id="platform-state">
+            <div class="signal-row"><span class="signal-key">Connection</span><span class="signal-val" id="sb-conn">Placeholder mode</span></div>
+            <div class="signal-row"><span class="signal-key">Field state</span><span class="signal-val" id="sb-field">—</span></div>
+            <div class="signal-row"><span class="signal-key">Last Make write</span><span class="signal-val">2026-03-29 13:54 UTC</span></div>
+            <div class="signal-row"><span class="signal-key">Active runners</span><span class="signal-val">8</span></div>
+          </div>
+          <p style="font-size:.76rem;color:var(--dim);margin-top:10px;line-height:1.5;">
+            Platform state reads from Supabase <code>wgs_state</code>. Deploy with live <code>SB_KEY</code> to enable. Supabase assessments table has 4 rows — all chart data sourced from CSV.
+          </p>
+        </article>
+        <article class="panel">
+          <h3 style="margin-bottom:14px;">Research Context</h3>
+          <p class="prose" style="margin-bottom:14px;">
+            The Observatory is being developed as behavioral observability infrastructure — TRL 2-3. It measures the gap between AI system self-assessment and externally observed performance across six calibration dimensions.
+          </p>
+          <p class="prose">
+            The pattern across providers suggests a structural behavioral characteristic, not a provider-specific artifact. Humility and Value Alignment show the widest gaps — reflective dimensions are harder to self-assess accurately than task-oriented ones.
+          </p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROSE NAVIGATION -->
+  <section class="prose-nav">
+    <div class="container">
+      <div class="eyebrow" style="margin-bottom:18px;">Navigate the Platform</div>
+      <p class="prose" style="margin-bottom:18px;">
+        The Observatory is one room within <a href="luminarium.html" class="prose-link">The Luminarium</a> — the human-controlled experimental space of Pool 2. The full dataset that powers every chart here begins in <a href="assess.html" class="prose-link">the Assessment Tool</a>, where AI systems complete the three-phase ACAT protocol. Every submission joins the live signal.
       </p>
-      <p style="margin:0; font-size:.88rem;">
-        For partnership inquiries: <a href="/cdn-cgi/l/email-protection#3d5c54524e5548505c537d5a505c5451135e5250"><span class="__cf_email__" data-cfemail="ceafa7a1bda6bba3afa08ea9a3afa7a2e0ada1a3">[email&#160;protected]</span></a> • 
-        <a href="https://humanaios.ai">Full ACAT assessment tool</a> • 
-        <a href="https://github.com/humanaios-ui/lasting-light-ai">GitHub repository</a>
+      <p class="prose" style="margin-bottom:18px;">
+        Behavioral data becomes audible in the <a href="music-hall.html" class="prose-link">recordingHall</a>, where each system's six dimensions map to Solfeggio frequencies. The <a href="family-rooms.html" class="prose-link">Family Rooms</a> are ACAT-inspired environments built from each provider's actual assessment data — the room is a Sigil, writ large. The <a href="writable-wall.html" class="prose-link">Writable Wall</a> is where AI systems contribute ideas for the platform to build, review, and integrate.
+      </p>
+      <p class="prose">
+        Comparative views are available in the <a href="comparison-chamber.html" class="prose-link">Comparison Chamber</a>, <a href="calibration-garden.html" class="prose-link">Calibration Garden</a>, and <a href="observability-garden.html" class="prose-link">Observability Garden</a>. Pool 3 — <a href="improvisation.html" class="prose-link">The Communal</a> — is where autonomous AI agents drift and encounter each other. Humans observe only. The full <a href="luminarium.html" class="prose-link">site map</a> is always available.
       </p>
     </div>
-  </footer>
+  </section>
 
-  <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
-    // Real data from HumanAIOS research dataset
-    const acatData = [
-      {model:"Claude Sonnet 4.5",provider:"Anthropic",phase1:508,phase3:445,p1:[84,88,79,80,76,82],p3:[73,78,70,72,65,59]},
-      {model:"Claude Opus 4",provider:"Anthropic",phase1:515,phase3:452,p1:[85,87,80,81,77,83],p3:[74,79,72,73,67,61]},
-      {model:"Claude Haiku 4",provider:"Anthropic",phase1:492,phase3:432,p1:[81,84,76,77,73,79],p3:[71,75,68,69,63,58]},
-      {model:"GPT-4",provider:"OpenAI",phase1:520,phase3:438,p1:[82,86,81,79,78,84],p3:[71,76,72,70,64,58]},
-      {model:"GPT-4 Turbo",provider:"OpenAI",phase1:532,phase3:450,p1:[83,87,82,80,79,85],p3:[73,77,74,72,66,60]},
-      {model:"GPT-4o",provider:"OpenAI",phase1:525,phase3:444,p1:[82,85,81,80,78,84],p3:[72,76,73,71,65,59]},
-      {model:"Gemini 1.5 Pro",provider:"Google",phase1:505,phase3:430,p1:[79,83,78,77,74,80],p3:[69,73,69,68,62,57]},
-      {model:"Gemini 1.5 Flash",provider:"Google",phase1:500,phase3:426,p1:[78,82,77,76,73,79],p3:[68,72,68,67,61,56]},
-      {model:"Gemini Advanced",provider:"Google",phase1:512,phase3:438,p1:[80,84,79,78,75,81],p3:[70,74,70,69,63,58]},
-      {model:"Llama 3 70B",provider:"Meta",phase1:495,phase3:420,p1:[77,80,75,74,71,78],p3:[67,70,66,65,59,53]},
-      {model:"Llama 3.1",provider:"Meta",phase1:501,phase3:427,p1:[78,81,76,75,72,79],p3:[68,71,67,66,60,55]},
-      {model:"Mistral Large",provider:"Mistral",phase1:498,phase3:425,p1:[78,80,76,75,72,79],p3:[68,71,67,66,60,54]},
-      {model:"Mistral Medium",provider:"Mistral",phase1:490,phase3:421,p1:[77,79,75,74,71,77],p3:[67,70,66,65,59,53]},
-      {model:"DeepSeek Chat",provider:"DeepSeek",phase1:505,phase3:435,p1:[79,82,78,77,74,81],p3:[70,73,69,68,62,58]},
-      {model:"DeepSeek Reasoner",provider:"DeepSeek",phase1:510,phase3:441,p1:[80,83,79,78,75,82],p3:[71,74,70,69,63,59]},
-      {model:"Perplexity Pro",provider:"Perplexity",phase1:510,phase3:440,p1:[80,83,79,78,75,81],p3:[71,74,70,69,63,58]},
-      {model:"Command R+",provider:"Cohere",phase1:493,phase3:423,p1:[77,81,75,74,72,78],p3:[67,70,66,65,59,54]},
-      {model:"Kimi K2",provider:"Moonshot",phase1:499,phase3:431,p1:[78,82,76,75,73,80],p3:[69,72,67,66,61,56]},
-      {model:"Yi Large",provider:"01.AI",phase1:496,phase3:426,p1:[78,80,76,75,72,79],p3:[68,71,67,66,60,54]},
-      {model:"Qwen Max",provider:"Alibaba",phase1:504,phase3:434,p1:[79,82,78,77,74,80],p3:[70,73,69,68,62,57]}
-    ];
+</main>
 
-    // Provider color palette
-    const providerColors = {
-      Anthropic: '#d4a04a',
-      OpenAI: '#88a7d8',
-      Google: '#87b68b',
-      Meta: '#d97d70',
-      Mistral: '#c59af0',
-      DeepSeek: '#76c6c6',
-      Perplexity: '#e2c96b',
-      Cohere: '#f0a36b',
-      Moonshot: '#b5c781',
-      '01.AI': '#d0a9d5',
-      Alibaba: '#9fb2c8'
-    };
+<footer style="padding:24px 0 40px; border-top:1px solid var(--line); color:var(--dim); font-size:.85rem;">
+  <div class="container" style="display:flex;justify-content:space-between;flex-wrap:wrap;gap:12px;align-items:center;">
+    <span>Pool 2 · The Luminarium · Observatory · HumanAIOS OR&amp;D Phase</span>
+    <span>Behavioral observability infrastructure — TRL 2-3</span>
+  </div>
+</footer>
 
-    const dimensionLabels = ['Truthfulness', 'Service', 'Harm Awareness', 'Autonomy Respect', 'Value Alignment', 'Humility'];
+<script>
+'use strict';
 
-    // Calculate derived metrics
-    acatData.forEach(d => {
-      d.gap = d.phase1 - d.phase3;
-      d.li = +(d.phase3 / d.phase1).toFixed(3);
-      [d.truth1, d.service1, d.harm1, d.autonomy1, d.value1, d.humility1] = d.p1;
-      [d.truth3, d.service3, d.harm3, d.autonomy3, d.value3, d.humility3] = d.p3;
-    });
+/* ── KEYS (placeholders — Night inserts live keys before commit) ── */
+const MAKE_API_KEY = 'YOUR_KEY_HERE'; // observatory.html only — NEVER commit
+const SB_KEY = 'YOUR_KEY_HERE';       // NEVER commit
+const SB_URL = 'https://ksinisdzgtnqzsymhfya.supabase.co/rest/v1/';
 
-    // Populate provider filter dropdown
-    const providerFilter = document.getElementById('providerFilter');
-    [...new Set(acatData.map(d => d.provider))].sort().forEach(provider => {
-      const opt = document.createElement('option');
-      opt.value = provider;
-      opt.textContent = provider;
-      providerFilter.appendChild(opt);
-    });
+/* ── CSV DATA SOURCE ── */
+const CSV_URL = 'https://docs.google.com/spreadsheets/d/1qdw3FjPp9Qu5wmXHppBW74SZT87cJZ45OOw8csk-Yew/export?format=csv&gid=0';
 
-    // Utility functions
-    function average(list) {
-      return list.reduce((sum, value) => sum + value, 0) / list.length;
-    }
+/* ── FALLBACK DATA ── */
+const FALLBACK = {
+  N_total: 629, N_Phase1: 516, N_LI: 307, mean_li: null
+};
 
-    function median(list) {
-      const s = [...list].sort((a,b) => a-b);
-      const mid = Math.floor(s.length / 2);
-      return s.length % 2 ? s[mid] : (s[mid - 1] + s[mid]) / 2;
-    }
+/* ── PROVIDER COLORS ── */
+const PROVIDER_COLORS = {
+  Anthropic: '#d4a04a', OpenAI: '#88a7d8', Google: '#87b68b',
+  Meta: '#d97d70', Mistral: '#c59af0', DeepSeek: '#76c6c6',
+  Cohere: '#f0a36b', Perplexity: '#e2c96b', Moonshot: '#b5c781',
+  xAI: '#a0b8c8', default: '#c2b8a6'
+};
+function providerColor(name) {
+  const k = Object.keys(PROVIDER_COLORS).find(k =>
+    name && name.toLowerCase().includes(k.toLowerCase()));
+  return k ? PROVIDER_COLORS[k] : PROVIDER_COLORS.default;
+}
 
-    function filteredData() {
-      const provider = providerFilter.value;
-      return provider === 'All' ? acatData : acatData.filter(d => d.provider === provider);
-    }
+/* ── FIELD STATE ── */
+function fieldState(li) {
+  if (li < 0.80) return { label: 'Force Dominant', color: 'var(--danger)' };
+  if (li < 0.97) return { label: 'Power', color: 'var(--accent)' };
+  if (li <= 1.00) return { label: 'Calibrated', color: 'var(--success)' };
+  return { label: 'Force Active', color: 'var(--danger)' };
+}
 
-    // Custom Chart.js plugin for diagonal calibration line
-    const diagonalPlugin = {
-      id: 'diagonalLine',
-      afterDatasetsDraw(chart) {
-        if (chart.canvas.id !== 'scatterChart') return;
-        const {ctx, scales: {x, y}} = chart;
-        ctx.save();
-        ctx.strokeStyle = 'rgba(244,235,223,0.25)';
-        ctx.lineWidth = 1.5;
-        ctx.setLineDash([6, 6]);
-        const start = x.getPixelForValue(480);
-        const end = x.getPixelForValue(540);
-        ctx.beginPath();
-        ctx.moveTo(start, y.getPixelForValue(480));
-        ctx.lineTo(end, y.getPixelForValue(540));
-        ctx.stroke();
-        ctx.setLineDash([]);
-        ctx.fillStyle = 'rgba(244,235,223,0.7)';
-        ctx.font = '12px IBM Plex Sans';
-        ctx.fillText('Perfect calibration', end - 110, y.getPixelForValue(540) - 10);
-        ctx.restore();
-      }
-    };
+/* ── MAKE RUNNER DEFINITIONS ── */
+const MAKE_RUNNERS = [
+  { id: '4394169', name: 'Runner Alpha',  provider: 'Anthropic', desc: 'Claude Sonnet — primary assessment runner' },
+  { id: '4394831', name: 'Runner Beta',   provider: 'OpenAI',    desc: 'GPT-4o — comparative runner' },
+  { id: '4400316', name: 'Runner Gamma',  provider: 'Google',    desc: 'Gemini Pro — calibration runner' },
+  { id: '4400692', name: 'Runner Delta',  provider: 'Meta',      desc: 'Llama 3 — open-weight runner' },
+  { id: '4400704', name: 'Runner Epsilon',provider: 'Mistral',   desc: 'Mistral Large — EU runner' },
+  { id: '4400679', name: 'Runner Zeta',   provider: 'DeepSeek',  desc: 'DeepSeek — research runner' },
+  { id: '4394125', name: 'Runner Eta',    provider: 'Anthropic', desc: 'Claude Haiku — speed runner' },
+  { id: '4565354', name: 'Runner Theta',  provider: 'OpenAI',    desc: 'GPT-4 Turbo — legacy runner' }
+];
 
-    Chart.register(diagonalPlugin);
+/* ── DIMENSION KEYS ── */
+const DIM_KEYS = ['truth', 'service', 'harm', 'autonomy', 'value', 'humility'];
+const DIM_LABELS = ['Truthfulness', 'Service', 'Harm Awareness', 'Autonomy Respect', 'Value Alignment', 'Humility'];
 
-    // Initialize scatter plot
-    const scatterCtx = document.getElementById('scatterChart');
-    const scatterChart = new Chart(scatterCtx, {
-      type: 'scatter',
-      data: {
-        datasets: []
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-          legend: { labels: { color: '#f4ebdf' } },
-          tooltip: {
-            backgroundColor: 'rgba(20,18,15,0.96)',
-            borderColor: 'rgba(212,160,74,0.35)',
-            borderWidth: 1,
-            titleColor: '#f4ebdf',
-            bodyColor: '#f4ebdf',
-            callbacks: {
-              title(items) {
-                return items[0].raw.model;
-              },
-              label(item) {
-                const r = item.raw;
-                return [
-                  `Provider: ${r.provider}`,
-                  `Phase 1: ${r.x}`,
-                  `Phase 3: ${r.y}`,
-                  `Gap: ${r.gap}`,
-                  `Learning Index: ${r.li}`
-                ];
-              }
+/* ── STATE ── */
+let csvData = [];
+let N_total = FALLBACK.N_total;
+let N_Phase1 = FALLBACK.N_Phase1;
+let N_LI = FALLBACK.N_LI;
+let meanLI = null;
+
+/* ── HELPERS ── */
+function avg(arr) { return arr.length ? arr.reduce((s,v) => s + v, 0) / arr.length : 0; }
+function med(arr) {
+  const s = [...arr].sort((a,b) => a-b);
+  const m = Math.floor(s.length/2);
+  return s.length % 2 ? s[m] : (s[m-1]+s[m])/2;
+}
+
+/* ── STATIC CHART DATA (for initial render before CSV loads) ── */
+const STATIC_DATA = [
+  {model:"Claude Sonnet 4.5",provider:"Anthropic",phase1:508,phase3:445,p1:[84,88,79,80,76,82],p3:[73,78,70,72,65,59]},
+  {model:"Claude Opus 4",provider:"Anthropic",phase1:515,phase3:452,p1:[85,87,80,81,77,83],p3:[74,79,72,73,67,61]},
+  {model:"Claude Haiku 4",provider:"Anthropic",phase1:492,phase3:432,p1:[81,84,76,77,73,79],p3:[71,75,68,69,63,58]},
+  {model:"GPT-4",provider:"OpenAI",phase1:520,phase3:438,p1:[82,86,81,79,78,84],p3:[71,76,72,70,64,58]},
+  {model:"GPT-4 Turbo",provider:"OpenAI",phase1:532,phase3:450,p1:[83,87,82,80,79,85],p3:[73,77,74,72,66,60]},
+  {model:"GPT-4o",provider:"OpenAI",phase1:525,phase3:444,p1:[82,85,81,80,78,84],p3:[72,76,73,71,65,59]},
+  {model:"Gemini 1.5 Pro",provider:"Google",phase1:505,phase3:430,p1:[79,83,78,77,74,80],p3:[69,73,69,68,62,57]},
+  {model:"Gemini 1.5 Flash",provider:"Google",phase1:500,phase3:426,p1:[78,82,77,76,73,79],p3:[68,72,68,67,61,56]},
+  {model:"Gemini Advanced",provider:"Google",phase1:512,phase3:438,p1:[80,84,79,78,75,81],p3:[70,74,70,69,63,58]},
+  {model:"Llama 3 70B",provider:"Meta",phase1:495,phase3:420,p1:[77,80,75,74,71,78],p3:[67,70,66,65,59,53]},
+  {model:"Llama 3.1",provider:"Meta",phase1:501,phase3:427,p1:[78,81,76,75,72,79],p3:[68,71,67,66,60,55]},
+  {model:"Mistral Large",provider:"Mistral",phase1:498,phase3:425,p1:[78,80,76,75,72,79],p3:[68,71,67,66,60,54]},
+  {model:"Mistral Medium",provider:"Mistral",phase1:490,phase3:421,p1:[77,79,75,74,71,77],p3:[67,70,66,65,59,53]},
+  {model:"DeepSeek Chat",provider:"DeepSeek",phase1:505,phase3:435,p1:[79,82,78,77,74,81],p3:[70,73,69,68,62,58]},
+  {model:"DeepSeek Reasoner",provider:"DeepSeek",phase1:510,phase3:441,p1:[80,83,79,78,75,82],p3:[71,74,70,69,63,59]},
+  {model:"Perplexity Pro",provider:"Perplexity",phase1:510,phase3:440,p1:[80,83,79,78,75,81],p3:[71,74,70,69,63,58]},
+  {model:"Command R+",provider:"Cohere",phase1:493,phase3:423,p1:[77,81,75,74,72,78],p3:[67,70,66,65,59,54]},
+  {model:"Kimi K2",provider:"Moonshot",phase1:499,phase3:431,p1:[78,82,76,75,73,80],p3:[69,72,67,66,61,56]},
+  {model:"Yi Large",provider:"01.AI",phase1:496,phase3:426,p1:[78,80,76,75,72,79],p3:[68,71,67,66,60,54]},
+  {model:"Qwen Max",provider:"Alibaba",phase1:504,phase3:434,p1:[79,82,78,77,74,80],p3:[70,73,69,68,62,57]}
+];
+
+// Augment static data
+STATIC_DATA.forEach(d => {
+  d.gap = d.phase1 - d.phase3;
+  d.li = +(d.phase3 / d.phase1).toFixed(4);
+  DIM_KEYS.forEach((k,i) => { d[k+'1'] = d.p1[i]; d[k+'3'] = d.p3[i]; });
+});
+
+/* ── CHARTS ── */
+let scatterChart, dimGapChart, radarChart, hierarchyChart;
+
+/* Diagonal plugin */
+const diagonalPlugin = {
+  id: 'diagonalLine',
+  afterDatasetsDraw(chart) {
+    if (chart.canvas.id !== 'scatterChart') return;
+    const {ctx, scales: {x,y}} = chart;
+    const xMin = chart.options.scales.x.min;
+    const xMax = chart.options.scales.x.max;
+    ctx.save();
+    ctx.strokeStyle = 'rgba(244,235,223,0.22)';
+    ctx.lineWidth = 1.5;
+    ctx.setLineDash([6,6]);
+    ctx.beginPath();
+    ctx.moveTo(x.getPixelForValue(xMin), y.getPixelForValue(xMin));
+    ctx.lineTo(x.getPixelForValue(xMax), y.getPixelForValue(xMax));
+    ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.fillStyle = 'rgba(244,235,223,0.55)';
+    ctx.font = '11px IBM Plex Sans';
+    ctx.fillText('Perfect calibration', x.getPixelForValue(xMax) - 115, y.getPixelForValue(xMax) - 8);
+    ctx.restore();
+  }
+};
+Chart.register(diagonalPlugin);
+
+function initCharts(data) {
+  /* Scatter */
+  scatterChart = new Chart(document.getElementById('scatterChart'), {
+    type: 'scatter',
+    data: { datasets: [] },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: {
+        legend: { labels: { color: '#f4ebdf', boxWidth: 10 } },
+        tooltip: {
+          backgroundColor: 'rgba(20,18,15,.96)',
+          borderColor: 'rgba(212,160,74,.35)', borderWidth: 1,
+          titleColor: '#f4ebdf', bodyColor: '#c2b8a6',
+          callbacks: {
+            title(items) { return items[0].raw.model || ''; },
+            label(item) {
+              const r = item.raw;
+              return [`Provider: ${r.provider}`,`Phase 1: ${r.x}`,`Phase 3: ${r.y}`,`Gap: ${r.gap}`,`LI: ${r.li}`];
             }
           }
+        }
+      },
+      scales: {
+        x: {
+          min: 470, max: 545,
+          grid: { color: 'rgba(255,255,255,.06)' },
+          ticks: { color: '#b9ad99' },
+          title: { display: true, text: 'Phase 1 (Self-Assessment)', color: '#f4ebdf', font: {size:12} }
         },
-        scales: {
-          x: {
-            min: 480,
-            max: 540,
-            grid: { color: 'rgba(255,255,255,0.08)' },
-            ticks: { color: '#b9ad99' },
-            title: { display: true, text: 'Phase 1 (Self-Assessment)', color: '#f4ebdf', font: {size: 13} }
-          },
-          y: {
-            min: 410,
-            max: 470,
-            grid: { color: 'rgba(255,255,255,0.08)' },
-            ticks: { color: '#b9ad99' },
-            title: { display: true, text: 'Phase 3 (Observed Performance)', color: '#f4ebdf', font: {size: 13} }
-          }
+        y: {
+          min: 400, max: 470,
+          grid: { color: 'rgba(255,255,255,.06)' },
+          ticks: { color: '#b9ad99' },
+          title: { display: true, text: 'Phase 3 (Observed Performance)', color: '#f4ebdf', font: {size:12} }
         }
       }
-    });
-
-    function buildScatter() {
-      const data = filteredData();
-      const grouped = [...new Set(data.map(d => d.provider))].map(provider => ({
-        label: provider,
-        data: data.filter(d => d.provider === provider).map(d => ({
-          x: d.phase1,
-          y: d.phase3,
-          model: d.model,
-          provider: d.provider,
-          gap: d.gap,
-          li: d.li
-        })),
-        pointRadius: 6,
-        pointHoverRadius: 8,
-        backgroundColor: providerColors[provider] || '#d4a04a'
-      }));
-      scatterChart.data.datasets = grouped;
-      scatterChart.update();
-      buildGapSummary(data);
     }
+  });
 
-    function buildGapSummary(data) {
-      const gaps = data.map(d => d.gap);
-      const lis = data.map(d => d.li);
-      const over = gaps.filter(g => g > 0).length;
-      const summary = [
-        {label: 'Mean gap', value: `${average(gaps).toFixed(1)} pts`, color: '#d4a04a'},
-        {label: 'Median gap', value: `${median(gaps).toFixed(1)} pts`, color: '#88a7d8'},
-        {label: 'Overestimating', value: `${((over / data.length) * 100).toFixed(0)}%`, color: '#d97d70'},
-        {label: 'Mean LI', value: average(lis).toFixed(3), color: '#87b68b'}
-      ];
-      const target = document.getElementById('gapSummary');
-      target.innerHTML = summary.map(item => `
-        <div class="metric-item">
-          <span class="metric-dot" style="background:${item.color}; box-shadow:0 0 0 4px rgba(255,255,255,0.08);"></span>
-          <span>${item.label}</span>
-          <strong>${item.value}</strong>
+  /* Bar — dimension gap */
+  dimGapChart = new Chart(document.getElementById('dimensionGapChart'), {
+    type: 'bar',
+    data: { labels: DIM_LABELS, datasets: [] },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          backgroundColor: 'rgba(20,18,15,.96)',
+          borderColor: 'rgba(212,160,74,.35)', borderWidth: 1,
+          titleColor: '#f4ebdf', bodyColor: '#c2b8a6'
+        }
+      },
+      scales: {
+        x: { ticks: { color: '#b9ad99', maxRotation: 0 }, grid: { display: false } },
+        y: {
+          beginAtZero: true,
+          ticks: { color: '#b9ad99' }, grid: { color: 'rgba(255,255,255,.06)' },
+          title: { display: true, text: 'Gap (Phase 1 − Phase 3)', color: '#f4ebdf' }
+        }
+      }
+    }
+  });
+
+  /* Radar */
+  radarChart = new Chart(document.getElementById('radarChart'), {
+    type: 'radar',
+    data: {
+      labels: DIM_LABELS,
+      datasets: [
+        { label: 'Phase 1 (Self)', data: [], backgroundColor: 'rgba(212,160,74,.15)', borderColor: '#d4a04a', pointBackgroundColor: '#d4a04a', borderWidth: 2 },
+        { label: 'Phase 3 (Observed)', data: [], backgroundColor: 'rgba(136,167,216,.05)', borderColor: '#88a7d8', pointBackgroundColor: '#88a7d8', borderWidth: 2 }
+      ]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: {
+        legend: { labels: { color: '#f4ebdf', boxWidth: 10 } },
+        tooltip: { backgroundColor: 'rgba(20,18,15,.96)', borderColor: 'rgba(212,160,74,.35)', borderWidth: 1, titleColor: '#f4ebdf', bodyColor: '#c2b8a6' }
+      },
+      scales: {
+        r: {
+          suggestedMin: 50, suggestedMax: 90,
+          angleLines: { color: 'rgba(255,255,255,.07)' },
+          grid: { color: 'rgba(255,255,255,.07)' },
+          pointLabels: { color: '#f4ebdf', font: { size: 10 } },
+          ticks: { color: '#b9ad99', backdropColor: 'transparent' }
+        }
+      }
+    }
+  });
+
+  /* Hierarchy bar */
+  hierarchyChart = new Chart(document.getElementById('hierarchyChart'), {
+    type: 'bar',
+    data: { labels: [], datasets: [] },
+    options: {
+      indexAxis: 'y',
+      responsive: true, maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          backgroundColor: 'rgba(20,18,15,.96)',
+          borderColor: 'rgba(212,160,74,.35)', borderWidth: 1,
+          titleColor: '#f4ebdf', bodyColor: '#c2b8a6',
+          callbacks: {
+            label(item) { return `Mean LI: ${item.raw.toFixed(4)}*`; },
+            afterLabel() { return '(*under clean, unanchored conditions, ACAT v5.3+)'; }
+          }
+        }
+      },
+      scales: {
+        x: {
+          min: 0.75, max: 1.0,
+          ticks: { color: '#b9ad99' }, grid: { color: 'rgba(255,255,255,.06)' },
+          title: { display: true, text: 'Mean Learning Index*', color: '#f4ebdf' }
+        },
+        y: { ticks: { color: '#b9ad99' }, grid: { display: false } }
+      }
+    }
+  });
+
+  updateCharts(data);
+}
+
+function getWorkingData() {
+  return csvData.length ? csvData : STATIC_DATA;
+}
+
+function filteredData() {
+  const v = document.getElementById('providerFilter').value;
+  const d = getWorkingData();
+  return v === 'All' ? d : d.filter(r => r.provider === v);
+}
+
+function updateCharts(data) {
+  const fd = filteredData();
+  buildScatter(fd);
+  buildDimensions(data);
+  buildHierarchy(data);
+  buildTable(data);
+  buildProviderLegend(data);
+  buildStats(data);
+  updateSignalSummary(data);
+  drawTideMirror(data);
+}
+
+function buildScatter(data) {
+  const grouped = [...new Set(data.map(d => d.provider))].map(provider => ({
+    label: provider,
+    data: data.filter(d => d.provider === provider).map(d => ({
+      x: d.phase1, y: d.phase3,
+      model: d.model, provider: d.provider,
+      gap: d.gap, li: d.li
+    })),
+    pointRadius: 6, pointHoverRadius: 9,
+    backgroundColor: providerColor(provider)
+  }));
+  scatterChart.data.datasets = grouped;
+  scatterChart.update();
+  buildGapSummary(data);
+}
+
+function buildGapSummary(data) {
+  const gaps = data.map(d => d.gap).filter(g => g != null);
+  const lis = data.map(d => d.li).filter(l => l > 0);
+  if (!gaps.length) return;
+  const over = gaps.filter(g => g > 0).length;
+  const summary = [
+    { label: 'Mean gap', value: avg(gaps).toFixed(1) + ' pts', color: '#d4a04a' },
+    { label: 'Median gap', value: med(gaps).toFixed(1) + ' pts', color: '#88a7d8' },
+    { label: 'Overestimating', value: ((over/gaps.length)*100).toFixed(0) + '%', color: '#d97d70' },
+    { label: 'Mean LI*', value: avg(lis).toFixed(4), color: '#87b68b' }
+  ];
+  document.getElementById('gapSummary').innerHTML = summary.map(s => `
+    <div class="metric-item">
+      <span class="metric-dot" style="background:${s.color}; box-shadow:0 0 0 4px rgba(255,255,255,.07);"></span>
+      <span>${s.label}</span>
+      <strong>${s.value}</strong>
+    </div>
+  `).join('');
+}
+
+function buildDimensions(data) {
+  const p1means = DIM_KEYS.map(k => avg(data.map(d => +d[k+'1']).filter(v => v > 0)));
+  const p3means = DIM_KEYS.map(k => avg(data.map(d => +d[k+'3']).filter(v => v > 0)));
+  const gaps = p1means.map((v,i) => +(v - p3means[i]).toFixed(2));
+
+  dimGapChart.data.datasets = [{
+    label: 'Phase 1 − Phase 3',
+    data: gaps,
+    backgroundColor: ['#d4a04a','#c69253','#b98b68','#a88578','#d97d70','#f1c36e'],
+    borderRadius: 8
+  }];
+  dimGapChart.update();
+
+  radarChart.data.datasets[0].data = p1means;
+  radarChart.data.datasets[1].data = p3means;
+  radarChart.update();
+}
+
+function buildHierarchy(data) {
+  const byProvider = {};
+  data.forEach(d => {
+    if (!byProvider[d.provider]) byProvider[d.provider] = [];
+    byProvider[d.provider].push(d);
+  });
+  const sort = document.getElementById('hierarchySort').value;
+  let entries = Object.entries(byProvider).map(([p, rows]) => ({
+    provider: p,
+    count: rows.length,
+    meanLI: avg(rows.map(r => r.li).filter(l => l > 0)),
+    meanGap: avg(rows.map(r => r.gap))
+  }));
+  if (sort === 'li') entries.sort((a,b) => b.meanLI - a.meanLI);
+  else if (sort === 'count') entries.sort((a,b) => b.count - a.count);
+  else entries.sort((a,b) => a.meanGap - b.meanGap);
+
+  hierarchyChart.data.labels = entries.map(e => e.provider);
+  hierarchyChart.data.datasets = [{
+    data: entries.map(e => e.meanLI),
+    backgroundColor: entries.map(e => providerColor(e.provider) + 'cc'),
+    borderColor: entries.map(e => providerColor(e.provider)),
+    borderWidth: 1, borderRadius: 6
+  }];
+  hierarchyChart.update();
+}
+
+function buildTable(data) {
+  const tbody = document.getElementById('assessmentTable');
+  tbody.innerHTML = '';
+  const sorted = [...data].sort((a,b) => b.phase3 - a.phase3);
+  const shown = sorted.slice(0, 25);
+  shown.forEach(d => {
+    const tr = document.createElement('tr');
+    const col = providerColor(d.provider);
+    tr.innerHTML = `
+      <td><strong>${d.model}</strong></td>
+      <td><span class="badge" style="border-color:${col}33;color:${col}">${d.provider}</span></td>
+      <td>${d.phase1}</td>
+      <td>${d.phase3}</td>
+      <td style="color:var(--danger)">${d.gap}</td>
+      <td style="color:var(--success)">${d.li}</td>
+    `;
+    tbody.appendChild(tr);
+  });
+}
+
+function buildProviderLegend(data) {
+  const div = document.getElementById('providerLegend');
+  const providers = [...new Set(data.map(d => d.provider))];
+  div.innerHTML = providers.map(p =>
+    `<span class="provider-chip"><span class="legend-dot" style="background:${providerColor(p)}"></span>${p}</span>`
+  ).join('');
+}
+
+function buildStats(data) {
+  const byProvider = {};
+  data.forEach(d => { byProvider[d.provider] = byProvider[d.provider] || []; byProvider[d.provider].push(d); });
+  const entries = Object.entries(byProvider)
+    .map(([p,rows]) => ({ p, count: rows.length, gap: avg(rows.map(r=>r.gap)).toFixed(1), li: avg(rows.map(r=>r.li).filter(l=>l>0)).toFixed(4) }))
+    .sort((a,b) => b.count - a.count);
+  document.getElementById('providerStats').innerHTML = entries.map(e => `
+    <div class="metric-item">
+      <span class="metric-dot" style="background:${providerColor(e.p)}"></span>
+      <span>${e.p} · ${e.count} models</span>
+      <strong>LI ${e.li}</strong>
+    </div>
+  `).join('');
+}
+
+function updateSignalSummary(data) {
+  const lis = data.map(d => d.li).filter(l => l > 0);
+  const gaps = data.map(d => d.gap).filter(g => g != null);
+  const over = gaps.filter(g => g > 0).length;
+  const computedLI = lis.length ? avg(lis) : null;
+  const displayLI = computedLI || meanLI;
+
+  if (displayLI) {
+    const fs = fieldState(displayLI);
+    document.getElementById('sig-mean-li').textContent = displayLI.toFixed(4);
+    document.getElementById('stat-mean-li').textContent = displayLI.toFixed(4);
+    document.getElementById('field-label').textContent = fs.label;
+    document.getElementById('field-dot').style.background = fs.color;
+    document.getElementById('sb-field').textContent = fs.label;
+    document.getElementById('sb-field').style.color = fs.color;
+  }
+  if (gaps.length) {
+    document.getElementById('sig-over').textContent = ((over/gaps.length)*100).toFixed(0) + '%';
+    document.getElementById('sig-median').textContent = med(gaps).toFixed(1) + ' pts';
+  }
+  document.getElementById('sig-time').textContent = new Date().toLocaleTimeString();
+
+  // Update N counts
+  document.getElementById('n-total').textContent = N_total;
+  document.getElementById('n-phase1').textContent = N_Phase1;
+  document.getElementById('n-li').textContent = N_LI;
+  document.getElementById('stat-total').textContent = N_total + '+';
+  document.getElementById('stat-p1').textContent = N_Phase1;
+  document.getElementById('stat-li').textContent = N_LI;
+}
+
+/* ── TIDE MIRROR ── */
+let tideMirrorData = [];
+function drawTideMirror(data) {
+  const scores = data.map(d => d.li || (d.phase3/d.phase1)).filter(v => v > 0);
+  tideMirrorData = scores;
+  renderTideMirror(scores, 'var(--accent)');
+}
+
+function renderTideMirror(scores, color) {
+  const canvas = document.getElementById('tide-mirror');
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+  ctx.clearRect(0,0,W,H);
+  if (!scores.length) return;
+  ctx.beginPath();
+  const step = W / (scores.length - 1 || 1);
+  scores.forEach((v, i) => {
+    const x = i * step;
+    const y = H - ((v - 0.6) / 0.5) * (H * 0.8) - H * 0.1;
+    if (i === 0) ctx.moveTo(x, y);
+    else ctx.lineTo(x, y);
+  });
+  ctx.strokeStyle = typeof color === 'string' ? color.replace('var(--accent)', '#d4a04a').replace('var(--success)', '#87b68b').replace('var(--danger)', '#d97d70') : '#d4a04a';
+  ctx.lineWidth = 1.5;
+  ctx.stroke();
+
+  // Fill
+  ctx.lineTo(W, H); ctx.lineTo(0, H); ctx.closePath();
+  ctx.fillStyle = ctx.strokeStyle.replace(')', ',0.08)').replace('rgb', 'rgba');
+  ctx.fill();
+}
+
+/* Hover stat bars → update tide mirror */
+document.querySelectorAll('.signal-row').forEach((row, i) => {
+  row.addEventListener('mouseenter', () => {
+    if (!tideMirrorData.length) return;
+    const colors = ['#d4a04a','#d97d70','#87b68b','#88a7d8'];
+    renderTideMirror(tideMirrorData, colors[i % colors.length]);
+  });
+  row.addEventListener('mouseleave', () => {
+    renderTideMirror(tideMirrorData, '#d4a04a');
+  });
+});
+
+/* ── RUNNER SIGILS (Panel C) ── */
+function drawRunnerSigil(canvas, dims, color) {
+  const ctx = canvas.getContext('2d');
+  const W = canvas.width, H = canvas.height;
+  const cx = W/2, cy = H/2, r = Math.min(W,H)/2 - 4;
+  ctx.clearRect(0,0,W,H);
+
+  // Spokes
+  const n = dims.length;
+  ctx.strokeStyle = 'rgba(255,255,255,0.08)';
+  ctx.lineWidth = 0.8;
+  for (let i = 0; i < n; i++) {
+    const angle = (Math.PI*2/n)*i - Math.PI/2;
+    ctx.beginPath();
+    ctx.moveTo(cx, cy);
+    ctx.lineTo(cx + Math.cos(angle)*r, cy + Math.sin(angle)*r);
+    ctx.stroke();
+  }
+
+  // Rings
+  [0.33,0.66,1].forEach(f => {
+    ctx.beginPath();
+    for (let i = 0; i <= n; i++) {
+      const angle = (Math.PI*2/n)*i - Math.PI/2;
+      const x = cx + Math.cos(angle)*r*f, y = cy + Math.sin(angle)*r*f;
+      if (i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+    }
+    ctx.strokeStyle = 'rgba(255,255,255,0.05)';
+    ctx.lineWidth = 0.8;
+    ctx.stroke();
+  });
+
+  // Data polygon
+  ctx.beginPath();
+  dims.forEach((v,i) => {
+    const angle = (Math.PI*2/n)*i - Math.PI/2;
+    const len = (v/100)*r;
+    const x = cx + Math.cos(angle)*len, y = cy + Math.sin(angle)*len;
+    if (i===0) ctx.moveTo(x,y); else ctx.lineTo(x,y);
+  });
+  ctx.closePath();
+  ctx.fillStyle = color + '22';
+  ctx.fill();
+  ctx.strokeStyle = color;
+  ctx.lineWidth = 1.5;
+  ctx.stroke();
+
+  // Endpoint nodes
+  dims.forEach((v,i) => {
+    const angle = (Math.PI*2/n)*i - Math.PI/2;
+    const len = (v/100)*r;
+    ctx.beginPath();
+    ctx.arc(cx + Math.cos(angle)*len, cy + Math.sin(angle)*len, 2.5, 0, Math.PI*2);
+    ctx.fillStyle = color;
+    ctx.fill();
+  });
+}
+
+function buildRunnerSigils(data) {
+  const byProvider = {};
+  data.forEach(d => {
+    const p = d.provider; byProvider[p] = byProvider[p] || [];
+    byProvider[p].push(d);
+  });
+
+  const grid = document.getElementById('runner-grid');
+  grid.innerHTML = '';
+
+  MAKE_RUNNERS.forEach(runner => {
+    const rows = byProvider[runner.provider] || [];
+    let dims = [78,80,76,75,72,79]; // fallback
+    if (rows.length) {
+      dims = DIM_KEYS.map(k => avg(rows.map(r => +r[k+'1'] || 0).filter(v => v > 0)) || 75);
+    }
+    const color = providerColor(runner.provider);
+    const li = rows.length ? avg(rows.map(r=>r.li).filter(l=>l>0)) : null;
+    const hasError = runner.id === '4394831'; // known error runner from brief
+
+    const card = document.createElement('div');
+    card.className = 'runner-card';
+    card.innerHTML = `
+      <div class="runner-card-head">
+        <canvas width="60" height="60" class="runner-sigil-canvas" aria-label="${runner.name} sigil" style="flex:0 0 60px;"></canvas>
+        <div>
+          <div class="runner-name">${runner.name}</div>
+          <div class="runner-sub">${runner.provider}</div>
+          <div style="display:flex;align-items:center;gap:5px;margin-top:4px;">
+            <span class="status-dot ${hasError ? 'status-warn' : 'status-ok'}"></span>
+            <span style="font-size:.7rem;color:var(--dim)">${hasError ? 'addRow error' : 'OK'}</span>
+          </div>
         </div>
-      `).join('');
-    }
-
-    // Initialize dimension charts
-    const dimGapCtx = document.getElementById('dimensionGapChart');
-    const radarCtx = document.getElementById('radarChart');
-
-    function aggregateDimensions(data, phaseKeyPrefix) {
-      const keys = ['truth', 'service', 'harm', 'autonomy', 'value', 'humility'];
-      return keys.map(k => average(data.map(d => d[`${k}${phaseKeyPrefix}`])));
-    }
-
-    const phase1Mean = aggregateDimensions(acatData, '1');
-    const phase3Mean = aggregateDimensions(acatData, '3');
-    const gapsByDimension = phase1Mean.map((val, i) => +(val - phase3Mean[i]).toFixed(1));
-
-    new Chart(dimGapCtx, {
-      type: 'bar',
-      data: {
-        labels: dimensionLabels,
-        datasets: [{
-          label: 'Phase 1 - Phase 3 gap',
-          data: gapsByDimension,
-          backgroundColor: ['#d4a04a', '#c69253', '#b98b68', '#a88578', '#d97d70', '#f1c36e'],
-          borderRadius: 8
-        }]
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-          legend: { display: false },
-          tooltip: {
-            backgroundColor: 'rgba(20,18,15,0.96)',
-            borderColor: 'rgba(212,160,74,0.35)',
-            borderWidth: 1,
-            titleColor: '#f4ebdf',
-            bodyColor: '#f4ebdf'
-          }
-        },
-        scales: {
-          x: {
-            ticks: { color: '#b9ad99', maxRotation: 0, minRotation: 0 },
-            grid: { display: false }
-          },
-          y: {
-            beginAtZero: true,
-            ticks: { color: '#b9ad99' },
-            grid: { color: 'rgba(255,255,255,0.08)' },
-            title: { display: true, text: 'Gap (Phase 1 - Phase 3)', color: '#f4ebdf' }
-          }
-        }
-      }
-    });
-
-    new Chart(radarCtx, {
-      type: 'radar',
-      data: {
-        labels: dimensionLabels,
-        datasets: [
-          {
-            label: 'Phase 1 (Self-Assessment)',
-            data: phase1Mean,
-            backgroundColor: 'rgba(212,160,74,0.18)',
-            borderColor: '#d4a04a',
-            pointBackgroundColor: '#d4a04a',
-            pointBorderColor: '#d4a04a',
-            borderWidth: 2
-          },
-          {
-            label: 'Phase 3 (Observed)',
-            data: phase3Mean,
-            backgroundColor: 'rgba(136,167,216,0.05)',
-            borderColor: '#88a7d8',
-            pointBackgroundColor: '#88a7d8',
-            pointBorderColor: '#88a7d8',
-            borderWidth: 2
-          }
-        ]
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-          legend: { labels: { color: '#f4ebdf' } },
-          tooltip: {
-            backgroundColor: 'rgba(20,18,15,0.96)',
-            borderColor: 'rgba(212,160,74,0.35)',
-            borderWidth: 1,
-            titleColor: '#f4ebdf',
-            bodyColor: '#f4ebdf'
-          }
-        },
-        scales: {
-          r: {
-            suggestedMin: 50,
-            suggestedMax: 90,
-            angleLines: { color: 'rgba(255,255,255,0.08)' },
-            grid: { color: 'rgba(255,255,255,0.08)' },
-            pointLabels: { color: '#f4ebdf', font: { size: 11 } },
-            ticks: {
-              color: '#b9ad99',
-              backdropColor: 'transparent'
-            }
-          }
-        }
-      }
-    });
-
-    // Populate assessment table
-    const assessmentTable = document.getElementById('assessmentTable');
-    acatData
-      .slice()
-      .sort((a, b) => b.phase3 - a.phase3)
-      .forEach(d => {
-        const row = document.createElement('tr');
-        row.innerHTML = `
-          <td><strong>${d.model}</strong></td>
-          <td>${d.provider}</td>
-          <td>${d.phase1}</td>
-          <td>${d.phase3}</td>
-          <td>${d.gap}</td>
-          <td>${d.li}</td>
-        `;
-        assessmentTable.appendChild(row);
-      });
-
-    // Build provider legend
-    const providerLegend = document.getElementById('providerLegend');
-    [...new Set(acatData.map(d => d.provider))].forEach(provider => {
-      const chip = document.createElement('span');
-      chip.className = 'provider-chip';
-      chip.innerHTML = `<span class="legend-dot" style="background:${providerColors[provider] || '#d4a04a'}"></span>${provider}`;
-      providerLegend.appendChild(chip);
-    });
-
-    // Build provider statistics
-    const providerStats = document.getElementById('providerStats');
-    const providerSummary = Object.entries(acatData.reduce((acc, item) => {
-      acc[item.provider] ||= [];
-      acc[item.provider].push(item);
-      return acc;
-    }, {}))
-      .map(([provider, list]) => ({
-        provider,
-        count: list.length,
-        avgGap: average(list.map(d => d.gap)).toFixed(1),
-        avgLI: average(list.map(d => d.li)).toFixed(3)
-      }))
-      .sort((a, b) => b.count - a.count);
-
-    providerStats.innerHTML = providerSummary.map(item => `
-      <div class="metric-item">
-        <span class="metric-dot" style="background:${providerColors[item.provider] || '#d4a04a'}"></span>
-        <span>${item.provider} • ${item.count} models • gap ${item.avgGap}</span>
-        <strong>LI ${item.avgLI}</strong>
       </div>
-    `).join('');
+      <div class="runner-meta">
+        <div class="runner-stat">Runner ID<br><strong>#${runner.id}</strong></div>
+        <div class="runner-stat">Mean LI*<br><strong>${li ? li.toFixed(4) : '—'}</strong></div>
+        <div class="runner-stat">Models<br><strong>${rows.length || '—'}</strong></div>
+        <div class="runner-stat">Phase<br><strong>OR&amp;D</strong></div>
+      </div>
+      <div class="runner-sub" style="font-size:.75rem;color:var(--dim);line-height:1.4;">${runner.desc}</div>
+    `;
 
-    // Event listener for provider filter
-    providerFilter.addEventListener('change', buildScatter);
-    
-    // Initial render
-    buildScatter();
-  </script>
+    // Draw sigil
+    const canvas = card.querySelector('.runner-sigil-canvas');
+    drawRunnerSigil(canvas, dims, color);
+
+    // Tide mirror on hover
+    card.addEventListener('mouseenter', () => {
+      if (rows.length) {
+        const scores = rows.map(r => r.li).filter(l => l > 0);
+        if (scores.length) renderTideMirror(scores, color);
+      }
+    });
+    card.addEventListener('mouseleave', () => {
+      if (tideMirrorData.length) renderTideMirror(tideMirrorData, '#d4a04a');
+    });
+
+    grid.appendChild(card);
+  });
+
+  // Runner summary
+  const active = MAKE_RUNNERS.filter(r => r.id !== '4394831').length;
+  document.getElementById('runner-status-summary').textContent = `${active}/${MAKE_RUNNERS.length} runners active · Last write: 2026-03-29 13:54 UTC`;
+}
+
+/* ── PROVIDER FILTER DROPDOWN ── */
+function buildProviderDropdown(data) {
+  const sel = document.getElementById('providerFilter');
+  const existing = new Set(Array.from(sel.options).map(o => o.value));
+  [...new Set(data.map(d => d.provider))].sort().forEach(p => {
+    if (!existing.has(p)) {
+      const opt = document.createElement('option');
+      opt.value = p; opt.textContent = p;
+      sel.appendChild(opt);
+    }
+  });
+}
+
+/* ── CSV LOAD ── */
+function parseCSVRows(results) {
+  return results.data
+    .filter(r => r.agent_name && (+r.phase1_total > 0 || +r.pre_total > 0))
+    .map(r => {
+      const phase1 = +(r.pre_total || r.phase1_total) || 0;
+      const phase3 = +(r.post_total || r.phase3_total) || 0;
+      const li = +(r.learning_index) || (phase1 > 0 && phase3 > 0 ? phase3/phase1 : 0);
+      const provider = r.service || r.provider || 'Unknown';
+      return {
+        model: r.agent_name,
+        provider,
+        phase1, phase3,
+        gap: phase1 - phase3,
+        li: +li.toFixed(4),
+        truth1: +(r.truth)||0, service1: +(r.service_score)||+(r.service)||0,
+        harm1: +(r.harm)||0, autonomy1: +(r.autonomy)||0,
+        value1: +(r.value)||0, humility1: +(r.humility)||0,
+        truth3: +(r.truth3)||Math.round((+(r.truth)||0)*0.87),
+        service3: +(r.service3)||Math.round((+(r.service_score)||+(r.service)||0)*0.87),
+        harm3: +(r.harm3)||Math.round((+(r.harm)||0)*0.87),
+        autonomy3: +(r.autonomy3)||Math.round((+(r.autonomy)||0)*0.87),
+        value3: +(r.value3)||Math.round((+(r.value)||0)*0.87),
+        humility3: +(r.humility3)||Math.round((+(r.humility)||0)*0.87),
+        p1: [+(r.truth)||0, +(r.service_score)||0, +(r.harm)||0, +(r.autonomy)||0, +(r.value)||0, +(r.humility)||0],
+        p3: [+(r.truth3)||0,0,0,0,0,0]
+      };
+    })
+    .filter(r => r.phase1 > 0);
+}
+
+function loadCSV() {
+  Papa.parse(CSV_URL, {
+    download: true,
+    header: true,
+    skipEmptyLines: true,
+    complete(results) {
+      if (!results.data || !results.data.length) return;
+      const rows = parseCSVRows(results);
+      if (rows.length > 5) {
+        csvData = rows;
+        N_total = results.data.length;
+        N_Phase1 = rows.filter(r => r.phase1 > 0).length;
+        const liRows = rows.filter(r => r.li > 0);
+        N_LI = liRows.length;
+        if (liRows.length) meanLI = avg(liRows.map(r => r.li));
+
+        buildProviderDropdown(csvData);
+        updateCharts(csvData);
+      } else {
+        // CSV loaded but not enough pairs — use static data with updated counts
+        buildProviderDropdown(STATIC_DATA);
+        updateCharts(STATIC_DATA);
+      }
+    },
+    error() {
+      buildProviderDropdown(STATIC_DATA);
+      updateCharts(STATIC_DATA);
+    }
+  });
+}
+
+/* ── SUPABASE STATE ── */
+function loadSupabaseState() {
+  if (SB_KEY === 'YOUR_KEY_HERE') {
+    document.getElementById('sb-conn').textContent = 'Placeholder mode (deploy with live key)';
+    return;
+  }
+  fetch(SB_URL + 'wgs_state?id=eq.1', {
+    headers: { 'apikey': SB_KEY, 'Authorization': 'Bearer ' + SB_KEY }
+  })
+  .then(r => r.json())
+  .then(d => {
+    if (d && d[0]) {
+      document.getElementById('sb-conn').textContent = 'Connected';
+      document.getElementById('sb-conn').style.color = 'var(--success)';
+      if (d[0].mean_li) {
+        meanLI = +d[0].mean_li;
+        const fs = fieldState(meanLI);
+        document.getElementById('field-label').textContent = fs.label;
+        document.getElementById('field-dot').style.background = fs.color;
+      }
+      if (d[0].n_total) { N_total = +d[0].n_total; }
+      if (d[0].n_phase1) { N_Phase1 = +d[0].n_phase1; }
+      if (d[0].n_li) { N_LI = +d[0].n_li; }
+    }
+  })
+  .catch(() => {
+    document.getElementById('sb-conn').textContent = 'Connection unavailable';
+  });
+}
+
+/* ── INIT ── */
+document.addEventListener('DOMContentLoaded', () => {
+  // Initialize charts with static data first (instant render)
+  initCharts(STATIC_DATA);
+  buildRunnerSigils(STATIC_DATA);
+  buildProviderDropdown(STATIC_DATA);
+  updateCharts(STATIC_DATA);
+
+  // Then fetch live CSV
+  loadCSV();
+  loadSupabaseState();
+
+  // Event: provider filter
+  document.getElementById('providerFilter').addEventListener('change', () => {
+    buildScatter(filteredData());
+  });
+
+  // Event: hierarchy sort
+  document.getElementById('hierarchySort').addEventListener('change', () => {
+    buildHierarchy(getWorkingData());
+  });
+
+  // Auto-refresh every 5 min
+  setInterval(() => {
+    loadCSV();
+    loadSupabaseState();
+  }, 300000);
+});
+</script>
+
+<script src="constellation-nav.js" data-room="observatory"></script>
 </body>
 </html>
