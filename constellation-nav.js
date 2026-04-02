@@ -60,7 +60,7 @@
   var DIM_COLORS  = ['#88a7d8', '#87b68b', '#d97d70', '#b48fd8', '#d4c47a', '#7ab8b0'];
 
   // Primary Google Sheets CSV — all pools all phases
-  var CSV_URL = 'https://docs.google.com/spreadsheets/d/1qdw3FjPp9Qu5wmXHppBW74SZT87cJZ45OOw8csk-Yew/export?format=csv&gid=863685903';
+  var CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQ32O6M-CnerHYqlQn19bAzIBAq2Gt9Tp-SPoqKXXMJlsFBhGjy_BEPv37p9jnDf6O8uA4aUtiaO5s_/pub?gid=113743562&single=true&output=csv';
 
   var meanLI   = 0.8632; // current displayed value (interpolated toward targetLI)
   var targetLI = 0.8632; // upstream clamped value
