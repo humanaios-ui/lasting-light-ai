@@ -231,14 +231,17 @@
     }
     .esc-link:hover { color: #c8a96e; }
     .esc-sep { color: #2a2520; font-size: .6rem; }
+    .topbar { position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(2,6,14,0.85);backdrop-filter:blur(12px);border-bottom:1px solid rgba(200,169,110,0.12); }
+    .topbar-inner { display:flex;align-items:center;gap:14px;padding:10px 20px; }
+    .brand-mark { width:36px;height:36px;border-radius:50%;border:1px solid rgba(200,169,110,0.3);background:linear-gradient(145deg,rgba(200,169,110,0.12),rgba(200,169,110,0.03));display:grid;place-items:center;flex-shrink:0; }
   </style>
 <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
 </head>
 <body>
 
-<header class="topbar" style="position:fixed;top:0;left:0;right:0;z-index:100;background:rgba(2,6,14,0.85);backdrop-filter:blur(12px);border-bottom:1px solid rgba(200,169,110,0.12);">
-  <div class="topbar-inner" style="display:flex;align-items:center;gap:14px;padding:10px 20px;">
-    <div class="brand-mark" style="width:36px;height:36px;border-radius:50%;border:1px solid rgba(200,169,110,0.3);background:linear-gradient(145deg,rgba(200,169,110,0.12),rgba(200,169,110,0.03));display:grid;place-items:center;flex-shrink:0;"></div>
+<header class="topbar">
+  <div class="topbar-inner">
+    <div class="brand-mark"></div>
   </div>
 </header>
 
