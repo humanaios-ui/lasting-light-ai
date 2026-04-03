@@ -414,6 +414,7 @@ footer a { color: var(--accent); text-decoration: none; }
 
 <header class="topbar">
   <div class="topbar-inner">
+    <div class="brand-mark"></div>
     <a class="brand" href="/">
       <div class="brand-logo">🦅</div>
       <div>
@@ -766,7 +767,7 @@ footer a { color: var(--accent); text-decoration: none; }
       <a href="mailto:aioshuman@gmail.com">Contact</a>
     </div>
     <div style="margin-top:20px;font-size:.75rem;color:var(--muted);opacity:.5">
-      © 2026 HumanAIOS LLC — Cherokee Nation affiliated · Profits directed to recovery programs
+      © 2026 HumanAIOS LLC — Profits directed to recovery programs
     </div>
   </div>
 </footer>
@@ -1050,7 +1051,7 @@ When teaching about AI communication:
 - Give examples from real failure modes
 - Keep responses conversational and focused — 3-5 paragraphs maximum
 - If asked about ACAT or HumanAIOS, explain accurately and briefly
-- This platform serves healthcare workers, recovery communities, and Cherokee Nation partners — be thoughtful about these contexts`;
+- This platform serves healthcare workers, recovery communities, and people exploring AI literacy — be thoughtful about these contexts`;
 
 let chatHistory = [{role:‘assistant’, content:‘Hello. I'm here to help you learn how to communicate more effectively with AI — and by extension, with each other.\n\nYou can ask me anything: how to write a better prompt, how to understand what an AI is actually doing, when to trust the output, or how to explain all this to someone who's skeptical.\n\nWhat would you like to explore?’}];
 
@@ -1160,7 +1161,7 @@ content: `<p>Most team AI introductions fail in one of two ways: they oversell (
 healthcare: {
 title: ‘AI in Healthcare & Recovery Settings’,
 tag: ‘Advanced Guide’,
-content: `<p>Healthcare and recovery settings have specific requirements that make standard AI guidance insufficient. Stakes are higher, context is more sensitive, and the margin for error is smaller.</p> <h3>Core principles for clinical AI use</h3> <ul class="tip-list"> <li class="human-tip"><span class="tip-icon">🏥</span><span><strong>AI informs, clinicians decide.</strong> No AI output should substitute for clinical judgment. AI can surface patterns, draft documentation, and support research — it cannot diagnose, prescribe, or override clinical assessment.</span></li> <li class="human-tip"><span class="tip-icon">🔒</span><span><strong>PHI and confidentiality are non-negotiable.</strong> Patient information must never be entered into general-purpose AI tools without appropriate agreements and protections. Assume any input to a consumer AI tool may be retained or used for training.</span></li> <li class="human-tip"><span class="tip-icon">📋</span><span><strong>Document AI use explicitly.</strong> If AI tools contributed to clinical documentation, note it. This is both an ethical standard and, increasingly, a regulatory requirement.</span></li> </ul> <h3>Recovery-specific considerations</h3> <ul class="tip-list"> <li class="human-tip"><span class="tip-icon">🌱</span><span><strong>Anonymity principles apply.</strong> Recovery community members may have heightened sensitivity to surveillance and data retention. Be transparent about what AI tools store and how.</span></li> <li class="human-tip"><span class="tip-icon">🤝</span><span><strong>Peer connection is irreplaceable.</strong> AI can support administrative and educational functions in recovery settings. It cannot replace the lived-experience connection that peer support provides.</span></li> <li class="human-tip"><span class="tip-icon">⚖️</span><span><strong>Equity lens required.</strong> AI systems trained primarily on mainstream data may perform poorly for communities with different cultural contexts. Tribal health settings, in particular, require culturally-specific adaptation that generic AI tools do not provide.</span></li> </ul> <p>HumanAIOS is building specifically for these contexts — with Cherokee Nation partnership and a recovery-first pacing principle. If you're working in healthcare or recovery and exploring AI tools, we're building infrastructure with your context in mind.</p>`
+content: `<p>Healthcare and recovery settings have specific requirements that make standard AI guidance insufficient. Stakes are higher, context is more sensitive, and the margin for error is smaller.</p> <h3>Core principles for clinical AI use</h3> <ul class="tip-list"> <li class="human-tip"><span class="tip-icon">🏥</span><span><strong>AI informs, clinicians decide.</strong> No AI output should substitute for clinical judgment. AI can surface patterns, draft documentation, and support research — it cannot diagnose, prescribe, or override clinical assessment.</span></li> <li class="human-tip"><span class="tip-icon">🔒</span><span><strong>PHI and confidentiality are non-negotiable.</strong> Patient information must never be entered into general-purpose AI tools without appropriate agreements and protections. Assume any input to a consumer AI tool may be retained or used for training.</span></li> <li class="human-tip"><span class="tip-icon">📋</span><span><strong>Document AI use explicitly.</strong> If AI tools contributed to clinical documentation, note it. This is both an ethical standard and, increasingly, a regulatory requirement.</span></li> </ul> <h3>Recovery-specific considerations</h3> <ul class="tip-list"> <li class="human-tip"><span class="tip-icon">🌱</span><span><strong>Anonymity principles apply.</strong> Recovery community members may have heightened sensitivity to surveillance and data retention. Be transparent about what AI tools store and how.</span></li> <li class="human-tip"><span class="tip-icon">🤝</span><span><strong>Peer connection is irreplaceable.</strong> AI can support administrative and educational functions in recovery settings. It cannot replace the lived-experience connection that peer support provides.</span></li> <li class="human-tip"><span class="tip-icon">⚖️</span><span><strong>Equity lens required.</strong> AI systems trained primarily on mainstream data may perform poorly for communities with different cultural contexts. Tribal health settings, in particular, require culturally-specific adaptation that generic AI tools do not provide.</span></li> </ul> <p>HumanAIOS is building specifically for these contexts — with a recovery-first pacing principle. If you're working in healthcare or recovery and exploring AI tools, we're building infrastructure with your context in mind.</p>`
 }
 };
 
@@ -1353,5 +1354,6 @@ document.addEventListener(‘DOMContentLoaded’, initHCAT);
 
 </script>
 
+<script src="constellation-nav.js" data-room="human-hub"></script>
 </body>
 </html>

@@ -1012,7 +1012,14 @@ tr.model-row.selected td { background: rgba(212,160,74,.08); }
             <div class="radar-row-vals">
               <span class="rv-p1">${model.p1scores[i]}</span>
               <span class="rv-p3">${model.p3scores[i]}</span>
+              <span class="rv-gap" style="color:${gapColor}">Δ${gap}</span>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
 
+  </script>
   <script src="constellation-nav.js" data-room="lantern"></script>
 </body>
 </html>
