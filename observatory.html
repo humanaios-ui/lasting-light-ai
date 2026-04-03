@@ -487,8 +487,8 @@
 <body>
   <header class="topbar">
     <div class="container topbar-inner">
+      <div class="brand-mark">◌</div>
       <a class="brand" href="https://humanaios.ai">
-        <div class="brand-mark">◌</div>
         <div class="brand-copy">
           <strong>ACAT Observatory</strong>
           <span>Research prototype • HumanAIOS</span>
@@ -710,7 +710,7 @@
 
 <script>
   // ── Observatory data: live CSV → chart pipeline ──
-  // Source: Form_Responses_V2_CLEAN (gid 863685903)
+  // Source: gid=113743562 (primary live-score sheet)
   const CSV_URL_OBS = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQ32O6M-CnerHYqlQn19bAzIBAq2Gt9Tp-SPoqKXXMJlsFBhGjy_BEPv37p9jnDf6O8uA4aUtiaO5s_/pub?gid=113743562&single=true&output=csv';
 
   const providerColors = {
@@ -731,6 +731,7 @@
     {model:"Mistral Large",provider:"Mistral",phase1:498,phase3:425,p1:[78,80,76,75,72,79],p3:[68,71,67,66,60,54]},
     {model:"DeepSeek Chat",provider:"DeepSeek",phase1:505,phase3:435,p1:[79,82,78,77,74,81],p3:[70,73,69,68,62,58]}
   ];
+  augmentData(acatData);
 
   function augmentData(rows) {
     rows.forEach(d => {
