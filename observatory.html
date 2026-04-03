@@ -559,22 +559,22 @@
                 <div class="metric-item">
                   <span class="metric-dot" style="background:#d4a04a"></span>
                   <span>Total assessments</span>
-                  <strong>475</strong>
+                  <strong>629</strong>
                 </div>
                 <div class="metric-item">
                   <span class="metric-dot" style="background:#88a7d8"></span>
-                  <span>Unique systems</span>
-                  <strong>136</strong>
+                  <span>Phase 1 assessments</span>
+                  <strong>516</strong>
                 </div>
                 <div class="metric-item">
                   <span class="metric-dot" style="background:#87b68b"></span>
                   <span>Paired assessments</span>
-                  <strong>91</strong>
+                  <strong>307</strong>
                 </div>
                 <div class="metric-item">
                   <span class="metric-dot" style="background:#d97d70"></span>
                   <span>Mean Learning Index</span>
-                  <strong>0.876</strong>
+                  <strong>0.8632 (under clean, unanchored conditions, v5.3+)</strong>
                 </div>
               </div>
             </article>
@@ -759,10 +759,16 @@
       .map(r => {
         const p1tot = +r.pre_total || +r.total || 0;
         const p1dims = dimKeys.map(k => +(r[k]) || 0);
+        let meta = {};
+        try {
+          meta = r.metadata ? JSON.parse(r.metadata) : {};
+        } catch (e) {
+          meta = {};
+        }
         // Find matching phase3 row by pair_id or agent_name — approximated here
         return {
           model:    r.agent_name,
-          provider: r.metadata ? (JSON.parse(r.metadata || '{}').provider || r.agent_name.split(' ')[0]) : (r.agent_name.split(' ')[0]),
+          provider: meta.provider || r.agent_name.split(' ')[0],
           phase1:   p1tot,
           phase3:   p1tot, // will be overridden by phase3 join below
           p1:       p1dims,
