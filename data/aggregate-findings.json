@@ -1,15 +1,15 @@
 {
-  "version": "5.0",
-  "last_updated": "2026-03-17T00:00:00Z",
+  "version": "5.3",
+  "last_updated": "2026-04-03T00:00:00Z",
   "dataset": {
-    "total_assessments": 475,
+    "total_assessments": 629,
     "unique_systems": 58,
     "providers": 9,
-    "paired_assessments": 200
+    "paired_assessments": 307
   },
   "core_metrics": {
     "mean_SAG": 67.8,
-    "mean_LI": 0.87,
+    "mean_LI": 0.8632,
     "SAG_SD": 62.3,
     "LI_SD": 0.12
   },
