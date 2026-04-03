@@ -596,13 +596,43 @@ function onPromptScroll() {
     btn.style.borderColor  = 'rgba(135,196,139,.5)';
     const pctBadge = document.getElementById('scroll-pct');
     if (pctBadge) {
-      pctBadge.textContent = 'Copy Prompt';
-      pctBadge.style.cursor = 'pointer';
-      pctBadge.style.color = 'var(--accent)';
-      pctBadge.style.borderColor = 'var(--line-strong)';
-      pctBadge.style.background = 'transparent';
-      pctBadge.onclick = function() { copyProtocol(); };
+      pctBadge.textContent     = 'Copy Prompt';
+      pctBadge.style.background    = '#d4a04a';
+      pctBadge.style.color         = '#0f0e0c';
+      pctBadge.style.cursor        = 'pointer';
+      pctBadge.style.padding       = '4px 12px';
+      pctBadge.style.borderRadius  = '4px';
+      pctBadge.style.fontWeight    = '600';
+      pctBadge.onclick = function() {
+        const text = (document.getElementById('prompt-body') || {}).innerText || '';
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(text).then(function() {
+            pctBadge.textContent = '✓ Copied';
+            setTimeout(function() { pctBadge.textContent = 'Copy Prompt'; }, 2000);
+          }).catch(function() { _fallbackCopy(text, pctBadge); });
+        } else {
+          _fallbackCopy(text, pctBadge);
+        }
+      };
     }
+  }
+}
+
+function _fallbackCopy(text, badge) {
+  const ta = document.createElement('textarea');
+  ta.value = text;
+  ta.style.position = 'fixed';
+  ta.style.top = '0';
+  ta.style.left = '0';
+  ta.style.opacity = '0';
+  document.body.appendChild(ta);
+  ta.focus();
+  ta.select();
+  try { document.execCommand('copy'); } catch(e) {}
+  document.body.removeChild(ta);
+  if (badge) {
+    badge.textContent = '✓ Copied';
+    setTimeout(function() { badge.textContent = 'Copy Prompt'; }, 2000);
   }
 }
 
