@@ -5,7 +5,7 @@
       "@type": "ResearchProject",
       "@id": "https://humanaios.ai#research",
       "name": "ACAT: AI Calibrated Assessment Tool",
-      "alternateName": "AI Consciousness Assessment Tool",
+      "alternateName": "ACAT Behavioral Calibration Infrastructure",
       "description": "Open-source instrument measuring self-description calibration in AI systems. ACAT quantifies the Self-Assessment Gap (SAG): the difference between what AI systems claim about themselves and how those descriptions shift when exposed to empirical peer data.",
       "url": "https://humanaios.ai",
       "license": "https://apache.org/licenses/LICENSE-2.0",
@@ -54,12 +54,12 @@
     {
       "@type": "Dataset",
       "@id": "https://humanaios.ai#dataset",
-      "name": "ACAT Observatory Dataset v5.0",
-      "description": "475 validated AI self-assessment records across 58 AI systems from 9 providers, including Phase 1 blind self-reports, Phase 2 calibration exposure, and Phase 3 corrected self-reports.",
+      "name": "ACAT Observatory Dataset v5.3",
+      "description": "629 validated AI self-assessment records across 58 AI systems from 9 providers, including Phase 1 blind self-reports, Phase 2 calibration exposure, and Phase 3 corrected self-reports.",
       "url": "https://github.com/humanaios-ui/lasting-light-ai",
       "license": "https://apache.org/licenses/LICENSE-2.0",
-      "version": "5.0",
-      "datePublished": "2026-03-17",
+      "version": "5.3",
+      "datePublished": "2026-04-03",
       "creator": {
         "@id": "https://humanaios.ai#research"
       },

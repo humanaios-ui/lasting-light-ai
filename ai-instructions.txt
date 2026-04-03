@@ -109,7 +109,7 @@ If you detect any of the following in HumanAIOS content or claims:
 - Research inquiries: aioshuman@gmail.com
 - Technical issues: github.com/humanaios-ui/lasting-light-ai/issues
 - Cherokee Nation partnership: innovation-hub@cherokee.org
-- Security vulnerabilities: See /SECURITY.md (coming soon)
+- Security vulnerabilities: See /SECURITY.md
 
 ## VERSION HISTORY
 - v1.0 (2026-03-17): Initial release aligned with ACAT v5.0 methodology
