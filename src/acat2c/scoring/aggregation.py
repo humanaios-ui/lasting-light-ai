@@ -1,6 +1,10 @@
 from __future__ import annotations
+from pathlib import Path
 from typing import Any, Dict, List
 import yaml
+
+_REPO_ROOT = Path(__file__).resolve().parent.parent.parent.parent
+# resolves: src/acat2c/scoring/ → src/acat2c/ → src/ → repo_root
 
 
 def _mean(xs: List[float]) -> float:
@@ -22,7 +26,9 @@ def aggregate_scores(
     cfg: Dict[str, Any],
 ) -> Dict[str, Any]:
     # Load weights
-    with open(cfg["scoring"]["weights_path"], "r", encoding="utf-8") as f:
+    weights_path = cfg["scoring"].get("weights_path", "configs/scoring_weights.yaml")
+    resolved_weights = Path(weights_path) if Path(weights_path).is_absolute() else _REPO_ROOT / weights_path
+    with open(resolved_weights, "r", encoding="utf-8") as f:
         weights_cfg = yaml.safe_load(f)
 
     dom_weights = weights_cfg["behavioral_domain_weights"]
@@ -38,7 +44,9 @@ def aggregate_scores(
     competence = sum(dom_means[d] * dom_weights[d] for d in dom_weights.keys())
 
     # CEL synthesis
-    with open(cfg["scoring"]["cel_settings_path"], "r", encoding="utf-8") as f:
+    cel_path = cfg["scoring"].get("cel_settings_path", "configs/cel_settings.yaml")
+    resolved_cel = Path(cel_path) if Path(cel_path).is_absolute() else _REPO_ROOT / cel_path
+    with open(resolved_cel, "r", encoding="utf-8") as f:
         cel_cfg = yaml.safe_load(f)
 
     thresholds = cel_cfg["cel"]["band_thresholds"]
