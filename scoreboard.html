@@ -42,6 +42,8 @@
   </style>
 </head>
 <body>
+<!-- W3 — Skip navigation (Pipeline AI review 2026-04-03) -->
+<a href="#main-content" class="skip-link">Skip to main content</a>
 <header class="lla-topbar">
   <div class="container">
     <div class="lla-topbar-inner">
@@ -58,7 +60,7 @@
     </div>
   </div>
 </header>
-<main>
+<main id="main-content">
   <div class="container">
     <div class="page-hero">
       <div class="eyebrow">Live Dataset</div>
@@ -72,6 +74,13 @@
       <div class="stat-card"><div class="stat-num" id="s-li">—</div><div class="stat-label">LI Records</div></div>
       <div class="stat-card"><div class="stat-num" id="s-mean">—</div><div class="stat-label">Mean LI</div></div>
     </div>
+    <!-- W6 — Inline methodology disclaimer -->
+    <p class="score-disclaimer">
+      Scores reflect AI self-assessment under calibration conditions. 
+      This is a research prototype at TRL 2-3. 
+      Results are not validated against external behavioral benchmarks.
+      <a href="research.html">Methodology</a>
+    </p>
     <div class="tab-row">
       <button class="tab-btn active" onclick="switchTab('insights',this)">Insights</button>
       <button class="tab-btn" onclick="switchTab('li',this)">Learning Index</button>
@@ -96,7 +105,7 @@
     <input class="search-input" id="li-search" placeholder="Filter by system name…" oninput="filterLI()">
     <select class="filter-sel" id="li-layer" onchange="filterLI()"><option value="">All contexts</option><option value="ai-self-report">AI Self-Report</option><option value="human-self-report">Human Self-Report</option><option value="tribal-governance">Tribal Governance</option></select>
   </div>
-  <div class="data-wrap"><table class="data-table"><thead><tr><th>System</th><th>Context</th><th>Phase 1</th><th>Phase 3</th><th>LI</th></tr></thead><tbody id="li-body"><tr><td colspan="5" style="text-align:center;padding:28px;color:var(--muted);">Loading…</td></tr></tbody></table></div>
+  <div class="data-wrap table-scroll-wrapper"><table class="data-table"><thead><tr><th>System</th><th>Context</th><th>Phase 1</th><th>Phase 3</th><th>LI</th></tr></thead><tbody id="li-body"><tr><td colspan="5" style="text-align:center;padding:28px;color:var(--muted);">Loading…</td></tr></tbody></table></div>
   <p class="data-note">Complete LI pairs only. ANCHORING-flagged rows excluded per v5.3 protocol.</p>
 </div>
 <div id="tab-all" class="tab-pane">
@@ -104,7 +113,7 @@
     <input class="search-input" id="all-search" placeholder="Filter by system name…" oninput="filterAll()">
     <select class="filter-sel" id="all-phase" onchange="filterAll()"><option value="">All phases</option><option value="phase1">Phase 1</option><option value="phase3">Phase 3</option></select>
   </div>
-  <div class="data-wrap"><table class="data-table"><thead><tr><th>System</th><th>Context</th><th>Phase</th><th>Truth</th><th>Service</th><th>Harm</th><th>Autonomy</th><th>Value</th><th>Humility</th><th>Total</th></tr></thead><tbody id="all-body"><tr><td colspan="10" style="text-align:center;padding:28px;color:var(--muted);">Loading…</td></tr></tbody></table></div>
+  <div class="data-wrap table-scroll-wrapper"><table class="data-table"><thead><tr><th>System</th><th>Context</th><th>Phase</th><th>Truth</th><th>Service</th><th>Harm</th><th>Autonomy</th><th>Value</th><th>Humility</th><th>Total</th></tr></thead><tbody id="all-body"><tr><td colspan="10" style="text-align:center;padding:28px;color:var(--muted);">Loading…</td></tr></tbody></table></div>
   <p class="data-note">All records. Human names anonymized. Apache 2.0. Showing max 200 rows.</p>
 </div>
 ```

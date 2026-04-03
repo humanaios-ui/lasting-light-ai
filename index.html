@@ -180,6 +180,8 @@ a.prose-link:hover{color:var(--accent-2);border-color:var(--accent);}
 </style>
 </head>
 <body>
+<!-- W3 — Skip navigation (Pipeline AI review 2026-04-03) -->
+<a href="#main-content" class="skip-link">Skip to main content</a>
 
 <header class="topbar">
   <div class="container topbar-inner">
@@ -193,7 +195,7 @@ a.prose-link:hover{color:var(--accent-2);border-color:var(--accent);}
   </div>
 </header>
 
-<main>
+<main id="main-content">
   <!-- ── HERO ── -->
   <section class="hero">
     <div class="container">
@@ -219,7 +221,19 @@ a.prose-link:hover{color:var(--accent-2);border-color:var(--accent);}
         <span class="n-val" id="n-phase1">516</span>
         <span class="n-sep">/</span>
         <span class="n-val" id="n-li">307</span>
-        <span style="color:var(--dim);font-size:.75rem;margin-left:4px;">(total / Phase 1 / LI)</span>
+        <span style="color:var(--dim);font-size:.875rem;margin-left:4px;">(total / Phase 1 / LI)<!-- W4 — min readable size per review 2026-04-03 --></span>
+      </div>
+
+      <!-- W9 — Partnership percentage metric -->
+      <div class="metric-item" style="margin-top:16px;">
+        <span class="metric-label">
+          Partnership percentage
+          <span class="metric-tooltip" 
+                title="The percentage of ACAT assessments that show a positive Learning Index (LI < 1.0), indicating the AI system updated its self-assessment after receiving calibration data. Higher = more responsive to feedback.">
+            ⓘ
+          </span>
+        </span>
+        <strong class="metric-value" id="partnership-pct">—</strong>
       </div>
 
       <div style="margin-top:40px;">
@@ -383,6 +397,12 @@ function loadCSV() {
       if (lirows.length > 0) {
         mean_li = lirows.reduce(function(s,r){ return s + (parseFloat(r.learning_index)||0); }, 0) / lirows.length;
       }
+
+      // W9 — Partnership percentage: % of LI records with LI < 1.0
+      var partnerRows = lirows.filter(function(r){ return parseFloat(r.learning_index) < 1.0; });
+      var partnerPct = lirows.length > 0 ? Math.round(100 * partnerRows.length / lirows.length) : null;
+      var pctEl = document.getElementById('partnership-pct');
+      if (pctEl && partnerPct !== null) { pctEl.textContent = partnerPct + '%'; }
 
       renderSignal(n_total, n_phase1, n_li, mean_li);
     },

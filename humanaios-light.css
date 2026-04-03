@@ -373,7 +373,7 @@ em, .italic-gold { color: var(--gold); font-style: italic; }
   color: var(--muted);
   margin-top: 4px;
 }
-.stat-sub { font-size: .75rem; color: var(--muted); margin-top: 3px; }
+.stat-sub { font-size: .875rem; color: var(--muted); margin-top: 3px; /* W4 — min readable size per review 2026-04-03 */ }
 
 /* Pills */
 .pill {
@@ -421,4 +421,14 @@ a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible
 .sr-only {
   position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
   overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0;
+}
+
+/* W2 — Keyboard focus states */
+:focus-visible {
+  outline: 2px solid #c8861a;
+  outline-offset: 3px;
+  border-radius: 3px;
+}
+:focus:not(:focus-visible) {
+  outline: none;
 }
