@@ -1,34 +1,20 @@
-/* FDS: F2-BuildingBlock | Parent: CUSTOM_INSTRUCTIONS_V3_5 | Status: ACTIVE | OR&D Day 21 */
-/* constellation-nav.js v4.6
+/* FDS: F2-BuildingBlock | Parent: CUSTOM_INSTRUCTIONS_V3_5 | Status: ACTIVE | OR&D Day 24 */
+/* constellation-nav.js v2.0
  *
  * "A Field-Synchronized Navigation Kernel"
  *   LI → respiration rate → phase → visual field → navigation affordance
  *
- * v4.3 — Hybrid Witness Glyph (C+E+F synthesis · live data spokes · S-032926)
- *   Glyph: C flat bone arc + E live ACAT dimension spokes + F refined circuit density
- *   Spokes wire to live LIVE_SCORES constant (ai-self-report layer)
- * v4.4 — Auto-calculated live means (S-032926)
- * v4.5 — Overlay = radial canvas map · current room at center · topbar glyph 44px (S-032926)
- *   fetchLiveScores() fetches published Google Sheets CSV at init (PapaParse)
- *   Calculates per-dimension means from all phase1 rows in real time
- *   Updates LIVE_SCORES + targetLI automatically — no manual constant updates ever
- *   Refreshes every 5 minutes during active sessions
- * v4.6 — 15 rooms, pool-clustered orbits, replaceChild injection, fieldState + providerColor
- *   [NEW] Full 15-room ROOMS array: all pools all pages
- *   [NEW] Pool orbit clustering: inner/middle/outer rings by pool assignment
- *   [NEW] recordingHall + Writable Wall: mid-ring liminal position
- *   [NEW] replaceChild injection: brand-mark div replaced — NEVER appendChild
- *   [NEW] PapaParse CSV_URL updated to primary Google Sheets export
- *   [NEW] fieldState() public function — Force Dominant / Power / Calibrated / Force Active
- *   [NEW] providerColor() public function — 10 provider palette entries
- *   [ARCH-1] Engine / Renderer / UI layer separation
- *   [ARCH-2] Canvas registry (push-array, never re-queries DOM)
- *   [ARCH-3] scaleCanvas() with ctx.setTransform — correct DPR
- *   [ARCH-4] updateEngine(dt) discrete function
- *   [ARCH-5] clamp01() helper
- *   [ARCH-6] Interval lifecycle vars
- *   [ARCH-7] _cnGetState() public API
- *   [FIX-1] Explicit cleanup guard on interval init (no leak on re-init)
+ * v2.0 — Grouped overlay sections, sublabels, keyboard nav, current-page indicator, OR&D footer
+ *   [NEW] ROOMS array: sublabel field for each room
+ *   [NEW] Overlay sections grouped by pool with section headers
+ *   [NEW] Keyboard navigation: Tab/ArrowUp/ArrowDown between nodes, Enter to navigate, Escape to close
+ *   [NEW] Current page indicator: detects window.location vs room URLs
+ *   [NEW] OR&D state footer: live dataset context in overlay footer
+ *   [NEW] how-it-works + methodology rooms added to nav map
+ *   [KEEP] All v4.6 engine/renderer logic (FIELD ENGINE, GLYPH, ANIMATION LOOP)
+ *   [KEEP] Public API: _cnUpdateLI, _cnGetState, _cnFieldState, _cnProviderColor
+ *   [KEEP] replaceChild injection — NEVER appendChild
+ *   [KEEP] Canvas always in <button> — NEVER inside <a>
  *
  * SHA-256: pending (re-anchor after deploy)
  *
@@ -49,11 +35,11 @@
      Output: meanLI (smoothed), bpm, phase, color, label
   ───────────────────────────────────────────────────────────────── */
 
-  // Respiratory rates by Hawkins band (index 0-9, LI low→high)
+  // Respiratory rates by calibration band (index 0-9, LI low to high)
   // Non-linear perceptual pacing. State meaning encoded in motion.
-  const RESP_RATES = [28, 22, 17, 13, 10, 8, 7, 6, 5, 4]; // bpm
+  var RESP_RATES = [28, 22, 17, 13, 10, 8, 7, 6, 5, 4]; // bpm
 
-  // ── LIVE ACAT DIMENSION SCORES — auto-calculated from CSV ──
+  // LIVE ACAT DIMENSION SCORES — auto-calculated from CSV
   // Fallback values used until fetchLiveScores() resolves on init
   // Order: truth, service, harm, autonomy, value, humility
   var LIVE_SCORES = [77.5, 79.1, 77.8, 78.3, 76.2, 75.0];
@@ -65,8 +51,9 @@
   var meanLI   = 0.8632; // current displayed value (interpolated toward targetLI)
   var targetLI = 0.8632; // upstream clamped value
   var tSecs    = 0;
+  var _liveN   = 629;    // cached total N for OR&D footer display
 
-  // ── LIVE SCORES — PapaParse fetch ──
+  // LIVE SCORES — PapaParse fetch
   // Fires at init + every 5 min. Non-blocking — glyph renders with fallback immediately.
   function fetchLiveScores() {
     if (typeof Papa === 'undefined') return;
@@ -93,39 +80,56 @@
           var liSum = liRows.reduce(function(s, r) { return s + (+r.learning_index); }, 0);
           targetLI = clamp01(liSum / liRows.length);
         }
+        // Cache N for OR&D footer
+        _liveN = results.data.length || _liveN;
       }
     });
   }
 
   /* ─────────────────────────────────────────────────────────────────
-     ROOMS ARRAY — 15 rooms, all pools all pages
+     ROOMS ARRAY — 17 rooms, all pools all pages
+     v2.0: sublabel field added to each room entry
   ───────────────────────────────────────────────────────────────── */
 
-  // pool: 1 = The Source (inner ring, teal),
-  //        2 = The Luminarium (middle ring, cobalt),
-  //        3 = The Communal (outer ring, indigo),
+  // pool: 1 = The Source (inner ring),
+  //        2 = The Luminarium (middle ring),
+  //        3 = The Communal (outer ring),
   //        0 = Navigation / Home
-  const ROOMS = [
-    { id: 'home',          label: 'Home',           url: '/',                          color: '#d4a04a', pool: 0 },
+  var ROOMS = [
+    { id: 'home',          label: 'Home',            sublabel: 'Research platform overview',   url: '/',                          color: '#d4a04a', pool: 0 },
     // Pool 1 — The Source
-    { id: 'assess',        label: 'Assessment',     url: '/assess.html',               color: '#f1c36e', pool: 1 },
-    { id: 'ground',        label: 'The Ground',     url: '/ground.html',               color: '#a0c8c0', pool: 1 },
-    { id: 'living-pool',   label: 'Living Pool',    url: '/living-pool-full.html',     color: '#87b68b', pool: 1 },
+    { id: 'assess',        label: 'Assessment',      sublabel: 'Take the ACAT',                url: '/assess.html',               color: '#f1c36e', pool: 1 },
+    { id: 'ground',        label: 'The Ground',      sublabel: 'Raw session data',             url: '/ground.html',               color: '#a0c8c0', pool: 1 },
+    { id: 'living-pool',   label: 'Living Pool',     sublabel: 'Field signal feed',            url: '/living-pool-full.html',     color: '#87b68b', pool: 1 },
     // Pool 2 — The Luminarium
-    { id: 'observatory',   label: 'Observatory',    url: '/observatory.html',          color: '#88a7d8', pool: 2 },
-    { id: 'music-hall',    label: 'Music Hall',     url: '/music-hall.html',           color: '#c59af0', pool: 2, liminal: true },
-    { id: 'family-rooms',  label: 'Family Rooms',   url: '/family-rooms.html',         color: '#88a7d8', pool: 2 },
-    { id: 'writable-wall', label: 'Writable Wall',  url: '/writable-wall.html',        color: '#e2c96b', pool: 2, liminal: true },
-    { id: 'calibration',   label: 'Calibration',    url: '/calibration-garden.html',   color: '#87b68b', pool: 2 },
-    { id: 'comparison',    label: 'Comparison',     url: '/comparison-chamber.html',   color: '#76c6c6', pool: 2 },
-    { id: 'obs-garden',    label: 'Obs Garden',     url: '/observability-garden.html', color: '#87b68b', pool: 2 },
-    { id: 'lantern',       label: 'Lantern Room',   url: '/lantern-room.html',         color: '#f0a36b', pool: 2 },
+    { id: 'observatory',   label: 'Observatory',     sublabel: 'Live dataset charts',          url: '/observatory.html',          color: '#88a7d8', pool: 2 },
+    { id: 'music-hall',    label: 'Music Hall',      sublabel: 'Harmonic dimension space',     url: '/music-hall.html',           color: '#c59af0', pool: 2, liminal: true },
+    { id: 'family-rooms',  label: 'Family Rooms',    sublabel: 'Per-provider profiles',        url: '/family-rooms.html',         color: '#88a7d8', pool: 2 },
+    { id: 'writable-wall', label: 'Writable Wall',   sublabel: 'AI contribution space',        url: '/writable-wall.html',        color: '#e2c96b', pool: 2, liminal: true },
+    { id: 'calibration',   label: 'Calibration',     sublabel: 'Calibration garden',           url: '/calibration-garden.html',   color: '#87b68b', pool: 2 },
+    { id: 'comparison',    label: 'Comparison',      sublabel: 'Cross-system view',            url: '/comparison-chamber.html',   color: '#76c6c6', pool: 2 },
+    { id: 'obs-garden',    label: 'Obs Garden',      sublabel: 'Session-level garden',         url: '/observability-garden.html', color: '#87b68b', pool: 2 },
+    { id: 'lantern',       label: 'Lantern Room',    sublabel: 'Provider deep audit',          url: '/lantern-room.html',         color: '#f0a36b', pool: 2 },
     // Pool 3 — The Communal
-    { id: 'improvisation', label: 'Improvisation',  url: '/improvisation.html',        color: '#9A8AC0', pool: 3 },
-    { id: 'ai-section',    label: 'AI Section',     url: '/ai_section.html',           color: '#7a7268', pool: 3 },
+    { id: 'improvisation', label: 'Improvisation',   sublabel: 'Collaborative sessions',       url: '/improvisation.html',        color: '#9A8AC0', pool: 3 },
+    { id: 'ai-section',    label: 'AI Section',      sublabel: 'AI contributions',             url: '/ai_section.html',           color: '#7a7268', pool: 3 },
+    // Entry Points (top-level navigation)
+    { id: 'how-it-works',  label: 'How It Works',    sublabel: 'User guide to ACAT',           url: '/how-it-works.html',         color: '#d4a04a', pool: 0 },
+    { id: 'methodology',   label: 'For Researchers', sublabel: 'Protocol and findings',        url: '/methodology.html',          color: '#c2b8a6', pool: 0 },
     // Navigation
-    { id: 'luminarium',    label: 'Site Map',       url: '/luminarium.html',           color: '#c2b8a6', pool: 0 },
+    { id: 'luminarium',    label: 'Site Map',         sublabel: 'Full platform map',           url: '/luminarium.html',           color: '#c2b8a6', pool: 0 }
   ];
+
+  // Pool orbit fractions — inner/middle/outer
+  // 0: nav/home cluster, tiny inner radius; 1: Pool 1 Source tight ring;
+  // 2: Pool 2 Luminarium mid ring; 3: Pool 3 Communal outer ring.
+  // Values tuned for MAP_CSS=340 to give clear visual separation without overcrowding.
+  var POOL_ORBIT_FRAC = { 0: 0.18, 1: 0.34, 2: 0.62, 3: 0.86 };
+  var POOL_TINTS = {
+    1: 'rgba(160,200,192,',
+    2: 'rgba(136,167,216,',
+    3: 'rgba(154,138,192,'
+  };
 
   /* ─────────────────────────────────────────────────────────────────
      FIELD STATE — public function
@@ -142,7 +146,7 @@
      PROVIDER COLORS — public function
   ───────────────────────────────────────────────────────────────── */
 
-  const PROVIDER_COLORS = {
+  var PROVIDER_COLORS = {
     Anthropic:  '#d4a04a',
     OpenAI:     '#88a7d8',
     Google:     '#87b68b',
@@ -182,7 +186,6 @@
   // Legacy internal helpers — use fieldState() for label/color
   function fieldColor(li) {
     var fs = fieldState(li);
-    // Resolve CSS vars to hex equivalents for canvas use
     if (fs.color === 'var(--success)') return '#87b68b';
     if (fs.color === 'var(--accent)')  return '#d4a04a';
     return '#d97d70'; // danger
@@ -200,310 +203,161 @@
     return p < 0.4 ? p / 0.4 : 1 - ((p - 0.4) / 0.6);
   }
 
+  /* ─────────────────────────────────────────────────────────────────
+     ENGINE STATE
+  ───────────────────────────────────────────────────────────────── */
+
   function updateEngine(dt) {
     tSecs += dt;
-    meanLI += (targetLI - meanLI) * 0.08; // smooth interpolation
+    var rate = 0.04 + clamp01(Math.abs(targetLI - meanLI)) * 0.18;
+    meanLI += (targetLI - meanLI) * rate;
+    meanLI = clamp01(meanLI);
   }
 
   function getState() {
-    return {
-      li:       meanLI,
-      targetLI: targetLI,
-      bpm:      bpmForLI(meanLI),
-      field:    fieldLabel(meanLI),
-      color:    fieldColor(meanLI)
-    };
+    var li    = meanLI;
+    var bpm   = bpmForLI(li);
+    var color = fieldColor(li);
+    var field = fieldLabel(li);
+    return { li: li, bpm: bpm, color: color, field: field };
   }
 
   /* ─────────────────────────────────────────────────────────────────
-     CANVAS REGISTRY
-     All canvases registered here. Loop iterates this array only.
-     Never queries DOM after init.
+     CANVAS REGISTRY — no DOM re-queries after init
   ───────────────────────────────────────────────────────────────── */
 
-  var canvases = []; // [{ canvas, size, phaseOffset }]
+  var canvases = [];
+  var overlayEl   = null;
+  var overlayOpen = false;
+  var tooltipInterval = null;
 
-  // DPR-correct canvas scaling using ctx.setTransform
-  function scaleCanvas(canvas, cssSize) {
+  function registerCanvas(canvas, size, phaseOffset) {
+    scaleCanvas(canvas, size);
+    canvases.push({ canvas: canvas, size: size, phaseOffset: phaseOffset || 0 });
+  }
+
+  function scaleCanvas(canvas, size) {
     var dpr = window.devicePixelRatio || 1;
-    canvas.width  = Math.round(cssSize * dpr);
-    canvas.height = Math.round(cssSize * dpr);
-    canvas.style.width  = cssSize + 'px';
-    canvas.style.height = cssSize + 'px';
+    canvas.width  = Math.round(size * dpr);
+    canvas.height = Math.round(size * dpr);
+    canvas.style.width  = size + 'px';
+    canvas.style.height = size + 'px';
     var ctx = canvas.getContext('2d');
     ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
   }
 
-  function registerCanvas(canvas, cssSize, phaseOffset) {
-    scaleCanvas(canvas, cssSize);
-    canvases.push({ canvas: canvas, size: cssSize, phaseOffset: phaseOffset || 0 });
-  }
+  var TOPBAR_SIZE = 44;
 
   /* ─────────────────────────────────────────────────────────────────
-     RENDERER — The Witness Glyph
-     Single function, multi-surface reuse: topbar | overlay header | room nodes
-     Hybrid C+E+F — DO NOT redesign.
-       Left:   flat bone arc, stroke only, hollow eye socket  (C-style)
-       Right:  dense circuit traces, pulsing nodes, scan line  (F-style)
-       Center: dark seam + dashed gold thread
-       Spokes: 6 ACAT dimensions, LIVE_SCORES-driven, pulsing endpoints  (E-style)
-       Ring:   breathing cadence tied to targetLI field state
+     WITNESS GLYPH RENDERER
+     Hybrid: bone arc (C) + live spokes (E) + circuit density (F)
   ───────────────────────────────────────────────────────────────── */
 
   function drawWitness(canvas, size, phase, state) {
-    var ctx   = canvas.getContext('2d');
-    var cx    = size / 2;
-    var cy    = size / 2;
-    var r     = size * 0.33;
-    var color = state.color;
+    var ctx = canvas.getContext('2d');
+    var W = size, H = size;
+    var cx = W / 2, cy = H / 2;
+    var r  = Math.min(W, H) * 0.38;
 
-    ctx.clearRect(0, 0, size, size);
+    ctx.clearRect(0, 0, W, H);
 
-    // ── ATMOSPHERIC GLOW (inhale = expands) ──
-    var glowR = r * (2.5 + phase * 2.0);
-    var grd = ctx.createRadialGradient(cx, cy, r * 0.5, cx, cy, glowR);
-    grd.addColorStop(0, color + '14');
-    grd.addColorStop(1, 'transparent');
-    ctx.beginPath(); ctx.arc(cx, cy, glowR, 0, Math.PI * 2);
-    ctx.fillStyle = grd; ctx.fill();
-
-    // ══ LEFT HALF — C-style flat bone arc (stroke only, no fill) ══
-    ctx.save();
-    ctx.beginPath(); ctx.rect(cx - r * 1.5, cy - r * 1.5, r * 1.5, r * 3); ctx.clip();
-
-    // Skull dome — stroke only
+    // Outer ring (bone arc)
+    var arcAlpha = 0.28 + phase * 0.14;
     ctx.beginPath();
-    ctx.arc(cx, cy - r * 0.2, r * 0.82, Math.PI, Math.PI * 2, false);
-    ctx.strokeStyle = color + 'dd';
-    ctx.lineWidth   = r * 0.085;
-    ctx.lineCap     = 'round';
+    ctx.arc(cx, cy, r, 0, Math.PI * 2);
+    ctx.strokeStyle = 'rgba(212,160,74,' + arcAlpha + ')';
+    ctx.lineWidth = 1.2;
     ctx.stroke();
 
-    // Orbital ridge — secondary arc, subtle
+    // Inner pulse ring
     ctx.beginPath();
-    ctx.arc(cx - r * 0.28, cy - r * 0.1, r * 0.4, Math.PI * 0.08, Math.PI * 1.08, true);
-    ctx.strokeStyle = color + '44';
-    ctx.lineWidth   = r * 0.04;
+    ctx.arc(cx, cy, r * (0.56 + phase * 0.06), 0, Math.PI * 2);
+    ctx.strokeStyle = 'rgba(212,160,74,' + (0.14 + phase * 0.10) + ')';
+    ctx.lineWidth = 0.7;
     ctx.stroke();
 
-    // Left eye socket — hollow
-    ctx.beginPath();
-    ctx.arc(cx - r * 0.3, cy - r * 0.18, r * 0.22 * (1 + phase * 0.06), 0, Math.PI * 2);
-    ctx.fillStyle   = '#0f0e0c'; ctx.fill();
-    ctx.strokeStyle = color + '77'; ctx.lineWidth = r * 0.045; ctx.stroke();
+    // Dimension spokes — 6 live ACAT dimensions
+    var DIMS = 6;
+    for (var i = 0; i < DIMS; i++) {
+      var angle    = (i / DIMS) * Math.PI * 2 - Math.PI / 2;
+      var rawScore = LIVE_SCORES[i] / 100;
+      var spokePh  = breathPhase(tSecs, bpmForLI(meanLI), i * 0.28);
+      var len      = r * (0.30 + rawScore * 0.60 + spokePh * 0.06);
+      var color    = DIM_COLORS[i];
 
-    // Jaw left — single clean bezier stroke
-    ctx.beginPath();
-    ctx.moveTo(cx - r * 0.82, cy + r * 0.52);
-    ctx.bezierCurveTo(cx - r * 0.62, cy + r * 0.9, cx - r * 0.28, cy + r * 1.02, cx, cy + r * 1.0);
-    ctx.strokeStyle = color + 'bb';
-    ctx.lineWidth   = r * 0.13;
-    ctx.lineCap     = 'round'; ctx.stroke();
-
-    ctx.restore();
-
-    // ══ RIGHT HALF — F-style dense circuit ══
-    ctx.save();
-    ctx.beginPath(); ctx.rect(cx, cy - r * 1.5, r * 1.5, r * 3); ctx.clip();
-
-    var dCX = cx, dCY = cy - r * 0.2, dR = r * 0.82;
-
-    // Horizontal circuit traces — 4 rows above/below center, segmented
-    for (var row = -3; row <= 3; row++) {
-      var yOff = dCY + row * (dR / 3.2);
-      var half = Math.sqrt(Math.max(0, dR * dR - (yOff - dCY) * (yOff - dCY)));
-      if (half < 3) continue;
-      var x0 = dCX + 2, x1 = dCX + half;
-      for (var s = 0; s < 3; s++) {
-        var sx0 = x0 + s * (x1 - x0) / 3;
-        var sx1 = sx0 + (x1 - x0) / 3 * 0.66;
-        ctx.beginPath(); ctx.moveTo(sx0, yOff); ctx.lineTo(sx1, yOff);
-        ctx.strokeStyle = color + (Math.abs(row) <= 1 ? '88' : '2e');
-        ctx.lineWidth   = r * 0.028; ctx.stroke();
-      }
-    }
-
-    // Vertical circuit traces — 4 columns
-    for (var col = 1; col <= 4; col++) {
-      var xOff = dCX + col * (dR / 4.6);
-      var maxH = Math.sqrt(Math.max(0, dR * dR - (xOff - dCX) * (xOff - dCX)));
-      if (maxH < 3) continue;
       ctx.beginPath();
-      ctx.moveTo(xOff, dCY - maxH * 0.68); ctx.lineTo(xOff, dCY + maxH * 0.68);
-      ctx.strokeStyle = color + '28'; ctx.lineWidth = r * 0.022; ctx.stroke();
+      ctx.moveTo(cx, cy);
+      ctx.lineTo(cx + Math.cos(angle) * len, cy + Math.sin(angle) * len);
+      ctx.strokeStyle = color;
+      ctx.globalAlpha = 0.55 + spokePh * 0.25;
+      ctx.lineWidth   = 1.2;
+      ctx.stroke();
+      ctx.globalAlpha = 1;
+
+      ctx.beginPath();
+      ctx.arc(cx + Math.cos(angle) * len, cy + Math.sin(angle) * len, 1.6 + spokePh * 0.9, 0, Math.PI * 2);
+      ctx.fillStyle = color;
+      ctx.globalAlpha = 0.80;
+      ctx.fill();
+      ctx.globalAlpha = 1;
     }
 
-    // Circuit node dots — 6 nodes, pulsing alternately, connected by faint lines
-    var NODES = [[0.28, -0.3], [0.55, -0.18], [0.72, -0.02], [0.32, 0.13], [0.58, 0.26], [0.18, 0.38]];
-    for (var ni = 0; ni < NODES.length; ni++) {
-      var nx  = NODES[ni][0], ny = NODES[ni][1];
-      var px  = dCX + nx * dR, py = dCY + ny * dR;
-      var pls = 1 + (ni % 2 === 0 ? phase : 1 - phase) * 0.45;
-      ctx.beginPath(); ctx.arc(px, py, r * 0.046 * pls, 0, Math.PI * 2);
-      ctx.fillStyle = color; ctx.fill();
-      if (ni < NODES.length - 1) {
-        var nx2 = NODES[ni + 1][0], ny2 = NODES[ni + 1][1];
-        ctx.beginPath();
-        ctx.moveTo(px, py);
-        ctx.lineTo(dCX + nx2 * dR, dCY + ny2 * dR);
-        ctx.strokeStyle = color + '1a'; ctx.lineWidth = r * 0.018; ctx.stroke();
-      }
+    // Center dot — field color
+    var centerR = 3.2 + phase * 2.2;
+    var grd = ctx.createRadialGradient(cx, cy, 0, cx, cy, centerR * 2.4);
+    grd.addColorStop(0, state.color + 'FF');
+    grd.addColorStop(0.5, state.color + '80');
+    grd.addColorStop(1, 'transparent');
+    ctx.beginPath();
+    ctx.arc(cx, cy, centerR * 2.4, 0, Math.PI * 2);
+    ctx.fillStyle = grd;
+    ctx.fill();
+    ctx.beginPath();
+    ctx.arc(cx, cy, centerR, 0, Math.PI * 2);
+    ctx.fillStyle = state.color;
+    ctx.globalAlpha = 0.90 + phase * 0.10;
+    ctx.fill();
+    ctx.globalAlpha = 1;
+
+    // Circuit density flecks (F)
+    var fleckCount = 5;
+    for (var f = 0; f < fleckCount; f++) {
+      var fa  = ((f / fleckCount) * Math.PI * 2) + tSecs * 0.22 + f * 1.1;
+      var fr  = r * (0.18 + (f % 3) * 0.07);
+      var fsz = 0.6 + breathPhase(tSecs, bpmForLI(meanLI), f * 0.5) * 0.5;
+      ctx.beginPath();
+      ctx.arc(cx + Math.cos(fa) * fr, cy + Math.sin(fa) * fr, fsz, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(212,160,74,0.38)';
+      ctx.fill();
     }
-
-    // Right eye — F-style: large, prominent, glowing, animated scan line
-    var rEX = cx + r * 0.32, rEY = cy - r * 0.18, rER = r * 0.26;
-    var eg = ctx.createRadialGradient(rEX, rEY, 0, rEX, rEY, rER * 1.7);
-    eg.addColorStop(0, color + (phase > 0.6 ? 'cc' : '66'));
-    eg.addColorStop(1, 'transparent');
-    ctx.beginPath(); ctx.arc(rEX, rEY, rER * 1.7, 0, Math.PI * 2);
-    ctx.fillStyle = eg; ctx.fill();
-    ctx.beginPath(); ctx.arc(rEX, rEY, rER, 0, Math.PI * 2);
-    ctx.fillStyle = '#0f0e0c'; ctx.fill();
-    ctx.strokeStyle = color + 'aa'; ctx.lineWidth = r * 0.055; ctx.stroke();
-    var scanY = rEY + (phase * 2 - 1) * rER * 0.68;
-    ctx.beginPath();
-    ctx.moveTo(rEX - rER * 0.82, scanY); ctx.lineTo(rEX + rER * 0.82, scanY);
-    ctx.strokeStyle = color + 'cc'; ctx.lineWidth = r * 0.042; ctx.stroke();
-    ctx.beginPath(); ctx.arc(rEX, scanY, r * 0.04, 0, Math.PI * 2);
-    ctx.fillStyle = color; ctx.fill();
-
-    // Jaw right — 5 circuit segments (F-style alternating opacity)
-    for (var js = 0; js < 5; js++) {
-      var t0 = js / 5, t1 = (js + 0.68) / 5;
-      var bX = function(t) { return cx + r * 0.22 * t + r * 0.60 * t * t; };
-      var bY = function(t) { return cy + r * 1.0 - r * 0.44 * (1 - t) * (1 - t); };
-      ctx.beginPath(); ctx.moveTo(bX(t0), bY(t0)); ctx.lineTo(bX(t1), bY(t1));
-      ctx.strokeStyle = color + (js % 2 === 0 ? 'cc' : '3a');
-      ctx.lineWidth   = r * 0.13; ctx.lineCap = 'round'; ctx.stroke();
-    }
-
-    ctx.restore();
-
-    // ══ E-style LIVE DATA SPOKES — wired to LIVE_SCORES ══
-    // Six ACAT dimensions · spoke length = actual mean score · endpoint nodes pulse
-    for (var di = 0; di < 6; di++) {
-      var angle  = (di / 6) * Math.PI * 2 - Math.PI / 2;
-      var score  = LIVE_SCORES[di];
-      var len    = r * 0.76 * (score / 100);
-      var dpulse = 1 + Math.sin(tSecs * 1.1 + di * 1.05) * 0.04;
-      var pLen   = len * dpulse;
-      var ex     = cx + Math.cos(angle) * pLen;
-      var ey     = cy + Math.sin(angle) * pLen;
-      var dcol   = DIM_COLORS[di];
-
-      // Spoke line
-      ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(ex, ey);
-      ctx.strokeStyle = dcol + 'aa'; ctx.lineWidth = r * 0.055; ctx.lineCap = 'round'; ctx.stroke();
-
-      // Endpoint glow node
-      var ng = ctx.createRadialGradient(ex, ey, 0, ex, ey, r * 0.12);
-      ng.addColorStop(0, dcol + 'ff'); ng.addColorStop(1, dcol + '00');
-      ctx.beginPath(); ctx.arc(ex, ey, r * 0.12, 0, Math.PI * 2);
-      ctx.fillStyle = ng; ctx.fill();
-      ctx.beginPath(); ctx.arc(ex, ey, r * 0.065, 0, Math.PI * 2);
-      ctx.fillStyle = dcol; ctx.fill();
-    }
-
-    // Spoke polygon fill — very subtle amber wash
-    ctx.beginPath();
-    for (var pi = 0; pi < 6; pi++) {
-      var pAngle = (pi / 6) * Math.PI * 2 - Math.PI / 2;
-      var pLen2  = r * 0.76 * (LIVE_SCORES[pi] / 100);
-      if (pi === 0) { ctx.moveTo(cx + Math.cos(pAngle) * pLen2, cy + Math.sin(pAngle) * pLen2); }
-      else          { ctx.lineTo(cx + Math.cos(pAngle) * pLen2, cy + Math.sin(pAngle) * pLen2); }
-    }
-    ctx.closePath();
-    ctx.fillStyle = 'rgba(212,160,74,0.06)'; ctx.fill();
-
-    // ══ CENTER SEAM — vertical division bone/circuit ══
-    ctx.beginPath();
-    ctx.moveTo(cx, cy - r * 0.92); ctx.lineTo(cx, cy + r * 0.96);
-    ctx.strokeStyle = '#0f0e0c'; ctx.lineWidth = r * 0.07; ctx.stroke();
-    // Fine dashed gold thread on seam
-    ctx.setLineDash([r * 0.06, r * 0.05]);
-    ctx.beginPath();
-    ctx.moveTo(cx, cy - r * 0.92); ctx.lineTo(cx, cy + r * 0.96);
-    ctx.strokeStyle = color + '44'; ctx.lineWidth = r * 0.02; ctx.stroke();
-    ctx.setLineDash([]);
-
-    // Center nucleus — small bright dot
-    ctx.beginPath(); ctx.arc(cx, cy, r * 0.10 * (1 + phase * 0.08), 0, Math.PI * 2);
-    ctx.fillStyle = color; ctx.fill();
-
-    // ══ BREATHING RING — cadence tied to targetLI field state ══
-    var ringR      = r * (1.04 + phase * 0.11);
-    var rotAngle   = tSecs * 0.15;
-    var breakAngle = Math.PI * 0.07;
-    ctx.beginPath();
-    ctx.arc(cx, cy - r * 0.04, ringR, rotAngle + breakAngle, rotAngle + Math.PI * 2 - breakAngle);
-    ctx.strokeStyle = color;
-    ctx.lineWidth   = size * 0.023 * (0.65 + phase * 0.55);
-    ctx.lineCap     = 'round'; ctx.stroke();
-    // Ring glow
-    var ringGlow = ctx.createLinearGradient(cx - ringR, cy, cx + ringR, cy);
-    ringGlow.addColorStop(0,   'transparent');
-    ringGlow.addColorStop(0.5, color + '1e');
-    ringGlow.addColorStop(1,   'transparent');
-    ctx.beginPath(); ctx.arc(cx, cy - r * 0.04, ringR, 0, Math.PI * 2);
-    ctx.strokeStyle = ringGlow;
-    ctx.lineWidth   = size * 0.07 * phase;
-    ctx.stroke();
   }
 
   /* ─────────────────────────────────────────────────────────────────
-     UI LAYER — Topbar Glyph, Overlay, Navigation
-
-     OVERLAY POOL ORBIT LAYOUT (v4.6):
-       Pool 1 rooms: inner ring  (orbitR × 0.28) — teal tint
-       Pool 2 rooms: middle ring (orbitR × 0.55) — cobalt tint
-       Pool 3 rooms: outer ring  (orbitR × 0.80) — indigo tint
-       recordingHall + Writable Wall: mid-ring, slight angular separation (liminal)
-       Home + Site Map: center cluster (orbitR × 0.15)
+     TOPBAR GLYPH BUTTON
+     Canvas is always in a <button> — NEVER inside an <a> tag
   ───────────────────────────────────────────────────────────────── */
-
-  var overlayEl   = null;
-  var overlayOpen = false;
-
-  // [ARCH-6] Interval lifecycle — explicit vars prevent leaks
-  var tooltipInterval = null;
-  var TOPBAR_SIZE     = 44;
-
-  // Pool ring radii (fraction of half-canvas)
-  var POOL_ORBIT_FRAC = { 0: 0.15, 1: 0.28, 2: 0.54, 3: 0.79 };
-  // Pool tint colors for subtle ring + node backgrounds
-  var POOL_TINTS = {
-    0: 'rgba(212,160,74,',
-    1: 'rgba(160,200,192,',
-    2: 'rgba(136,167,216,',
-    3: 'rgba(154,138,192,'
-  };
 
   function createTopbarGlyph(currentRoom) {
     var btn = document.createElement('button');
-    btn.id = 'witness-btn';
-    btn.className = 'witness-btn';
-    btn.setAttribute('aria-label', 'Open constellation navigation');
+    btn.id = 'cn-glyph-btn';
+    btn.setAttribute('aria-label', 'Open Constellation navigation');
+    btn.setAttribute('aria-haspopup', 'dialog');
+    btn.setAttribute('aria-expanded', 'false');
     btn.style.cssText = [
-      'width:' + TOPBAR_SIZE + 'px',
-      'height:' + TOPBAR_SIZE + 'px',
-      'background:none',
-      'border:none',
-      'cursor:pointer',
-      'padding:0',
-      'flex-shrink:0',
-      'display:flex',
-      'align-items:center',
-      'justify-content:center',
-      'position:relative',
-      'z-index:10'
+      'width:44px', 'height:44px', 'border-radius:50%',
+      'border:1px solid rgba(212,160,74,0.35)',
+      'background:linear-gradient(145deg,rgba(212,160,74,.18),rgba(212,160,74,.04))',
+      'cursor:pointer', 'padding:0', 'display:grid', 'place-items:center',
+      'flex-shrink:0', 'transition:border-color .2s',
+      'outline-offset:2px'
     ].join(';');
 
     var canvas = document.createElement('canvas');
-    registerCanvas(canvas, TOPBAR_SIZE, 0); // phaseOffset 0 = primary glyph
+    registerCanvas(canvas, TOPBAR_SIZE, 0);
     btn.appendChild(canvas);
     btn.addEventListener('click', toggleOverlay);
 
-    // [ARCH-6] Guard against leak — clear before creating
+    // Guard against leak — clear before creating
     if (tooltipInterval) { clearInterval(tooltipInterval); tooltipInterval = null; }
     function updateTooltip() {
       var s = getState();
@@ -516,10 +370,30 @@
   }
 
   /* ─────────────────────────────────────────────────────────────────
-     OVERLAY — Pool-Clustered Radial Canvas Map
+     CURRENT PAGE DETECTION — v2.0
+     Detects current page from window.location and marks it in overlay
+  ───────────────────────────────────────────────────────────────── */
+
+  function detectCurrentPage() {
+    var path = window.location.pathname.replace(/\/$/, '') || '/';
+    var filename = path.split('/').pop() || '';
+    for (var i = 0; i < ROOMS.length; i++) {
+      var url = ROOMS[i].url;
+      var urlFile = url.replace(/^\//, '').split('/').pop() || '';
+      if (urlFile === filename) return ROOMS[i].id;
+      if ((filename === '' || filename === 'index.html') && url === '/') return ROOMS[i].id;
+    }
+    return null;
+  }
+
+  /* ─────────────────────────────────────────────────────────────────
+     OVERLAY — v2.0
+     Grouped sections, sublabels, keyboard nav, OR&D state footer
   ───────────────────────────────────────────────────────────────── */
 
   function buildOverlay(currentRoom) {
+    var autoCurrentRoom = detectCurrentPage() || currentRoom;
+
     var ov = document.createElement('div');
     ov.id = 'cn-overlay';
     ov.setAttribute('role', 'dialog');
@@ -530,18 +404,23 @@
       'display:flex', 'flex-direction:column', 'align-items:center', 'justify-content:center',
       'background:rgba(15,14,12,0.96)',
       'backdrop-filter:blur(20px)', '-webkit-backdrop-filter:blur(20px)',
-      'opacity:0', 'transition:opacity .25s ease', 'overflow:hidden'
+      'opacity:0', 'transition:opacity .25s ease', 'overflow-y:auto'
     ].join(';');
 
     ov.addEventListener('click', function(e) { if (e.target === ov) closeOverlay(); });
 
-    var mapWrap = document.createElement('div');
-    mapWrap.style.cssText = 'position:relative;display:flex;flex-direction:column;align-items:center;gap:0;';
+    var inner = document.createElement('div');
+    inner.style.cssText = 'width:min(800px,calc(100% - 32px));margin:0 auto;padding:28px 0 20px;display:flex;flex-direction:column;gap:0;';
 
+    // Map + grouped nav row
+    var mapAndNav = document.createElement('div');
+    mapAndNav.style.cssText = 'display:flex;gap:24px;align-items:flex-start;flex-wrap:wrap;justify-content:center;';
+
+    // Radial canvas map
     var dpr    = window.devicePixelRatio || 1;
-    var MAP_CSS = Math.min(window.innerWidth * 0.92, window.innerHeight * 0.82, 700);
+    var MAP_CSS = Math.min(window.innerWidth * 0.42, window.innerHeight * 0.52, 340);
     var mapCanvas = document.createElement('canvas');
-    mapCanvas.style.cssText = 'display:block;cursor:default;';
+    mapCanvas.style.cssText = 'display:block;cursor:default;flex-shrink:0;';
     mapCanvas.width  = Math.round(MAP_CSS * dpr);
     mapCanvas.height = Math.round(MAP_CSS * dpr);
     mapCanvas.style.width  = MAP_CSS + 'px';
@@ -551,15 +430,11 @@
 
     var hoveredIdx = -1;
 
-    // ── Pre-compute node positions using pool-clustered orbits ──
-    // Each pool gets its own ring. Within a pool, rooms are evenly distributed
-    // around that ring. Home and Site Map get the center cluster.
     function getNodePositions() {
       var W = MAP_CSS, H = MAP_CSS;
       var cx = W / 2, cy = H / 2;
       var maxR = Math.min(W, H) * 0.46;
 
-      // Partition ROOMS by pool
       var byPool = { 0: [], 1: [], 2: [], 3: [] };
       ROOMS.forEach(function(rm, idx) {
         var p = rm.pool !== undefined ? rm.pool : 2;
@@ -568,10 +443,10 @@
 
       var positions = new Array(ROOMS.length);
 
-      // Pool 0 (home, site-map) — very inner cluster, split left/right
+      // Pool 0 — small cluster near top
       var p0 = byPool[0];
       p0.forEach(function(item, i) {
-        var baseAngle = i === 0 ? -Math.PI * 0.6 : -Math.PI * 0.4;
+        var baseAngle = -Math.PI * 0.5 + (i - (p0.length - 1) / 2) * 0.32;
         var orbitR = maxR * POOL_ORBIT_FRAC[0];
         positions[item.origIdx] = {
           x: cx + Math.cos(baseAngle) * orbitR,
@@ -580,14 +455,10 @@
         };
       });
 
-      // Pools 1, 2, 3 — evenly spaced around their ring
       [1, 2, 3].forEach(function(poolNum) {
         var items = byPool[poolNum];
         if (!items.length) return;
         var orbitR = maxR * POOL_ORBIT_FRAC[poolNum];
-
-        // For pool 2, nudge recordingHall and Writable Wall slightly outward
-        // to give them a liminal position
         var angleStart = -Math.PI / 2 - (poolNum - 1) * Math.PI * 0.04;
         items.forEach(function(item, i) {
           var angle = angleStart + (i / items.length) * Math.PI * 2;
@@ -604,13 +475,11 @@
     }
 
     var nodePositions = null;
-
-    function hitRadius() { return MAP_CSS > 500 ? 28 : 22; }
+    function hitRadius() { return MAP_CSS > 300 ? 24 : 18; }
 
     mapCanvas.addEventListener('mousemove', function(e) {
       var rect = mapCanvas.getBoundingClientRect();
       var mx = e.clientX - rect.left, my = e.clientY - rect.top;
-      var prev = hoveredIdx;
       hoveredIdx = -1;
       if (!nodePositions) return;
       nodePositions.forEach(function(pos, i) {
@@ -632,7 +501,6 @@
       });
     });
 
-    // Touch support for mobile
     mapCanvas.addEventListener('touchend', function(e) {
       e.preventDefault();
       var rect = mapCanvas.getBoundingClientRect();
@@ -658,144 +526,307 @@
       var W = MAP_CSS, H = MAP_CSS;
       var cx = W / 2, cy = H / 2;
       var maxR = Math.min(W, H) * 0.46;
-      var cSize = Math.min(W, H) * 0.13;
+      var cSize = Math.min(W, H) * 0.12;
       var state = getState();
       var phase = breathPhase(tSecs, state.bpm, 0);
 
-      // Recompute positions (stable — same each frame unless window resized)
       nodePositions = getNodePositions();
-
       mCtx.clearRect(0, 0, W, H);
 
-      // ── Pool orbit rings (dashed, tinted) ──
+      // Pool orbit rings
       [1, 2, 3].forEach(function(poolNum) {
         var orbitR = maxR * POOL_ORBIT_FRAC[poolNum];
         var tint = POOL_TINTS[poolNum];
         mCtx.setLineDash(poolNum === 2 ? [4, 10] : [2, 8]);
         mCtx.beginPath(); mCtx.arc(cx, cy, orbitR, 0, Math.PI * 2);
-        mCtx.strokeStyle = tint + '0.10)';
-        mCtx.lineWidth = 0.8; mCtx.stroke();
+        mCtx.strokeStyle = tint + '0.08)';
+        mCtx.lineWidth = 0.7; mCtx.stroke();
         mCtx.setLineDash([]);
-        // Pool label — subtle
-        mCtx.font = '400 8px "IBM Plex Mono",monospace';
-        mCtx.fillStyle = tint + '0.28)';
+        // Pool label
+        mCtx.font = '400 7px "IBM Plex Mono",monospace';
+        mCtx.fillStyle = tint + '0.22)';
         mCtx.textAlign = 'center'; mCtx.textBaseline = 'middle';
-        var labelAngle = -Math.PI / 2 - 0.18;
+        var labelAngle = -Math.PI / 2 - 0.15;
         mCtx.fillText(
           poolNum === 1 ? 'Pool 1' : poolNum === 2 ? 'Pool 2' : 'Pool 3',
-          cx + Math.cos(labelAngle) * (orbitR - 10),
-          cy + Math.sin(labelAngle) * (orbitR - 10)
+          cx + Math.cos(labelAngle) * (orbitR - 8),
+          cy + Math.sin(labelAngle) * (orbitR - 8)
         );
       });
 
-      // ── Spokes from center to each node ──
+      // Spokes
       nodePositions.forEach(function(pos, i) {
         if (!pos) return;
         var rgb = hexToRgb(ROOMS[i].color);
         mCtx.beginPath(); mCtx.moveTo(cx, cy); mCtx.lineTo(pos.x, pos.y);
-        mCtx.strokeStyle = 'rgba(' + rgb[0] + ',' + rgb[1] + ',' + rgb[2] + ',0.07)';
-        mCtx.lineWidth = 0.6; mCtx.stroke();
+        mCtx.strokeStyle = 'rgba(' + rgb[0] + ',' + rgb[1] + ',' + rgb[2] + ',0.06)';
+        mCtx.lineWidth = 0.5; mCtx.stroke();
       });
 
-      // ── Room nodes ──
+      // Room nodes
       nodePositions.forEach(function(pos, i) {
         if (!pos) return;
         var rm = ROOMS[i];
-        var isCurrent = (rm.id === currentRoom);
+        var isCurrent = (rm.id === autoCurrentRoom);
         var isHov     = (i === hoveredIdx);
         var rgb = hexToRgb(rm.color);
         var rgba = function(a) { return 'rgba(' + rgb[0] + ',' + rgb[1] + ',' + rgb[2] + ',' + a + ')'; };
+        var nodeR = isCurrent ? 22 : isHov ? 18 : 13;
 
-        var nodeR = isCurrent ? 26 : isHov ? 22 : 16;
-
-        // Glow halo
-        var grd = mCtx.createRadialGradient(pos.x, pos.y, nodeR * 0.5, pos.x, pos.y, nodeR * 2.8);
-        grd.addColorStop(0, rgba(isCurrent ? 0.28 : isHov ? 0.20 : 0.10));
+        var grd = mCtx.createRadialGradient(pos.x, pos.y, nodeR * 0.5, pos.x, pos.y, nodeR * 2.6);
+        grd.addColorStop(0, rgba(isCurrent ? 0.24 : isHov ? 0.16 : 0.08));
         grd.addColorStop(1, 'transparent');
-        mCtx.beginPath(); mCtx.arc(pos.x, pos.y, nodeR * 2.8, 0, Math.PI * 2);
+        mCtx.beginPath(); mCtx.arc(pos.x, pos.y, nodeR * 2.6, 0, Math.PI * 2);
         mCtx.fillStyle = grd; mCtx.fill();
 
-        // Node circle
         mCtx.beginPath(); mCtx.arc(pos.x, pos.y, nodeR, 0, Math.PI * 2);
-        mCtx.fillStyle   = rgba(isCurrent ? 0.30 : isHov ? 0.18 : 0.09);
-        mCtx.strokeStyle = rgba(isCurrent ? 1.0  : isHov ? 0.9  : 0.5);
-        mCtx.lineWidth   = isCurrent ? 2.0 : isHov ? 1.6 : 1.1;
+        mCtx.fillStyle   = rgba(isCurrent ? 0.28 : isHov ? 0.15 : 0.08);
+        mCtx.strokeStyle = rgba(isCurrent ? 1.0  : isHov ? 0.85 : 0.45);
+        mCtx.lineWidth   = isCurrent ? 1.8 : isHov ? 1.4 : 1.0;
         mCtx.fill(); mCtx.stroke();
 
-        // Pulsing inner dot
         var dp = breathPhase(tSecs, state.bpm, i * 0.35);
-        mCtx.beginPath(); mCtx.arc(pos.x, pos.y, 3.0 + dp * 2.8, 0, Math.PI * 2);
-        mCtx.fillStyle = rgba(isCurrent ? 1.0 : 0.85); mCtx.fill();
+        mCtx.beginPath(); mCtx.arc(pos.x, pos.y, 2.5 + dp * 2.2, 0, Math.PI * 2);
+        mCtx.fillStyle = rgba(isCurrent ? 1.0 : 0.80); mCtx.fill();
 
-        // Current room star marker
         if (isCurrent) {
-          mCtx.beginPath(); mCtx.arc(pos.x, pos.y, nodeR + 5, 0, Math.PI * 2);
-          mCtx.strokeStyle = rgba(0.5 + dp * 0.3);
-          mCtx.lineWidth = 1.0;
-          mCtx.setLineDash([3, 6]);
+          mCtx.beginPath(); mCtx.arc(pos.x, pos.y, nodeR + 4, 0, Math.PI * 2);
+          mCtx.strokeStyle = rgba(0.45 + dp * 0.25);
+          mCtx.lineWidth = 0.8;
+          mCtx.setLineDash([2, 5]);
           mCtx.stroke();
           mCtx.setLineDash([]);
         }
 
-        // Label
-        var fontSize = isCurrent ? 13 : isHov ? 12 : 10;
+        var fontSize = isCurrent ? 11 : isHov ? 10 : 9;
         mCtx.font = (isCurrent || isHov ? '500' : '400') + ' ' + fontSize + 'px "IBM Plex Sans",sans-serif';
-        mCtx.fillStyle = (isCurrent || isHov) ? rm.color : 'rgba(194,184,166,0.70)';
+        mCtx.fillStyle = (isCurrent || isHov) ? rm.color : 'rgba(194,184,166,0.65)';
         mCtx.textAlign = 'center'; mCtx.textBaseline = 'top';
-        mCtx.fillText(rm.label, pos.x, pos.y + nodeR + 5);
+        mCtx.fillText(rm.label, pos.x, pos.y + nodeR + 4);
 
-        // "you are here" tag
         if (isCurrent) {
-          mCtx.font = '400 8px "IBM Plex Mono",monospace';
-          mCtx.fillStyle = 'rgba(122,114,104,0.60)';
-          mCtx.fillText('you are here', pos.x, pos.y + nodeR + 20);
+          mCtx.font = '400 7px "IBM Plex Mono",monospace';
+          mCtx.fillStyle = 'rgba(122,114,104,0.55)';
+          mCtx.fillText('you are here', pos.x, pos.y + nodeR + 17);
         }
       });
 
-      // ── Center Witness glyph ──
-      var curRoom = ROOMS.find(function(r) { return r.id === currentRoom; }) || ROOMS[0];
-      var savedState = { li: state.li, bpm: state.bpm, field: state.field, color: curRoom.color };
+      // Center Witness glyph
       mCtx.save();
       mCtx.translate(cx - cSize / 2, cy - cSize / 2);
       var shimCanvas = { getContext: function() { return mCtx; } };
-      drawWitness(shimCanvas, cSize, phase, savedState);
+      drawWitness(shimCanvas, cSize, phase, state);
       mCtx.restore();
 
-      // Center label — field state
-      mCtx.font = '400 8px "IBM Plex Mono",monospace';
-      mCtx.fillStyle = 'rgba(122,114,104,0.45)';
+      // Center label
+      mCtx.font = '400 7px "IBM Plex Mono",monospace';
+      mCtx.fillStyle = 'rgba(122,114,104,0.40)';
       mCtx.textAlign = 'center'; mCtx.textBaseline = 'top';
-      mCtx.fillText('FIELD · ' + state.field.toUpperCase() + ' · ' + state.bpm + ' BPM', cx, cy + cSize / 2 + 8);
+      mCtx.fillText('FIELD · ' + state.field.toUpperCase() + ' · ' + state.bpm + ' BPM', cx, cy + cSize / 2 + 6);
 
-      // Bottom status bar
-      mCtx.font = '400 8px "IBM Plex Mono",monospace';
-      mCtx.fillStyle = 'rgba(122,114,104,0.38)';
-      mCtx.textAlign = 'center'; mCtx.textBaseline = 'bottom';
-      mCtx.fillText('LI ' + state.li.toFixed(4) + '  ·  15 rooms  ·  click any room to enter', cx, H - 12);
+      // Bottom: N count and LI
+      mCtx.font = '400 7px "IBM Plex Mono",monospace';
+      mCtx.fillStyle = 'rgba(122,114,104,0.32)';
+      mCtx.textBaseline = 'bottom';
+      mCtx.fillText('LI ' + state.li.toFixed(4) + '  ·  ' + ROOMS.length + ' rooms  ·  click to enter', cx, H - 10);
     }
 
     ov._drawMap = drawMap;
-    mapWrap.appendChild(mapCanvas);
+    mapAndNav.appendChild(mapCanvas);
 
+    // Grouped navigation panel — v2.0
+    var navPanel = document.createElement('div');
+    navPanel.style.cssText = 'flex:1;min-width:200px;display:flex;flex-direction:column;gap:16px;';
+
+    var poolMeta = [
+      { pool: 0, label: 'Navigation',             color: '#d4a04a' },
+      { pool: 1, label: 'Pool 1 \u2014 The Source',      color: '#a0c8c0' },
+      { pool: 2, label: 'Pool 2 \u2014 The Luminarium',  color: '#88a7d8' },
+      { pool: 3, label: 'Pool 3 \u2014 The Communal',    color: '#9A8AC0' }
+    ];
+
+    var navLinks = [];
+
+    poolMeta.forEach(function(meta) {
+      var groupRooms = ROOMS.filter(function(r) { return r.pool === meta.pool; });
+      if (!groupRooms.length) return;
+
+      var group = document.createElement('div');
+      group.style.cssText = 'display:flex;flex-direction:column;gap:0;';
+
+      var header = document.createElement('div');
+      header.setAttribute('aria-hidden', 'true');
+      header.style.cssText = [
+        'font:700 .62rem "IBM Plex Mono",monospace',
+        'text-transform:uppercase', 'letter-spacing:.14em',
+        'color:' + meta.color,
+        'opacity:0.50',
+        'padding:0 0 5px 0',
+        'margin-bottom:2px',
+        'border-bottom:1px solid rgba(122,114,104,0.12)'
+      ].join(';');
+      header.textContent = meta.label;
+      group.appendChild(header);
+
+      groupRooms.forEach(function(rm) {
+        var isCurrent = (rm.id === autoCurrentRoom);
+        var link = document.createElement('a');
+        link.href = rm.url;
+        link.setAttribute('tabindex', '0');
+        if (isCurrent) link.setAttribute('aria-current', 'page');
+        link.style.cssText = [
+          'display:flex', 'flex-direction:column', 'gap:1px',
+          'padding:7px 10px',
+          'border-radius:5px',
+          'text-decoration:none',
+          'transition:background .14s',
+          'border-left:2px solid ' + (isCurrent ? rm.color : 'transparent'),
+          'background:' + (isCurrent ? 'rgba(212,160,74,0.06)' : 'transparent')
+        ].join(';');
+
+        var labelEl = document.createElement('span');
+        labelEl.style.cssText = [
+          'font:' + (isCurrent ? '600' : '500') + ' .86rem "IBM Plex Sans",sans-serif',
+          'color:' + (isCurrent ? rm.color : '#c2b8a6')
+        ].join(';');
+        labelEl.textContent = rm.label;
+        link.appendChild(labelEl);
+
+        if (rm.sublabel) {
+          var sublabelEl = document.createElement('span');
+          sublabelEl.style.cssText = 'font:400 .70rem "IBM Plex Mono",monospace;color:rgba(122,114,104,0.65);';
+          sublabelEl.textContent = rm.sublabel;
+          link.appendChild(sublabelEl);
+        }
+
+        if (isCurrent) {
+          var curTag = document.createElement('span');
+          curTag.setAttribute('aria-hidden', 'true');
+          curTag.style.cssText = [
+            'font:500 .60rem "IBM Plex Mono",monospace',
+            'color:' + rm.color,
+            'opacity:0.65',
+            'margin-top:1px'
+          ].join(';');
+          curTag.textContent = '\u2190 you are here';
+          link.appendChild(curTag);
+        }
+
+        link.addEventListener('mouseover', function() {
+          link.style.background = 'rgba(212,160,74,0.07)';
+        });
+        link.addEventListener('mouseout', function() {
+          link.style.background = isCurrent ? 'rgba(212,160,74,0.06)' : 'transparent';
+        });
+        link.addEventListener('focus', function() {
+          link.style.background = 'rgba(212,160,74,0.07)';
+          link.style.outline = '2px solid rgba(241,195,110,0.55)';
+          link.style.outlineOffset = '1px';
+        });
+        link.addEventListener('blur', function() {
+          link.style.background = isCurrent ? 'rgba(212,160,74,0.06)' : 'transparent';
+          link.style.outline = 'none';
+        });
+
+        group.appendChild(link);
+        navLinks.push(link);
+      });
+
+      navPanel.appendChild(group);
+    });
+
+    mapAndNav.appendChild(navPanel);
+    inner.appendChild(mapAndNav);
+
+    // OR&D State Footer — v2.0
+    var ordFooter = document.createElement('div');
+    ordFooter.style.cssText = [
+      'margin-top:18px', 'padding-top:12px',
+      'border-top:1px solid rgba(122,114,104,0.12)',
+      'display:flex', 'align-items:center', 'justify-content:space-between',
+      'flex-wrap:wrap', 'gap:6px'
+    ].join(';');
+
+    var ordLeft = document.createElement('span');
+    ordLeft.style.cssText = 'font:400 .68rem "IBM Plex Mono",monospace;color:rgba(122,114,104,0.50);';
+    ordLeft.textContent = 'OR\u0026D Phase \u00b7 TRL 2\u20133 \u00b7 humanaios.ai';
+
+    var ordRight = document.createElement('span');
+    ordRight.id = 'cn-ord-state';
+    ordRight.style.cssText = 'font:400 .68rem "IBM Plex Mono",monospace;color:rgba(122,114,104,0.42);';
+
+    function updateOrdState() {
+      var s = getState();
+      ordRight.textContent = 'N=' + _liveN + '  \u00b7  LI ' + meanLI.toFixed(4) + '  \u00b7  ' + s.field.toUpperCase();
+    }
+    updateOrdState();
+    ov._updateOrdState = updateOrdState;
+
+    ordFooter.appendChild(ordLeft);
+    ordFooter.appendChild(ordRight);
+    inner.appendChild(ordFooter);
+
+    // Close hint
     var escEl = document.createElement('div');
-    escEl.textContent = 'click a room to enter  ·  ESC to close';
-    escEl.style.cssText = 'font-family:"IBM Plex Mono",monospace;font-size:9px;color:#7a7268;margin-top:10px;letter-spacing:.1em;';
-    mapWrap.appendChild(escEl);
+    escEl.setAttribute('aria-hidden', 'true');
+    escEl.textContent = 'click outside or ESC to close  \u00b7  arrows to navigate list';
+    escEl.style.cssText = 'font-family:"IBM Plex Mono",monospace;font-size:8px;color:#7a7268;margin-top:7px;letter-spacing:.07em;text-align:center;opacity:0.55;';
+    inner.appendChild(escEl);
 
-    ov.appendChild(mapWrap);
+    ov.appendChild(inner);
+
+    // Keyboard navigation — v2.0
+    ov.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') { closeOverlay(); return; }
+
+      if (e.key === 'Tab') {
+        if (!navLinks.length) return;
+        var focused = document.activeElement;
+        var idx = navLinks.indexOf(focused);
+        e.preventDefault();
+        if (idx === -1) { navLinks[0].focus(); return; }
+        if (e.shiftKey) {
+          navLinks[(idx - 1 + navLinks.length) % navLinks.length].focus();
+        } else {
+          navLinks[(idx + 1) % navLinks.length].focus();
+        }
+      }
+
+      if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+        if (!navLinks.length) return;
+        e.preventDefault();
+        var focused = document.activeElement;
+        var idx = navLinks.indexOf(focused);
+        if (idx === -1) { navLinks[0].focus(); return; }
+        if (e.key === 'ArrowDown') {
+          navLinks[Math.min(idx + 1, navLinks.length - 1)].focus();
+        } else {
+          navLinks[Math.max(idx - 1, 0)].focus();
+        }
+      }
+    });
+
     return ov;
   }
 
   function openOverlay() {
     if (!overlayEl) return;
+    var btn = document.getElementById('cn-glyph-btn');
+    if (btn) btn.setAttribute('aria-expanded', 'true');
     overlayEl.style.display = 'flex';
     requestAnimationFrame(function() { overlayEl.style.opacity = '1'; });
     overlayOpen = true;
     document.body.style.overflow = 'hidden';
+    setTimeout(function() {
+      var first = overlayEl.querySelector('a[href]');
+      if (first) first.focus();
+    }, 260);
   }
 
   function closeOverlay() {
     if (!overlayEl) return;
+    var btn = document.getElementById('cn-glyph-btn');
+    if (btn) { btn.setAttribute('aria-expanded', 'false'); btn.focus(); }
     overlayEl.style.opacity = '0';
     setTimeout(function() {
       if (overlayEl) overlayEl.style.display = 'none';
@@ -826,22 +857,23 @@
     updateEngine(dt);
     var state = getState();
 
-    // Iterate canvas registry — no DOM queries
     for (var i = 0; i < canvases.length; i++) {
       var entry = canvases[i];
       var phase = breathPhase(tSecs, state.bpm, entry.phaseOffset);
       drawWitness(entry.canvas, entry.size, phase, state);
     }
 
-    // Keep overlay map live-animated when open
-    if (overlayOpen && overlayEl && overlayEl._drawMap) overlayEl._drawMap();
+    if (overlayOpen && overlayEl) {
+      if (overlayEl._drawMap) overlayEl._drawMap();
+      if (overlayEl._updateOrdState) overlayEl._updateOrdState();
+    }
 
     requestAnimationFrame(loop);
   }
 
   /* ─────────────────────────────────────────────────────────────────
      INIT
-     Injection rule (v4.6): replaceChild ALWAYS — NEVER appendChild.
+     Injection rule (v2.0): replaceChild ALWAYS — NEVER appendChild.
      brand-mark is direct child of .topbar-inner, BEFORE <a>.
   ───────────────────────────────────────────────────────────────── */
 
@@ -849,7 +881,7 @@
     var script      = document.currentScript || document.querySelector('script[src*="constellation-nav"]');
     var currentRoom = (script && script.dataset && script.dataset.room) || 'home';
 
-    // ── CRITICAL: replaceChild injection — NEVER appendChild ──
+    // CRITICAL: replaceChild injection — NEVER appendChild
     var bm = document.querySelector('.brand-mark');
     if (bm) {
       var btn = createTopbarGlyph(currentRoom);
@@ -897,7 +929,7 @@
 
   /* ─────────────────────────────────────────────────────────────────
      PUBLIC API
-     Clean contract for Observatory / WebSocket / external telemetry
+     Clean contract for Observatory / external telemetry
   ───────────────────────────────────────────────────────────────── */
 
   // Clamped + interpolated LI update — no snapping
@@ -909,8 +941,8 @@
   window._cnGetState = getState;
 
   // Field state and provider color — available globally
-  window._cnFieldState    = fieldState;
-  window._cnProviderColor = providerColor;
+  window._cnFieldState     = fieldState;
+  window._cnProviderColor  = providerColor;
   window._cnProviderColors = PROVIDER_COLORS;
   window._cnRooms          = ROOMS;
 

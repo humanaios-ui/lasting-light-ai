@@ -59,6 +59,12 @@ body::before{
 .brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--text);}
 .brand-copy strong{display:block;font-size:.95rem;font-weight:700;letter-spacing:.02em;}
 .brand-copy span{display:block;font-size:.74rem;color:var(--muted);}
+nav{display:flex;flex-wrap:wrap;gap:4px;margin-left:auto;}
+nav a{color:var(--muted);text-decoration:none;padding:7px 12px;border-radius:999px;border:1px solid transparent;transition:.18s ease;font-size:.88rem;}
+nav a:hover,nav a:focus-visible{color:var(--text);background:rgba(212,160,74,.07);border-color:var(--line-strong);outline:none;}
+nav a.nav-cta{color:var(--bg);background:linear-gradient(180deg,var(--accent-2),var(--accent));border-color:transparent;font-weight:700;}
+nav a.nav-cta:hover{opacity:.9;}
+a:focus-visible,button:focus-visible{outline:2px solid var(--accent-2);outline-offset:2px;}
 
 /* ── TYPOGRAPHY ── */
 h1{font:600 clamp(3rem,7vw,5.4rem)/1.04 'Cormorant Garamond',serif;letter-spacing:-.02em;}
@@ -192,6 +198,13 @@ a.prose-link:hover{color:var(--accent-2);border-color:var(--accent);}
         <span>Lasting Light AI · OR&amp;D Phase</span>
       </div>
     </a>
+    <nav aria-label="Primary navigation">
+      <a href="how-it-works.html">How It Works</a>
+      <a href="methodology.html">For Researchers</a>
+      <a href="observatory.html">Observatory</a>
+      <a href="#rooms">All Rooms</a>
+      <a href="acat-assessment-tool.html" class="nav-cta">Take ACAT →</a>
+    </nav>
   </div>
 </header>
 
@@ -341,6 +354,8 @@ a.prose-link:hover{color:var(--accent-2);border-color:var(--accent);}
     <div class="footer-inner">
       <span class="footer-left">HumanAIOS · Lasting Light AI · OR&amp;D Phase · TRL 2–3</span>
       <div class="footer-right">
+        <a href="how-it-works.html">How It Works</a>
+        <a href="methodology.html">For Researchers</a>
         <a href="assess.html">Assessment</a>
         <a href="ground.html">The Ground</a>
         <a href="observatory.html">Observatory</a>
