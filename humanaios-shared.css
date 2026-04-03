@@ -391,7 +391,7 @@ textarea:focus-visible,
 
 /* W8 — Framework caveat indicator */
 .framework-caveat {
-  font-size: 0.75rem;
+  font-size: 0.875rem;
   color: var(--muted);
   cursor: help;
   margin-left: 4px;
