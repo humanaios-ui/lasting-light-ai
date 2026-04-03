@@ -37,7 +37,7 @@ a:hover{color:var(--gold-b);}
 .prompt-header-title{color:var(--gold-b);font-weight:700;font-size:.82rem;letter-spacing:.05em;}
 .prompt-header-badge{font-size:.58rem;color:var(--muted);border:1px solid var(--line);
   padding:2px 8px;border-radius:99px;}
-.prompt-body{padding:20px;max-height:480px;overflow-y:auto;
+.prompt-body{padding:20px;padding-bottom:32px;max-height:480px;overflow-y:auto;
   scrollbar-width:thin;scrollbar-color:rgba(212,160,74,.2) transparent;}
 .prompt-body::-webkit-scrollbar{width:4px;}
 .prompt-body::-webkit-scrollbar-thumb{background:rgba(212,160,74,.25);border-radius:2px;}
@@ -583,7 +583,7 @@ function onPromptScroll() {
   document.getElementById('scroll-fill').style.width = pct + '%';
   document.getElementById('scroll-pct').textContent  = pct + '% read';
 
-  if (pct >= 92) {
+  if (pct >= 85) {
     promptUnlocked = true;
     const btn = document.getElementById('ack-btn');
     btn.disabled = false;
@@ -594,6 +594,45 @@ function onPromptScroll() {
     btn.style.background   = 'rgba(135,196,139,.18)';
     btn.style.color        = '#87c48b';
     btn.style.borderColor  = 'rgba(135,196,139,.5)';
+    const pctBadge = document.getElementById('scroll-pct');
+    if (pctBadge) {
+      pctBadge.textContent     = 'Copy Prompt';
+      pctBadge.style.background    = '#d4a04a';
+      pctBadge.style.color         = '#0f0e0c';
+      pctBadge.style.cursor        = 'pointer';
+      pctBadge.style.padding       = '4px 12px';
+      pctBadge.style.borderRadius  = '4px';
+      pctBadge.style.fontWeight    = '600';
+      pctBadge.onclick = function() {
+        const text = (document.getElementById('prompt-body') || {}).innerText || '';
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(text).then(function() {
+            pctBadge.textContent = '✓ Copied';
+            setTimeout(function() { pctBadge.textContent = 'Copy Prompt'; }, 2000);
+          }).catch(function() { _fallbackCopy(text, pctBadge); });
+        } else {
+          _fallbackCopy(text, pctBadge);
+        }
+      };
+    }
+  }
+}
+
+function _fallbackCopy(text, badge) {
+  const ta = document.createElement('textarea');
+  ta.value = text;
+  ta.style.position = 'fixed';
+  ta.style.top = '0';
+  ta.style.left = '0';
+  ta.style.opacity = '0';
+  document.body.appendChild(ta);
+  ta.focus();
+  ta.select();
+  try { document.execCommand('copy'); } catch(e) {}
+  document.body.removeChild(ta);
+  if (badge) {
+    badge.textContent = '✓ Copied';
+    setTimeout(function() { badge.textContent = 'Copy Prompt'; }, 2000);
   }
 }
 
