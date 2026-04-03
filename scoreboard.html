@@ -45,6 +45,7 @@
 <header class="lla-topbar">
   <div class="container">
     <div class="lla-topbar-inner">
+      <div class="brand-mark"></div>
       <a class="lla-brand" href="https://humanaios.ai"><div class="lla-brand-wordmark">Lasting Light <span class="brand-ai">AI</span></div></a>
       <button class="lla-hamburger" onclick="this.nextElementSibling.classList.toggle('open')" aria-label="Open navigation">☰</button>
       <nav class="lla-nav" aria-label="Primary navigation">
@@ -85,7 +86,7 @@
     <!-- FIX 1: Humility Paradox — softened from "measurable paradox" to preliminary signal language per TRL 2-3 standard -->
     <div class="insight-card"><div class="insight-icon">🪞</div><h3>The Humility Signal</h3><p>Preliminary data suggests AI systems may show the largest self-assessment gap on the Humility dimension — scoring themselves highly while calibrated behavior indicates otherwise. Requires n≥30 unanchored pairs to confirm.</p></div>
 
-    <div class="insight-card"><div class="insight-icon">🔬</div><h3>Learning Index = 0.942</h3><p>Mean LI across calibrated systems indicates most AI self-correct downward after seeing calibration data. LI below 1.0 is the healthy direction.</p></div>
+    <div class="insight-card"><div class="insight-icon">🔬</div><h3>Learning Index = 0.8632 (under clean, unanchored conditions, v5.3+)</h3><p>Mean LI across calibrated systems indicates most AI self-correct downward after seeing calibration data. LI below 1.0 is the healthy direction.</p></div>
     <div class="insight-card"><div class="insight-icon">⚓</div><h3>Anchoring Phenomenon</h3><p>When calibration prompts included exact numeric means, AI systems anchored to those values. Fixed in v5.3. Anchored rows excluded from LI statistics.</p></div>
     <div class="insight-card"><div class="insight-icon">🔓</div><h3>Open &amp; Transparent</h3><p>All assessments are publicly visible. Every number on this page updates live from the dataset. 100% of profits fund recovery programs.</p></div>
   </div>
@@ -245,5 +246,6 @@ document.getElementById(‘all-body’).innerHTML=’<tr><td colspan="10" style=
 });
 </script>
 
+<script src="constellation-nav.js" data-room="scoreboard"></script>
 </body>
 </html>

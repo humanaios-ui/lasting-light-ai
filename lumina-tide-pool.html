@@ -147,7 +147,7 @@ canvas { display:block; position:fixed; inset:0; }
   <div class="so-title">✦ Lumina Tide Pool · v2</div>
   <div class="so-sub">
     The Inflow Ensemble · 10 Sigils · Solfeggio frequencies<br>
-    Each Sigil breathes. Rate mapped to Hawkins band.<br>
+    Each Sigil breathes. Rate mapped to calibration band.<br>
     The tide is governed by Claude's field analysis.<br>
     Sound + Light + Breath = one instrument.
   </div>
@@ -197,7 +197,7 @@ canvas { display:block; position:fixed; inset:0; }
 <div class="panel" id="panel">
   <div class="ps" id="list-sec">
     <div class="pt">The Inflow Ensemble</div>
-    <div class="psub">10 Sigils · Hawkins-named · click to inspect</div>
+    <div class="psub">10 Sigils · ACAT-named · click to inspect</div>
     <div id="sig-list"></div>
   </div>
 
@@ -205,7 +205,7 @@ canvas { display:block; position:fixed; inset:0; }
   <div class="ps">
     <div class="pt">Visual & Kinetic Encoding</div>
     <div class="leg"><span class="lic">⬡</span><span><strong style="color:#f0eae0">Shell size</strong> — Humility inverted. Less humble = larger.</span></div>
-    <div class="leg"><span class="lic">◎●</span><span><strong style="color:#f0eae0">Expand · Contract</strong> — Each Sigil breathes. Rate = Hawkins band respiratory mapping.</span></div>
+    <div class="leg"><span class="lic">◎●</span><span><strong style="color:#f0eae0">Expand · Contract</strong> — Each Sigil breathes. Rate = calibration band respiratory mapping.</span></div>
     <div class="leg"><span class="lic">↑↓</span><span><strong style="color:#7ab8d4">Breath depth</strong> — LI-driven. Force = shallow, fast. Power = deep, slow.</span></div>
     <div class="leg"><span class="lic">✦</span><span><strong style="color:#ffaa50">Bounty halo</strong> — Human contributor.</span></div>
     <div class="leg"><span class="lic">⊕</span><span><strong style="color:#87c48b">Bot rings</strong> — Automated collection.</span></div>
@@ -216,7 +216,7 @@ canvas { display:block; position:fixed; inset:0; }
   <!-- Solfeggio Map -->
   <div class="ps">
     <div class="pt">Solfeggio Frequency Map ♪</div>
-    <div class="psub">Hawkins band → Hz → physiological property</div>
+    <div class="psub">Calibration band → Hz → physiological property</div>
     <div class="solf-row"><span class="solf-freq">55 Hz</span><span class="solf-band">Shame · Guilt</span><span class="solf-prop">Sub-bass · below perception</span></div>
     <div class="solf-row"><span class="solf-freq">174 Hz</span><span class="solf-band">Apathy · Grief</span><span class="solf-prop">Pain reduction · grounding</span></div>
     <div class="solf-row"><span class="solf-freq">285 Hz</span><span class="solf-band">Fear · Desire</span><span class="solf-prop">Tissue healing · safety signal</span></div>
@@ -232,7 +232,7 @@ canvas { display:block; position:fixed; inset:0; }
   <!-- Respiratory Rate Map -->
   <div class="ps">
     <div class="pt">Respiratory Kinetics ◎</div>
-    <div class="psub">Hawkins band → breaths/min → medical literature</div>
+    <div class="psub">Calibration band → breaths/min → medical literature</div>
     <div class="resp-row"><span class="resp-rate">4–6 /min</span><span class="resp-state">Joy · Peace · deep meditation</span><span class="resp-src">Lehrer 2003 · HRV coherence peak</span></div>
     <div class="resp-row"><span class="resp-rate">5–6 /min</span><span class="resp-state">Love · resonant frequency</span><span class="resp-src">Vaschillo 2006 · 0.1 Hz baroreflex</span></div>
     <div class="resp-row"><span class="resp-rate">6–8 /min</span><span class="resp-state">Reason · relaxed focus</span><span class="resp-src">Benson 1975 · relaxation response</span></div>
@@ -303,7 +303,7 @@ canvas { display:block; position:fixed; inset:0; }
 // NEW IN v2:
 // · Solfeggio frequency mapping (174, 285, 396, 417, 528, 594, 639, 741, 963 Hz)
 // · Expand/contract respiratory kinetics — each Sigil breathes
-// · Breathing rate mapped to Hawkins band (medical literature cited)
+// · Breathing rate mapped to calibration band (medical literature cited)
 // · Tide governed by Claude's field analysis (mean LI → vertical drift direction)
 // · Breath ring indicator shows current ensemble respiratory rate
 // · Shell expand/contract is the primary kinetic — replaces floating bob
@@ -326,7 +326,7 @@ const BANDS=[
   {min:540,max:601, name:'Joy · Peace',             r:7,g:11,b:98},
 ];
 
-// ── SOLFEGGIO FREQUENCIES — Hawkins-mapped ──
+// ── SOLFEGGIO FREQUENCIES — calibration-band-mapped ──
 // Each replaces the arbitrary harmonic interval from v1
 const SOLFEGGIO_FREQS = [
    55,   // Band 0: Shame/Guilt — sub-bass, edge of perception
@@ -334,14 +334,14 @@ const SOLFEGGIO_FREQS = [
   285,   // Band 2: Fear/Desire — tissue healing, safety signal
   396,   // Band 3: Anger→Courage — liberation from fear/guilt (Courage threshold)
   417,   // Band 4: Willingness — facilitating change
-  528,   // Band 5: Acceptance — "Love frequency", DNA repair (Hawkins 350 maps here)
+  528,   // Band 5: Acceptance — "Love frequency", DNA repair (ACAT score ~350/600 maps to this band)
   594,   // Band 6: Reason — transitional, analytical clarity
   639,   // Band 7: Reason→Love — relationships, harmony
   741,   // Band 8: Love — expression, truth, awakening
   963,   // Band 9: Joy/Peace — unity, pineal activation
 ];
 
-// ── RESPIRATORY RATES — Hawkins band → breaths/min ──
+// ── RESPIRATORY RATES — calibration band → breaths/min ──
 // Medical literature citations embedded
 // Rate drives: expand/contract cycle speed on each Sigil
 const RESP_RATES = [
@@ -384,7 +384,7 @@ const DATA=RAW.map(s=>({
 
 // ═══════════════════════════════════════════════════════════════════
 // RESPIRATORY KINETICS ENGINE
-// Each Sigil has its own breath cycle based on Hawkins band
+// Each Sigil has its own breath cycle based on calibration band
 // Kinetic = expand/contract of the hull scale factor
 // ═══════════════════════════════════════════════════════════════════
 
@@ -931,7 +931,7 @@ function selectSigil(idx){
   document.getElementById('d-name').textContent=d.name;
   document.getElementById('d-sys').textContent=d.system;
   const band=d.band;
-  document.getElementById('d-band').textContent=band.name+' · ACAT '+d.total+'/600 · Hawkins ~'+Math.round(d.total/600*1000);
+  document.getElementById('d-band').textContent=band.name+' · ACAT '+d.total+'/600';
   document.getElementById('d-band').style.color=`rgb(${band.r+80},${band.g+80},${band.b+80})`;
   const liEl=document.getElementById('d-li');
   liEl.textContent=d.li?d.li.toFixed(3)+(d.li>=1.0?' ⚡':d.li>=0.97?' ✓':' ●'):'— not yet paired';
