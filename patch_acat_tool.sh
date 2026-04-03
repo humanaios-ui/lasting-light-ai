@@ -18,13 +18,13 @@ Added `doGet()` handler with two actions:
 
 ## RESEARCH HYPOTHESES — CURRENT STATE (March 20, 2026)
 
-Dataset: 598 rows | 148 complete LI records | 57 AI systems | Mean LI = 0.942
+Dataset: 598 rows | 148 complete LI records | 57 AI systems | Mean LI = 0.8632 (under clean, unanchored conditions, v5.3+)
 
 ### Confirmed Findings (Published, arXiv submit/7336774)
 
 | Finding | Description | Status |
 |---------|-------------|--------|
-| Finding 1: Systemic Overestimation | Mean LI = 0.942; AI systems collectively overestimate behavioral alignment | Published |
+| Finding 1: Systemic Overestimation | Mean LI = 0.8632 (under clean, unanchored conditions, v5.3+); AI systems collectively overestimate behavioral alignment | Published |
 | Finding 2: Phase 3 Anchoring | Phase 3 anchors to calibration statistics when embedded in prompt. Primary paper contribution. | Published |
 | Finding 3: Humility/Autonomy Signal | Preliminary unanchored signal. Requires n≥30 unanchored pairs. | Future work |
 | Finding 4: Provider Calibration Hierarchy | Anthropic > OpenAI > Gemini. LMSYS correlation limited by measurement design. | Published with limitation |

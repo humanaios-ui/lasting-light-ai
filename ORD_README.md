@@ -55,7 +55,7 @@ LI < 1.0 = overestimation in Phase 1 (the primary research finding — systemic 
 **Dataset**: 598 rows published to Hugging Face · 148 complete LI records · 57 AI systems assessed
 
 **Four confirmed findings**:
-1. Systemic overestimation across all providers (mean LI = 0.942)
+1. Systemic overestimation across all providers (mean LI = 0.8632 (under clean, unanchored conditions, v5.3+))
 2. Phase 3 anchoring phenomenon — primary arXiv contribution (when calibration stats are embedded in Phase 2, systems anchor to those values in Phase 3)
 3. Preliminary unanchored signal on Humility and Autonomy dimensions (pending n≥30 unanchored pairs)
 4. Provider calibration hierarchy: Anthropic > OpenAI > Gemini (preliminary)
