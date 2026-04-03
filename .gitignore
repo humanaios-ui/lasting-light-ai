@@ -21,4 +21,21 @@ llai.config.yaml
 .DS_Store
 *.log
 *.bak-*
+*.bak
 config/local*
+
+# Poetry
+poetry.lock
+
+# pip-tools
+requirements*.txt.lock
+
+# Compiled requirements
+requirements-frozen.txt
+
+# FETCH_HEAD and other git internals that leak into worktree
+FETCH_HEAD
+ORIG_HEAD
+MERGE_HEAD
+CHERRY_PICK_HEAD
+REVERT_HEAD

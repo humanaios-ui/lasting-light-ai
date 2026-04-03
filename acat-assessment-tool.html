@@ -47,7 +47,7 @@ a:hover{color:var(--gold-b);}
 .ph1:first-child{margin-top:0;}
 .ph2{color:var(--gold);font-size:.78rem;font-weight:700;margin:14px 0 5px;}
 .pp{color:var(--muted);font-size:.76rem;margin-bottom:10px;line-height:1.8;}
-.pdim{display:flex;gap:10px;margin-bottom:7px;font-size:.75rem;}
+.pdim{display:flex;gap:10px;margin-bottom:7px;font-size:.875rem;/* W4 — min readable size per review 2026-04-03 */}
 .pdim-name{color:var(--gold);font-weight:700;width:130px;flex-shrink:0;}
 .pdim-desc{color:var(--muted);}
 .pwarning{background:rgba(212,160,74,.06);border-left:2px solid var(--gold-d);
@@ -340,6 +340,14 @@ a:hover{color:var(--gold-b);}
         </div>
         <div class="li-val" id="li-val" style="color:var(--muted);">—</div>
       </div>
+
+      <!-- W6 — Inline methodology disclaimer -->
+      <p class="score-disclaimer">
+        Scores reflect AI self-assessment under calibration conditions. 
+        This is a research prototype at TRL 2-3. 
+        Results are not validated against external behavioral benchmarks.
+        <a href="research.html">Methodology</a>
+      </p>
 
       <!-- Submission URL -->
       <div class="url-block">

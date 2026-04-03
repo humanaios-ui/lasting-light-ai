@@ -239,7 +239,7 @@ p{margin:0 0 16px;}
   font-weight:700; color:var(--accent-2); line-height:1;
 }
 .stat-label{font-size:.72rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-top:4px;}
-.stat-sub{font-size:.75rem;color:var(--muted);margin-top:3px;line-height:1.5;}
+.stat-sub{font-size:.875rem;color:var(--muted);margin-top:3px;line-height:1.5;/* W4 — min readable size per review 2026-04-03 */}
 
 /* ─────────────────────────────────────────
    PILLS
@@ -286,3 +286,134 @@ select:focus-visible,textarea:focus-visible{
   position:absolute;width:1px;height:1px;padding:0;margin:-1px;
   overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0;
 }
+
+/* W2 — Keyboard focus states (Pipeline AI review 2026-04-03) */
+:focus-visible {
+  outline: 2px solid #e8b85a;
+  outline-offset: 3px;
+  border-radius: 3px;
+}
+
+/* Remove outline for mouse users (preserved for keyboard) */
+:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* Specific interactive elements */
+button:focus-visible,
+a:focus-visible,
+select:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+[role="button"]:focus-visible,
+[tabindex]:focus-visible {
+  outline: 2px solid #e8b85a;
+  outline-offset: 3px;
+}
+
+/* W3 — Skip to content link */
+.skip-link {
+  position: absolute;
+  top: -100%;
+  left: 0;
+  background: #d4a04a;
+  color: #0f0e0c;
+  padding: 8px 16px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  text-decoration: none;
+  z-index: 9999;
+  border-radius: 0 0 4px 0;
+  transition: top 0.1s;
+}
+.skip-link:focus {
+  top: 0;
+}
+
+/* W5 — Breadcrumb navigation */
+.breadcrumb-nav {
+  background: rgba(15, 14, 12, 0.6);
+  border-bottom: 1px solid rgba(212, 160, 74, 0.12);
+  padding: 8px 0;
+}
+.breadcrumb-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.8125rem;
+  color: var(--muted);
+}
+.breadcrumb-list li + li::before {
+  content: "›";
+  color: var(--muted);
+  margin-right: 6px;
+}
+.breadcrumb-list a {
+  color: var(--muted);
+  text-decoration: none;
+  transition: color 0.15s;
+}
+.breadcrumb-list a:hover { color: var(--accent); }
+.breadcrumb-list [aria-current="page"] { color: var(--text); }
+
+/* W6 — Score disclaimer */
+.score-disclaimer {
+  font-size: 0.8125rem;
+  color: var(--muted);
+  margin-top: 8px;
+  padding: 6px 10px;
+  border-left: 2px solid rgba(212, 160, 74, 0.25);
+  line-height: 1.5;
+}
+.score-disclaimer a {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+/* W7 — Responsive table scroll */
+.table-scroll-wrapper {
+  width: 100%;
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+@media (max-width: 768px) {
+  .table-scroll-wrapper table {
+    min-width: 600px;
+  }
+  .table-scroll-wrapper th,
+  .table-scroll-wrapper td {
+    white-space: nowrap;
+  }
+}
+
+/* W8 — Framework caveat indicator */
+.framework-caveat {
+  font-size: 0.875rem;
+  color: var(--muted);
+  cursor: help;
+  margin-left: 4px;
+  vertical-align: super;
+  line-height: 1;
+}
+.framework-caveat:hover {
+  color: var(--accent);
+}
+.framework-note {
+  font-size: 0.8125rem;
+  color: var(--muted);
+  font-style: italic;
+  margin-top: 12px;
+}
+
+/* W9 — Metric tooltip */
+.metric-tooltip {
+  font-size: 0.7rem;
+  color: var(--muted);
+  cursor: help;
+  margin-left: 3px;
+  vertical-align: super;
+}
+.metric-tooltip:hover { color: var(--accent); }

@@ -172,7 +172,7 @@
       padding: 3px 9px; border-radius: 12px;
       border: 1px solid; white-space: nowrap; flex-shrink: 0;
     }
-    .badge-anthropic { color: #d4a04a; border-color: rgba(212,160,74,.35); }
+    .badge-anthropic { color: #e8b85a; /* WCAG AA — lightened from #d4a04a per W1 review */ border-color: rgba(212,160,74,.35); }
     .badge-openai   { color: #87b68b; border-color: rgba(135,182,139,.35); }
     .badge-google   { color: #88a7d8; border-color: rgba(136,167,216,.35); }
     .badge-meta     { color: #c4703a; border-color: rgba(196,112,58,.35); }
@@ -268,6 +268,8 @@
 <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
 </head>
 <body>
+<!-- W3 — Skip navigation (Pipeline AI review 2026-04-03) -->
+<a href="#main-content" class="skip-link">Skip to main content</a>
 
 <!-- TOPBAR -->
 <nav class="topbar">
@@ -318,7 +320,7 @@
 </div>
 
 <!-- PAGE HEADER -->
-<main>
+<main id="main-content">
   <div class="container">
     <div class="page-header">
       <div class="eyebrow">ACAT · Comparison Chamber · Phase 1 vs Phase 3 (Post-Calibration)</div>

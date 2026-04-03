@@ -33,7 +33,7 @@
     input[type="text"],select{width:100%;padding:11px 14px;background:var(--panel-2);border:1px solid var(--line-strong);border-radius:var(--radius-sm);color:var(--text);font-family:inherit;font-size:.95rem;transition:border-color .2s;}
     input[type="text"]:focus,select:focus{outline:none;border-color:var(--accent);}
     select option{background:#1d1915;}
-    .field-note{font-size:.75rem;color:var(--muted);margin-top:5px;opacity:.8;}
+    .field-note{font-size:.875rem;color:var(--muted);margin-top:5px;opacity:.8;/* W4 — min readable size per review 2026-04-03 */}
     .context-badge{display:none;align-items:center;gap:8px;padding:8px 14px;border-radius:999px;font-size:.78rem;font-weight:600;letter-spacing:.04em;margin-top:10px;}
     .context-badge.show{display:inline-flex;}
     .ctx-ai{background:rgba(136,167,216,.12);border:1px solid rgba(136,167,216,.3);color:var(--blue);}
@@ -115,6 +115,8 @@
   </style>
 </head>
 <body>
+<!-- W3 — Skip navigation (Pipeline AI review 2026-04-03) -->
+<a href="#main-content" class="skip-link">Skip to main content</a>
 
 <header class="lla-topbar">
   <div class="container">
