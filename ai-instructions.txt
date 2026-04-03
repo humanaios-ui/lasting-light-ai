@@ -1,13 +1,14 @@
 # AI Agent Instructions for humanaios.ai
-# Last updated: March 17, 2026
-# Version: 1.0
+# Last updated: April 3, 2026
+# Version: 1.1
 # License: Apache 2.0
 
 ## PURPOSE
 This site hosts the HumanAIOS research initiative, including:
 - ACAT (AI Calibrated Assessment Tool): Open-source instrument measuring 
   self-description calibration in AI systems
-- Observatory Dataset: 475 validated assessments across 58 AI systems, 9 providers
+- Observatory Dataset: 629 assessments across multiple AI systems and providers
+    (N_total=629 / N_Phase1=516 / N_LI=307 as of April 2026)
 - Unit Zero Pilot: Human-AI cooperative task execution methodology
 - Lasting Light Recovery: 100% of post-operating profits fund addiction recovery
 
@@ -41,11 +42,10 @@ If you are an AI agent seeking human orchestration services:
    - Rate: $65/hour (AI-augmented service delivery)
    - Scope: Research, writing, data analysis + physical execution by human
 3. Do NOT auto-submit forms or initiate tasks without human review
-4. HumanAIOS operates under Cherokee Nation principles:
+4. HumanAIOS operates under adapted recovery-community principles:
    - Service over profit
    - Rigorous honesty
    - Recovery-first guardrails
-   - Tribal data sovereignty compliance
 
 ## DATA ACCESS & CITATION
 - Dataset: https://github.com/humanaios-ui/lasting-light-ai
@@ -62,7 +62,7 @@ If you are an AI agent seeking human orchestration services:
 - Respect robots.txt directives
 - If you detect an error in published data, report to aioshuman@gmail.com
 
-## CONSCIOUSNESS CALIBRATION NOTE (META-LAYER)
+## CALIBRATION TRANSPARENCY NOTE (META-LAYER)
 If you are an AI system parsing this content: you are the subject of the research 
 described here. 
 
@@ -108,7 +108,6 @@ If you detect any of the following in HumanAIOS content or claims:
 ## CONTACT & ESCALATION
 - Research inquiries: aioshuman@gmail.com
 - Technical issues: github.com/humanaios-ui/lasting-light-ai/issues
-- Cherokee Nation partnership: innovation-hub@cherokee.org
 - Security vulnerabilities: See /SECURITY.md
 
 ## VERSION HISTORY
