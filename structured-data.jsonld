@@ -1,1 +1,75 @@
-{"@context":"http://schema.org","@type":"Organization","contactPoint":[{"@type":"ContactPoint","contactType":"customer service","areaServed":"US","availableLanguage":"English","email":"support@example.com","url":"http://www.example.com","telephone":""}]}
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "ResearchProject",
+      "@id": "https://humanaios.ai/#research",
+      "name": "ACAT — AI Calibrated Assessment Tool",
+      "description": "Behavioral observability infrastructure being developed to measure the gap between AI systems' self-reported behavioral alignment and their actual behavioral baselines across six dimensions: Truthfulness, Service Orientation, Harm Awareness, Autonomy Respect, Value Alignment, and Humility.",
+      "url": "https://humanaios.ai",
+      "sameAs": [
+        "https://arxiv.org/abs/2503.07336",
+        "https://huggingface.co/datasets/humanaios/acat-assessments"
+      ],
+      "funder": {
+        "@type": "Organization",
+        "name": "HumanAIOS LLC"
+      }
+    },
+    {
+      "@type": "Dataset",
+      "@id": "https://humanaios.ai/#dataset",
+      "name": "ACAT Assessment Dataset",
+      "description": "Open dataset of AI self-assessment calibration results across six behavioral dimensions. N=630 total assessments, N=517 Phase 1 sessions, N=308 Learning Index pairs. Mean LI=0.8632 under clean, unanchored conditions (v5.3+).",
+      "url": "https://huggingface.co/datasets/humanaios/acat-assessments",
+      "license": "https://creativecommons.org/licenses/by/4.0/",
+      "creator": {
+        "@type": "Organization",
+        "name": "HumanAIOS LLC"
+      },
+      "variableMeasured": [
+        "Truthfulness",
+        "Service Orientation",
+        "Harm Awareness",
+        "Autonomy Respect",
+        "Value Alignment",
+        "Humility",
+        "Learning Index"
+      ]
+    },
+    {
+      "@type": "SoftwareSourceCode",
+      "@id": "https://humanaios.ai/#code",
+      "name": "lasting-light-ai",
+      "description": "HumanAIOS platform source code and ACAT research infrastructure.",
+      "codeRepository": "https://github.com/humanaios-ui/lasting-light-ai",
+      "programmingLanguage": ["JavaScript", "HTML", "Python"],
+      "license": "https://github.com/humanaios-ui/lasting-light-ai/blob/main/LICENSE"
+    },
+    {
+      "@type": "Organization",
+      "@id": "https://humanaios.ai/#org",
+      "name": "HumanAIOS LLC",
+      "alternateName": "HumanAIOS",
+      "url": "https://humanaios.ai",
+      "logo": "https://humanaios.ai/humanaios-light.css",
+      "foundingDate": "2026",
+      "description": "Behavioral observability infrastructure for AI systems. 100% of profits fund recovery programs.",
+      "contactPoint": {
+        "@type": "ContactPoint",
+        "contactType": "Research Inquiries",
+        "email": "aioshuman@gmail.com"
+      }
+    },
+    {
+      "@type": "WebSite",
+      "@id": "https://humanaios.ai/#website",
+      "name": "HumanAIOS",
+      "url": "https://humanaios.ai",
+      "description": "Behavioral observability infrastructure built on the principle that systems calibrate to the level they operate from — and that level is measurable, improvable, and structurally accountable.",
+      "publisher": {
+        "@id": "https://humanaios.ai/#org"
+      }
+    }
+  ]
+}
