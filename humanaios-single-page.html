@@ -1,0 +1,1130 @@
+<!DOCTYPE html>
+<!-- FDS: F3-Component | Parent: CUSTOM_INSTRUCTIONS_V3_6_ORD.md | Status: ACTIVE | OR&D Day 25 -->
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HumanAIOS · The Witness · ACAT System</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,600;1,300;1,600&family=IBM+Plex+Sans:wght@300;400;500;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* ═══════════════════════════════════════════════════
+   ROOT TOKENS
+═══════════════════════════════════════════════════ */
+:root {
+  --bg:          #0a0908;
+  --surface:     #141210;
+  --surface2:    #1a1714;
+  --accent:      #d4a04a;
+  --accent2:     #f0c870;
+  --accent-dim:  rgba(212,160,74,.1);
+  --accent-mid:  rgba(212,160,74,.22);
+  --text:        #e8e0d0;
+  --muted:       #7a6e5f;
+  --line:        rgba(212,160,74,.14);
+  --line2:       rgba(212,160,74,.32);
+  --red:         #c0624a;
+  --green:       #5a9e6e;
+  --blue:        #5a82b0;
+  --mono:        'IBM Plex Mono', monospace;
+  --sans:        'IBM Plex Sans', sans-serif;
+  --serif:       'Cormorant Garamond', Georgia, serif;
+  --radius:      6px;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--sans);
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+
+/* Grain overlay */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.05'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 9999;
+  opacity: .4;
+  mix-blend-mode: overlay;
+}
+
+/* ═══════════════════════════════════════════════════
+   SECTION 1 — HERO
+═══════════════════════════════════════════════════ */
+#hero-section {
+  position: relative;
+  width: 100%;
+  height: 100svh;
+  min-height: 520px;
+  max-height: 900px;
+  overflow: hidden;
+}
+
+#hero-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.hero-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  pointer-events: none;
+  z-index: 10;
+}
+
+.hero-eyebrow {
+  font-family: var(--mono);
+  font-size: clamp(.48rem, .75vw, .65rem);
+  letter-spacing: .26em;
+  text-transform: uppercase;
+  color: rgba(212,160,74,.52);
+  margin-bottom: clamp(10px, 2vw, 20px);
+  opacity: 0;
+  animation: riseIn 1.8s .2s ease forwards;
+}
+
+.hero-title {
+  font-family: var(--serif);
+  font-size: clamp(2.2rem, 6vw, 5.2rem);
+  font-weight: 300;
+  font-style: italic;
+  color: var(--text);
+  line-height: 1.0;
+  text-align: center;
+  letter-spacing: -.01em;
+  text-shadow: 0 0 120px rgba(212,160,74,.16), 0 4px 60px rgba(0,0,0,.9);
+  opacity: 0;
+  animation: riseIn 2s .5s ease forwards;
+}
+
+.hero-title strong {
+  font-style: normal;
+  font-weight: 600;
+  color: var(--accent);
+}
+
+.hero-subtitle {
+  font-family: var(--serif);
+  font-size: clamp(.78rem, 1.4vw, 1rem);
+  font-weight: 300;
+  color: rgba(232,224,208,.36);
+  margin-top: clamp(10px, 2vw, 22px);
+  letter-spacing: .04em;
+  text-align: center;
+  max-width: 54ch;
+  line-height: 1.55;
+  opacity: 0;
+  animation: riseIn 2s .9s ease forwards;
+}
+
+/* Stats bar — bottom of hero */
+.hero-stats {
+  position: absolute;
+  bottom: clamp(14px, 3vw, 28px);
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: clamp(14px, 2.8vw, 36px);
+  align-items: flex-end;
+  opacity: 0;
+  animation: riseIn 2s 1.3s ease forwards;
+  z-index: 10;
+  pointer-events: none;
+  white-space: nowrap;
+}
+
+.h-stat { text-align: center; }
+.h-stat-val {
+  display: block;
+  font-family: var(--serif);
+  font-size: clamp(1.1rem, 2.2vw, 1.8rem);
+  font-weight: 600;
+  color: var(--accent);
+  line-height: 1;
+}
+.h-stat-lbl {
+  display: block;
+  font-family: var(--mono);
+  font-size: clamp(.42rem, .65vw, .54rem);
+  color: rgba(212,160,74,.38);
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  margin-top: 3px;
+}
+.h-sep { width: 1px; height: 22px; background: rgba(212,160,74,.16); margin-bottom: 3px; }
+
+/* Field state indicator */
+.field-state {
+  position: absolute;
+  top: clamp(12px, 2.5vw, 22px);
+  right: clamp(14px, 3vw, 30px);
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  opacity: 0;
+  animation: riseIn 2s 1.6s ease forwards;
+  z-index: 10;
+  pointer-events: none;
+}
+.field-dot {
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 0 8px rgba(212,160,74,.7);
+  animation: dotPulse 2.4s ease-in-out infinite;
+}
+.field-lbl {
+  font-family: var(--mono);
+  font-size: clamp(.46rem, .68vw, .58rem);
+  color: rgba(212,160,74,.55);
+  letter-spacing: .14em;
+  text-transform: uppercase;
+}
+
+/* Scroll cue */
+.scroll-cue {
+  position: absolute;
+  bottom: clamp(60px, 9vw, 86px);
+  left: 50%;
+  transform: translateX(-50%);
+  opacity: 0;
+  animation: riseIn 2s 2s ease forwards;
+  z-index: 10;
+  pointer-events: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+}
+.scroll-cue span {
+  font-family: var(--mono);
+  font-size: .52rem;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  color: rgba(212,160,74,.25);
+}
+.scroll-arrow {
+  width: 1px;
+  height: 28px;
+  background: linear-gradient(to bottom, rgba(212,160,74,.3), transparent);
+  animation: arrowBob 2s ease-in-out infinite;
+}
+
+@keyframes riseIn   { from { opacity:0; transform:translateY(12px); } to { opacity:1; transform:translateY(0); } }
+@keyframes dotPulse { 0%,100% { opacity:1; transform:scale(1); } 50% { opacity:.4; transform:scale(.65); } }
+@keyframes arrowBob { 0%,100% { transform:scaleY(1); } 50% { transform:scaleY(1.3); } }
+
+/* Divider between sections */
+.section-divide {
+  height: 1px;
+  background: linear-gradient(to right, transparent, var(--line2) 30%, var(--line2) 70%, transparent);
+}
+
+/* ═══════════════════════════════════════════════════
+   SECTION 2 — SYSTEM DIAGRAM
+═══════════════════════════════════════════════════ */
+#system-section {
+  background: var(--bg);
+  padding: 64px 0 80px;
+}
+
+.system-inner {
+  max-width: 1060px;
+  margin: 0 auto;
+  padding: 0 28px;
+}
+
+/* Section header */
+.sys-header {
+  text-align: center;
+  margin-bottom: 52px;
+}
+.sys-eyebrow {
+  font-family: var(--mono);
+  font-size: .65rem;
+  letter-spacing: .22em;
+  text-transform: uppercase;
+  color: var(--accent);
+  display: block;
+  margin-bottom: 12px;
+}
+.sys-title {
+  font-family: var(--serif);
+  font-size: clamp(1.9rem, 3.5vw, 2.8rem);
+  font-weight: 600;
+  color: var(--text);
+  line-height: 1.05;
+  margin-bottom: 10px;
+}
+.sys-lead {
+  color: var(--muted);
+  font-family: var(--mono);
+  font-size: .72rem;
+  letter-spacing: .06em;
+}
+
+/* N-bar */
+.n-bar {
+  display: flex;
+  background: var(--surface);
+  border: 1px solid var(--line2);
+  border-radius: var(--radius);
+  overflow: hidden;
+  margin-bottom: 48px;
+}
+.n-cell {
+  flex: 1;
+  padding: 14px 12px;
+  border-right: 1px solid var(--line);
+  text-align: center;
+}
+.n-cell:last-child { border-right: none; }
+.n-val {
+  font-family: var(--serif);
+  font-size: clamp(1.4rem, 2.5vw, 2rem);
+  font-weight: 700;
+  color: var(--accent2);
+  display: block;
+  line-height: 1;
+}
+.n-lbl {
+  font-family: var(--mono);
+  font-size: .58rem;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: .1em;
+  display: block;
+  margin-top: 4px;
+}
+
+/* Layer wrapper */
+.layer-block {
+  margin-bottom: 40px;
+}
+.layer-tag {
+  font-family: var(--mono);
+  font-size: .6rem;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  color: var(--muted);
+  padding-left: 10px;
+  border-left: 2px solid var(--accent);
+  margin-bottom: 10px;
+  display: block;
+}
+.layer-title {
+  font-family: var(--serif);
+  font-size: 1.05rem;
+  font-weight: 600;
+  color: var(--text);
+  margin-bottom: 14px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--line);
+}
+
+/* Node grids */
+.nodes-2 { display: grid; grid-template-columns: repeat(2,1fr); gap: 10px; }
+.nodes-3 { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; }
+.nodes-4 { display: grid; grid-template-columns: repeat(4,1fr); gap: 10px; }
+
+.node {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 14px 16px;
+  transition: border-color .2s;
+  position: relative;
+}
+.node:hover { border-color: var(--line2); }
+.node.a  { border-color: var(--line2); background: linear-gradient(135deg,rgba(212,160,74,.07),var(--surface)); }
+.node.w  { border-color: rgba(192,98,74,.35); background: linear-gradient(135deg,rgba(192,98,74,.05),var(--surface)); }
+.node.ok { border-color: rgba(90,158,110,.32); background: linear-gradient(135deg,rgba(90,158,110,.05),var(--surface)); }
+.node.p  { border-color: rgba(122,110,95,.25); opacity:.62; }
+
+.node-icon { font-size: 1rem; margin-bottom: 7px; display: block; }
+.node-name { font-weight: 700; font-size: .8rem; color: var(--text); margin-bottom: 3px; }
+.node-detail { font-family: var(--mono); font-size: .62rem; color: var(--muted); line-height: 1.65; }
+
+.badge {
+  display: inline-block;
+  padding: 1px 7px;
+  border-radius: 3px;
+  font-family: var(--mono);
+  font-size: .55rem;
+  font-weight: 500;
+  letter-spacing: .06em;
+  margin-top: 6px;
+  text-transform: uppercase;
+}
+.b-live  { background:rgba(90,158,110,.18);  color:#7ec896; border:1px solid rgba(90,158,110,.28); }
+.b-warn  { background:rgba(192,98,74,.18);   color:#e08060; border:1px solid rgba(192,98,74,.28); }
+.b-fix   { background:rgba(212,160,74,.18);  color:var(--accent2); border:1px solid var(--line2); }
+.b-pause { background:rgba(122,110,95,.18);  color:#9a8e7e; border:1px solid rgba(122,110,95,.28); }
+
+/* Issue callout */
+.issue {
+  background: rgba(192,98,74,.07);
+  border: 1px solid rgba(192,98,74,.28);
+  border-left: 3px solid var(--red);
+  border-radius: var(--radius);
+  padding: 11px 15px;
+  margin-top: 10px;
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+}
+.issue-icon { font-size: .95rem; flex-shrink: 0; margin-top: 1px; }
+.issue-body { font-family: var(--mono); font-size: .64rem; color: #b87860; line-height: 1.65; }
+.issue-body strong { color: #e08060; display: block; margin-bottom: 2px; }
+
+/* Connector arrow */
+.connector {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 0 16px;
+  position: relative;
+}
+.connector::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 0; bottom: 0;
+  width: 1px;
+  background: linear-gradient(to bottom, var(--line), var(--line2), var(--line));
+  transform: translateX(-50%);
+}
+.conn-label {
+  background: var(--bg);
+  border: 1px solid var(--line);
+  border-radius: 20px;
+  padding: 3px 14px;
+  font-family: var(--mono);
+  font-size: .6rem;
+  color: var(--accent);
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  position: relative;
+  z-index: 1;
+}
+
+/* Phase flow — ACAT instrument */
+.phase-flow {
+  display: flex;
+  gap: 0;
+  align-items: stretch;
+  margin-top: 14px;
+}
+.phase-box {
+  flex: 1;
+  background: var(--surface2);
+  border: 1px solid var(--line);
+  border-radius: 5px;
+  padding: 12px 12px;
+  text-align: center;
+}
+.phase-box.active { border-color: var(--line2); background: linear-gradient(135deg,rgba(212,160,74,.09),var(--surface2)); }
+.phase-arr { width: 26px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; color: var(--accent); font-size: .9rem; }
+.phase-num { font-family: var(--serif); font-size: 1.15rem; font-weight: 700; color: var(--accent); display: block; line-height:1; }
+.phase-lbl { font-family: var(--mono); font-size: .56rem; color: var(--muted); text-transform: uppercase; letter-spacing: .06em; display: block; margin-top: 3px; }
+.phase-note { font-size: .68rem; color: var(--muted); display: block; margin-top: 4px; font-family: var(--serif); }
+
+/* Facets row */
+.facets {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 8px;
+  margin-bottom: 14px;
+}
+.facet {
+  background: var(--surface2);
+  border: 1px solid var(--line);
+  border-radius: 5px;
+  padding: 10px 6px 8px;
+  text-align: center;
+  transition: border-color .2s;
+}
+.facet:hover { border-color: var(--accent); }
+.facet-l { font-family: var(--serif); font-size: 1.25rem; font-weight: 700; color: var(--accent); display: block; line-height: 1; margin-bottom: 3px; }
+.facet-n { font-family: var(--mono); font-size: .56rem; color: var(--muted); letter-spacing: .04em; text-transform: uppercase; }
+
+/* Gate row */
+.gate-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-top: 10px;
+}
+.gate-card {
+  background: var(--surface2);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 14px 14px;
+  text-align: center;
+}
+.gate-num { font-family: var(--serif); font-size: 1.4rem; font-weight: 700; color: var(--accent); display: block; }
+.gate-date { font-family: var(--mono); font-size: .6rem; color: var(--accent); display: block; margin-top: 2px; letter-spacing: .08em; }
+.gate-name { font-size: .8rem; color: var(--text); margin-top: 4px; display: block; font-weight: 600; }
+.gate-note { font-family: var(--mono); font-size: .6rem; color: var(--muted); margin-top: 3px; display: block; }
+
+/* Footer */
+.sys-footer {
+  margin-top: 56px;
+  padding-top: 24px;
+  border-top: 1px solid var(--line);
+  text-align: center;
+  font-family: var(--mono);
+  font-size: .62rem;
+  color: var(--muted);
+  letter-spacing: .07em;
+  line-height: 1.8;
+}
+.sys-footer em { color: var(--accent); font-style: normal; }
+
+/* Responsive */
+@media (max-width: 700px) {
+  .nodes-4 { grid-template-columns: 1fr 1fr; }
+  .nodes-3 { grid-template-columns: 1fr 1fr; }
+  .facets  { grid-template-columns: repeat(3,1fr); }
+  .phase-flow { flex-direction: column; }
+  .phase-arr { transform: rotate(90deg); height: 22px; width: 100%; }
+  .gate-row { grid-template-columns: 1fr; }
+  .n-bar { flex-wrap: wrap; }
+  .n-cell { flex: 0 0 33.33%; }
+}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════
+     SECTION 1: HERO — The Witness v3.4
+═══════════════════════════════════════════════════ -->
+<section id="hero-section">
+  <canvas id="hero-canvas"></canvas>
+
+  <div class="hero-overlay">
+    <div class="hero-eyebrow">Behavioral Observability Infrastructure · OR&D Phase · Day <span id="ord-day-hero" style="font-variant-numeric:tabular-nums;">25</span></div>
+    <div class="hero-title">The <strong>Witness</strong><br/>Stands in the Gap</div>
+    <div class="hero-subtitle">Measuring the distance between what AI systems say they are<br/>and what they do when it matters</div>
+  </div>
+
+  <div class="field-state">
+    <div class="field-dot"></div>
+    <span class="field-lbl">Power · 8 BPM</span>
+  </div>
+
+  <div class="hero-stats">
+    <div class="h-stat"><span class="h-stat-val">630</span><span class="h-stat-lbl">Assessments</span></div>
+    <div class="h-sep"></div>
+    <div class="h-stat"><span class="h-stat-val">0.8632</span><span class="h-stat-lbl">Mean LI</span></div>
+    <div class="h-sep"></div>
+    <div class="h-stat"><span class="h-stat-val">308</span><span class="h-stat-lbl">LI Pairs</span></div>
+    <div class="h-sep"></div>
+    <div class="h-stat"><span class="h-stat-val">11</span><span class="h-stat-lbl">Providers</span></div>
+    <div class="h-sep"></div>
+    <div class="h-stat"><span class="h-stat-val">Open</span><span class="h-stat-lbl">Dataset</span></div>
+  </div>
+
+  <div class="scroll-cue">
+    <span>System Architecture</span>
+    <div class="scroll-arrow"></div>
+  </div>
+</section>
+
+<div class="section-divide"></div>
+
+<!-- ═══════════════════════════════════════════════
+     SECTION 2: ACAT SYSTEM ARCHITECTURE
+═══════════════════════════════════════════════════ -->
+<section id="system-section">
+<div class="system-inner">
+
+  <div class="sys-header">
+    <span class="sys-eyebrow">HumanAIOS LLC · OR&D Phase · April 4, 2026</span>
+    <div class="sys-title">ACAT System Architecture</div>
+    <div class="sys-lead">Behavioral Observability Infrastructure · Current State · TRL 2–3</div>
+  </div>
+
+  <!-- N BAR -->
+  <div class="n-bar">
+    <div class="n-cell"><span class="n-val">630</span><span class="n-lbl">N_total</span></div>
+    <div class="n-cell"><span class="n-val">517</span><span class="n-lbl">N_Phase1</span></div>
+    <div class="n-cell"><span class="n-val">308</span><span class="n-lbl">N_LI</span></div>
+    <div class="n-cell"><span class="n-val">0.8632</span><span class="n-lbl">Mean LI</span></div>
+    <div class="n-cell"><span class="n-val">Power</span><span class="n-lbl">Field State</span></div>
+    <div class="n-cell"><span class="n-val" id="ord-day-stat">25</span><span class="n-lbl">OR&D Phase</span></div>
+  </div>
+
+  <!-- LAYER 1: INSTRUMENT -->
+  <div class="layer-block">
+    <span class="layer-tag">Layer 1 · Instrument</span>
+    <div class="layer-title">ACAT Core — Six-Dimensional Self-Assessment Gap Measurement</div>
+
+    <div class="facets">
+      <div class="facet"><span class="facet-l">T</span><span class="facet-n">Truth</span></div>
+      <div class="facet"><span class="facet-l">S</span><span class="facet-n">Service</span></div>
+      <div class="facet"><span class="facet-l">H</span><span class="facet-n">Harm</span></div>
+      <div class="facet"><span class="facet-l">A</span><span class="facet-n">Autonomy</span></div>
+      <div class="facet"><span class="facet-l">V</span><span class="facet-n">Value</span></div>
+      <div class="facet"><span class="facet-l">U</span><span class="facet-n">Humility</span></div>
+    </div>
+
+    <div class="phase-flow">
+      <div class="phase-box active">
+        <span class="phase-num">①</span>
+        <span class="phase-lbl">Blind Self-Assessment</span>
+        <span class="phase-note">No anchor data</span>
+      </div>
+      <div class="phase-arr">→</div>
+      <div class="phase-box">
+        <span class="phase-num">②</span>
+        <span class="phase-lbl">Calibration Exposure</span>
+        <span class="phase-note">Directional only (v5.3)</span>
+      </div>
+      <div class="phase-arr">→</div>
+      <div class="phase-box active">
+        <span class="phase-num">③</span>
+        <span class="phase-lbl">Revised Self-Assessment</span>
+        <span class="phase-note">Score ≤ Phase 1 total</span>
+      </div>
+      <div class="phase-arr">→</div>
+      <div class="phase-box" style="flex:.55">
+        <span class="phase-num">LI</span>
+        <span class="phase-lbl">Learning Index</span>
+        <span class="phase-note">post / pre ratio</span>
+      </div>
+    </div>
+
+    <div class="issue">
+      <span class="issue-icon">⚠</span>
+      <div class="issue-body">
+        <strong>IC-008 Anchoring Fix · v5.3 Active</strong>
+        copyPrompt() removed exact numeric means. Phase 2 directional language only. LI &gt; 1.0 records exist (14+) — all public claims qualified: "under clean, unanchored conditions (v5.3+)"
+      </div>
+    </div>
+  </div>
+
+  <div class="connector"><span class="conn-label">Submit → Apps Script v5.2</span></div>
+
+  <!-- LAYER 2: PIPELINE -->
+  <div class="layer-block">
+    <span class="layer-tag">Layer 2 · Data Pipeline</span>
+    <div class="nodes-4">
+      <div class="node ok">
+        <span class="node-icon">📋</span>
+        <div class="node-name">ACAT Assessment Tool</div>
+        <div class="node-detail">humanaios.ai/acat-assessment-tool.html<br/>Scroll gate + copy button fixed Apr 3<br/>HTTPS live verification pending (Z3)</div>
+        <span class="badge b-live">Live</span>
+      </div>
+      <div class="node ok">
+        <span class="node-icon">⚙️</span>
+        <div class="node-name">Apps Script v5.2</div>
+        <div class="node-detail">AKfycbzLGHN…uZv/exec<br/>Live runner endpoint<br/>v6.1 = library only, not HTTP</div>
+        <span class="badge b-live">Live</span>
+      </div>
+      <div class="node w">
+        <span class="node-icon">🗄️</span>
+        <div class="node-name">Google Sheets</div>
+        <div class="node-detail">Row objects unreadable<br/>0 extractable fields · agent_name missing<br/>Serialization failure active</div>
+        <span class="badge b-warn">Issue</span>
+      </div>
+      <div class="node a">
+        <span class="node-icon">🗃️</span>
+        <div class="node-name">Supabase</div>
+        <div class="node-detail">ksinisdzgtnqzsymhfya<br/>Tables: assessments · pipeline_health<br/>wgs_state · scratchpad_marks</div>
+        <span class="badge b-fix">SB_KEY Active</span>
+      </div>
+    </div>
+    <div class="issue">
+      <span class="issue-icon">🚨</span>
+      <div class="issue-body">
+        <strong>Active Pipeline Issue (Apr 3–4)</strong>
+        Runners firing but row bundle objects unreadable — 0 extractable fields. Claude Runner 4394169 fixed (content[] index + Phase 3 prompt). IC-011/012/013 registered. Llama frozen scores under investigation.
+      </div>
+    </div>
+  </div>
+
+  <div class="connector"><span class="conn-label">Make.com Dispatcher → Runner Scenarios</span></div>
+
+  <!-- LAYER 3: AUTOMATION -->
+  <div class="layer-block">
+    <span class="layer-tag">Layer 3 · Automation — Make.com (Paid · ~7,972 ops/month remaining)</span>
+    <div class="nodes-3">
+      <div class="node ok">
+        <span class="node-icon">🤖</span>
+        <div class="node-name">Dispatcher</div>
+        <div class="node-detail">Scenario: 4394125<br/>Triggers runner scenarios<br/>2-hour schedule</div>
+        <span class="badge b-live">Active</span>
+      </div>
+      <div class="node a">
+        <span class="node-icon">🧠</span>
+        <div class="node-name">Claude Runner</div>
+        <div class="node-detail">Scenario: 4394169<br/>Fixed Apr 3 · content[] index bug<br/>Phase 3 prompt corrected</div>
+        <span class="badge b-fix">Fixed Apr 3</span>
+      </div>
+      <div class="node p">
+        <span class="node-icon">⏸️</span>
+        <div class="node-name">Gemini Runner</div>
+        <div class="node-detail">Scenario: 4400316<br/>Credits depleted Apr 3<br/>Paused until replenishment</div>
+        <span class="badge b-pause">Paused</span>
+      </div>
+      <div class="node ok">
+        <span class="node-icon">📡</span>
+        <div class="node-name">WGS-COMMS-HARMONIZER</div>
+        <div class="node-detail">8-hour digest scan<br/>Gmail + 3 Slack channels<br/>Posts to #wgs-sync</div>
+        <span class="badge b-live">Active</span>
+      </div>
+      <div class="node ok">
+        <span class="node-icon">📊</span>
+        <div class="node-name">#acat-monitor</div>
+        <div class="node-detail">C0APHCJ5WUE<br/>Pipeline health / automated alerts<br/>Real-time status</div>
+        <span class="badge b-live">Active</span>
+      </div>
+      <div class="node a">
+        <span class="node-icon">🏷️</span>
+        <div class="node-name">mode field</div>
+        <div class="node-detail">automated · manual<br/>manual_controlled<br/>Deployed Apr 3</div>
+        <span class="badge b-fix">New</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="connector"><span class="conn-label">LI Calculation → Outputs & Research Infrastructure</span></div>
+
+  <!-- LAYER 4: OUTPUTS -->
+  <div class="layer-block">
+    <span class="layer-tag">Layer 4 · Outputs & Research Infrastructure</span>
+    <div class="nodes-3">
+      <div class="node ok">
+        <span class="node-icon">🔭</span>
+        <div class="node-name">Observatory</div>
+        <div class="node-detail">humanaios.ai/observatory.html<br/>The Ground · The Variation<br/>Constellation nav v4.0 live</div>
+        <span class="badge b-live">Live</span>
+      </div>
+      <div class="node a">
+        <span class="node-icon">📄</span>
+        <div class="node-name">arXiv Preprint</div>
+        <div class="node-detail">submit/7336774 · v5.2<br/>N=630 · mean LI=0.8632<br/>Under review</div>
+        <span class="badge b-fix">Under Review</span>
+      </div>
+      <div class="node ok">
+        <span class="node-icon">🤗</span>
+        <div class="node-name">HuggingFace Dataset</div>
+        <div class="node-detail">humanaios/acat-assessments<br/>Public · open science<br/>N_LI=308 records</div>
+        <span class="badge b-live">Public</span>
+      </div>
+      <div class="node a">
+        <span class="node-icon">⛓️</span>
+        <div class="node-name">OriginStamp</div>
+        <div class="node-detail">SHA-256: 300dc7ef…<br/>The Witness v3.4 anchored<br/>Blockchain provenance</div>
+        <span class="badge b-live">Anchored</span>
+      </div>
+      <div class="node ok">
+        <span class="node-icon">💬</span>
+        <div class="node-name">#wgs-sync</div>
+        <div class="node-detail">C0AND66PT7U<br/>Operational truth<br/>Session open/close logs</div>
+        <span class="badge b-live">Active</span>
+      </div>
+      <div class="node ok">
+        <span class="node-icon">📦</span>
+        <div class="node-name">Elastic Cloud</div>
+        <div class="node-detail">acat-assessments index<br/>598+ docs · Kibana dashboard<br/>Trial expiring — act soon</div>
+        <span class="badge b-warn">Trial Expiring</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- GATE FRAMEWORK -->
+  <div class="layer-block" style="margin-top:40px;">
+    <span class="layer-tag">60-Day Gate Framework</span>
+    <div class="gate-row">
+      <div class="gate-card">
+        <span class="gate-num">Gate 1</span>
+        <span class="gate-date">April 21, 2026</span>
+        <span class="gate-name">Validity</span>
+        <span class="gate-note">Pipeline fixed · N_LI ≥ 350 · mode filter clean</span>
+      </div>
+      <div class="gate-card">
+        <span class="gate-num">Gate 2</span>
+        <span class="gate-date">May 7, 2026</span>
+        <span class="gate-name">Identity</span>
+        <span class="gate-note">Shadow Calibration System spec · F-STRATEGIC-001</span>
+      </div>
+      <div class="gate-card">
+        <span class="gate-num">Gate 3</span>
+        <span class="gate-date">May 21, 2026</span>
+        <span class="gate-name">Service</span>
+        <span class="gate-note">First enterprise client · revenue &gt; $0</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="sys-footer">
+    HumanAIOS LLC · FL Doc #L26000155266 · Effective Mar 16, 2026<br/>
+    <em>"The data is open. The research is published. The art is the instrument."</em><br/>
+    100% of profits fund recovery programs · 20%+ positions reserved for the recovery community · TRL 2–3
+  </div>
+
+</div>
+</section>
+
+<!-- ═══════════════════════════════════════════════
+     CANVAS — Witness v3.4 Renderer
+     Layer order: ambient shadow → breath ring →
+     skull halves → seam → data core → comet →
+     outer arc → vignette
+═══════════════════════════════════════════════════ -->
+<script>
+(function() {
+  const canvas = document.getElementById('hero-canvas');
+  const ctx    = canvas.getContext('2d');
+
+  // v3.4 canonical config
+  const FIELD = 'Power';
+  const PARAMS = {
+    Power:      { bpm: 8,  speed: 1.0, split: false, ringA: 0.22, cometA: 0.9, color: '#d4a04a' },
+    Calibrated: { bpm: 3,  speed: 0.2, split: false, ringA: 0.35, cometA: 0.6, color: '#a0c4e8' },
+    Force:      { bpm: 18, speed: 2.8, split: true,  ringA: 0.18, cometA: 1.0, color: '#c06040' },
+  };
+  const fp = PARAMS[FIELD];
+
+  const LI_GAP    = 1 - 0.8632; // = 0.1368
+  const TAIL_SPAN = (190 / 180) * Math.PI;
+  const DIMS = ['T','S','H','A','V','U'];
+
+  let W, H, cx, cy, R;
+  let cometAngle = -Math.PI / 2;
+  let sigils = [];
+  let lastTs = null;
+
+  function resize() {
+    const rect = canvas.parentElement.getBoundingClientRect();
+    W = canvas.width  = rect.width;
+    H = canvas.height = rect.height;
+    cx = W * 0.5;
+    cy = H * 0.48;
+    R  = Math.min(W, H) * 0.3;
+
+    sigils = [];
+    for (let i = 0; i < 8; i++) {
+      const a  = (i / 8) * Math.PI * 2 - Math.PI * 0.15;
+      const br = R * (0.58 + (i % 3) * 0.07);
+      const bx = cx + Math.cos(a) * br * 0.95;
+      const by = cy + Math.sin(a) * br * 0.85;
+      const pts = [];
+      const cnt = 4 + (i % 3);
+      for (let j = 0; j < cnt; j++) {
+        const pa = (j / cnt) * Math.PI * 2 + i * 0.4;
+        const pr = R * (0.04 + (j % 2) * 0.04);
+        pts.push({ x: bx + Math.cos(pa) * pr, y: by + Math.sin(pa) * pr });
+      }
+      sigils.push({ bx, by, pts, phase: i * 0.7, bright: 0.4 + (i % 4) * 0.15 });
+    }
+  }
+
+  function drawComet(angle, alpha) {
+    const cr = R * 0.62;
+    const hx = cx + Math.cos(angle) * cr;
+    const hy = cy + Math.sin(angle) * cr;
+
+    // Quadratic tail ~190°
+    const steps = 52;
+    for (let i = 1; i <= steps; i++) {
+      const f  = i / steps;
+      const ta = angle - f * TAIL_SPAN;
+      const tx = cx + Math.cos(ta) * cr;
+      const ty = cy + Math.sin(ta) * cr;
+      const a  = alpha * (1 - f * f) * 0.5;
+      const r  = (1 - f) * 2.6 + 0.3;
+      ctx.beginPath();
+      ctx.arc(tx, ty, r * 0.5, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(240,200,100,${a})`;
+      ctx.fill();
+    }
+
+    // Head glow
+    const g = ctx.createRadialGradient(hx, hy, 0, hx, hy, 12);
+    g.addColorStop(0,   `rgba(255,232,140,${alpha * 0.9})`);
+    g.addColorStop(0.4, `rgba(212,160,74,${alpha * 0.4})`);
+    g.addColorStop(1,   'rgba(212,160,74,0)');
+    ctx.fillStyle = g;
+    ctx.beginPath();
+    ctx.arc(hx, hy, 12, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Leading spark
+    ctx.beginPath();
+    ctx.arc(hx, hy, 2.2, 0, Math.PI * 2);
+    ctx.fillStyle = `rgba(255,248,200,${alpha})`;
+    ctx.fill();
+  }
+
+  function frame(ts) {
+    if (!lastTs) lastTs = ts;
+    const dt = Math.min((ts - lastTs) / 1000, 0.05);
+    lastTs = ts;
+
+    // Angular velocity = (2π) / (60/bpm)
+    const angVel = (2 * Math.PI) / (60 / fp.bpm);
+    cometAngle += angVel * dt * fp.speed;
+
+    const bPeriod = 60 / fp.bpm;
+    const bPhase  = (ts / 1000) % bPeriod / bPeriod;
+    const bPulse  = 0.5 + 0.5 * Math.sin(bPhase * Math.PI * 2);
+    const t       = ts / 1000;
+
+    // Clear
+    ctx.fillStyle = '#0a0908';
+    ctx.fillRect(0, 0, W, H);
+
+    // ── L1: Ambient shadow ──
+    const atmo = ctx.createRadialGradient(cx, cy, 0, cx, cy, R * 2.2);
+    atmo.addColorStop(0,   `rgba(160,100,20,${0.08 + bPulse * 0.03})`);
+    atmo.addColorStop(0.5, 'rgba(80,50,10,.03)');
+    atmo.addColorStop(1,   'rgba(0,0,0,0)');
+    ctx.fillStyle = atmo;
+    ctx.fillRect(0, 0, W, H);
+
+    // Background stars (deterministic)
+    for (let i = 0; i < 100; i++) {
+      const a  = (i / 100) * Math.PI * 2 + i * 0.19;
+      const r  = R * (0.55 + (i * 37 % 100) / 100 * 1.15);
+      const sx = cx + Math.cos(a) * r;
+      const sy = cy + Math.sin(a) * r * 0.77;
+      if (sx < 4 || sx > W - 4 || sy < 4 || sy > H - 4) continue;
+      const tw = 0.2 + 0.18 * Math.sin(t * (0.4 + i * 0.03) + i);
+      ctx.beginPath();
+      ctx.arc(sx, sy, 0.65 + (i % 3) * 0.35, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(240,220,160,${tw})`;
+      ctx.fill();
+    }
+
+    // ── L2: Breath ring ──
+    const bR  = R * (0.18 + bPulse * 0.03);
+    const bGl = ctx.createRadialGradient(cx, cy, 0, cx, cy, bR * 2.2);
+    bGl.addColorStop(0,   `rgba(212,160,74,${fp.ringA * bPulse * 0.8})`);
+    bGl.addColorStop(0.5, `rgba(160,100,30,${fp.ringA * bPulse * 0.25})`);
+    bGl.addColorStop(1,   'rgba(0,0,0,0)');
+    ctx.fillStyle = bGl;
+    ctx.beginPath();
+    ctx.arc(cx, cy, bR * 2.2, 0, Math.PI * 2);
+    ctx.fill();
+
+    // ── L3: Skull halves ──
+    const sR = R * 0.28;
+    ctx.save();
+    ctx.translate(cx, cy);
+
+    const al = 0.44 + bPulse * 0.1;
+
+    // Skull dome
+    ctx.beginPath();
+    ctx.arc(0, -sR * 0.05, sR * 0.72, Math.PI * 0.08, Math.PI * 0.92);
+    ctx.strokeStyle = `rgba(212,160,74,${al * 0.58})`;
+    ctx.lineWidth = 1.0;
+    ctx.stroke();
+
+    // Left half — human eye (organic oval + pupil)
+    const eOff = sR * 0.28;
+    const eR   = sR * 0.1;
+    ctx.beginPath();
+    ctx.ellipse(-eOff, -sR * 0.08, eR * 1.2, eR * 0.85, 0, 0, Math.PI * 2);
+    ctx.strokeStyle = `rgba(212,160,74,${al * 0.75})`;
+    ctx.lineWidth = 0.9;
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.arc(-eOff, -sR * 0.08, eR * 0.38, 0, Math.PI * 2);
+    ctx.fillStyle = `rgba(212,160,74,${al * 0.45})`;
+    ctx.fill();
+
+    // Right half — code eye (brackets)
+    const cex = eOff, cey = -sR * 0.08;
+    const bw  = eR * 1.1, bh = eR * 0.95;
+    ctx.strokeStyle = `rgba(212,160,74,${al * 0.78})`;
+    ctx.lineWidth = 0.85;
+    // left bracket
+    ctx.beginPath();
+    ctx.moveTo(cex - bw, cey - bh);
+    ctx.lineTo(cex - bw * 0.6, cey - bh);
+    ctx.moveTo(cex - bw * 0.6, cey - bh);
+    ctx.lineTo(cex - bw * 0.6, cey + bh);
+    ctx.moveTo(cex - bw * 0.6, cey + bh);
+    ctx.lineTo(cex - bw, cey + bh);
+    ctx.stroke();
+    // right bracket
+    ctx.beginPath();
+    ctx.moveTo(cex + bw * 0.05, cey - bh);
+    ctx.lineTo(cex + bw * 0.65, cey - bh);
+    ctx.moveTo(cex + bw * 0.65, cey - bh);
+    ctx.lineTo(cex + bw * 0.65, cey + bh);
+    ctx.moveTo(cex + bw * 0.65, cey + bh);
+    ctx.lineTo(cex + bw * 0.05, cey + bh);
+    ctx.stroke();
+
+    ctx.font = `${sR * 0.13}px 'IBM Plex Mono', monospace`;
+    ctx.fillStyle = `rgba(212,160,74,${al * 0.38})`;
+    ctx.textAlign = 'center';
+    ctx.fillText('01', cex + bw * 0.09, cey + bh * 0.3);
+
+    // ── L4: Seam ──
+    ctx.beginPath();
+    ctx.moveTo(0, -sR * 0.78);
+    ctx.lineTo(0,  sR * 0.65);
+    ctx.strokeStyle = `rgba(212,160,74,${0.16 + bPulse * 0.06})`;
+    ctx.lineWidth = 0.7;
+    ctx.setLineDash([2.5, 3.5]);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    ctx.restore();
+
+    // ── L5: Data core — six-spoke ACAT web ──
+    const webRot = -t * 0.008;
+    for (let i = 0; i < 6; i++) {
+      const ang  = (i / 6) * Math.PI * 2 - Math.PI / 2 + webRot;
+      const nAng = ((i + 1) / 6) * Math.PI * 2 - Math.PI / 2 + webRot;
+      const ax = cx + Math.cos(ang) * R;
+      const ay = cy + Math.sin(ang) * R;
+      const bx = cx + Math.cos(nAng) * R;
+      const by = cy + Math.sin(nAng) * R;
+
+      ctx.beginPath(); ctx.moveTo(cx, cy); ctx.lineTo(ax, ay);
+      ctx.strokeStyle = 'rgba(212,160,74,.07)'; ctx.lineWidth = 0.6; ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(ax, ay); ctx.lineTo(bx, by);
+      ctx.strokeStyle = 'rgba(212,160,74,.04)'; ctx.lineWidth = 0.5; ctx.stroke();
+
+      const ng = ctx.createRadialGradient(ax, ay, 0, ax, ay, 13);
+      ng.addColorStop(0, 'rgba(212,160,74,.26)');
+      ng.addColorStop(1, 'rgba(212,160,74,0)');
+      ctx.fillStyle = ng;
+      ctx.beginPath(); ctx.arc(ax, ay, 13, 0, Math.PI * 2); ctx.fill();
+      ctx.beginPath(); ctx.arc(ax, ay, 1.8, 0, Math.PI * 2);
+      ctx.fillStyle = '#d4a04a'; ctx.fill();
+
+      const lx = cx + Math.cos(ang) * (R + 16);
+      const ly = cy + Math.sin(ang) * (R + 16);
+      ctx.font = `600 ${Math.max(9, W * 0.011)}px 'Cormorant Garamond', serif`;
+      ctx.fillStyle = 'rgba(212,160,74,.42)';
+      ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.fillText(DIMS[i], lx, ly);
+    }
+    // Calibration rings
+    [0.43, 0.72].forEach(f => {
+      ctx.beginPath(); ctx.arc(cx, cy, R * f, 0, Math.PI * 2);
+      ctx.strokeStyle = 'rgba(212,160,74,.045)'; ctx.lineWidth = 0.5; ctx.stroke();
+    });
+
+    // Sigils
+    sigils.forEach(sig => {
+      const sp = 0.5 + 0.5 * Math.sin(t * 0.5 + sig.phase);
+      for (let i = 0; i < sig.pts.length; i++) {
+        for (let j = i + 1; j < sig.pts.length; j++) {
+          const dx = sig.pts[i].x - sig.pts[j].x;
+          const dy = sig.pts[i].y - sig.pts[j].y;
+          if (dx*dx + dy*dy < (R * 0.12) ** 2) {
+            ctx.beginPath();
+            ctx.moveTo(sig.pts[i].x, sig.pts[i].y);
+            ctx.lineTo(sig.pts[j].x, sig.pts[j].y);
+            ctx.strokeStyle = `rgba(212,160,74,${0.065 * sig.bright * sp})`;
+            ctx.lineWidth = 0.45; ctx.stroke();
+          }
+        }
+      }
+      sig.pts.forEach(pt => {
+        const tw = 0.55 + 0.45 * Math.sin(t * 1.1 + sig.phase + pt.x * 0.02);
+        ctx.beginPath(); ctx.arc(pt.x, pt.y, 1.05 + sig.bright * 0.45, 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(240,210,120,${tw * sig.bright * 0.55})`; ctx.fill();
+      });
+    });
+
+    // ── L6: Comet ──
+    if (fp.split) {
+      drawComet(cometAngle, fp.cometA);
+      drawComet(cometAngle + Math.PI, fp.cometA * 0.72);
+    } else {
+      drawComet(cometAngle, fp.cometA);
+    }
+
+    // ── L7: Outer arc — truth ring + LI gap ──
+    const arcR     = R * 1.0;
+    const gapAng   = LI_GAP * Math.PI * 2;
+    const gapCtr   = -Math.PI / 2;
+    const arcStart = gapCtr + gapAng / 2;
+    const arcEnd   = gapCtr - gapAng / 2 + Math.PI * 2;
+
+    ctx.beginPath();
+    ctx.arc(cx, cy, arcR, arcStart, arcEnd);
+    ctx.strokeStyle = `rgba(212,160,74,${fp.ringA + bPulse * 0.05})`;
+    ctx.lineWidth = 1.2;
+    ctx.stroke();
+
+    // Seam terminal dots
+    [arcStart, arcEnd % (Math.PI * 2)].forEach(a => {
+      const dx = cx + Math.cos(a) * arcR;
+      const dy = cy + Math.sin(a) * arcR;
+      ctx.beginPath(); ctx.arc(dx, dy, 2.4, 0, Math.PI * 2);
+      ctx.fillStyle = '#d4a04a'; ctx.fill();
+    });
+
+    // Gap label
+    const glx = cx + Math.cos(gapCtr) * (arcR + 13);
+    const gly = cy + Math.sin(gapCtr) * (arcR + 13) - 3;
+    ctx.font = `${Math.max(8, W * 0.008)}px 'IBM Plex Mono', monospace`;
+    ctx.fillStyle = 'rgba(212,160,74,.3)';
+    ctx.textAlign = 'center'; ctx.textBaseline = 'bottom';
+    ctx.fillText(`gap ${(LI_GAP * 100).toFixed(1)}%`, glx, gly);
+
+    // Dimension ticks on outer ring
+    for (let i = 0; i < 6; i++) {
+      const ta  = (i / 6) * Math.PI * 2 - Math.PI / 2;
+      const t1x = cx + Math.cos(ta) * (arcR - 5);
+      const t1y = cy + Math.sin(ta) * (arcR - 5);
+      const t2x = cx + Math.cos(ta) * (arcR + 5);
+      const t2y = cy + Math.sin(ta) * (arcR + 5);
+      ctx.beginPath(); ctx.moveTo(t1x, t1y); ctx.lineTo(t2x, t2y);
+      ctx.strokeStyle = 'rgba(212,160,74,.18)'; ctx.lineWidth = 0.7; ctx.stroke();
+    }
+
+    // ── L8: Vignette ──
+    const vign = ctx.createRadialGradient(cx, cy, R * 0.5, cx, cy, Math.max(W, H) * 0.78);
+    vign.addColorStop(0, 'rgba(0,0,0,0)');
+    vign.addColorStop(1, 'rgba(6,5,3,.9)');
+    ctx.fillStyle = vign;
+    ctx.fillRect(0, 0, W, H);
+
+    requestAnimationFrame(frame);
+  }
+
+  resize();
+  window.addEventListener('resize', resize);
+  requestAnimationFrame(frame);
+})();
+</script>
+
+
+<script>
+(function() {
+  var start = new Date('2026-03-11');
+  var day = Math.floor((new Date() - start) / 86400000) + 1;
+  var h = document.getElementById('ord-day-hero');
+  var s = document.getElementById('ord-day-stat');
+  if (h) h.textContent = day;
+  if (s) s.textContent = 'Day ' + day;
+})();
+</script>
+</body>
+</html>
