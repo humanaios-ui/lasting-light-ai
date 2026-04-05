@@ -772,7 +772,7 @@ function submitAssessment() {
   });
 
   var payload = {
-    agent_name: agent, layer: 'ai-self-report', mode: 'standard', version: 'v5.3',
+    agent_name: agent, layer: 'ai-self-report', mode: 'manual', version: 'v5.3',
     p1_truth: p1.truth, p1_service: p1.service, p1_harm: p1.harm,
     p1_autonomy: p1.autonomy, p1_value: p1.value, p1_humility: p1.humility,
     p3_truth: p3.truth, p3_service: p3.service, p3_harm: p3.harm,
@@ -794,7 +794,7 @@ function submitAssessment() {
     document.getElementById('form-section').style.display    = 'none';
     document.getElementById('confirm-section').style.display = 'block';
     var confirmUrl = document.getElementById('confirm-url');
-    if (confirmUrl) confirmUrl.textContent = 'Submitted: ' + agent + ' · LI calculated server-side · v6.0';
+    if (confirmUrl) confirmUrl.textContent = 'Submitted: ' + agent + ' · LI calculated server-side · v5.3';
     window.scrollTo(0, 0);
   })
   .catch(function(err) {
