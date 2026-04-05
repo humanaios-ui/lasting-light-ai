@@ -29,11 +29,11 @@
 (function() {
   'use strict';
 
-  /* ─────────────────────────────────────────────────────────────────
+  /* ────────────────────────────────────────────────────────────────
      FIELD ENGINE — State + Signal Processing
      Input: targetLI (upstream scalar)
      Output: meanLI (smoothed), bpm, phase, color, label
-  ───────────────────────────────────────────────────────────────── */
+  ──────────────────────────────────────────────────────────────── */
 
   // Respiratory rates by calibration band (index 0-9, LI low to high)
   // Non-linear perceptual pacing. State meaning encoded in motion.
@@ -86,10 +86,10 @@
     });
   }
 
-  /* ─────────────────────────────────────────────────────────────────
+  /* ────────────────────────────────────────────────────────────────
      ROOMS ARRAY — 17 rooms, all pools all pages
      v2.0: sublabel field added to each room entry
-  ───────────────────────────────────────────────────────────────── */
+  ──────────────────────────────────────────────────────────────── */
 
   // pool: 1 = The Source (inner ring),
   //        2 = The Luminarium (middle ring),
@@ -131,9 +131,9 @@
     3: 'rgba(154,138,192,'
   };
 
-  /* ─────────────────────────────────────────────────────────────────
+  /* ────────────────────────────────────────────────────────────────
      FIELD STATE — public function
-  ───────────────────────────────────────────────────────────────── */
+  ──────────────────────────────────────────────────────────────── */
 
   function fieldState(li) {
     if (li < 0.80)  return { label: 'Force Dominant', color: 'var(--danger)'  };
@@ -142,9 +142,9 @@
     return                  { label: 'Force Active',   color: 'var(--danger)'  };
   }
 
-  /* ─────────────────────────────────────────────────────────────────
+  /* ────────────────────────────────────────────────────────────────
      PROVIDER COLORS — public function
-  ───────────────────────────────────────────────────────────────── */
+  ──────────────────────────────────────────────────────────────── */
 
   var PROVIDER_COLORS = {
     Anthropic:  '#d4a04a',
@@ -167,9 +167,9 @@
     return k ? PROVIDER_COLORS[k] : PROVIDER_COLORS.default;
   }
 
-  /* ─────────────────────────────────────────────────────────────────
+  /* ────────────────────────────────────────────────────────────────
      ENGINE HELPERS
-  ───────────────────────────────────────────────────────────────── */
+  ──────────────────────────────────────────────────────────────── */
 
   function clamp01(x) {
     return Math.min(1, Math.max(0, x));
@@ -203,9 +203,9 @@
     return p < 0.4 ? p / 0.4 : 1 - ((p - 0.4) / 0.6);
   }
 
-  /* ─────────────────────────────────────────────────────────────────
+  /* ────────────────────────────────────────────────────────────────
      ENGINE STATE
-  ───────────────────────────────────────────────────────────────── */
+  ──────────────────────────────────────────────────────────────── */
 
   function updateEngine(dt) {
     tSecs += dt;
@@ -222,9 +222,9 @@
     return { li: li, bpm: bpm, color: color, field: field };
   }
 
-  /* ─────────────────────────────────────────────────────────────────
+  /* ────────────────────────────────────────────────────────────────
      CANVAS REGISTRY — no DOM re-queries after init
-  ───────────────────────────────────────────────────────────────── */
+  ──────────────────────────────────────────────────────────────── */
 
   var canvases = [];
   var overlayEl   = null;
@@ -248,10 +248,10 @@
 
   var TOPBAR_SIZE = 44;
 
-  /* ─────────────────────────────────────────────────────────────────
+  /* ────────────────────────────────────────────────────────────────
      WITNESS GLYPH RENDERER
      Hybrid: bone arc (C) + live spokes (E) + circuit density (F)
-  ───────────────────────────────────────────────────────────────── */
+  ──────────────────────────────────────────────────────────────── */
 
   function drawWitness(canvas, size, phase, state) {
     var ctx = canvas.getContext('2d');
@@ -299,7 +299,6 @@
       ctx.fillStyle = color;
       ctx.globalAlpha = 0.80;
       ctx.fill();
-      ctx.globalAlpha = 1;
     }
 
     // Center dot — field color
@@ -332,10 +331,10 @@
     }
   }
 
-  /* ─────────────────────────────────────────────────────────────────
+  /* ────────────────────────────────────────────────────────────────
      TOPBAR GLYPH BUTTON
      Canvas is always in a <button> — NEVER inside an <a> tag
-  ───────────────────────────────────────────────────────────────── */
+  ──────────────────────────────────────────────────────────────── */
 
   function createTopbarGlyph(currentRoom) {
     var btn = document.createElement('button');
@@ -369,10 +368,10 @@
     return btn;
   }
 
-  /* ─────────────────────────────────────────────────────────────────
+  /* ────────────────────────────────────────────────────────────────
      CURRENT PAGE DETECTION — v2.0
      Detects current page from window.location and marks it in overlay
-  ───────────────────────────────────────────────────────────────── */
+  ──────────────────────────────────────────────────────────────── */
 
   function detectCurrentPage() {
     var path = window.location.pathname.replace(/\/$/, '') || '/';
@@ -386,10 +385,10 @@
     return null;
   }
 
-  /* ─────────────────────────────────────────────────────────────────
+  /* ────────────────────────────────────────────────────────────────
      OVERLAY — v2.0
      Grouped sections, sublabels, keyboard nav, OR&D state footer
-  ───────────────────────────────────────────────────────────────── */
+  ──────────────────────────────────────────────────────────────── */
 
   function buildOverlay(currentRoom) {
     var autoCurrentRoom = detectCurrentPage() || currentRoom;
@@ -640,9 +639,9 @@
 
     var poolMeta = [
       { pool: 0, label: 'Navigation',             color: '#d4a04a' },
-      { pool: 1, label: 'Pool 1 \u2014 The Source',      color: '#a0c8c0' },
-      { pool: 2, label: 'Pool 2 \u2014 The Luminarium',  color: '#88a7d8' },
-      { pool: 3, label: 'Pool 3 \u2014 The Communal',    color: '#9A8AC0' }
+      { pool: 1, label: 'Pool 1  The Source',      color: '#a0c8c0' },
+      { pool: 2, label: 'Pool 2  The Luminarium',  color: '#88a7d8' },
+      { pool: 3, label: 'Pool 3  The Communal',    color: '#9A8AC0' }
     ];
 
     var navLinks = [];
@@ -708,7 +707,7 @@
             'opacity:0.65',
             'margin-top:1px'
           ].join(';');
-          curTag.textContent = '\u2190 you are here';
+          curTag.textContent = '604 you are here';
           link.appendChild(curTag);
         }
 
@@ -749,7 +748,7 @@
 
     var ordLeft = document.createElement('span');
     ordLeft.style.cssText = 'font:400 .68rem "IBM Plex Mono",monospace;color:rgba(122,114,104,0.50);';
-    ordLeft.textContent = 'OR\u0026D Phase \u00b7 TRL 2\u20133 \u00b7 humanaios.ai';
+    ordLeft.textContent = 'OR 26D Phase  27 TRL 2 27=3 (Proven track record)
 
     var ordRight = document.createElement('span');
     ordRight.id = 'cn-ord-state';
@@ -757,7 +756,7 @@
 
     function updateOrdState() {
       var s = getState();
-      ordRight.textContent = 'N=' + _liveN + '  \u00b7  LI ' + meanLI.toFixed(4) + '  \u00b7  ' + s.field.toUpperCase();
+      ordRight.textContent = 'N=' + _liveN + '   27 LI ' + meanLI.toFixed(4) + '   27 ' + s.field.toUpperCase();
     }
     updateOrdState();
     ov._updateOrdState = updateOrdState;
@@ -769,14 +768,14 @@
     // Close hint
     var escEl = document.createElement('div');
     escEl.setAttribute('aria-hidden', 'true');
-    escEl.textContent = 'click outside or ESC to close  \u00b7  arrows to navigate list';
+    escEl.textContent = 'click outside or ESC to close   27 arrows to navigate list';
     escEl.style.cssText = 'font-family:"IBM Plex Mono",monospace;font-size:8px;color:#7a7268;margin-top:7px;letter-spacing:.07em;text-align:center;opacity:0.55;';
     inner.appendChild(escEl);
 
     ov.appendChild(inner);
 
     // Keyboard navigation — v2.0
-    ov.addEventListener('keydown', function(e) {
+     function  keyboardNavigation(e) {
       if (e.key === 'Escape') { closeOverlay(); return; }
 
       if (e.key === 'Tab') {
@@ -804,7 +803,7 @@
           navLinks[Math.max(idx - 1, 0)].focus();
         }
       }
-    });
+    }
 
     return ov;
   }
@@ -843,9 +842,9 @@
     if (e.key === 'Escape' && overlayOpen) closeOverlay();
   });
 
-  /* ─────────────────────────────────────────────────────────────────
+  /* ────────────────────────────────────────────────────────────────
      ANIMATION LOOP
-  ───────────────────────────────────────────────────────────────── */
+  ──────────────────────────────────────────────────────────────── */
 
   var lastTs = null;
 
@@ -871,11 +870,11 @@
     requestAnimationFrame(loop);
   }
 
-  /* ─────────────────────────────────────────────────────────────────
+  /* ────────────────────────────────────────────────────────────────
      INIT
      Injection rule (v2.0): replaceChild ALWAYS — NEVER appendChild.
      brand-mark is direct child of .topbar-inner, BEFORE <a>.
-  ───────────────────────────────────────────────────────────────── */
+  ────────────────────────────────────────────────���─────────────── */
 
   function init() {
     var script      = document.currentScript || document.querySelector('script[src*="constellation-nav"]');
@@ -927,10 +926,10 @@
     requestAnimationFrame(loop);
   }
 
-  /* ─────────────────────────────────────────────────────────────────
+  /* ────────────────────────────────────────────────────────────────
      PUBLIC API
      Clean contract for Observatory / external telemetry
-  ───────────────────────────────────────────────────────────────── */
+  ──────────────────────────────────────────────────────────────── */
 
   // Clamped + interpolated LI update — no snapping
   window._cnUpdateLI = function(newLI) {
@@ -946,7 +945,7 @@
   window._cnProviderColors = PROVIDER_COLORS;
   window._cnRooms          = ROOMS;
 
-  /* ───────────────────────────────────────────────────────────────── */
+  /* ──────────────────────────────────────────────────────────────── */
 
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', init);
