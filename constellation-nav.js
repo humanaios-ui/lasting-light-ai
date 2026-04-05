@@ -1,4 +1,4 @@
-/* FDS: F2-BuildingBlock | Parent: CUSTOM_INSTRUCTIONS_V3_5 | Status: ACTIVE | OR&D Day 24 */
+/* FDS: F2-BuildingBlock | Parent: CUSTOM_INSTRUCTIONS_V3_6 | Status: ACTIVE | OR&D Day 25 */
 /* constellation-nav.js v2.0
  *
  * "A Field-Synchronized Navigation Kernel"
@@ -748,7 +748,7 @@
 
     var ordLeft = document.createElement('span');
     ordLeft.style.cssText = 'font:400 .68rem "IBM Plex Mono",monospace;color:rgba(122,114,104,0.50);';
-    ordLeft.textContent = 'OR 26D Phase  27 TRL 2 27=3 (Proven track record)
+    ordLeft.textContent = 'OR\u0026D Phase \u00b7 TRL 2\u20133 \u00b7 humanaios.ai';
 
     var ordRight = document.createElement('span');
     ordRight.id = 'cn-ord-state';
@@ -756,7 +756,7 @@
 
     function updateOrdState() {
       var s = getState();
-      ordRight.textContent = 'N=' + _liveN + '   27 LI ' + meanLI.toFixed(4) + '   27 ' + s.field.toUpperCase();
+      ordRight.textContent = 'N=' + _liveN + '  \u00b7 LI ' + meanLI.toFixed(4) + '  \u00b7 ' + s.field.toUpperCase();
     }
     updateOrdState();
     ov._updateOrdState = updateOrdState;
@@ -768,7 +768,7 @@
     // Close hint
     var escEl = document.createElement('div');
     escEl.setAttribute('aria-hidden', 'true');
-    escEl.textContent = 'click outside or ESC to close   27 arrows to navigate list';
+    escEl.textContent = 'click outside or ESC to close  \u00b7 arrows to navigate list';
     escEl.style.cssText = 'font-family:"IBM Plex Mono",monospace;font-size:8px;color:#7a7268;margin-top:7px;letter-spacing:.07em;text-align:center;opacity:0.55;';
     inner.appendChild(escEl);
 
@@ -921,6 +921,27 @@
     // Fetch live scores — non-blocking
     fetchLiveScores();
     setInterval(fetchLiveScores, 300000); // every 5 min
+
+    // Witness live stats — doGet endpoint (v5.3+)
+    // Supplements fetchLiveScores() with confirmed server-side N counts + mean LI
+    // Falls back silently if Apps Script v5.3 doGet() not yet deployed
+    (function fetchWitnessStats() {
+      var STATS_URL = 'https://script.google.com/macros/s/AKfycbzLGHNkoATfWEuZ_4wED8qZZ-Kua2zborJtV657limU3-hvHEln3GQE1q93W_ZW2uZv/exec?action=getStats';
+      function load() {
+        fetch(STATS_URL)
+          .then(function(r) { return r.json(); })
+          .then(function(d) {
+            if (d && d.mean_li && typeof d.mean_li === 'number') {
+              targetLI = clamp01(d.mean_li);
+              if (d.n_total) _liveN = d.n_total;
+              console.log('[Witness] Live stats loaded:', d.mean_li);
+            }
+          })
+          .catch(function() { /* silent — stubs hold until v5.3 deployed */ });
+      }
+      load();
+      setInterval(load, 300000); // every 5 min
+    })();
 
     // Start animation loop
     requestAnimationFrame(loop);
