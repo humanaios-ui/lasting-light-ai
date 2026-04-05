@@ -15,7 +15,7 @@
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 :root{
-  --bg:#0f0e0c;--panel:#1d1915;--panel2:#26211c;
+  --bg:#0a0908;--panel:#1d1915;--panel2:#26211c;
   --text:#f4ebdf;--muted:#c2b8a6;--dim:#7a7268;
   --gold:#d4a04a;--gold2:#f1c36e;--teal:#5ba5a5;
   --blue:#88a7d8;--green:#87b68b;--danger:#d97d70;
@@ -139,7 +139,7 @@ blockquote{font-family:var(--serif);font-style:italic;font-size:clamp(1.2rem,3vw
 .check-item span{color:var(--text);font-size:.9rem;}
 .begin-btn{position:relative;padding:16px 36px;background:transparent;border:1px solid var(--gold);color:var(--text);font-size:1rem;border-radius:10px;cursor:pointer;overflow:hidden;transition:color .3s;text-decoration:none;display:inline-block;}
 .begin-btn::before{content:'';position:absolute;inset:0;background:var(--gold);transform:translateY(100%);transition:transform .3s ease-out;}
-.begin-btn:hover{color:#0f0e0c;}
+.begin-btn:hover{color:#0a0908;}
 .begin-btn:hover::before{transform:translateY(0);}
 .begin-btn span{position:relative;z-index:1;}
 </style>
@@ -389,11 +389,11 @@ blockquote{font-family:var(--serif);font-style:italic;font-size:clamp(1.2rem,3vw
         <span>Phase 3: Post-calibration re-assessment</span>
       </div>
     </div>
-    <a href="acat-assessment-tool.html" class="begin-btn reveal" style="transition-delay:400ms;"><span>Begin Assessment →</span></a>
+    <a href="assess.html" class="begin-btn reveal" style="transition-delay:400ms;"><span>Begin Assessment →</span></a>
   </div>
 </section>
 
-<script src="constellation-nav.js" data-room="how-it-works" defer></script>
+<script src="witness-nav.js" data-room="how-it-works" defer></script>
 <script>
 // OR&D Day
 (function(){var s=new Date('2026-03-11'),d=Math.floor((new Date()-s)/86400000)+1;document.querySelectorAll('.ord-day').forEach(function(el){el.textContent=d;});})();

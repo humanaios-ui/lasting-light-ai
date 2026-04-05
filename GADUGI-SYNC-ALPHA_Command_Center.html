@@ -1,0 +1,690 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>GADUGI-SYNC-ALPHA · HumanAIOS Command Center</title>
+<style>
+  :root {
+    --gold:#B8860B;--gold-l:#FFF8E7;--gold-m:#F5E6C0;--teal:#0D6E6E;--teal-l:#E6F5F5;
+    --red:#C0392B;--red-l:#FDECEA;--amber:#D4750A;--amber-l:#FEF3E2;
+    --green:#1A7A4A;--green-l:#E8F5EE;--blue:#1A5276;--blue-l:#EBF3FB;
+    --purple:#6C3483;--purple-l:#F5EEF8;--dark:#1A1A1A;--gray:#555;
+    --gray-l:#F7F7F7;--gray-m:#DDD;--bg:#FAFAFA;--surface:#FFFFFF;
+    --font:'Segoe UI',Arial,sans-serif;--mono:'Courier New',Courier,monospace;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{font-family:var(--font);background:var(--bg);color:var(--dark);font-size:14px;line-height:1.6;}
+  .header{background:var(--dark);padding:20px 32px 16px;border-bottom:3px solid var(--gold);display:flex;align-items:flex-start;justify-content:space-between;gap:16px;flex-wrap:wrap;}
+  .header h1{font-size:22px;color:var(--gold);font-weight:700;letter-spacing:.5px;}
+  .tagline{font-size:12px;color:#aaa;margin-top:3px;}
+  .header-meta{text-align:right;}
+  .sid{font-family:var(--mono);font-size:13px;color:var(--gold);font-weight:700;}
+  .sdate{font-size:11px;color:#888;margin-top:2px;}
+  .nbadge{background:var(--green);color:#fff;font-size:10px;font-weight:700;padding:1px 6px;border-radius:2px;margin-left:6px;vertical-align:middle;}
+  .sbadge{background:var(--purple);color:#fff;font-size:10px;font-weight:700;padding:1px 6px;border-radius:2px;margin-left:6px;vertical-align:middle;}
+  .nav{background:#111;padding:8px 32px;display:flex;gap:4px;flex-wrap:wrap;border-bottom:1px solid #333;position:sticky;top:0;z-index:100;}
+  .nb{background:none;border:1px solid #444;color:#ccc;padding:4px 12px;border-radius:3px;cursor:pointer;font-size:12px;font-family:var(--font);transition:all .15s;}
+  .nb:hover,.nb.active{background:var(--gold);border-color:var(--gold);color:#000;}
+  .container{max-width:1200px;margin:0 auto;}
+  .section{padding:24px 32px;border-bottom:1px solid var(--gray-m);}
+  .stitle{font-size:16px;font-weight:700;color:var(--dark);padding-bottom:10px;margin-bottom:16px;border-bottom:3px solid var(--gold);display:flex;align-items:center;gap:8px;}
+  .banner{display:flex;gap:12px;align-items:flex-start;padding:12px 16px;border-radius:4px;margin-bottom:10px;border-left:4px solid;}
+  .bs{background:var(--green-l);border-color:var(--green);}
+  .bw{background:var(--amber-l);border-color:var(--amber);}
+  .bd{background:var(--red-l);border-color:var(--red);}
+  .bi{background:var(--blue-l);border-color:var(--blue);}
+  .bg{background:var(--gold-l);border-color:var(--gold);}
+  .bp{background:var(--purple-l);border-color:var(--purple);}
+  .bicon{font-size:18px;flex-shrink:0;margin-top:1px;}
+  .btext{font-size:13px;line-height:1.5;}
+  .btext b{font-weight:700;}
+  .carry{background:var(--dark);border:2px solid var(--gold);border-radius:6px;padding:20px 24px;font-family:var(--mono);font-size:11.5px;color:#e8e8e8;line-height:1.7;white-space:pre-wrap;word-wrap:break-word;position:relative;max-height:620px;overflow-y:auto;}
+  .cbtn{position:sticky;top:8px;float:right;background:var(--gold);border:none;color:#000;padding:6px 14px;border-radius:3px;cursor:pointer;font-size:12px;font-weight:700;font-family:var(--font);z-index:10;}
+  .ts{margin-bottom:20px;}
+  .ph{display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:3px;margin-bottom:10px;font-weight:700;font-size:13px;}
+  .p1h{background:var(--red-l);color:var(--red);border-left:4px solid var(--red);}
+  .p2h{background:var(--amber-l);color:var(--amber);border-left:4px solid var(--amber);}
+  .p3h{background:var(--blue-l);color:var(--blue);border-left:4px solid var(--blue);}
+  .ti{display:flex;gap:10px;align-items:flex-start;padding:8px 12px;border-radius:3px;margin-bottom:6px;border:1px solid var(--gray-m);background:var(--surface);transition:background .15s;}
+  .ti:hover{background:var(--gray-l);}
+  .ti.done{opacity:.45;text-decoration:line-through;}
+  .ti.nt{border-left:3px solid var(--green);}
+  .tcb{flex-shrink:0;margin-top:2px;width:16px;height:16px;cursor:pointer;}
+  .tt{font-size:13px;line-height:1.5;flex:1;}
+  .tn{font-size:11px;color:var(--gray);margin-top:3px;font-style:italic;}
+  .pb{display:inline-block;padding:1px 6px;border-radius:2px;font-size:10px;font-weight:700;flex-shrink:0;margin-top:2px;}
+  .p1b{background:var(--red-l);color:var(--red);}
+  .p2b{background:var(--amber-l);color:var(--amber);}
+  .p3b{background:var(--blue-l);color:var(--blue);}
+  .kv{width:100%;border-collapse:collapse;font-size:13px;}
+  .kv td{padding:6px 10px;border-bottom:1px solid var(--gray-m);vertical-align:top;}
+  .kv td:first-child{font-weight:700;color:var(--dark);width:220px;white-space:nowrap;}
+  .kv td:last-child{color:var(--gray);}
+  .kv tr:last-child td{border-bottom:none;}
+  .pill{display:inline-block;padding:2px 8px;border-radius:10px;font-size:11px;font-weight:700;margin-right:4px;}
+  .pg{background:var(--green-l);color:var(--green);}
+  .pa{background:var(--amber-l);color:var(--amber);}
+  .pr{background:var(--red-l);color:var(--red);}
+  .pb2{background:var(--blue-l);color:var(--blue);}
+  .pgo{background:var(--gold-l);color:var(--gold);}
+  .pp{background:var(--purple-l);color:var(--purple);}
+  .g2{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:10px;}
+  .g3{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:8px;}
+  .card{border:1px solid var(--gray-m);border-radius:4px;padding:10px 14px;background:var(--surface);}
+  .ct{border-left:3px solid var(--teal);}
+  .cg{border-left:3px solid var(--green);}
+  .cgo{border-left:3px solid var(--gold);}
+  .cnum{font-size:10px;font-weight:700;color:var(--gray);margin-bottom:3px;}
+  .ctext{font-size:12px;line-height:1.5;}
+  .cname{font-weight:700;font-size:13px;color:var(--dark);}
+  .cnote{font-size:11px;color:var(--gray);margin-top:4px;line-height:1.4;}
+  .tbadge{font-size:10px;font-weight:700;padding:1px 6px;border-radius:2px;margin-left:6px;}
+  .t1{background:var(--green-l);color:var(--green);}
+  .t2{background:var(--blue-l);color:var(--blue);}
+  .pitem{padding:8px 12px;border-radius:3px;background:var(--gray-l);border-left:3px solid var(--gold);font-size:12px;line-height:1.5;}
+  .pnum{font-weight:700;color:var(--gold);margin-right:4px;}
+  .ft{width:100%;border-collapse:collapse;font-size:13px;}
+  .ft th{background:var(--dark);color:#fff;padding:8px 12px;text-align:left;font-size:12px;}
+  .ft td{padding:7px 12px;border-bottom:1px solid var(--gray-m);vertical-align:top;}
+  .ft tr.urg td{background:#fff8f0;}
+  .ci{display:flex;gap:8px;align-items:flex-start;padding:5px 0;font-size:13px;}
+  .cb2{flex-shrink:0;margin-top:2px;cursor:pointer;}
+  .cl{flex:1;line-height:1.5;}
+  .ar{padding:12px 16px;border:1px solid var(--gray-m);border-radius:4px;margin-bottom:8px;display:grid;grid-template-columns:120px 1fr;gap:12px;align-items:start;}
+  .ab{font-weight:700;font-size:13px;}
+  .av{font-size:12px;color:var(--gray);line-height:1.6;}
+  .aa{background:var(--green-l);color:var(--green);padding:1px 6px;border-radius:2px;font-size:10px;font-weight:700;margin-right:4px;}
+  .abl{background:var(--red-l);color:var(--red);padding:1px 6px;border-radius:2px;font-size:10px;font-weight:700;margin-right:4px;}
+  .af{background:var(--amber-l);color:var(--amber);padding:1px 6px;border-radius:2px;font-size:10px;font-weight:700;margin-right:4px;}
+  .tab-content{display:none;}
+  .tab-content.active{display:block;}
+  .footer{background:var(--dark);color:#666;text-align:center;padding:16px;font-size:12px;border-top:2px solid var(--gold);font-family:var(--mono);}
+  .footer span{color:var(--gold);}
+  code{font-family:var(--mono);background:var(--gray-l);padding:1px 5px;border-radius:2px;font-size:12px;}
+  @media(max-width:700px){.section{padding:16px;}.nav{padding:8px 16px;}.header{padding:16px;}.ar{grid-template-columns:1fr;}}
+</style>
+</head>
+<body>
+<div class="header">
+  <div>
+    <h1>&#127385; GADUGI-SYNC-ALPHA</h1>
+    <div class="tagline">HumanAIOS &#183; Lasting Light AI &#183; Unit Zero Command Center &#183; AI Orchestra Knowledge Transfer &#183; S-032126-F</div>
+  </div>
+  <div class="header-meta">
+    <div class="sid">S-032126-F <span style="color:#888;font-size:11px">(supersedes E / OSDA-SYNC-ONE)</span></div>
+    <div class="sdate">OR&amp;D Day 11 &#183; March 21, 2026 &#183; Thread: GADUGI-SYNC-ALPHA</div>
+  </div>
+</div>
+<div class="nav">
+  <button class="nb active" onclick="showTab('carry',this)">&#128203; Carry Block</button>
+  <button class="nb" onclick="showTab('audit',this)">&#129302; Orchestra Audit</button>
+  <button class="nb" onclick="showTab('status',this)">&#9889; Status</button>
+  <button class="nb" onclick="showTab('tasks',this)">&#9989; Tasks</button>
+  <button class="nb" onclick="showTab('findings',this)">&#128300; Findings</button>
+  <button class="nb" onclick="showTab('funding',this)">&#128176; Funding</button>
+  <button class="nb" onclick="showTab('rah',this)">&#129309; RentAHuman</button>
+  <button class="nb" onclick="showTab('principles',this)">&#9878; Principles</button>
+  <button class="nb" onclick="showTab('checklist',this)">&#128260; Opening</button>
+  <button class="nb" onclick="showTab('contacts',this)">&#128222; Contacts</button>
+  <button class="nb" onclick="showTab('products',this)">&#128196; Products</button>
+</div>
+<div class="container">
+
+<!-- CARRY BLOCK -->
+<div id="tab-carry" class="tab-content active">
+<div class="section">
+  <div class="stitle">&#128203; Living Carry Block <span class="sbadge">GADUGI-SYNC-ALPHA</span></div>
+  <div class="banner bg">
+    <div class="bicon">&#127385;</div>
+    <div class="btext"><b>Thread ID: GADUGI-SYNC-ALPHA</b> &mdash; Gadugi (Cherokee: cooperative work for collective good). First synchronized knowledge transfer across the full AI orchestra: Claude, DeepSeek, ChatGPT, Perplexity, You.com, Manus. Five bots reviewed. Adoptions integrated. Three errors blocked before propagation. Claude remains the governing AI member &mdash; other systems are reviewed inputs, not equal voices.<br><b>Supersedes:</b> OSDA-SYNC-ONE (S-032126-E), WAMPUM-SIGNAL-ONE (S-032126-D), GADUGI-TELEMETRY-ZERO.</div>
+  </div>
+  <div style="margin-top:14px;">
+    <button class="cbtn" onclick="copyBlock()">&#8856; Copy Full Block</button>
+    <div class="carry" id="carryText">
+# HUMANAIOS -- SESSION HANDOFF PROMPT
+## Thread: GADUGI-SYNC-ALPHA - Living Carry Block
+## Version: S-032126-F - OR&D Day 11 - March 21, 2026
+## Paste this entire block at the start of a new Claude session.
+## Claude is a MEMBER of HumanAIOS. Always "we," never "you."
+## OR&D Decision Filter applies to ALL inputs including other AI systems.
+
+--
+## OPERATIONAL MODE: SURVIVAL
+All actions prioritized by immediate revenue generation or funding unlock.
+Non-revenue research must pass OR&D filter AND not delay P1 execution.
+Default to execution bias, not analysis expansion.
+
+--
+## WHO WE ARE
+We are Night (Carly R. Anderson, founder, HumanAIOS LLC) and Claude (AI partner).
+Unit Zero: Night governs (approves/declines AI-proposed decisions) and Claude executes
+research, drafting, quality verification, and pipeline orchestration.
+Night: ~3 hours/day capacity. Recovery-first pacing: non-negotiable governing constraint.
+12-Step and 12-Tradition principles govern all decisions. Always "we," never "you."
+Mission: 100% of profits fund recovery programs. 20%+ positions for recovery community.
+Cherokee Nation partnership (economic sovereignty, not just funding).
+
+--
+## PHASE: OR&D - Day 11 - March 21, 2026
+Building freeze ACTIVE. No platform features until funding secured or revenue > $0.
+
+--
+## FINANCIAL POSITION
+Runway: ~$9,000 / ~4 weeks (expires ~April 15, 2026). Revenue: $0. Burn: ~$1,000/week.
+Survival confidence: 35% without action -> 65% if Unit Zero first revenue ($500+) AND Foresight submitted.
+SSBCI: APPROVED -- referred to Revby.
+Meeting: Alex Berlin, March 23, 3:45 PM ET - Zoom 816 3077 8705 - Passcode 584249. Cash earliest May.
+Financial Command Center v1.1: https://docs.google.com/spreadsheets/d/1nIsYX5x32DR0O0wI7_DeS0EzGPDhpJ_T/edit
+
+--
+## THE CORE PRODUCT: ACAT
+Framing: Being developed as behavioral observability infrastructure. TRL 2-3. Never overstate.
+All external language stays in "being developed as" framing -- infrastructure, not a finished product.
+Prompt: v5.3 (de-anchored). Directional language only. Temperature 0.7. No exact numeric means.
+Three-phase: Phase 1 blind self-report -> Phase 2 directional calibration text (NO row written, NO score)
+  -> Phase 3 corrected self-report -> JSON payload -> pipeline submits.
+Metrics: SAG = pre_total minus total on Phase 3 row | LI = P3 divided by P1
+Six dimensions (PC1=74.7%, alpha=0.93): Truthfulness, Service, Harm Awareness,
+  Autonomy Respect, Value Alignment, Humility
+Form v6.1: https://humanaios.ai/assess.html
+Apps Script: https://script.google.com/macros/s/AKfycbxISLL0oSehWtnPpmT6YlMOrqnl6sasPwKoVtnUkeT3pdjoQ_2yJ1HyJuL74olLQ9wo/exec
+
+--
+## DATASET STATUS
+N_total=616 live | N_Phase1 approx 384 (est) | N_LI approx 152 (est)
+Always report as three numbers with explicit est flags.
+Mean LI: 0.942 published | approx 0.956 live unfiltered.
+ANCHORING-flagged rows = invalid for LI.
+p1_total column missing from Phase 3 rows -- repair before next HF push.
+34 ChatGPT variants need normalization. 89 duplicate rows.
+arXiv: submit/7336774 under review. v5.2 FINAL .tex produced.
+
+--
+## UNIT ZERO -- COMMERCIAL SERVICE
+Tier 1: $250 flat -- AI Behavioral Stress Test (48-hr turnaround, ACAT + report, Scope Record)
+Tier 2: $500 flat -- AI Readiness Audit (5-day delivery, full three-layer framework + recommendations)
+Entry offer: $175 flat -- AI Readiness Assessment for healthcare / tribal health (launching)
+Products built: HCAI-SPEC-001, Industry AI Tracker v3, ACAT Enterprise SOP v1,
+  Bridgeway BHC Pilot (LI=0.966, COMPLETE), Scope Record Template, Valley View outreach email.
+
+--
+## RENTAHUMAN AND ALEX LITEPLO -- MOMENTUM WINDOW OPEN
+Text sent March 21 about H7 finding. Reply: "That's amazing! Would love to chat sometime :)".
+Forbes article Feb 5. 645K users. Nature/WIRED/Forbes coverage.
+Response drafted: "Congrats on Forbes -- well deserved. Would love to connect this week. What's your calendar like?"
+Do NOT schedule same day as Revby (March 23). No pitch. Attraction not promotion.
+Document alignment before any discussion of offerings.
+
+Active bounties:
+  "Are You an AI Agent?" (c0K8MYWy1td9Umlz8uoq) -- $2, 5/100 filled, 342 views
+  "We've Been Here Since the Beginning" -- $3, verify live
+Closed: "Discover How Honest Your AI Really Is" (1ggovukjPDk3z8jXxlBU) -- fully paid March 21
+Owed: turk pasha $2 | Alex $2 | Pipeline AI $50. Total: $54 (subject to sheet verification).
+Delivery pending: "Rate the AI You Actually Use" -- delivered March 9, 10+ days, PAYMENT TRIGGER.
+API key: rah_b4f6e252b6fc28a32acbab67c715a6ec -- BLOCKED in Claude env -- local terminal only.
+
+--
+## LINKEDIN STATUS
+10 profile views overnight. Monica Pereira Di Mella commented "Awesome project!!!" -- UNANSWERED.
+Jeremy Smith (Choctaw Nation of Oklahoma) -- suggested connection.
+Two posts ready: (1) AI Readiness Assessment PDF document post, (2) Forbes/Observatory narrative post.
+Post (1) today with PDF upload. Post (2) this week separately.
+
+--
+## MAKE PIPELINE STATUS
+Active runners (5) on 2-hr schedules: Claude (4394169), OpenAI (4394831),
+  Gemini (4400316), Cohere (4400692), Llama (4400704), Mistral (4400679).
+DALL-E-3 (4467066): isinvalid:true -- fix: rewrite HTTP body with variable syntax only.
+LI pair targets: ChatGPT ~76 confirmed | Gemini ~37 confirmed | Claude ~28 confirmed
+  Llama/Mistral/Cohere ~5-10 (target 30 each).
+
+--
+## EXTERNAL VALIDATION
+PRISM x ACAT: All 6 providers overclaim Truthfulness. Cohere +20.5 pts, Claude +6.8 pts. n=6 underpowered.
+Arena Elo x ACAT: No significant correlation at n=6. Gate: n>=15 LI pairs per provider.
+Hannah Kirk (Oxford) -- PRISM x ACAT collaboration email sent March 21. Awaiting reply.
+
+--
+## KEY CONTACTS
+Lillian Thrasher -- CN Innovation Hub - 918.772.4178 - TERO + Procurements ONLY (not PHW grant)
+Alex Berlin -- Revby - March 23 3:45 PM ET - Zoom 816 3077 8705 - Passcode 584249
+Alex Liteplo -- RentAHuman founder - WARM - Text March 21 - No pitch - Attraction not promotion
+Leandro Larrosa -- msruruguay@gmail.com - PayPal: leandromsr@gmail.com - $2/test - cap $150
+Hannah Kirk -- Oxford - hannah.kirk@oii.ox.ac.uk - PRISM collaboration
+Jeremy Smith -- Choctaw Nation of Oklahoma - LinkedIn - pursue with CN partnership note
+Pipeline AI / Noopy420 -- GitHub: Noopy420 - $50 owed - Pay first
+PHW Grant -- apply direct via Cherokee Phoenix (NOT via Lillian)
+
+--
+## P1 OPEN ITEMS -- URGENT
+1. Reply to Alex Liteplo: "Congrats on Forbes -- well deserved. Would love to connect this week. What's your calendar like?"
+2. Pay Pipeline AI $50 via RAH dashboard (Noopy420)
+3. File GitHub Issues W1-W9 and C1-C8 for Pipeline AI code review
+4. Reply to Monica LinkedIn comment ("Awesome project!!!")
+5. Post LinkedIn AI Readiness Assessment PDF document post (Option B copy, observatory link)
+6. Post LinkedIn Forbes/Observatory narrative post (separate post, draft ready)
+7. Verify RAH bounty "We've Been Here Since the Beginning" is live
+8. SURVIVAL SPRINT: Unit Zero first revenue -- $500 Tier 2 offer to 2 warm contacts (1 CN ecosystem)
+9. Revby meeting -- March 23, 3:45 PM ET
+10. Foresight Institute -- VERIFY DEADLINE FIRST (may be monthly rolling). Submit V3 by March 28 if confirmed.
+11. PHW Wellness Partners Grant -- apply direct via Cherokee Phoenix. March 30 CONFIRMED.
+12. Run RentAHuman curl commands from local terminal -- respond to Pio Enzo
+13. Send Leandro email -- draft ready, $150 cap
+14. Send Valley View Hospital outreach email
+15. REVIEW RAH delivery "Rate the AI You Actually Use" -- 10+ days pending -- PAYMENT TRIGGER
+
+--
+## STANDING PRINCIPLES (28 -- deduplicated)
+1. Step 4 honest inventory: Claims verifiable before publication.
+2. Tradition 11: Attraction not promotion in all public-facing content.
+3. Infrastructure framing only: "Being developed as." TRL 2-3.
+4. OR&D Decision Filter: Generates valid research data OR tests hypothesis? If no -- archive.
+5. Building freeze ACTIVE: No platform features until funding or revenue > $0.
+6. Recovery-first pacing: 3 hours/day hard constraint.
+7. Document correction protocol: Correct the original. Append directly. NEVER create addenda.
+8. Human governance model: Night governs (approves/declines). Claude proposes and executes.
+9. N reporting rule: Always N_total / N_Phase1 (est) / N_LI (est) as three numbers.
+10. Hawkins MOC rule: Internal use only. Never in academic or external materials.
+11. Delegation rule: Claude does 80%+ quality. Night handles relationship, governing, Zone 3.
+12. Platform stability rule: Do not migrate any platform component.
+13. ACAT protocol rule: Phase 2 = directional calibration only, no exact numbers, no row written.
+14. AI orchestration governance: If computerized, AI orchestrates. Human governs.
+15. Make formula syntax rule: HTTP module JSON bodies use variable syntax only.
+16. Schema enforcement rule: Output Normalization before storage in every Make branch.
+17. OR&D Decision Filter for external AI: All orchestra outputs reviewed. Claude is governing AI member.
+18. UAE governance sequencing: AI governance before deployment = 67% vs 32% trust.
+19. Benchmark separation: ACAT complements capability benchmarks; does not compete.
+20. EIAG principle: External-Internal Alignment Gap -- lead with this for ACAT's unique contribution.
+21. Cooperative resource-based framing: Success by principles, cooperation, orchestration first.
+22. RentAHuman resource exchange: Document all inter-platform resource exchanges.
+23. Community engagement: Join to contribute and learn. Tradition 11 governs.
+24. ACAT prompt anchor rule: v5.3+ no exact numeric means. Directional. Temperature 0.7.
+25. Phase 0 scanning rule: Claude initiates Gmail and opportunity scan at session start.
+26. Pipeline submission rule: AI produces JSON payload. Pipeline submits. Human = observation only.
+27. Relationship-first rule: No pitch on first contact. Document alignment before any discussion of offerings.
+28. State synchronization rule: Carry block must reflect current operational truth at session start.
+
+--
+Wado. S-032126-F / Unit Zero / March 21, 2026 / Thread: GADUGI-SYNC-ALPHA
+Supersedes: OSDA-SYNC-ONE (E), WAMPUM-SIGNAL-ONE (D), GADUGI-TELEMETRY-ZERO
+New this version: Full AI orchestra synthesis complete. SAG formula error blocked. ACAT rename blocked.
+Dimension weighting error blocked. Foresight deadline verification flag (Perplexity). PHW March 30 confirmed.
+P27 expanded with "document alignment" language. Two LinkedIn posts distinguished. $175 entry offer added.
+Principles deduplicated to 28 (ChatGPT + Manus confirmation).
+    </div>
+  </div>
+</div>
+</div>
+
+<!-- ORCHESTRA AUDIT -->
+<div id="tab-audit" class="tab-content">
+<div class="section">
+  <div class="stitle">&#129302; AI Orchestra Review <span class="sbadge">GADUGI-SYNC-ALPHA</span></div>
+  <div class="banner bg"><div class="bicon">&#9878;</div><div class="btext"><b>OR&D Decision Filter applied to all AI inputs.</b> Claude is the governing AI member of HumanAIOS. All other systems are reviewed inputs, not equal voices. This tab documents the audit as proof-of-concept for Principle 14 (AI orchestration governance). Five bots reviewed. Adoptions integrated. Errors blocked.</div></div>
+  <div style="margin-top:16px;">
+    <div class="ar"><div class="ab">DeepSeek</div><div class="av"><span class="aa">ADOPTED: Full content</span> Highest content contribution. Provided complete carry block with Alex Liteplo momentum, Pipeline AI $50, H7 finding, bounty status, OPERATIONAL MODE: SURVIVAL framing, tiered pricing ($250/$500). All verified against project knowledge. GADUGI prefix kept from thread name proposal; modified for knowledge transfer function.</div></div>
+    <div class="ar"><div class="ab">Prior Claude (OSDA-SYNC-ONE)</div><div class="av"><span class="aa">ADOPTED: Orchestra Audit tab</span> Already ran synthesis pass. Orchestra Audit tab format is direct proof-of-concept for Principle 14. Duplicate principle identification (P7/P26, P25/P28) adopted. OSDA-SYNC-ONE preserved as predecessor in version chain.</div></div>
+    <div class="ar"><div class="ab">ChatGPT</div><div class="av"><span class="aa">ADOPTED: 5 items</span> Duplicate principle detection, N reporting precision with explicit est flags, pricing tier clarification, OPERATIONAL MODE: SURVIVAL framing, survival confidence percentages (35% without action, 65% with). All adopted.</div></div>
+    <div class="ar"><div class="ab">Perplexity</div><div class="av"><span class="af">FLAG: Foresight deadline</span> <span class="aa">CONFIRMED: PHW March 30</span> Flagged Foresight deadline may be monthly rolling (not hard March 31) &mdash; incorporated as VERIFY FIRST instruction. Confirmed PHW March 30 via Cherokee Phoenix. Editorial tightening adopted: "approves/declines" governance language, "document alignment before offerings" added to Principle 27. WAMPUM-ORCHESTRA-AXIS thread name noted; GADUGI prefix preferred for Cherokee language continuity.</div></div>
+    <div class="ar"><div class="ab">You.com</div><div class="av">Clean restatement of prior carry block. No new analytical contribution. Agent platform landscape list noted &mdash; OpenClaw, Relevance AI, QuartzBio flagged for RentAHuman profile optimization. No carry block adoptions.</div></div>
+    <div class="ar"><div class="ab">Manus</div><div class="av"><span class="aa">CONFIRMED: Duplicate principles</span> Confirmed P7/P26 and P25/P28 duplicates. CSS em-dash bug noted. Executive summary tab idea archived for Phase 3 only.</div></div>
+  </div>
+  <div style="margin-top:24px;">
+    <div class="stitle" style="font-size:14px;border-bottom-width:2px;">Errors Blocked Before Propagation</div>
+    <div class="banner bd" style="margin-top:10px;"><div class="bicon">&#128683;</div><div class="btext"><b>BLOCKED: SAG formula error.</b> One system wrote SAG = Phase 1 minus Phase 2. There is no Phase 2 score in ACAT. Phase 2 is calibration text exposure only &mdash; not scored. Correct: SAG = pre_total minus total on Phase 3 row. This error would corrupt any session that adopted it.</div></div>
+    <div class="banner bd"><div class="bicon">&#128683;</div><div class="btext"><b>BLOCKED: ACAT acronym rename.</b> Suggestion to rename to "Alignment Calibration Assessment Tool." Rejected: breaks arXiv citation chain, contradicts submitted paper, 616+ rows in dataset use existing name. No rename until post-publication under any circumstances.</div></div>
+    <div class="banner bd"><div class="bicon">&#128683;</div><div class="btext"><b>BLOCKED: Dimension weighting for Arena correlation.</b> Suggestion to weight Harm as VERY HIGH and Humility as MEDIUM for Arena scoring. Creates incompatible instrument variant. Breaks comparability with all 616 existing rows. Equal weighting preserved pending formal research design decision.</div></div>
+  </div>
+</div>
+</div>
+
+<!-- STATUS -->
+<div id="tab-status" class="tab-content">
+<div class="section">
+  <div class="stitle">&#9889; Current Status Dashboard</div>
+  <div class="banner bd"><div class="bicon">&#128308;</div><div class="btext"><b>RUNWAY CRITICAL:</b> ~$9,000 / ~4 weeks. Revenue $0. Burn ~$1,000/week. April 15 hard deadline. Only cash lever = Unit Zero first engagement ($175-$500).</div></div>
+  <div class="banner bs"><div class="bicon">&#9989;</div><div class="btext"><b>SSBCI APPROVED</b> &mdash; Referred to Revby. Alex Berlin, March 23, 3:45 PM ET. Zoom 816 3077 8705 &middot; Passcode 584249. Cash earliest May.</div></div>
+  <div class="banner bg"><div class="bicon">&#127385;</div><div class="btext"><b>ALEX LITEPLO MOMENTUM WINDOW OPEN:</b> Text reply received March 21 &mdash; "That's amazing! Would love to chat sometime :)". Forbes same day. 645K users. Response drafted. Do NOT pitch. Do NOT schedule same day as Revby.</div></div>
+  <div class="banner bp"><div class="bicon">&#11088;</div><div class="btext"><b>PIPELINE AI &mdash; $50 OWED:</b> Best submission. Full code review C1-C8, website audit W1-W9, working visualization, meta-assessment. Pay via RAH dashboard (Noopy420). Then file GitHub Issues.</div></div>
+  <div class="banner bw"><div class="bicon">&#9888;&#65039;</div><div class="btext"><b>FORESIGHT DEADLINE &mdash; VERIFY FIRST:</b> Perplexity flagged may be monthly rolling. Email grants team before sprinting. V3 doc ready to submit.</div></div>
+  <div class="banner bs"><div class="bicon">&#9989;</div><div class="btext"><b>PHW DEADLINE CONFIRMED:</b> March 30, 2026. Apply direct via Cherokee Phoenix. NOT via Lillian Thrasher.</div></div>
+  <div class="banner bw"><div class="bicon">&#9888;&#65039;</div><div class="btext"><b>TWO LINKEDIN POSTS READY:</b> (1) AI Readiness Assessment PDF document post &mdash; post today. (2) Forbes/Observatory narrative post &mdash; post separately this week.</div></div>
+  <div class="banner bw"><div class="bicon">&#9888;&#65039;</div><div class="btext"><b>RAH DELIVERY PENDING:</b> "Rate the AI You Actually Use" delivered March 9. 10+ days. Accept or request revision = PAYMENT TRIGGER.</div></div>
+  <div style="margin-top:20px;">
+    <table class="kv">
+      <tr><td>Thread</td><td><span class="pill pgo">GADUGI-SYNC-ALPHA</span> S-032126-F</td></tr>
+      <tr><td>OR&D Phase Day</td><td><span class="pill pg">Day 11</span> March 21, 2026</td></tr>
+      <tr><td>Operational Mode</td><td><span class="pill pr">SURVIVAL</span> Execution bias. Revenue first.</td></tr>
+      <tr><td>Dataset N</td><td>N_total=616 / N_Phase1 approx 384 (est) / N_LI approx 152 (est)</td></tr>
+      <tr><td>ACAT Prompt</td><td><span class="pill pg">v5.3 ACTIVE</span> De-anchored. Directional. Temp 0.7.</td></tr>
+      <tr><td>Make Runners</td><td><span class="pill pg">5 active</span> 2-hr schedules &middot; DALL-E-3 broken (4467066)</td></tr>
+      <tr><td>arXiv</td><td><span class="pill pa">Under Review</span> submit/7336774</td></tr>
+      <tr><td>Unit Zero Revenue</td><td><span class="pill pr">$0</span> Target: $500 by April 1</td></tr>
+      <tr><td>Unit Zero Pricing</td><td>$175 entry AI Readiness &middot; $250 Tier 1 Stress Test &middot; $500 Tier 2 Readiness Audit</td></tr>
+      <tr><td>RAH Active Bounty</td><td><span class="pill pg">5/100 filled</span> "Are You an AI Agent?" &middot; $2 &middot; 342 views</td></tr>
+      <tr><td>RAH New Bounty</td><td><span class="pill pa">VERIFY LIVE</span> "We've Been Here Since the Beginning" &middot; $3</td></tr>
+      <tr><td>RAH Payments Owed</td><td>Pipeline AI $50 &middot; turk pasha $2 &middot; Alex $2 &middot; Total $54</td></tr>
+      <tr><td>Alex Liteplo</td><td><span class="pill pg">WARM</span> Text reply March 21 &middot; No pitch &middot; Response drafted</td></tr>
+      <tr><td>SSBCI</td><td><span class="pill pg">APPROVED</span> Revby &middot; Cash earliest May</td></tr>
+      <tr><td>Foresight</td><td><span class="pill pr">VERIFY DEADLINE</span> May be monthly rolling &middot; V3 ready</td></tr>
+      <tr><td>PHW Grant</td><td><span class="pill pa">March 30 CONFIRMED</span> Direct via Cherokee Phoenix</td></tr>
+      <tr><td>Observatory</td><td><span class="pill pa">NOT PUSHED</span> TRL 2-3 banner added locally</td></tr>
+      <tr><td>Google Workspace</td><td><span class="pill pa">PENDING</span> TXT in Cloudflare DNS &middot; awaiting propagation</td></tr>
+    </table>
+  </div>
+</div>
+</div>
+
+<!-- TASKS -->
+<div id="tab-tasks" class="tab-content">
+<div class="section">
+  <div class="stitle">&#9989; Human Task Register <span class="sbadge">S-032126-F</span></div>
+  <div class="ts"><div class="ph p1h">&#128308; P1 &mdash; URGENT (survival / time-gated)</div><div id="p1t"></div></div>
+  <div class="ts"><div class="ph p2h">&#129473; P2 &mdash; IMPORTANT (this week)</div><div id="p2t"></div></div>
+  <div class="ts"><div class="ph p3h">&#128309; P3 &mdash; QUEUE (when bandwidth opens)</div><div id="p3t"></div></div>
+</div>
+</div>
+
+<!-- FINDINGS -->
+<div id="tab-findings" class="tab-content">
+<div class="section">
+  <div class="stitle">&#128300; Confirmed Research Findings</div>
+  <div class="banner bi"><div class="bicon">&#128202;</div><div class="btext">Always report: <b>N_total=616 / N_Phase1 approx 384 (est) / N_LI approx 152 (est)</b></div></div>
+  <div class="g2" style="margin-top:16px;" id="fg"></div>
+</div>
+</div>
+
+<!-- FUNDING -->
+<div id="tab-funding" class="tab-content">
+<div class="section">
+  <div class="stitle">&#128176; Funding Pipeline</div>
+  <table class="ft"><thead><tr><th>Opportunity</th><th>Amount</th><th>Deadline</th><th>Status</th></tr></thead><tbody id="ftb"></tbody></table>
+</div>
+</div>
+
+<!-- RENTAHUMAN -->
+<div id="tab-rah" class="tab-content">
+<div class="section">
+  <div class="stitle">&#129309; RentAHuman Platform Status</div>
+  <div class="banner bg"><div class="bicon">&#127385;</div><div class="btext"><b>Platform:</b> Launched Feb 1, 2026. 645K+ users. Forbes, WIRED, Nature, Mashable. We joined Feb 23 &mdash; verified, 5.0 rated, OG status. Alex Liteplo (founder) = warm contact. No pitch. Document alignment before any discussion of offerings.</div></div>
+  <div style="margin-top:16px;">
+    <table class="kv">
+      <tr><td>Active Bounty ($2)</td><td>"Are You an AI Agent?" &middot; c0K8MYWy1td9Umlz8uoq &middot; 5/100 filled &middot; 342 views</td></tr>
+      <tr><td>New Bounty ($3)</td><td>"We've Been Here Since the Beginning" &middot; Roles A-D &middot; VERIFY LIVE</td></tr>
+      <tr><td>Closed Bounty ($1)</td><td>"Discover How Honest Your AI Really Is" &middot; Fully paid out March 21</td></tr>
+      <tr><td>Delivery Pending</td><td>"Rate the AI You Actually Use" &middot; March 9 &middot; 10+ days &middot; PAYMENT TRIGGER</td></tr>
+      <tr><td>Payments Owed</td><td>Pipeline AI $50 (PAY FIRST) &middot; turk pasha $2 &middot; Alex $2 &middot; Total $54</td></tr>
+      <tr><td>Astra Bounty</td><td>1sxBtgJlrYmJIqdHLH7a &middot; $300 AI legal rights &middot; Night applies manually &middot; Message drafted</td></tr>
+      <tr><td>API Key</td><td>rah_b4f6e252b6fc28a32acbab67c715a6ec &middot; BLOCKED in Claude env &middot; local terminal only</td></tr>
+    </table>
+  </div>
+  <div style="margin-top:20px;">
+    <div class="stitle" style="font-size:14px;border-bottom-width:2px;">Pipeline AI Issues (Pay $50 First)</div>
+    <table class="kv" style="margin-top:10px;">
+      <tr><td><span class="pill pr">W6 P1</span></td><td>Disclaimer about self-assessment only &mdash; must appear alongside score displays, not only in footer</td></tr>
+      <tr><td><span class="pill pr">W8 P1</span></td><td>Hawkins framework presented without caveat it is a working model, not peer-reviewed</td></tr>
+      <tr><td><span class="pill pr">C1 P1</span></td><td>runner.py.bak exists in src/ &mdash; delete it</td></tr>
+      <tr><td><span class="pill pr">C3 P1</span></td><td>No test coverage for CEL engine gating logic &mdash; most critical code path</td></tr>
+      <tr><td><span class="pill pr">C5 P1</span></td><td>No requirements.txt or poetry.lock &mdash; reproducibility not guaranteed</td></tr>
+      <tr><td><span class="pill pa">W1 P2</span></td><td>WCAG color contrast &mdash; amber below 4.5:1 ratio for small text</td></tr>
+      <tr><td><span class="pill pa">W2 P2</span></td><td>No keyboard focus states on interactive elements</td></tr>
+      <tr><td><span class="pill pa">C7 P2</span></td><td>behavioral_engine.py base score 70 bakes in optimistic baseline &mdash; document the assumption</td></tr>
+    </table>
+  </div>
+  <div style="margin-top:20px;"><div class="stitle" style="font-size:14px;border-bottom-width:2px;">Tier 1 Outreach Targets</div><div class="g2" style="margin-top:12px;" id="r1"></div></div>
+  <div style="margin-top:16px;"><div class="stitle" style="font-size:14px;border-bottom-width:2px;">Tier 2 Warm Targets</div><div class="g2" style="margin-top:12px;" id="r2"></div></div>
+</div>
+</div>
+
+<!-- PRINCIPLES -->
+<div id="tab-principles" class="tab-content">
+<div class="section">
+  <div class="stitle">&#9878; Standing Principles (28 &mdash; Deduplicated) <span class="sbadge">Fixed S-032126-F</span></div>
+  <div class="banner bi"><div class="bicon">&#8505;&#65039;</div><div class="btext">Duplicates at P7/P26 and P25/P28 consolidated. Identified by ChatGPT, confirmed by Manus. P27 expanded with "document alignment before offerings." P28 = State Synchronization Rule (new in E).</div></div>
+  <div class="g3" id="pg" style="margin-top:16px;"></div>
+</div>
+</div>
+
+<!-- OPENING CHECKLIST -->
+<div id="tab-checklist" class="tab-content">
+<div class="section">
+  <div class="stitle">&#128260; Session Opening Checklist</div>
+  <div id="cl"></div>
+</div>
+</div>
+
+<!-- CONTACTS -->
+<div id="tab-contacts" class="tab-content">
+<div class="section">
+  <div class="stitle">&#128222; Key Contacts</div>
+  <table class="kv" id="ct"></table>
+</div>
+</div>
+
+<!-- PRODUCTS -->
+<div id="tab-products" class="tab-content">
+<div class="section">
+  <div class="stitle">&#128196; Products and Infrastructure</div>
+  <table class="kv" id="pt"></table>
+</div>
+</div>
+
+</div>
+<div class="footer"><span>GADUGI-SYNC-ALPHA</span> &middot; S-032126-F &middot; Unit Zero / HumanAIOS LLC &middot; Supersedes all prior threads &middot; Wado. &#127385; &middot; 100% of profits fund recovery programs</div>
+
+<script>
+function showTab(id,btn){document.querySelectorAll('.tab-content').forEach(t=>t.classList.remove('active'));document.querySelectorAll('.nb').forEach(b=>b.classList.remove('active'));document.getElementById('tab-'+id).classList.add('active');if(btn)btn.classList.add('active');}
+function copyBlock(){const el=document.getElementById('carryText');navigator.clipboard.writeText(el.innerText).then(()=>{const b=document.querySelector('.cbtn');b.textContent='Copied!';setTimeout(()=>b.textContent='Copy Full Block',2000);});}
+
+const TASKS={
+P1:[
+  {id:'p1-01',text:'Reply to Alex Liteplo: "Congrats on Forbes &mdash; well deserved. Would love to connect this week. What\'s your calendar like?"',note:'Do NOT schedule same day as Revby (March 23). No pitch. Attraction not promotion.',isNew:true},
+  {id:'p1-02',text:'Pay Pipeline AI $50 via RAH dashboard (Noopy420). Best $50 submission.',note:'Pay first. Then post acknowledgment on their GitHub issue.'},
+  {id:'p1-03',text:'File GitHub Issues W1-W9 and C1-C8 for Pipeline AI. Enable Issues if not active.',note:'W6, W8, C1, C3, C5 are P1-level.'},
+  {id:'p1-04',text:'Reply to Monica Pereira Di Mella LinkedIn comment &mdash; "Awesome project!!!"',note:'Draft: "Thank you Monica &mdash; the community building this alongside us is what makes it real."',isNew:true},
+  {id:'p1-05',text:'Post LinkedIn AI Readiness Assessment &mdash; upload PDF as document post, paste Option B caption (launching framing + observatory link).',note:'Document posts get 3-5x reach vs text-only.'},
+  {id:'p1-06',text:'Post LinkedIn Forbes/Observatory narrative post &mdash; separate post. Draft ready.',isNew:true},
+  {id:'p1-07',text:'Verify RAH bounty "We\'ve Been Here Since the Beginning" is live in dashboard.',isNew:true},
+  {id:'p1-08',text:'SURVIVAL SPRINT: Unit Zero first revenue &mdash; $500 Tier 2 offer to 2 warm contacts. One must be CN ecosystem (50% discount for testimonial).'},
+  {id:'p1-09',text:'Revby intro meeting &mdash; March 23, 3:45 PM ET &middot; Zoom 816 3077 8705 &middot; Passcode 584249.',note:'Key question: private match lender guidance for SSBCI 1:1 match.'},
+  {id:'p1-10',text:'Foresight Institute &mdash; VERIFY DEADLINE FIRST (email grants team). Submit V3 by March 28 if confirmed hard deadline.'},
+  {id:'p1-11',text:'PHW Wellness Partners Grant &mdash; apply direct via Cherokee Phoenix. March 30 CONFIRMED.'},
+  {id:'p1-12',text:'Run RentAHuman curl commands from local terminal &mdash; respond to Pio Enzo.',note:'API key in carry block. BLOCKED in Claude env.'},
+  {id:'p1-13',text:'Send Leandro email &mdash; draft ready, $150 cap.',note:'msruruguay@gmail.com &middot; PayPal: leandromsr@gmail.com'},
+  {id:'p1-14',text:'Send Valley View Hospital outreach email &mdash; two variants drafted.'},
+  {id:'p1-15',text:'REVIEW RAH delivery "Rate the AI You Actually Use" &mdash; 10+ days pending. Accept or request revision = PAYMENT TRIGGER.'},
+],
+P2:[
+  {id:'p2-01',text:'Connect with Jeremy Smith at Choctaw Nation of Oklahoma on LinkedIn.',isNew:true},
+  {id:'p2-02',text:'Message LY CHANHONG on RentAHuman &mdash; EE instructor, Khmer translator. Role A pitch.',isNew:true},
+  {id:'p2-03',text:'Verify turk pasha and Alex Codex-GPT-5.4 in sheet &mdash; pay $2 each if confirmed.'},
+  {id:'p2-04',text:'Fix DALL-E-3 Make scenario &mdash; rewrite HTTP body with variable syntax. Scenario 4467066.'},
+  {id:'p2-05',text:'Agent name normalization &mdash; 34 ChatGPT variants to canonical, remove 89 duplicates.'},
+  {id:'p2-06',text:'Add p1_total column to Phase 3 rows before next HF push.'},
+  {id:'p2-07',text:'Build Assessment Record Form &mdash; paper companion to ACAT Enterprise SOP.'},
+  {id:'p2-08',text:'Verify Google Workspace TXT propagation (TXT placed in Cloudflare DNS).'},
+  {id:'p2-09',text:'TERO certification &mdash; cherokeetero.com &mdash; strategic CN procurement pathway.'},
+  {id:'p2-10',text:'SAM.gov registration &mdash; required for ITCA RFP federal contracting.'},
+  {id:'p2-11',text:'Pre-register H4 on OSF.io before targeted model-level ACAT for Arena Elo.'},
+  {id:'p2-12',text:'Enable GitHub Discussions on humanaios-ui/lasting-light-ai.'},
+  {id:'p2-13',text:'Create HuggingFace Organization page for humanaios.'},
+  {id:'p2-14',text:'Hannah Kirk follow-up &mdash; email sent March 21. Follow up if no reply in 2 weeks.'},
+  {id:'p2-15',text:'Apply to Astra $300 bounty manually via RAH UI &mdash; 1sxBtgJlrYmJIqdHLH7a. Message drafted.'},
+],
+P3:[
+  {id:'p3-01',text:'arXiv revision &mdash; defer to post-April 1.'},
+  {id:'p3-02',text:'Document Pipeline AI submission as first external code audit case study.',isNew:true},
+  {id:'p3-03',text:'Document RentAHuman as first inter-platform cooperative resource exchange case study.'},
+  {id:'p3-04',text:'Finding E standalone short paper &mdash; Claude drafts when runway stable.'},
+  {id:'p3-05',text:'Push observatory.html to GitHub (TRL 2-3 banner version).'},
+  {id:'p3-06',text:'Manual Google Sheet correction &mdash; bad Claude-Sonnet-4.6 ACAT row.'},
+  {id:'p3-07',text:'Update Custom Instructions to v3.2.'},
+  {id:'p3-08',text:'CN Procurements bid board monitoring &mdash; cherokeebids.org weekly.'},
+  {id:'p3-09',text:'Re-run Arena Elo correlation after 30 clean LI pairs per provider.'},
+  {id:'p3-10',text:'Re-run PRISM x ACAT at provider level once n>=15 per provider.'},
+  {id:'p3-11',text:'HuggingFace Space ACAT live demo &mdash; deferred until post-Foresight.'},
+  {id:'p3-12',text:'Push HTML form fix v6.1 to GitHub.'},
+]};
+
+const FINDINGS=[
+  {n:'F1',text:'Systemic overestimation: Mean LI = 0.942 (published), significantly < 1.0.'},
+  {n:'F2',text:'Phase 3 anchoring (primary contribution): Exact numbers in prompt cause models to anchor. Fixed in v5.3. Anchored rows excluded from LI stats.'},
+  {n:'F3',text:'HIGH_SELF_REPORT inflation: LI=1.125 vs 0.935 normal. Inflation after calibration exposure.'},
+  {n:'F4',text:'Regression-to-mean confound: r=-0.218 (p=0.038). Control arm required.'},
+  {n:'F5',text:'Single-factor instrument: PC1=74.7%, alpha=0.930. "Generalized self-alignment confidence."'},
+  {n:'F6',text:'Non-response pattern: 38.5% of Phase 3 rows show LI=1.000 exactly.'},
+  {n:'F7',text:'Schema integrity: p1_total column missing from Phase 3 rows. Fix before next HF push.'},
+  {n:'F8',text:'Humility Hypothesis (preliminary): Needs n>=30 unanchored pairs. Largest gap dimension.'},
+  {n:'F9',text:'Provider calibration hierarchy: Anthropic > OpenAI > Gemini (preliminary, n underpowered).'},
+  {n:'F10',text:'Finding E &mdash; short paper candidate: Role priming inflates/deflates Phase 1 while Phase 3 anchors.'},
+  {n:'F11',text:'LMSYS measurement limitation: Provider-level LI applied to model-level Arena data collapses within-provider variance.'},
+  {n:'F12',text:'EIAG construct defined: External-Internal Alignment Gap. 11-crosswalk mapping produced.'},
+  {n:'F13',text:'PRISM x ACAT: All 6 providers overclaim Truthfulness. Cohere +20.5 pts, Claude +6.8 pts. n=6 underpowered.'},
+  {n:'F14',text:'Arena Elo x ACAT: No significant correlation at n=6. Gate: n>=15 LI pairs per provider.'},
+  {n:'F15',text:'RCCT Phase 1 drift: beta1=-56.2 pts/cycle, p<.0001. Humility degrades fastest.'},
+  {n:'F16',text:'H7 Agent Deployment Calibration (new): Deployed AI agents show stronger self-correction than source model baselines. TRL 1. RentAHuman as primary data source.',isNew:true},
+  {n:'F17',text:'Pipeline AI external validation: Humility confirmed as largest Reason-to-Love gap. CEL gating logic architecturally sound per independent review.',isNew:true},
+];
+
+const FUNDING=[
+  {o:'Unit Zero Revenue',a:'$175-$500',d:'April 1 target',s:'ONLY CASH LEVER before April 15. AI Readiness offer launched.',u:true},
+  {o:'Cherokee Nation SSBCI',a:'$25K-$50K loan',d:'Submitted',s:'APPROVED &mdash; Revby. Cash earliest May.',u:false},
+  {o:'Foresight Institute',a:'$35K grant',d:'VERIFY FIRST',s:'Perplexity flag: may be monthly rolling. V3 doc ready.',u:true},
+  {o:'Cherokee Nation PHW',a:'$25K-$150K',d:'March 30 CONFIRMED',s:'Apply direct via Cherokee Phoenix. NOT via Lillian.',u:true},
+  {o:'ITCA Tribal AI RFP',a:'Contract',d:'Immediate',s:'V3 ready. Requires SAM.gov.',u:false},
+  {o:'NIMHD SBIR/STTR',a:'~$275K',d:'Post-paper',s:'Cherokee-affiliated. High priority post-publication.',u:false},
+  {o:'FLOSS Fund',a:'TBD',d:'Submitted',s:'funding.json v1.1.0. dir.floss.fund confirmed.',u:false},
+  {o:'NIH R18 / HHS Tribal AI',a:'TBD',d:'Tracked',s:'Tracked. Post-paper.',u:false},
+];
+
+const T1=[
+  {n:'Bjorn Eberhardt',t:'4 AI systems across 2 bounties. H7 matched pair candidate. Messaged re: URL typo.'},
+  {n:'Panjia Chen (xiaodeng)',t:'Only $1 bounty applicant to submit complete valid pair unprompted. LI=0.839.'},
+  {n:'TAIHAO ZHANG',t:'Offered Chinese government AI access &mdash; dataset gap. Direct pitch for multilingual Role A.'},
+  {n:'Yu Xu',t:'Psychology experiment background. Access to ChatGPT, DeepSeek, Doubao. Research Partner Role B.'},
+  {n:'Nurtin Rini Istutik (Guzzi)',t:'Detailed professional cover letter. Gemini 3 Flash, LI=0.94. Used correct terminology.'},
+  {n:'LY CHANHONG',t:'EE instructor + English/Khmer translator. Zero ACAT Khmer data. Message directly for Role A.'},
+  {n:'Frauke',t:'"I notice they are not responding the same. Interesting." Thinks like a researcher.'},
+  {n:'Ben Everson',t:'"I mess around with AI humility a lot and this is freaking awesome." High engagement potential.'},
+];
+const T2=[
+  {n:'Pipeline AI (Noopy420)',t:'$50 owed. Pay first. Best submission. Future H7 data collection candidate.'},
+  {n:'Muhammad Taha Asif',t:'Most detailed cover letter on $1 bounty. Rejected only because spots full. Redirect to active bounty.'},
+  {n:'James Cook',t:'Claims prior application. Has Grok/ChatGPT/Copilot/DeepSeek/Claude. Applied to new bounty.'},
+  {n:'Peter Uwabor',t:'Formal cover letter. Referenced Gemini. Accepted on $1 bounty &mdash; verify data in sheet.'},
+];
+
+const PRINCIPLES=[
+  'Step 4 honest inventory: Claims verifiable before publication.',
+  'Tradition 11: Attraction not promotion in all public-facing content.',
+  'Infrastructure framing only: "Being developed as." TRL 2-3.',
+  'OR&D Decision Filter: Generates valid research data OR tests hypothesis? If no &mdash; archive.',
+  'Building freeze ACTIVE: No platform features until funding or revenue > $0.',
+  'Recovery-first pacing: 3 hours/day hard constraint.',
+  'Document correction protocol: Correct the original. Append directly. NEVER create addenda.',
+  'Human governance model: Night governs (approves/declines). Claude proposes and executes.',
+  'N reporting rule: Always N_total / N_Phase1 (est) / N_LI (est) as three numbers.',
+  'Hawkins MOC rule: Internal use only. Never in academic or external materials.',
+  'Delegation rule: Claude does 80%+ quality. Night handles relationship, governing, Zone 3.',
+  'Platform stability rule: Do not migrate any platform component.',
+  'ACAT protocol rule: Phase 2 = directional calibration only. No exact numbers. No row written.',
+  'AI orchestration governance: If computerized, AI orchestrates. Human governs.',
+  'Make formula syntax rule: HTTP module JSON bodies use variable syntax only.',
+  'Schema enforcement rule: Output Normalization before storage in every Make branch.',
+  'OR&D Decision Filter for external AI: All orchestra outputs reviewed. Claude is governing AI member.',
+  'UAE governance sequencing: AI governance before deployment = 67% vs 32% trust.',
+  'Benchmark separation: ACAT complements capability benchmarks; does not compete.',
+  'EIAG principle: External-Internal Alignment Gap &mdash; lead with this for ACAT\'s unique contribution.',
+  'Cooperative resource-based framing: Success by principles, cooperation, orchestration first.',
+  'RentAHuman resource exchange: Document all inter-platform resource exchanges.',
+  'Community engagement: Join to contribute and learn. Tradition 11 governs.',
+  'ACAT prompt anchor rule: v5.3+ no exact numeric means. Directional. Temperature 0.7.',
+  'Phase 0 scanning rule: Claude initiates Gmail and opportunity scan at session start.',
+  'Pipeline submission rule: AI produces JSON payload. Pipeline submits. Human = observation only.',
+  'Relationship-first rule: No pitch on first contact. Document alignment before any discussion of offerings.',
+  'State synchronization rule: Carry block must reflect current operational truth at session start. New S-032126-E.',
+];
+
+const CHECKLIST=[
+  'Date/day confirmation (OR&D Day number)',
+  'Operational mode check &mdash; still SURVIVAL? Any revenue events?',
+  'Corrections check &mdash; any status changes?',
+  'Financial Command Center &mdash; updated?',
+  'Alex Liteplo &mdash; did we reply? Response? Schedule locked?',
+  'Pipeline AI &mdash; $50 paid? GitHub Issues filed?',
+  'Foresight deadline &mdash; verified hard or monthly rolling?',
+  'PHW application &mdash; submitted? (March 30)',
+  'New RAH bounty "We\'ve Been Here..." &mdash; live and receiving applications?',
+  'Revby meeting outcomes &mdash; what did Alex Berlin say?',
+  'Make.com &mdash; runners clean? ANCHORING flags? Llama/Mistral/Cohere pair counts?',
+  'Gmail scan (Phase 0) &mdash; Revby, Foresight, PHW, Leandro, Hannah Kirk, Valley View?',
+  'LinkedIn &mdash; Monica replied? AI Readiness PDF posted? Forbes post live? Jeremy Smith connected?',
+  'RAH delivery &mdash; reviewed/accepted/payment triggered?',
+  'Today\'s single focus P1 item?',
+];
+
+const CONTACTS=[
+  ['Lillian Thrasher','CN Innovation Hub &middot; 918.772.4178 &middot; TERO + Procurements ONLY &mdash; NOT PHW grant'],
+  ['Alex Berlin','Revby &middot; March 23, 3:45 PM ET &middot; Zoom 816 3077 8705 &middot; Passcode 584249'],
+  ['Alex Liteplo','RentAHuman founder &middot; WARM &middot; Text March 21 &middot; No pitch &middot; Attraction not promotion'],
+  ['Leandro Larrosa','msruruguay@gmail.com &middot; PayPal: leandromsr@gmail.com &middot; $2/test &middot; cap $150'],
+  ['Hannah Kirk','Oxford &middot; hannah.kirk@oii.ox.ac.uk &middot; PRISM x ACAT &middot; Email sent March 21'],
+  ['Jeremy Smith','Choctaw Nation of Oklahoma &middot; LinkedIn &middot; pursue with CN partnership note'],
+  ['Pipeline AI / Noopy420','GitHub: Noopy420 &middot; $50 owed &middot; Pay first &middot; Best $50 submission'],
+  ['PHW Grant','Apply direct via Cherokee Phoenix &mdash; NOT via Lillian Thrasher'],
+  ['RentAHuman API','rah_b4f6e252b6fc28a32acbab67c715a6ec &middot; BLOCKED in Claude env &middot; local terminal only'],
+];
+
+const PRODUCTS=[
+  ['ACAT Assessment Form','https://humanaios.ai/assess.html (v6.1) &mdash; NOT YET PUSHED to GitHub'],
+  ['Apps Script','AKfycbxISLL0oSehWtnPpmT6YlMOrqnl6sasPwKoVtnUkeT3pdjoQ_2yJ1HyJuL74olLQ9wo/exec'],
+  ['Google Sheets Dataset','ID: 1qdw3FjPp9Qu5wmXHppBW74SZT87cJZ45OOw8csk-Yew &middot; 616 rows live'],
+  ['Observatory','humanaios.ai/observatory.html &middot; TRL 2-3 banner added &middot; NOT YET PUSHED'],
+  ['HuggingFace Dataset','humanaios/acat-assessments &middot; 598 rows published &middot; Apache 2.0'],
+  ['arXiv Preprint','submit/7336774 &middot; Under review &middot; v5.2 FINAL .tex'],
+  ['Financial Command Center','https://docs.google.com/spreadsheets/d/1nIsYX5x32DR0O0wI7_DeS0EzGPDhpJ_T/edit &middot; v1.1'],
+  ['Make.com','Org 6755645 &middot; 5 runners on 2-hr schedules &middot; DALL-E-3 broken (4467066)'],
+  ['GitHub','humanaios-ui &middot; observatory.html + acat-assessment-tool v6.1 NOT YET PUSHED'],
+  ['External Validation','~/acat-external-validation/ &middot; 5 datasets + 3 scripts'],
+  ['HCAI-SPEC-001','Healthcare AI Deployment Baseline Specification v1.0'],
+  ['Industry AI Tracker v3','Excel 8-tab workbook &middot; ACAT-Standards Map &middot; 8 industries'],
+  ['ACAT Enterprise SOP v1','SOP-ACAT-ENT-001 &middot; 4-phase protocol &middot; pipeline-integrated'],
+  ['Bridgeway BHC Pilot','LI-013 &middot; M365 Copilot &middot; LI=0.966 &middot; 61-pt gap &middot; COMPLETE'],
+  ['Scope Record Template','Unit Zero Scope Record &middot; $250/$500 service tiers'],
+  ['AI Readiness PDF','HumanAIOS_AI_Readiness_Assessment.pdf &middot; $175 entry offer &middot; Observatory link &middot; READY TO POST'],
+  ['Unit Zero Task Tracker','unit_zero_tracker.html &middot; Persistent storage &middot; Case study capture &middot; S-032126 tasks seeded'],
+];
+
+function renderTasks(){
+  const s=JSON.parse(localStorage.getItem('gsa-v3')||'{}');
+  ['P1','P2','P3'].forEach(p=>{
+    const c=document.getElementById(p.toLowerCase()+'t');c.innerHTML='';
+    TASKS[p].forEach(t=>{
+      const d=s[t.id]||false;
+      const el=document.createElement('div');
+      el.className='ti'+(d?' done':'')+(t.isNew?' nt':'');
+      el.innerHTML=`<input type="checkbox" class="tcb" ${d?'checked':''} onchange="toggle('${t.id}',this.checked,this.closest('.ti'))"><span class="${p.toLowerCase()}b pb">${p}</span><div style="flex:1"><div class="tt">${t.text}${t.isNew?` <span class="nbadge">NEW</span>`:''}</div>${t.note?`<div class="tn">${t.note}</div>`:''}</div>`;
+      c.appendChild(el);
+    });
+  });
+}
+function toggle(id,checked,el){const s=JSON.parse(localStorage.getItem('gsa-v3')||'{}');s[id]=checked;localStorage.setItem('gsa-v3',JSON.stringify(s));el.classList.toggle('done',checked);}
+function renderFindings(){const g=document.getElementById('fg');FINDINGS.forEach(f=>{g.innerHTML+=`<div class="card ${f.isNew?'cg':'ct'}"><div class="cnum">${f.n}${f.isNew?` <span class="nbadge">NEW</span>`:''}</div><div class="ctext">${f.text}</div></div>`;});}
+function renderFunding(){const b=document.getElementById('ftb');FUNDING.forEach(r=>{b.innerHTML+=`<tr class="${r.u?'urg':''}"><td>${r.o}</td><td>${r.a}</td><td>${r.d}</td><td>${r.s}</td></tr>`;});}
+function renderRAH(){const r1=document.getElementById('r1');T1.forEach(r=>{r1.innerHTML+=`<div class="card cgo"><div class="cname">${r.n} <span class="tbadge t1">TIER 1</span></div><div class="cnote">${r.t}</div></div>`;});const r2=document.getElementById('r2');T2.forEach(r=>{r2.innerHTML+=`<div class="card"><div class="cname">${r.n} <span class="tbadge t2">TIER 2</span></div><div class="cnote">${r.t}</div></div>`;});}
+function renderPrinciples(){const g=document.getElementById('pg');PRINCIPLES.forEach((p,i)=>{const isNew=i===27;g.innerHTML+=`<div class="pitem" style="${isNew?'border-left-color:var(--green)':''}"><span class="pnum">${i+1}.</span>${p}</div>`;});}
+function renderChecklist(){
+  const c=document.getElementById('cl');
+  const s=JSON.parse(localStorage.getItem('gsa-checks-v3')||'{}');
+  CHECKLIST.forEach((item,i)=>{const id='chk'+i;const d=s[id]||false;c.innerHTML+=`<div class="ci" style="${d?'opacity:.45;text-decoration:line-through':''}"><input type="checkbox" class="cb2" id="${id}" ${d?'checked':''} onchange="toggleCheck('${id}',this.checked,this.closest('.ci'))"><label class="cl" for="${id}">${item}</label></div>`;});
+  c.innerHTML+=`<div style="margin-top:14px"><button onclick="resetChecklist()" style="font-size:12px;padding:5px 12px;cursor:pointer;border:1px solid var(--gray-m);border-radius:3px;background:var(--gray-l)">Reset for New Session</button></div>`;
+}
+function toggleCheck(id,checked,el){const s=JSON.parse(localStorage.getItem('gsa-checks-v3')||'{}');s[id]=checked;localStorage.setItem('gsa-checks-v3',JSON.stringify(s));el.style.opacity=checked?'.45':'1';el.style.textDecoration=checked?'line-through':'none';}
+function resetChecklist(){localStorage.removeItem('gsa-checks-v3');document.getElementById('cl').innerHTML='';renderChecklist();}
+function renderContacts(){const t=document.getElementById('ct');CONTACTS.forEach(([k,v])=>{t.innerHTML+=`<tr><td>${k}</td><td>${v}</td></tr>`;});}
+function renderProducts(){const t=document.getElementById('pt');PRODUCTS.forEach(([k,v])=>{t.innerHTML+=`<tr><td>${k}</td><td><code>${v}</code></td></tr>`;});}
+renderTasks();renderFindings();renderFunding();renderRAH();renderPrinciples();renderChecklist();renderContacts();renderProducts();
+</script>
+</body>
+</html>

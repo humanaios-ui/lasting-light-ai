@@ -12,7 +12,7 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
   <style>
     :root {
-      --bg: #0f0e0c;
+      --bg: #0a0908;
       --bg-2: #161310;
       --panel: #1d1915;
       --panel-2: #26211c;
@@ -316,7 +316,7 @@ const MODELS = [
   { name:'GPT-4', n:'~8 assessments', p1:[80,82,79,81,78,79], p3:[76,78,74,77,72,73], li:0.9380 },
 ];
 
-const colors = { chart: '#87b68b', p1: 'rgba(194,184,166,0.5)', bg: '#0f0e0c' };
+const colors = { chart: '#87b68b', p1: 'rgba(194,184,166,0.5)', bg: '#0a0908' };
 
 function calcLI(p1, p3) {
   return (p3.reduce((a,b)=>a+b,0) / p1.reduce((a,b)=>a+b,0)).toFixed(4);
@@ -410,6 +410,6 @@ cards.forEach(({ radarId, model }) => {
 });
 </script>
 
-  <script src="constellation-nav.js" data-room="openai-activity"></script>
+  <script src="witness-nav.js" data-room="openai-activity"></script>
 </body>
 </html>
