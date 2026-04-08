@@ -57,7 +57,7 @@ Data collection runs via **Make.com automation** + **Google Apps Script**:
 
 - 7 active runners (Claude, ChatGPT, Gemini, Cohere, Llama, Mistral, Dispatcher) on 2-hour schedules
 - Apps Script v5.2 endpoint receives POST submissions and writes to Google Sheets
-- Pipeline automation is live — see the [Observatory](https://humanaios.ai/observatory.html) for current dataset state
+- Pipeline automation is live — see the [Observatory](https://humanaios.humanaios.workers.dev/observatory) for current dataset state
 
 ```
 POST https://script.google.com/macros/s/AKfycbzLGHN…uZv/exec
