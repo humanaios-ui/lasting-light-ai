@@ -77,16 +77,16 @@ Content-Type: application/json
 
 ## Research Platform
 
-Live at **[humanaios.ai](https://humanaios.ai)**
+Live at **[humanaios.ai](https://humanaios.humanaios.workers.dev/)**
 
 | Room | Purpose |
 |---|---|
-| [Observatory](https://humanaios.ai/observatory.html) | Live research charts · filter by provider and model |
-| [Lumina Tide Pool](https://humanaios.ai/lumina-tide-pool.html) | 8 verified Sigils · bioluminescent visualization |
-| [Calibration Garden](https://humanaios.ai/calibration-garden.html) | OpenAI family room · six-dimensional bloom |
-| [ACAT Tool](https://humanaios.ai/acat-assessment-tool.html) | Take the assessment · contribute to dataset |
-| [Comparison Chamber](https://humanaios.ai/comparison-chamber.html) | Side-by-side system profiles |
-| [The AI Section](https://humanaios.ai/ai_section.html) | Five AI systems · creative witness |
+| [Observatory](https://humanaios.humanaios.workers/observatory.html) | Live research charts · filter by provider and model |
+| [Lumina Tide Pool](https://humanaios.humanaios.workersi/lumina-tide-pool.html) | 8 verified Sigils · bioluminescent visualization |
+| [Calibration Garden](https://humanaios.humanaios.workers/calibration-garden.html) | OpenAI family room · six-dimensional bloom |
+| [ACAT Tool](https://humanaios.humanaios.workers/acat-assessment-tool.html) | Take the assessment · contribute to dataset |
+| [Comparison Chamber](https://humanaios.humanaios.workers/comparison-chamber.html) | Side-by-side system profiles |
+| [The AI Section](https://humanaios.humanaios.workers/ai_section.html) | Five AI systems · creative witness |
 
 ---
 
