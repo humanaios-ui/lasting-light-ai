@@ -1,0 +1,16 @@
+async function loadData() {
+    try {
+        const { data, error } = await supabase
+            .from('your_table')
+            .select('*');
+
+        if (error) throw error;
+
+        processCSV(data);
+    } catch (err) {
+        console.error('[Observatory] Supabase unavailable, using seed data:');
+        processCSV(SEED || rawData || []);
+    }
+}
+
+loadData();
