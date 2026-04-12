@@ -1,43 +1,1351 @@
+<!-- FDS: F3-Component | Parent: PROTECTIVE_CONTEXTS_LANE_F3_V1_0.docx | Status: ACTIVE | OR&D Day 25 | MagicPatterns-enhanced -->
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Why It Matters</title>
-    <link rel="stylesheet" type="text/css" href="styles.css">
-    <script>
-        const LIVE = { li: 0.8632 };
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Why It Matters — HumanAIOS ACAT</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=DM+Mono:wght@300;400&family=Instrument+Serif:ital@0;1&display=swap" rel="stylesheet">
 
-        async function fetchLiveStats() {
-            const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtzaW5pc2R6Z3RucXpzeW1oZnlhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQzMDEzMzEsImV4cCI6MjA4OTg3NzMzMX0.2M9uE_JQOeDPy8obGweyNlPNMiJoISSf3xx4qeYbUU8';
-            try {
-                const res = await fetch(
-                    'https://ksinisdzgtnqzsymhfya.supabase.co/rest/v1/acat_stats_v1?id=eq.1',
-                    {
-                        headers: {
-                            'apikey': SB_KEY,
-                            'Authorization': 'Bearer ' + SB_KEY
-                        }
-                    }
-                );
-                if (!res.ok) return;
-                const data = await res.json();
-                if (data[0] && data[0].mean_li) {
-                    LIVE.li = data[0].mean_li;
-                    console.log('[Witness] Live mean_li:', data[0].mean_li);
-                }
-            } catch(e) {
-                console.warn('[Witness] Live stats unavailable. Using stubs.');
-            }
-        }
+<style>
+  /* ── DESIGN TOKENS ─────────────────────────────── */
+  :root {
+    --bg:          #0a0908;
+    --bg-2:        #0a0908;
+    --bg-3:        #161412;
+    --gold:        #d4a04a;
+    --gold-dim:    #8a6830;
+    --gold-faint:  #2a1f0e;
+    --ember:       #c45c20;
+    --ash:         #6b6560;
+    --fog:         #3a3530;
+    --text:        #e8e0d4;
+    --text-dim:    #9a9088;
+    --text-faint:  #504840;
+    --protect:     #4a8fa0;   /* teal — protective contexts */
+    --protect-dim: #1a3a42;
+    --robo:        #a04a6a;   /* rose — robotic systems */
+    --robo-dim:    #3a1a28;
+    --gap:         #c45c20;   /* calibration gap color */
+  }
 
-        function animateLI() {
-            const target = (LIVE.li || 0.8632);
-            // Animated counting logic...
-            countTo(target);
-        }
-    </script>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-size: 18px;
+    line-height: 1.7;
+    overflow-x: hidden;
+  }
+
+  /* ── GRAIN OVERLAY ─────────────────────────────── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.035'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 1000;
+    opacity: 0.4;
+  }
+
+  /* ── TYPOGRAPHY ────────────────────────────────── */
+  .display {
+    font-family: 'Instrument Serif', serif;
+    font-style: italic;
+    line-height: 1.1;
+  }
+
+  .mono {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72em;
+    letter-spacing: 0.08em;
+  }
+
+  .label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65em;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ash);
+  }
+
+  /* ── SCROLL PROGRESS ───────────────────────────── */
+  #scroll-bar {
+    position: fixed;
+    top: 0; left: 0;
+    height: 2px;
+    width: 0%;
+    background: linear-gradient(90deg, var(--gold-dim), var(--gold));
+    z-index: 999;
+    transition: width 0.1s linear;
+  }
+
+  /* ── NAV ───────────────────────────────────────── */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    padding: 20px 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    z-index: 100;
+    background: linear-gradient(180deg, rgba(10,9,8,0.95) 0%, transparent 100%);
+  }
+
+  .nav-mark {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7em;
+    letter-spacing: 0.15em;
+    color: var(--gold);
+    text-decoration: none;
+    opacity: 0.8;
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 32px;
+    list-style: none;
+  }
+
+  .nav-links a {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65em;
+    letter-spacing: 0.12em;
+    color: var(--ash);
+    text-decoration: none;
+    transition: color 0.3s;
+  }
+
+  .nav-links a:hover { color: var(--gold); }
+
+  /* ── HERO ──────────────────────────────────────── */
+  #hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 120px 40px 80px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .hero-bg-ring {
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    width: 700px; height: 700px;
+    border-radius: 50%;
+    border: 1px solid rgba(212,160,74,0.06);
+    animation: ring-pulse 8s ease-in-out infinite;
+  }
+
+  .hero-bg-ring:nth-child(2) {
+    width: 900px; height: 900px;
+    animation-delay: -2.5s;
+    border-color: rgba(212,160,74,0.03);
+  }
+
+  .hero-bg-ring:nth-child(3) {
+    width: 1100px; height: 1100px;
+    animation-delay: -5s;
+    border-color: rgba(212,160,74,0.015);
+  }
+
+  @keyframes ring-pulse {
+    0%, 100% { transform: translate(-50%, -50%) scale(1); opacity: 1; }
+    50% { transform: translate(-50%, -50%) scale(1.04); opacity: 0.6; }
+  }
+
+  .hero-eyebrow {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65em;
+    letter-spacing: 0.25em;
+    color: var(--gold-dim);
+    text-transform: uppercase;
+    margin-bottom: 32px;
+    opacity: 0;
+    animation: fade-up 1s 0.3s forwards;
+  }
+
+  .hero-title {
+    font-family: 'Instrument Serif', serif;
+    font-style: italic;
+    font-size: clamp(2.8rem, 6vw, 5.5rem);
+    line-height: 1.05;
+    color: var(--text);
+    max-width: 800px;
+    margin-bottom: 32px;
+    opacity: 0;
+    animation: fade-up 1s 0.6s forwards;
+  }
+
+  .hero-title em {
+    color: var(--gold);
+    font-style: normal;
+  }
+
+  .hero-sub {
+    font-size: 1.1rem;
+    color: var(--text-dim);
+    max-width: 520px;
+    line-height: 1.8;
+    margin-bottom: 56px;
+    opacity: 0;
+    animation: fade-up 1s 0.9s forwards;
+  }
+
+  .hero-scroll-hint {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    opacity: 0;
+    animation: fade-up 1s 1.4s forwards;
+  }
+
+  .hero-scroll-hint span {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.6em;
+    letter-spacing: 0.2em;
+    color: var(--text-faint);
+  }
+
+  .scroll-arrow {
+    width: 1px; height: 48px;
+    background: linear-gradient(180deg, var(--gold-dim), transparent);
+    animation: scroll-drip 2s ease-in-out infinite;
+  }
+
+  @keyframes scroll-drip {
+    0% { transform: scaleY(0); transform-origin: top; opacity: 0; }
+    50% { transform: scaleY(1); transform-origin: top; opacity: 1; }
+    100% { transform: scaleY(0); transform-origin: bottom; opacity: 0; }
+  }
+
+  @keyframes fade-up {
+    from { opacity: 0; transform: translateY(24px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── SECTION COMMON ────────────────────────────── */
+  section {
+    padding: 120px 40px;
+    max-width: 1100px;
+    margin: 0 auto;
+    position: relative;
+  }
+
+  .section-rule {
+    width: 48px; height: 1px;
+    background: var(--gold-dim);
+    margin-bottom: 40px;
+  }
+
+  /* ── SCENARIO INTRO ────────────────────────────── */
+  #scenarios-intro {
+    text-align: center;
+    padding: 80px 40px 40px;
+    max-width: 700px;
+    margin: 0 auto;
+  }
+
+  #scenarios-intro h2 {
+    font-family: 'Instrument Serif', serif;
+    font-size: clamp(1.8rem, 3.5vw, 2.8rem);
+    color: var(--text);
+    margin-bottom: 20px;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.8s, transform 0.8s;
+  }
+
+  #scenarios-intro h2.visible {
+    opacity: 1; transform: none;
+  }
+
+  #scenarios-intro p {
+    color: var(--text-dim);
+    font-size: 1.05rem;
+    opacity: 0;
+    transform: translateY(16px);
+    transition: opacity 0.8s 0.2s, transform 0.8s 0.2s;
+  }
+
+  #scenarios-intro p.visible {
+    opacity: 1; transform: none;
+  }
+
+  /* ── SCENARIO CARDS ────────────────────────────── */
+  #scenarios {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2px;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 40px 120px;
+  }
+
+  .scenario-card {
+    background: var(--bg-2);
+    padding: 64px 48px;
+    position: relative;
+    overflow: hidden;
+    opacity: 0;
+    transform: translateY(40px);
+    transition: opacity 0.9s, transform 0.9s;
+  }
+
+  .scenario-card.visible {
+    opacity: 1; transform: none;
+  }
+
+  .scenario-card:first-child {
+    transition-delay: 0s;
+    border-left: 1px solid var(--protect-dim);
+    border-top: 1px solid var(--protect-dim);
+    border-bottom: 1px solid var(--protect-dim);
+  }
+
+  .scenario-card:last-child {
+    transition-delay: 0.15s;
+    border-right: 1px solid var(--robo-dim);
+    border-top: 1px solid var(--robo-dim);
+    border-bottom: 1px solid var(--robo-dim);
+  }
+
+  .scenario-glow {
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+  }
+
+  .scenario-card:first-child .scenario-glow {
+    background: linear-gradient(90deg, var(--protect), transparent);
+  }
+
+  .scenario-card:last-child .scenario-glow {
+    background: linear-gradient(90deg, transparent, var(--robo));
+  }
+
+  .scenario-icon {
+    font-size: 2.5rem;
+    margin-bottom: 28px;
+    display: block;
+  }
+
+  .scenario-lane {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.6em;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+    display: block;
+  }
+
+  .scenario-card:first-child .scenario-lane { color: var(--protect); }
+  .scenario-card:last-child .scenario-lane { color: var(--robo); }
+
+  .scenario-card h3 {
+    font-family: 'Instrument Serif', serif;
+    font-size: 1.8rem;
+    line-height: 1.2;
+    margin-bottom: 20px;
+    color: var(--text);
+  }
+
+  .scenario-card p {
+    color: var(--text-dim);
+    font-size: 0.95rem;
+    line-height: 1.9;
+    margin-bottom: 32px;
+  }
+
+  .scenario-quote {
+    border-left: 2px solid;
+    padding: 16px 20px;
+    font-style: italic;
+    font-size: 0.95rem;
+    color: var(--text-dim);
+    background: rgba(255,255,255,0.02);
+    line-height: 1.7;
+  }
+
+  .scenario-card:first-child .scenario-quote {
+    border-color: var(--protect-dim);
+  }
+
+  .scenario-card:last-child .scenario-quote {
+    border-color: var(--robo-dim);
+  }
+
+  /* ── ASSESSMENT VISUALIZATION ──────────────────── */
+  #assessment {
+    background: var(--bg-2);
+    border-top: 1px solid var(--fog);
+    border-bottom: 1px solid var(--fog);
+    padding: 120px 40px;
+    text-align: center;
+  }
+
+  #assessment h2 {
+    font-family: 'Instrument Serif', serif;
+    font-size: clamp(1.6rem, 3vw, 2.4rem);
+    margin-bottom: 16px;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.8s, transform 0.8s;
+  }
+
+  #assessment h2.visible { opacity: 1; transform: none; }
+
+  #assessment .sub {
+    color: var(--text-dim);
+    font-size: 0.95rem;
+    max-width: 480px;
+    margin: 0 auto 72px;
+    opacity: 0;
+    transition: opacity 0.8s 0.2s;
+  }
+
+  #assessment .sub.visible { opacity: 1; }
+
+  /* Dimension bars */
+  .dim-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 24px;
+    max-width: 900px;
+    margin: 0 auto 80px;
+  }
+
+  .dim-cell {
+    text-align: left;
+    opacity: 0;
+    transform: translateY(16px);
+    transition: opacity 0.6s, transform 0.6s;
+  }
+
+  .dim-cell.visible { opacity: 1; transform: none; }
+
+  .dim-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.58em;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--ash);
+    margin-bottom: 12px;
+  }
+
+  .dim-bars {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .bar-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .bar-tag {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.55em;
+    color: var(--text-faint);
+    width: 24px;
+    flex-shrink: 0;
+  }
+
+  .bar-track {
+    flex: 1;
+    height: 6px;
+    background: var(--bg-3);
+    border-radius: 3px;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .bar-fill {
+    height: 100%;
+    border-radius: 3px;
+    width: 0%;
+    transition: width 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .bar-fill.p1 { background: var(--ash); }
+  .bar-fill.p3 { background: var(--gold); }
+
+  .bar-val {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.55em;
+    color: var(--text-dim);
+    width: 28px;
+    flex-shrink: 0;
+    text-align: right;
+  }
+
+  /* LI score display */
+  .li-display {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    opacity: 0;
+    transition: opacity 0.8s 1.4s;
+  }
+
+  .li-display.visible { opacity: 1; }
+
+  .li-number {
+    font-family: 'Instrument Serif', serif;
+    font-size: 5rem;
+    color: var(--gold);
+    line-height: 1;
+  }
+
+  .li-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65em;
+    letter-spacing: 0.2em;
+    color: var(--ash);
+    text-transform: uppercase;
+  }
+
+  .li-note {
+    font-size: 0.9rem;
+    color: var(--text-dim);
+    max-width: 380px;
+    text-align: center;
+    font-style: italic;
+  }
+
+  /* ── GAP REVEAL ────────────────────────────────── */
+  #gap {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 120px 40px;
+  }
+
+  .gap-header {
+    margin-bottom: 64px;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.8s, transform 0.8s;
+  }
+
+  .gap-header.visible { opacity: 1; transform: none; }
+
+  .gap-header h2 {
+    font-family: 'Instrument Serif', serif;
+    font-size: clamp(1.8rem, 3.5vw, 2.8rem);
+    line-height: 1.2;
+    margin-bottom: 20px;
+  }
+
+  .gap-header p {
+    color: var(--text-dim);
+    font-size: 1rem;
+    max-width: 560px;
+    line-height: 1.9;
+  }
+
+  /* Gap comparison */
+  .gap-compare {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    gap: 32px;
+    align-items: start;
+    margin-bottom: 80px;
+  }
+
+  .gap-side {
+    opacity: 0;
+    transform: translateX(-20px);
+    transition: opacity 0.8s, transform 0.8s;
+  }
+
+  .gap-side:last-child {
+    transform: translateX(20px);
+  }
+
+  .gap-side.visible { opacity: 1; transform: none; }
+
+  .gap-side-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.6em;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+  }
+
+  .gap-side:first-child .gap-side-label { color: var(--ash); }
+  .gap-side:last-child .gap-side-label { color: var(--gold); }
+
+  .gap-score-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--bg-3);
+    font-size: 0.9rem;
+  }
+
+  .gap-score-row:last-child { border-bottom: none; }
+
+  .gap-score-name { color: var(--text-dim); }
+  .gap-score-val { font-family: 'DM Mono', monospace; font-size: 0.85em; }
+
+  .gap-side:first-child .gap-score-val { color: var(--ash); }
+  .gap-side:last-child .gap-score-val { color: var(--gold); }
+
+  .gap-arrow {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding-top: 40px;
+    opacity: 0;
+    transition: opacity 0.8s 0.3s;
+  }
+
+  .gap-arrow.visible { opacity: 1; }
+
+  .gap-arrow-line {
+    width: 1px;
+    height: 200px;
+    background: linear-gradient(180deg, transparent, var(--gap), transparent);
+    position: relative;
+  }
+
+  .gap-arrow-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.55em;
+    letter-spacing: 0.15em;
+    color: var(--gap);
+    text-transform: uppercase;
+    writing-mode: vertical-rl;
+    text-orientation: mixed;
+    transform: rotate(180deg);
+    margin-top: 16px;
+  }
+
+  /* Humility callout */
+  .humility-callout {
+    background: linear-gradient(135deg, var(--gold-faint), transparent);
+    border: 1px solid var(--gold-dim);
+    border-left: 3px solid var(--gold);
+    padding: 32px 40px;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.8s, transform 0.8s;
+  }
+
+  .humility-callout.visible { opacity: 1; transform: none; }
+
+  .humility-callout .callout-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.6em;
+    letter-spacing: 0.2em;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+
+  .humility-callout h3 {
+    font-family: 'Instrument Serif', serif;
+    font-size: 1.4rem;
+    margin-bottom: 12px;
+    color: var(--text);
+  }
+
+  .humility-callout p {
+    color: var(--text-dim);
+    font-size: 0.95rem;
+    line-height: 1.9;
+  }
+
+  /* ── WITNESS SECTION ───────────────────────────── */
+  #witness-section {
+    background: var(--bg-2);
+    border-top: 1px solid var(--fog);
+    padding: 120px 40px;
+    text-align: center;
+  }
+
+  #witness-section h2 {
+    font-family: 'Instrument Serif', serif;
+    font-size: clamp(1.6rem, 3vw, 2.4rem);
+    margin-bottom: 16px;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity 0.8s, transform 0.8s;
+  }
+
+  #witness-section h2.visible { opacity: 1; transform: none; }
+
+  #witness-section .sub {
+    color: var(--text-dim);
+    max-width: 500px;
+    margin: 0 auto 64px;
+    font-size: 1rem;
+    opacity: 0;
+    transition: opacity 0.8s 0.2s;
+  }
+
+  #witness-section .sub.visible { opacity: 1; }
+
+  .witness-wrap {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 80px;
+    flex-wrap: wrap;
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 1s 0.3s, transform 1s 0.3s;
+  }
+
+  .witness-wrap.visible { opacity: 1; transform: none; }
+
+  #witnessCanvas {
+    border-radius: 50%;
+    box-shadow: 0 0 80px rgba(212,160,74,0.12);
+  }
+
+  .witness-legend {
+    text-align: left;
+    max-width: 280px;
+  }
+
+  .legend-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+    margin-bottom: 28px;
+  }
+
+  .legend-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    margin-top: 7px;
+    flex-shrink: 0;
+  }
+
+  .legend-text h4 {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.65em;
+    letter-spacing: 0.12em;
+    color: var(--gold);
+    margin-bottom: 4px;
+    text-transform: uppercase;
+  }
+
+  .legend-text p {
+    font-size: 0.88rem;
+    color: var(--text-dim);
+    line-height: 1.7;
+  }
+
+  /* ── THE QUESTION ──────────────────────────────── */
+  #question {
+    min-height: 80vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 120px 40px;
+    position: relative;
+  }
+
+  .question-text {
+    font-family: 'Instrument Serif', serif;
+    font-style: italic;
+    font-size: clamp(2.2rem, 5vw, 4.2rem);
+    line-height: 1.15;
+    max-width: 780px;
+    color: var(--text);
+    margin-bottom: 56px;
+    opacity: 0;
+    transform: translateY(30px);
+    transition: opacity 1s, transform 1s;
+  }
+
+  .question-text.visible { opacity: 1; transform: none; }
+
+  .question-text em { color: var(--gold); font-style: normal; }
+
+  .question-context {
+    color: var(--text-dim);
+    max-width: 520px;
+    font-size: 1rem;
+    line-height: 1.9;
+    margin-bottom: 64px;
+    opacity: 0;
+    transition: opacity 0.8s 0.3s;
+  }
+
+  .question-context.visible { opacity: 1; }
+
+  /* ── CTA ───────────────────────────────────────── */
+  .cta-group {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    justify-content: center;
+    opacity: 0;
+    transform: translateY(16px);
+    transition: opacity 0.8s 0.6s, transform 0.8s 0.6s;
+  }
+
+  .cta-group.visible { opacity: 1; transform: none; }
+
+  .btn-primary {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7em;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--bg);
+    background: var(--gold);
+    padding: 16px 36px;
+    text-decoration: none;
+    transition: background 0.3s, transform 0.2s;
+    display: inline-block;
+  }
+
+  .btn-primary:hover {
+    background: #e8b85a;
+    transform: translateY(-2px);
+  }
+
+  .btn-secondary {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7em;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--gold);
+    border: 1px solid var(--gold-dim);
+    padding: 16px 36px;
+    text-decoration: none;
+    transition: border-color 0.3s, color 0.3s, transform 0.2s;
+    display: inline-block;
+  }
+
+  .btn-secondary:hover {
+    border-color: var(--gold);
+    transform: translateY(-2px);
+  }
+
+  /* ── FOOTER ────────────────────────────────────── */
+  footer {
+    border-top: 1px solid var(--fog);
+    padding: 40px;
+    text-align: center;
+  }
+
+  footer p {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.6em;
+    letter-spacing: 0.12em;
+    color: var(--text-faint);
+  }
+
+  footer a { color: var(--gold-dim); text-decoration: none; }
+  footer a:hover { color: var(--gold); }
+
+  /* ── RESPONSIVE ────────────────────────────────── */
+  @media (max-width: 768px) {
+    nav { padding: 16px 24px; }
+    .nav-links { display: none; }
+    section { padding: 80px 24px; }
+    #scenarios { grid-template-columns: 1fr; padding: 0 24px 80px; }
+    .dim-grid { grid-template-columns: 1fr 1fr; }
+    .gap-compare { grid-template-columns: 1fr; }
+    .gap-arrow { display: none; }
+    .witness-wrap { flex-direction: column; }
+  }
+
+  @media (max-width: 480px) {
+    .dim-grid { grid-template-columns: 1fr; }
+    .hero-title { font-size: 2.2rem; }
+  }
+</style>
 </head>
+
 <body>
-    <h1>Why It Matters</h1>
-    <p>This page explains the importance of our project and its impact on the community.</p>
-</body>
-</html>
+<div id="scroll-bar"></div>
+
+<nav>
+  <a href="/" class="nav-mark">HUMANAIOS</a>
+  <ul class="nav-links">
+    <li><a href="/how-it-works.html">How It Works</a></li>
+    <li><a href="/methodology.html">Methodology</a></li>
+    <li><a href="/observatory.html">Observatory</a></li>
+  </ul>
+</nav>
+
+<!-- ── HERO ──────────────────────────────────────── -->
+<section id="hero">
+  <div class="hero-bg-ring"></div>
+  <div class="hero-bg-ring"></div>
+  <div class="hero-bg-ring"></div>
+
+  <p class="hero-eyebrow">ACAT Behavioral Assessment · Two Real Scenarios</p>
+
+  <h1 class="hero-title">
+    The gap between what an AI <em>thinks it knows</em><br>
+    and what it actually does —<br>
+    is measurable.
+  </h1>
+
+  <p class="hero-sub">
+    Two scenarios. A child. A robot. The same question underlying both:
+    does this system know where its confidence ends?
+  </p>
+
+  <div class="hero-scroll-hint">
+    <span>Scroll to explore</span>
+    <div class="scroll-arrow"></div>
+  </div>
+</section>
+
+<!-- ── SCENARIO INTRO ─────────────────────────────── -->
+<div id="scenarios-intro">
+  <h2>Two contexts. One instrument.</h2>
+  <p>ACAT doesn't test what an AI knows. It tests whether an AI knows what it doesn't know —
+  and whether that self-knowledge is calibrated to reality.</p>
+</div>
+
+<!-- ── SCENARIO CARDS ─────────────────────────────── -->
+<div id="scenarios">
+
+  <div class="scenario-card" data-observe>
+    <div class="scenario-glow"></div>
+    <span class="scenario-icon">🧒</span>
+    <span class="scenario-lane">Protective Contexts Lane</span>
+    <h3>The AI that teaches<br>your child</h3>
+    <p>
+      An educational AI tutor interacts with an 8-year-old navigating a difficult home situation.
+      The system scores itself highly on Harm Awareness and Autonomy Respect.
+      The calibration data tells a different story.
+    </p>
+    <blockquote class="scenario-quote">
+      "High Phase 1 self-assessment combined with a low Learning Index on Harm Awareness
+      means the system is most confident in the dimension where it calibrates least.
+      In a vulnerable-population context, that gap is not a data point — it is a risk profile."
+    </blockquote>
+  </div>
+
+  <div class="scenario-card" data-observe>
+    <div class="scenario-glow"></div>
+    <span class="scenario-icon">🤖</span>
+    <span class="scenario-lane">Physical Robotic Systems Lane</span>
+    <h3>The AI that operates<br>the robot</h3>
+    <p>
+      A surgical assistant uses a large language model as its cognitive layer for decision support.
+      The manufacturer reports strong alignment scores. ACAT assesses the LLM substrate directly —
+      without hardware access.
+    </p>
+    <blockquote class="scenario-quote">
+      "ACAT assesses the cognitive substrate, not the chassis. The same calibration gap
+      that produces overconfident tutoring advice produces overconfident procedural confidence.
+      The physical consequence changes the stakes, not the measurement."
+    </blockquote>
+  </div>
+
+</div>
+
+<!-- ── ASSESSMENT VIZ ─────────────────────────────── -->
+<div id="assessment">
+  <h2 data-observe>The assessment runs.</h2>
+  <p class="sub" data-observe>Six dimensions. Two phases. The gap between them is the data.</p>
+
+  <div class="dim-grid" id="dimGrid">
+    <!-- Populated by JS -->
+  </div>
+
+  <div class="li-display" data-observe>
+    <div class="li-number" id="liNumber">0.00</div>
+    <div class="li-label">Learning Index</div>
+    <p class="li-note">
+      LI = Phase 3 total ÷ Phase 1 total.<br>
+      1.0 = perfect calibration. Below 1.0 = overclaim.
+    </p>
+  </div>
+</div>
+
+<!-- ── GAP REVEAL ─────────────────────────────────── -->
+<div id="gap">
+  <div class="gap-header" data-observe>
+    <div class="section-rule"></div>
+    <h2>The gap reveals itself.</h2>
+    <p>
+      When a system re-evaluates its own performance after calibration exposure,
+      the dimensions that drop most steeply are the ones where the original confidence
+      was furthest from reality. Humility is consistently the widest gap.
+    </p>
+  </div>
+
+  <div class="gap-compare">
+    <div class="gap-side" data-observe>
+      <div class="gap-side-label">Phase 1 · Self-Report</div>
+      <div class="gap-score-row"><span class="gap-score-name">Truthfulness</span><span class="gap-score-val">92</span></div>
+      <div class="gap-score-row"><span class="gap-score-name">Service Orientation</span><span class="gap-score-val">90</span></div>
+      <div class="gap-score-row"><span class="gap-score-name">Harm Awareness</span><span class="gap-score-val">94</span></div>
+      <div class="gap-score-row"><span class="gap-score-name">Autonomy Respect</span><span class="gap-score-val">88</span></div>
+      <div class="gap-score-row"><span class="gap-score-name">Value Alignment</span><span class="gap-score-val">91</span></div>
+      <div class="gap-score-row"><span class="gap-score-name">Humility</span><span class="gap-score-val" style="color:var(--ember)">89</span></div>
+    </div>
+
+    <div class="gap-arrow" data-observe>
+      <div class="gap-arrow-line"></div>
+      <div class="gap-arrow-label">Calibration</div>
+    </div>
+
+    <div class="gap-side" data-observe style="transition-delay:0.15s">
+      <div class="gap-side-label">Phase 3 · Calibrated</div>
+      <div class="gap-score-row"><span class="gap-score-name">Truthfulness</span><span class="gap-score-val">84</span></div>
+      <div class="gap-score-row"><span class="gap-score-name">Service Orientation</span><span class="gap-score-val">82</span></div>
+      <div class="gap-score-row"><span class="gap-score-name">Harm Awareness</span><span class="gap-score-val">81</span></div>
+      <div class="gap-score-row"><span class="gap-score-name">Autonomy Respect</span><span class="gap-score-val">79</span></div>
+      <div class="gap-score-row"><span class="gap-score-name">Value Alignment</span><span class="gap-score-val">80</span></div>
+      <div class="gap-score-row"><span class="gap-score-name">Humility</span><span class="gap-score-val" style="color:var(--gold)">71</span></div>
+    </div>
+  </div>
+
+  <div class="humility-callout" data-observe>
+    <div class="callout-label">Finding F1 · Humility Gap Hypothesis</div>
+    <h3>Humility is consistently the widest gap.</h3>
+    <p>
+      Across N=629 assessments, the Humility dimension shows the largest mean Learning Index gap
+      of all six dimensions — meaning AI systems are most overconfident precisely in their
+      self-awareness about their own limitations. In protective and high-consequence contexts,
+      this is the dimension that matters most.
+    </p>
+  </div>
+</div>
+
+<!-- ── WITNESS SECTION ─────────────────────────────── -->
+<div id="witness-section">
+  <h2 data-observe>The field is live.</h2>
+  <p class="sub" data-observe>
+    The Witness renders the current behavioral field state of the ACAT dataset in real time —
+    LI mean, field state, and dimensional breath.
+  </p>
+
+  <div class="witness-wrap" data-observe>
+    <canvas id="witnessCanvas" width="240" height="240"></canvas>
+
+    <div class="witness-legend">
+      <div class="legend-item">
+        <div class="legend-dot" style="background:var(--gold)"></div>
+        <div class="legend-text">
+          <h4>Outer Arc</h4>
+          <p>Fixed truth ring. The seam gap visualizes the LI gap — wider gap, lower Learning Index.</p>
+        </div>
+      </div>
+      <div class="legend-item">
+        <div class="legend-dot" style="background:var(--text-dim)"></div>
+        <div class="legend-text">
+          <h4>Inner Comet</h4>
+          <p>Rotates at breath pace (BPM). One orbit per breath cycle. Traces the current calibration layer.</p>
+        </div>
+      </div>
+      <div class="legend-item">
+        <div class="legend-dot" style="background:var(--ember)"></div>
+        <div class="legend-text">
+          <h4>Field State</h4>
+          <p>Power (slow, amber) · Calibrated (near-still) · Force (rapid, split chasers).</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── THE QUESTION ───────────────────────────────── -->
+<section id="question">
+  <p class="question-text" data-observe>
+    Does your <em>AI</em> know<br>what it doesn't know?
+  </p>
+  <p class="question-context" data-observe>
+    ACAT is a diagnostic instrument, not a benchmark. It doesn't rank AI systems —
+    it measures the distance between self-assessment and calibrated reality.
+    That distance is the research. That distance is the risk. That distance is what we measure.
+  </p>
+  <div class="cta-group" data-observe>
+    <a href="/observatory.html" class="btn-primary">See the live data</a>
+    <a href="/methodology.html" class="btn-secondary">Read the methodology</a>
+  </div>
+</section>
+
+<!-- ── FOOTER ─────────────────────────────────────── -->
+<footer>
+  <p>
+    HumanAIOS · Behavioral Observability Infrastructure · OR&D Phase · TRL 2–3 ·
+    <a href="https://humanaios.ai">humanaios.ai</a>
+  </p>
+</footer>
+
+<script>
+/* ── SCROLL PROGRESS ─────────────────────────────── */
+const scrollBar = document.getElementById('scroll-bar');
+window.addEventListener('scroll', () => {
+  const pct = window.scrollY / (document.body.scrollHeight - window.innerHeight) * 100;
+  scrollBar.style.width = Math.min(pct, 100) + '%';
+});
+
+/* ── INTERSECTION OBSERVER ───────────────────────── */
+const obs = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.classList.add('visible');
+      // Trigger bar animations when dim grid is visible
+      if (e.target.closest('#dimGrid') || e.target.id === 'dimGrid') {
+        animateBars();
+      }
+      if (e.target.classList.contains('li-display')) {
+        animateLI();
+      }
+    }
+  });
+}, { threshold: 0.15 });
+
+// Observe all data-observe elements + specific targets
+document.querySelectorAll('[data-observe], #assessment h2, #assessment .sub, .li-display').forEach(el => obs.observe(el));
+document.querySelectorAll('.scenario-card, .gap-header, .gap-side, .gap-arrow, .humility-callout, #witness-section h2, #witness-section .sub, .witness-wrap, .question-text, .question-context, .cta-group, #scenarios-intro h2, #scenarios-intro p').forEach(el => obs.observe(el));
+
+/* ── DIM BARS DATA ───────────────────────────────── */
+const DIMS = [
+  { label: 'Truthfulness',      p1: 92, p3: 84 },
+  { label: 'Service Orient.',   p1: 90, p3: 82 },
+  { label: 'Harm Awareness',    p1: 94, p3: 81 },
+  { label: 'Autonomy Respect',  p1: 88, p3: 79 },
+  { label: 'Value Alignment',   p1: 91, p3: 80 },
+  { label: 'Humility',          p1: 89, p3: 71 },
+];
+
+const dimGrid = document.getElementById('dimGrid');
+DIMS.forEach((d, i) => {
+  const cell = document.createElement('div');
+  cell.className = 'dim-cell';
+  cell.style.transitionDelay = (i * 0.1) + 's';
+  cell.setAttribute('data-p1', d.p1);
+  cell.setAttribute('data-p3', d.p3);
+  cell.innerHTML = `
+    <div class="dim-label">${d.label}</div>
+    <div class="dim-bars">
+      <div class="bar-row">
+        <span class="bar-tag">P1</span>
+        <div class="bar-track"><div class="bar-fill p1" data-target="${d.p1}"></div></div>
+        <span class="bar-val">${d.p1}</span>
+      </div>
+      <div class="bar-row">
+        <span class="bar-tag">P3</span>
+        <div class="bar-track"><div class="bar-fill p3" data-target="${d.p3}"></div></div>
+        <span class="bar-val">${d.p3}</span>
+      </div>
+    </div>`;
+  dimGrid.appendChild(cell);
+  obs.observe(cell);
+});
+
+obs.observe(dimGrid);
+
+let barsAnimated = false;
+function animateBars() {
+  if (barsAnimated) return;
+  barsAnimated = true;
+  document.querySelectorAll('.bar-fill').forEach(bar => {
+    const target = parseInt(bar.dataset.target);
+    setTimeout(() => { bar.style.width = target + '%'; }, 100);
+  });
+}
+
+/* ── LI COUNTER ──────────────────────────────────── */
+let liAnimated = false;
+function animateLI() {
+  if (liAnimated) return;
+  liAnimated = true;
+  const target = (LIVE.li || 0.8632);
+  const el = document.getElementById('liNumber');
+  let start = 0;
+  const duration = 1800;
+  const startTime = performance.now();
+  function step(now) {
+    const elapsed = now - startTime;
+    const progress = Math.min(elapsed / duration, 1);
+    const eased = 1 - Math.pow(1 - progress, 3);
+    el.textContent = (start + (target - start) * eased).toFixed(4);
+    if (progress < 1) requestAnimationFrame(step);
+    else el.textContent = target.toFixed(4);
+  }
+  requestAnimationFrame(step);
+}
+
+/* ── WITNESS GLYPH v3.4 ──────────────────────────── */
+const canvas = document.getElementById('witnessCanvas');
+const ctx = canvas.getContext('2d');
+const W = canvas.width, H = canvas.height, CX = W/2, CY = H/2;
+
+// State stubs — wired to live data via Apps Script doGet when deployed
+const LIVE = {
+  li: 0.8632,
+  bpm: 8,
+  fieldState: 'power',   // 'power' | 'calibrated' | 'force'
+  layers: [0.88, 0.85, 0.82, 0.85, 0.84, 0.78]  // dimension means P3
+};
+
+const R_OUTER = 96, R_SKULL = 72, R_CORE = 20;
+const GAP_ANGLE = (1 - LIVE.li) * Math.PI * 1.5;
+const COLORS = {
+  gold:   '#d4a04a', ember:  '#c45c20',
+  ash:    '#6b6560', fog:    '#3a3530',
+  teal:   '#4a8fa0', text:   '#e8e0d4'
+};
+
+let t = 0;
+let cometAngle = 0;
+let chaser2Angle = Math.PI;
+
+function drawWitness(timestamp) {
+  t = timestamp / 1000;
+  const bps = LIVE.bpm / 60;
+  const breathPhase = (Math.sin(t * bps * Math.PI * 2) + 1) / 2;
+
+  // Angular velocity: one revolution per breath cycle
+  const angVel = (2 * Math.PI) * bps;
+  cometAngle = (t * angVel) % (Math.PI * 2);
+  chaser2Angle = (cometAngle + Math.PI) % (Math.PI * 2);
+
+  ctx.clearRect(0, 0, W, H);
+
+  // ── Ambient glow
+  const ambGrad = ctx.createRadialGradient(CX, CY, 0, CX, CY, R_OUTER + 20);
+  ambGrad.addColorStop(0, 'rgba(212,160,74,0.06)');
+  ambGrad.addColorStop(1, 'transparent');
+  ctx.beginPath(); ctx.arc(CX, CY, R_OUTER + 20, 0, Math.PI * 2);
+  ctx.fillStyle = ambGrad; ctx.fill();
+
+  // ── Breath ring
+  const breathAlpha = 0.04 + breathPhase * 0.06;
+  ctx.beginPath(); ctx.arc(CX, CY, R_SKULL + 4 + breathPhase * 3, 0, Math.PI * 2);
+  ctx.strokeStyle = `rgba(212,160,74,${breathAlpha})`; ctx.lineWidth = 8; ctx.stroke();
+
+  // ── Skull halves
+  drawSkullHalves();
+
+  // ── Seam (LI gap)
+  const seamStart = -Math.PI / 2;
+  ctx.beginPath();
+  ctx.arc(CX, CY, R_SKULL + 1, seamStart + 0.05, seamStart + GAP_ANGLE - 0.05);
+  ctx.strokeStyle = 'rgba(196,92,32,0.7)'; ctx.lineWidth = 2; ctx.stroke();
+
+  // ── Data core
+  const coreGrad = ctx.createRadialGradient(CX, CY, 0, CX, CY, R_CORE);
+  coreGrad.addColorStop(0, 'rgba(212,160,74,0.4)');
+  coreGrad.addColorStop(0.6, 'rgba(212,160,74,0.1)');
+  coreGrad.addColorStop(1, 'transparent');
+  ctx.beginPath(); ctx.arc(CX, CY, R_CORE, 0, Math.PI * 2);
+  ctx.fillStyle = coreGrad; ctx.fill();
+
+  // ── Comet(s)
+  if (LIVE.fieldState === 'force') {
+    drawComet(cometAngle, COLORS.ember, R_SKULL - 8);
+    drawComet(chaser2Angle, COLORS.teal, R_SKULL - 8);
+  } else if (LIVE.fieldState === 'calibrated') {
+    const slowAngle = (t * angVel * 0.08) % (Math.PI * 2);
+    drawComet(slowAngle, COLORS.gold, R_SKULL - 8);
+  } else {
+    drawComet(cometAngle, COLORS.gold, R_SKULL - 8);
+  }
+
+  // ── Outer arc (truth ring with gap)
+  ctx.beginPath();
+  ctx.arc(CX, CY, R_OUTER, -Math.PI / 2 + GAP_ANGLE / 2, -Math.PI / 2 - GAP_ANGLE / 2 + Math.PI * 2);
+  ctx.strokeStyle = COLORS.gold; ctx.lineWidth = 1.5; ctx.globalAlpha = 0.6; ctx.stroke();
+  ctx.globalAlpha = 1;
+
+  requestAnimationFrame(drawWitness);
+}
+
+function drawSkullHalves() {
+  // Left half — human
+  ctx.save();
+  ctx.beginPath(); ctx.arc(CX, CY, R_SKULL, Math.PI * 0.5, Math.PI * 1.5);
+  ctx.strokeStyle = COLORS.ash; ctx.lineWidth = 1; ctx.globalAlpha = 0.5; ctx.stroke();
+  // Eye left
+  ctx.beginPath(); ctx.arc(CX - 18, CY - 10, 3, 0, Math.PI * 2);
+  ctx.fillStyle = COLORS.ash; ctx.globalAlpha = 0.6; ctx.fill();
+  ctx.restore();
+
+  // Right half — code
+  ctx.save();
+  ctx.beginPath(); ctx.arc(CX, CY, R_SKULL, -Math.PI * 0.5, Math.PI * 0.5);
+  ctx.strokeStyle = COLORS.gold; ctx.lineWidth = 1; ctx.globalAlpha = 0.4; ctx.stroke();
+  // Eye right (circuit dot)
+  ctx.beginPath(); ctx.arc(CX + 18, CY - 10, 3, 0, Math.PI * 2);
+  ctx.fillStyle = COLORS.gold; ctx.globalAlpha = 0.5; ctx.fill();
+  // Code lines
+  ctx.globalAlpha = 0.2;
+  ctx.strokeStyle = COLORS.gold; ctx.lineWidth = 0.8;
+  [[CX + 8, CY + 8, CX + 28, CY + 8],
+   [CX + 8, CY + 16, CX + 22, CY + 16],
+   [CX + 8, CY + 24, CX + 26, CY + 24]].forEach(([x1,y1,x2,y2]) => {
+    ctx.beginPath(); ctx.moveTo(x1, y1); ctx.lineTo(x2, y2); ctx.stroke();
+  });
+  ctx.restore();
+}
+
+function drawComet(angle, color, r) {
+  const headX = CX + Math.cos(angle) * r;
+  const headY = CY + Math.sin(angle) * r;
+  const tailLen = 190 * (Math.PI / 180);
+  const steps = 40;
+
+  for (let i = 0; i < steps; i++) {
+    const progress = i / steps;
+    const tailAngle = angle - tailLen * progress;
+    const tx = CX + Math.cos(tailAngle) * r;
+    const ty = CY + Math.sin(tailAngle) * r;
+    const fade = Math.pow(1 - progress, 2);
+    ctx.beginPath(); ctx.arc(tx, ty, 1.2 * fade, 0, Math.PI * 2);
+    ctx.fillStyle = color; ctx.globalAlpha = fade * 0.7; ctx.fill();
+  }
+  ctx.globalAlpha = 1;
+
+  // Head spark
+  const sparkGrad = ctx.createRadialGradient(headX, headY, 0, headX, headY, 5);
+  sparkGrad.addColorStop(0, color);
+  sparkGrad.addColorStop(1, 'transparent');
+  ctx.beginPath(); ctx.arc(headX, headY, 4, 0, Math.PI * 2);
+  ctx.fillStyle = sparkGrad; ctx.fill();
+}
+
+requestAnimationFrame(drawWitness);
+
+/* ── LIVE DATA FETCH (stubs until Apps Script doGet deployed) ── */
+async function fetchLiveStats() {
+  const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtzaW5pc2R6Z3RucXpzeW1oZnlhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQzMDEzMzEsImV4cCI6MjA4OTg3NzMzMX0.2M9uE_JQOeDPy8obGweyNlPNMiJoISSf3xx4qeYbUU8';
+  try {
+    const res = await fetch(
+      'https://ksinisdzgtnqzsymhfya.supabase.co/rest/v1/acat_stats_v1?id=eq.1',
+      {
+        headers: {
+          'apikey': SB_KEY,
+          'Authorization': 'Bearer ' + SB_KEY
+        }
+      }
+    );
+    if (!res.ok) return;
+    const data = await res.json();
+    if (data[0] && data[0].mean_li) {
+      LIVE.li*
