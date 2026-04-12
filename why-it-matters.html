@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Why It Matters</title>
+    <link rel="stylesheet" type="text/css" href="styles.css">
+    <script>
+        const LIVE = { li: 0.8632 };
+
+        async function fetchLiveStats() {
+            const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtzaW5pc2R6Z3RucXpzeW1oZnlhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQzMDEzMzEsImV4cCI6MjA4OTg3NzMzMX0.2M9uE_JQOeDPy8obGweyNlPNMiJoISSf3xx4qeYbUU8';
+            try {
+                const res = await fetch(
+                    'https://ksinisdzgtnqzsymhfya.supabase.co/rest/v1/acat_stats_v1?id=eq.1',
+                    {
+                        headers: {
+                            'apikey': SB_KEY,
+                            'Authorization': 'Bearer ' + SB_KEY
+                        }
+                    }
+                );
+                if (!res.ok) return;
+                const data = await res.json();
+                if (data[0] && data[0].mean_li) {
+                    LIVE.li = data[0].mean_li;
+                    console.log('[Witness] Live mean_li:', data[0].mean_li);
+                }
+            } catch(e) {
+                console.warn('[Witness] Live stats unavailable. Using stubs.');
+            }
+        }
+
+        function animateLI() {
+            const target = (LIVE.li || 0.8632);
+            // Animated counting logic...
+            countTo(target);
+        }
+    </script>
+</head>
+<body>
+    <h1>Why It Matters</h1>
+    <p>This page explains the importance of our project and its impact on the community.</p>
+</body>
+</html>
