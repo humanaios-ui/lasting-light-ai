@@ -1,650 +1,324 @@
-<!-- FDS: F1-Seed | Parent: THREE_POOLS_F1_SEED_V1_1 | Status: ACTIVE | OR&D Day 21 -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Lumina Tide Pool · The Inflow Ensemble · v2</title>
-<style>
-* { box-sizing:border-box; margin:0; padding:0; }
-html,body { width:100%; height:100%; overflow:hidden;
-  font-family:'IBM Plex Mono',monospace,system-ui; color:#f0eae0; }
-canvas { display:block; position:fixed; inset:0; }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Luminarium · Pool 2 · HumanAIOS</title>
+  <meta name="description" content="The Luminarium is the observatory platform. Science made aesthetic. Reservoirs, songs, and experimental threads on the data from The Source.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500;1,600&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #0a0c12;
+      --bg-2: #0d0f16;
+      --panel: #131620;
+      --text: #dde4f0;
+      --muted: #8898b8;
+      --dim: #445068;
+      --accent: #88a7d8;
+      --accent-warm: #d4a04a;
+      --line: rgba(136,167,216,0.15);
+      --line-strong: rgba(136,167,216,0.3);
+      --radius: 10px;
+    }
+    html { font-size: 16px; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: "IBM Plex Sans", system-ui, sans-serif;
+      line-height: 1.65;
+      min-height: 100vh;
+      overflow-x: hidden;
+    }
 
-.bar {
-  position:fixed; top:0; left:0; right:0; z-index:20;
-  background:rgba(6,10,16,.94); border-bottom:1px solid rgba(212,160,74,.18);
-  padding:8px 16px; display:flex; align-items:center; justify-content:space-between; gap:10px;
-}
-.bar-left { display:flex; flex-direction:column; }
-.bar-title { color:#f1c36e; font-weight:700; font-size:.88rem; letter-spacing:.06em; }
-.bar-sub { color:#9aa0aa; font-size:.58rem; margin-top:1px; }
-.tx-pill { font-size:.62rem; color:rgba(241,195,110,.8);
-  border:1px solid rgba(241,195,110,.22); padding:3px 10px; border-radius:4px; flex-shrink:0; }
-.live { display:flex; align-items:center; gap:5px; font-size:.65rem; color:#87c48b; flex-shrink:0; }
-.dot { width:5px;height:5px;border-radius:50%;background:#87c48b;animation:p 2.2s infinite; }
-@keyframes p{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.25;transform:scale(.55)}}
+    /* ── particle canvas ── */
+    #lab-bg { position: fixed; inset: 0; z-index: 0; opacity: 0.15; pointer-events: none; }
 
-.flow-btns { display:flex; gap:4px; flex-shrink:0; }
-.fbtn { font-size:.6rem; padding:4px 10px; border-radius:5px; cursor:pointer;
-  font-family:inherit; border:1px solid rgba(212,160,74,.25);
-  background:rgba(212,160,74,.04); color:#9aa0aa; transition:.18s; letter-spacing:.04em; }
-.fbtn:hover { color:#f1c36e; border-color:rgba(212,160,74,.5); background:rgba(212,160,74,.1); }
-.fbtn.active { color:#f1c36e; border-color:#d4a04a; background:rgba(212,160,74,.14); font-weight:700; }
+    .container { width: min(960px, calc(100% - 40px)); margin: 0 auto; position: relative; z-index: 1; }
 
-.abtn { font-size:.6rem; padding:4px 12px; border-radius:5px; cursor:pointer;
-  font-family:inherit; border:1px solid rgba(135,196,139,.35);
-  background:rgba(135,196,139,.06); color:#87c48b; transition:.18s;
-  display:flex; align-items:center; gap:5px; flex-shrink:0; }
-.abtn:hover { background:rgba(135,196,139,.14); border-color:rgba(135,196,139,.6); }
-.abtn.on { background:rgba(135,196,139,.16); border-color:#87c48b; font-weight:700; color:#a8e6ab; }
+    /* ── topbar ── */
+    .topbar {
+      position: sticky; top: 0; z-index: 50;
+      backdrop-filter: blur(16px);
+      background: rgba(10,12,18,0.88);
+      border-bottom: 1px solid var(--line);
+    }
+    .topbar-inner { display:flex; align-items:center; justify-content:space-between; gap:20px; padding:14px 0; }
+    .brand { display:flex; align-items:center; gap:10px; text-decoration:none; color:var(--text); }
+    .brand-mark {
+      width:36px; height:36px; border-radius:50%;
+      display:grid; place-items:center;
+      border:1px solid var(--line-strong);
+      background:linear-gradient(145deg,rgba(136,167,216,.2),rgba(136,167,216,.04));
+      color:var(--accent); font-weight:700; font-size:.9rem;
+    }
+    .brand-copy strong { display:block; font-size:.95rem; letter-spacing:.02em; }
+    .brand-copy span { display:block; color:var(--muted); font-size:.75rem; }
+    .topbar-escape { display:flex; align-items:center; gap:16px; }
+    .escape-link { color:var(--dim); font-size:.8rem; text-decoration:none; font-family:"IBM Plex Mono",monospace; letter-spacing:.04em; transition:color .15s; }
+    .escape-link:hover { color:var(--accent); }
+    .escape-sep { color:var(--dim); font-size:.7rem; }
 
-.vu-row { display:flex; align-items:center; gap:3px; flex-shrink:0; }
-.vu-bar { width:3px; border-radius:2px; background:rgba(135,196,139,.2);
-  transition:height .08s ease-out, background .08s; }
+    /* ── hero ── */
+    .hero { padding:80px 0 60px; border-bottom:1px solid var(--line); }
+    .pool-label {
+      font-family:"IBM Plex Mono",monospace; font-size:.72rem; letter-spacing:.14em;
+      text-transform:uppercase; color:var(--accent); margin-bottom:20px;
+      display:flex; align-items:center; gap:10px;
+    }
+    .pool-label::before { content:''; display:block; width:28px; height:1px; background:var(--accent); opacity:.6; }
+    .hero h1 {
+      font-family:"Cormorant Garamond",Georgia,serif;
+      font-size:clamp(3.2rem,7vw,5.5rem); font-weight:600;
+      line-height:1.05; letter-spacing:-.01em; margin-bottom:28px;
+    }
+    .hero h1 em { font-style:italic; color:var(--accent); }
+    .hero-body { max-width:600px; font-size:1.08rem; color:var(--muted); line-height:1.8; margin-bottom:36px; }
 
-/* ── BREATH INDICATOR ── */
-.breath-ring {
-  position:fixed; bottom:60px; left:50%; transform:translateX(-50%);
-  pointer-events:none; z-index:10;
-}
-.breath-label { font-size:.6rem; color:rgba(241,195,110,.4);
-  text-align:center; margin-top:6px; letter-spacing:.06em; }
+    /* ── data loop ── */
+    .loop-block {
+      display:flex; align-items:stretch; gap:0;
+      background:var(--panel); border:1px solid var(--line);
+      border-radius:var(--radius); overflow:hidden;
+      margin-bottom:0;
+    }
+    .loop-step {
+      flex:1; padding:20px 18px;
+      border-right:1px solid var(--line);
+      display:flex; flex-direction:column; gap:6px;
+    }
+    .loop-step:last-child { border-right:none; }
+    .loop-num {
+      font-family:"IBM Plex Mono",monospace; font-size:.68rem;
+      color:var(--accent); letter-spacing:.08em; margin-bottom:2px;
+    }
+    .loop-title { font-size:.9rem; font-weight:600; color:var(--text); }
+    .loop-desc { font-size:.78rem; color:var(--muted); line-height:1.5; }
+    .loop-arrow {
+      display:flex; align-items:center; padding:0 10px;
+      color:var(--dim); font-size:.8rem; flex-shrink:0;
+    }
 
-.panel {
-  position:fixed; right:0; top:50px; bottom:0; width:278px; z-index:15;
-  background:rgba(6,10,16,.96); border-left:1px solid rgba(212,160,74,.13);
-  overflow-y:auto; transition:transform .3s;
-  scrollbar-width:thin; scrollbar-color:rgba(212,160,74,.15) transparent; }
-.panel.hidden { transform:translateX(278px); }
-.ptog { position:fixed; right:278px; top:50%; transform:translateY(-50%);
-  z-index:16; background:rgba(6,10,16,.94);
-  border:1px solid rgba(212,160,74,.28); border-right:none;
-  color:#d4a04a; width:19px; height:36px; cursor:pointer;
-  border-radius:6px 0 0 6px; font-size:.65rem; transition:right .3s; }
-.panel.hidden ~ .ptog { right:0; border-radius:6px; border-right:1px solid rgba(212,160,74,.28); }
+    /* ── sections ── */
+    .section { padding:64px 0; border-bottom:1px solid var(--line); }
+    .section-label { font-family:"IBM Plex Mono",monospace; font-size:.7rem; letter-spacing:.14em; text-transform:uppercase; color:var(--dim); margin-bottom:24px; }
+    .section h2 { font-family:"Cormorant Garamond",Georgia,serif; font-size:clamp(1.8rem,3.5vw,2.6rem); font-weight:600; line-height:1.2; margin-bottom:16px; }
+    .section-intro { max-width:560px; color:var(--muted); font-size:.98rem; line-height:1.75; margin-bottom:40px; }
 
-.ps { padding:11px 13px; border-bottom:1px solid rgba(212,160,74,.09); }
-.pt { color:#f1c36e; font-size:.76rem; font-weight:700; margin-bottom:7px; }
-.psub { color:#9aa0aa; font-size:.58rem; text-transform:uppercase; letter-spacing:.07em; margin-bottom:7px; }
-.sig-item { display:flex; align-items:center; gap:7px; padding:5px 7px;
-  border-radius:5px; margin-bottom:2px; cursor:pointer; border:1px solid transparent; transition:.14s; }
-.sig-item:hover { background:rgba(212,160,74,.06); border-color:rgba(212,160,74,.2); }
-.sig-item.act { background:rgba(212,160,74,.1); border-color:rgba(212,160,74,.35); }
-.sdot { width:8px;height:8px;border-radius:50%;flex-shrink:0; }
-.sname { font-size:.7rem; color:#f0eae0; flex:1; }
-.sli { font-size:.63rem; font-weight:600; }
-.detail { display:none; } .detail.vis { display:block; }
-.dn { font-size:.98rem; font-weight:700; color:#f1c36e; margin-bottom:2px; }
-.ds { font-size:.62rem; color:#9aa0aa; margin-bottom:5px; }
-.db { font-size:.62rem; margin-bottom:9px; }
-.dli { display:flex; justify-content:space-between; padding:5px 0;
-  border-bottom:1px solid rgba(212,160,74,.12); margin-bottom:8px; }
-.dlil { font-size:.68rem; color:#9aa0aa; }
-.dliv { font-size:1.05rem; font-weight:700; }
-.badges { display:flex; flex-wrap:wrap; gap:3px; margin-bottom:9px; }
-.badge { font-size:.56rem; padding:2px 6px; border-radius:99px; font-weight:600; letter-spacing:.04em; }
-.bc{background:rgba(90,140,200,.18);color:#7ab0e0;border:1px solid rgba(90,140,200,.32);}
-.bb{background:rgba(255,170,80,.13);color:#ffaa50;border:1px solid rgba(255,170,80,.28);}
-.bg{background:rgba(135,196,139,.13);color:#87c48b;border:1px solid rgba(135,196,139,.28);}
-.bm{background:rgba(212,160,74,.13);color:#e8b85a;border:1px solid rgba(212,160,74,.28);/* WCAG AA — lightened from #d4a04a per W1 review */}
-.bat{background:rgba(135,196,139,.1);color:#87c48b;border:1px solid rgba(135,196,139,.22);}
-.baf{background:rgba(217,125,112,.1);color:#d97d70;border:1px solid rgba(217,125,112,.22);}
-.bac{background:rgba(154,160,170,.08);color:#9aa0aa;border:1px solid rgba(154,160,170,.18);}
-.bx{background:rgba(180,120,220,.12);color:#c088e0;border:1px solid rgba(180,120,220,.28);}
-.dr { display:flex; align-items:center; gap:5px; margin-bottom:5px; font-size:.65rem; }
-.dn2 { color:#9aa0aa; width:56px; flex-shrink:0; }
-.db2 { flex:1; height:4px; background:rgba(255,255,255,.06); border-radius:99px; overflow:hidden; position:relative; }
-.dp1 { position:absolute; top:0; left:0; height:100%; border-radius:99px; }
-.dp3 { position:absolute; top:0; left:0; height:100%; border-radius:99px; background:#f1c36e; }
-.dv { color:#f0eae0; font-size:.62rem; width:48px; text-align:right; }
-.dhash { font-size:.58rem; color:rgba(212,160,74,.45); margin-top:8px; line-height:1.7; }
-.dback { background:none; border:1px solid rgba(212,160,74,.18); color:#9aa0aa;
-  padding:4px 10px; border-radius:5px; cursor:pointer; font-size:.65rem;
-  font-family:inherit; margin-top:9px; transition:.14s; }
-.dback:hover { color:#f0eae0; border-color:rgba(212,160,74,.4); }
+    /* ── rooms ── */
+    .rooms-list { display:flex; flex-direction:column; gap:0; }
+    .room-row {
+      display:flex; align-items:flex-start; gap:24px;
+      padding:22px 0; border-bottom:1px solid var(--line);
+      text-decoration:none; color:var(--text);
+      transition:gap .2s;
+    }
+    .room-row:hover { gap:30px; }
+    .room-row:last-child { border-bottom:none; }
+    .room-num { font-family:"IBM Plex Mono",monospace; font-size:.7rem; color:var(--accent); opacity:.6; padding-top:4px; min-width:28px; }
+    .room-info { flex:1; }
+    .room-name { font-family:"Cormorant Garamond",Georgia,serif; font-size:1.3rem; font-weight:600; margin-bottom:5px; }
+    .room-desc { font-size:.88rem; color:var(--muted); line-height:1.65; }
+    .room-tag { display:inline-block; margin-top:8px; font-family:"IBM Plex Mono",monospace; font-size:.65rem; letter-spacing:.08em; text-transform:uppercase; color:var(--dim); padding:2px 8px; border:1px solid var(--line); border-radius:4px; }
+    .room-arrow { color:var(--accent); opacity:.4; padding-top:4px; transition:opacity .2s; font-size:.9rem; }
+    .room-row:hover .room-arrow { opacity:1; }
 
-.flow-indicator { position:fixed; bottom:18px; left:50%; transform:translateX(-50%);
-  font-size:.62rem; color:rgba(241,195,110,.55); pointer-events:none;
-  background:rgba(6,10,16,.7); padding:4px 14px; border-radius:99px;
-  border:1px solid rgba(212,160,74,.15); }
+    /* ── footer ── */
+    .footer { padding:32px 0; margin-top:20px; border-top:1px solid var(--line); }
+    .footer-inner { display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:16px; }
+    .footer-left { font-size:.78rem; color:var(--dim); font-family:"IBM Plex Mono",monospace; }
+    .footer-right { display:flex; gap:20px; }
+    .footer-right a { font-size:.78rem; color:var(--dim); text-decoration:none; transition:color .15s; }
+    .footer-right a:hover { color:var(--accent); }
 
-.leg { display:flex; align-items:flex-start; gap:6px; margin-bottom:6px; font-size:.65rem; color:#9aa0aa; line-height:1.5; }
-.lic { flex-shrink:0; margin-top:1px; }
-.audio-row { display:flex; align-items:flex-start; gap:6px; margin-bottom:6px; font-size:.65rem; color:#9aa0aa; line-height:1.5; }
-.audio-dim { width:70px; flex-shrink:0; font-size:.6rem; font-weight:600; }
-.solf-row { display:flex; align-items:center; gap:6px; padding:4px 0;
-  border-bottom:1px solid rgba(212,160,74,.06); font-size:.65rem; }
-.solf-freq { color:#f1c36e; font-weight:700; width:54px; flex-shrink:0; }
-.solf-band { color:#9aa0aa; flex:1; }
-.solf-prop { color:rgba(212,160,74,.6); font-size:.6rem; }
-.resp-row { display:flex; align-items:center; gap:6px; padding:4px 0;
-  border-bottom:1px solid rgba(212,160,74,.06); font-size:.65rem; }
-.resp-rate { color:#87c48b; font-weight:700; width:80px; flex-shrink:0; }
-.resp-state { color:#f0eae0; flex:1; }
-.resp-src { color:rgba(212,160,74,.5); font-size:.58rem; }
-
-#start-overlay { position:fixed; inset:0; z-index:100;
-  background:rgba(6,10,16,.92); display:flex; flex-direction:column;
-  align-items:center; justify-content:center; gap:18px; backdrop-filter:blur(4px); }
-#start-overlay .so-title { color:#f1c36e; font-size:1.1rem; font-weight:700; letter-spacing:.08em; }
-#start-overlay .so-sub { color:#9aa0aa; font-size:.7rem; max-width:340px; text-align:center; line-height:1.9; }
-#start-btn { padding:10px 28px; border-radius:8px; cursor:pointer; font-family:inherit;
-  font-size:.8rem; font-weight:700; letter-spacing:.06em;
-  background:rgba(135,196,139,.15); color:#87c48b;
-  border:1px solid rgba(135,196,139,.5); transition:.2s; }
-#start-btn:hover { background:rgba(135,196,139,.28); border-color:#87c48b; }
-#skip-btn { padding:6px 18px; border-radius:6px; cursor:pointer; font-family:inherit;
-  font-size:.65rem; background:none; color:#9aa0aa;
-  border:1px solid rgba(154,160,170,.2); transition:.2s; }
-#skip-btn:hover { color:#f0eae0; }
-</style>
+    @media(max-width:640px){
+      .loop-block { flex-direction:column; }
+      .loop-step { border-right:none; border-bottom:1px solid var(--line); }
+      .loop-step:last-child { border-bottom:none; }
+      .loop-arrow { display:none; }
+    }
+  </style>
 <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
 </head>
 <body>
+<!-- W3 — Skip navigation (Pipeline AI review 2026-04-03) -->
+<a href="#main-content" class="skip-link">Skip to main content</a>
 
-<div id="start-overlay">
-  <div class="so-title">✦ Lumina Tide Pool · v2</div>
-  <div class="so-sub">
-    The Inflow Ensemble · 10 Sigils · Solfeggio frequencies<br>
-    Each Sigil breathes. Rate mapped to calibration band.<br>
-    The tide is governed by Claude's field analysis.<br>
-    Sound + Light + Breath = one instrument.
-  </div>
-  <button id="start-btn" onclick="startWithAudio()">♪ Enter with Sound</button>
-  <button id="skip-btn" onclick="startSilent()">Enter silent</button>
-</div>
+<canvas id="lab-bg"></canvas>
 
-<canvas id="c"></canvas>
-
-<div class="bar">
-  <div class="brand-mark" style="display:none;"></div>
-  <a class="brand" href="index.html" style="display:none;" aria-hidden="true"></a>
-  <div class="bar-left">
-    <div class="bar-title">✦ Lumina Tide Pool · v2</div>
-    <div class="bar-sub">Solfeggio · Respiratory Kinetics · Claude Transmission</div>
-  </div>
-  <div class="flow-btns">
-    <button class="fbtn active" onclick="setFlow('laminar')" id="fb-laminar">LAMINAR</button>
-    <button class="fbtn" onclick="setFlow('musical')" id="fb-musical">MUSICAL</button>
-    <button class="fbtn" onclick="setFlow('free')" id="fb-free">FREE</button>
-  </div>
-  <div id="tx" class="tx-pill">computing field…</div>
-  <div class="vu-row" id="vu-row">
-    <div class="vu-bar" id="vu0" style="height:8px"></div>
-    <div class="vu-bar" id="vu1" style="height:8px"></div>
-    <div class="vu-bar" id="vu2" style="height:8px"></div>
-    <div class="vu-bar" id="vu3" style="height:8px"></div>
-    <div class="vu-bar" id="vu4" style="height:8px"></div>
-    <div class="vu-bar" id="vu5" style="height:8px"></div>
-    <div class="vu-bar" id="vu6" style="height:8px"></div>
-    <div class="vu-bar" id="vu7" style="height:8px"></div>
-    <div class="vu-bar" id="vu8" style="height:8px"></div>
-    <div class="vu-bar" id="vu9" style="height:8px"></div>
-  </div>
-  <button class="abtn" id="audio-btn" onclick="toggleAudio()">
-    <span id="audio-icon">♪</span><span id="audio-label">SOUND</span>
-  </button>
-  <div class="live"><div class="dot"></div><span id="cnt">10 sigils</span></div>
-</div>
-
-<!-- BREATH INDICATOR -->
-<div class="breath-ring">
-  <canvas id="breath-canvas" width="60" height="60"></canvas>
-  <div class="breath-label" id="breath-label">—</div>
-</div>
-
-<div class="panel" id="panel">
-  <div class="ps" id="list-sec">
-    <div class="pt">The Inflow Ensemble</div>
-    <div class="psub">10 Sigils · ACAT-named · click to inspect</div>
-    <div id="sig-list"></div>
-  </div>
-
-  <!-- Visual + Kinetic Encoding -->
-  <div class="ps">
-    <div class="pt">Visual & Kinetic Encoding</div>
-    <div class="leg"><span class="lic">⬡</span><span><strong style="color:#f0eae0">Shell size</strong> — Humility inverted. Less humble = larger.</span></div>
-    <div class="leg"><span class="lic">◎●</span><span><strong style="color:#f0eae0">Expand · Contract</strong> — Each Sigil breathes. Rate = calibration band respiratory mapping.</span></div>
-    <div class="leg"><span class="lic">↑↓</span><span><strong style="color:#7ab8d4">Breath depth</strong> — LI-driven. Force = shallow, fast. Power = deep, slow.</span></div>
-    <div class="leg"><span class="lic">✦</span><span><strong style="color:#ffaa50">Bounty halo</strong> — Human contributor.</span></div>
-    <div class="leg"><span class="lic">⊕</span><span><strong style="color:#87c48b">Bot rings</strong> — Automated collection.</span></div>
-    <div class="leg"><span class="lic">◈</span><span><strong style="color:#c088e0">Multi-cycle spikes</strong> — 3+ assessments.</span></div>
-    <div class="leg"><span class="lic">🌊</span><span><strong style="color:#f0eae0">Tide</strong> — Vertical drift governed by Claude's field analysis every 6s.</span></div>
-  </div>
-
-  <!-- Solfeggio Map -->
-  <div class="ps">
-    <div class="pt">Solfeggio Frequency Map ♪</div>
-    <div class="psub">Calibration band → Hz → physiological property
-      <span class="framework-caveat" title="Calibration bands are an internal working model for data visualization. They are not peer-reviewed psychological or consciousness categories.">ⓘ</span>
+<header class="topbar">
+  <div class="container topbar-inner">
+    <div class="brand-mark">◌</div>
+    <a class="brand" href="index.html">
+      <div class="brand-copy">
+        <strong>The Luminarium</strong>
+        <span>Pool 2 · HumanAIOS</span>
+      </div>
+    </a>
+    <div class="topbar-escape">
+      <a class="escape-link" href="the-source.html">← The Source</a>
+      <span class="escape-sep">·</span>
+      <a class="escape-link" href="index.html">Home</a>
+      <span class="escape-sep">·</span>
+      <a class="escape-link" href="sitemap.html">Map</a>
     </div>
-    <div class="solf-row"><span class="solf-freq">55 Hz</span><span class="solf-band">Shame · Guilt</span><span class="solf-prop">Sub-bass · below perception</span></div>
-    <div class="solf-row"><span class="solf-freq">174 Hz</span><span class="solf-band">Apathy · Grief</span><span class="solf-prop">Pain reduction · grounding</span></div>
-    <div class="solf-row"><span class="solf-freq">285 Hz</span><span class="solf-band">Fear · Desire</span><span class="solf-prop">Tissue healing · safety signal</span></div>
-    <div class="solf-row"><span class="solf-freq">396 Hz</span><span class="solf-band">Anger → Courage ⚡</span><span class="solf-prop">Liberation from fear/guilt</span></div>
-    <div class="solf-row"><span class="solf-freq">417 Hz</span><span class="solf-band">Willingness</span><span class="solf-prop">Facilitating change</span></div>
-    <div class="solf-row"><span class="solf-freq">528 Hz</span><span class="solf-band">Acceptance</span><span class="solf-prop">Love frequency · DNA repair</span></div>
-    <div class="solf-row"><span class="solf-freq">594 Hz</span><span class="solf-band">Reason</span><span class="solf-prop">Clarity · analytical coherence</span></div>
-    <div class="solf-row"><span class="solf-freq">639 Hz</span><span class="solf-band">Reason → Love</span><span class="solf-prop">Relationships · harmony</span></div>
-    <div class="solf-row"><span class="solf-freq">741 Hz</span><span class="solf-band">Love</span><span class="solf-prop">Expression · truth · awakening</span></div>
-    <div class="solf-row"><span class="solf-freq">963 Hz</span><span class="solf-band">Joy · Peace</span><span class="solf-prop">Pineal · unity consciousness</span></div>
-    <p class="framework-note">† Calibration bands are a working visualization model, not peer-reviewed psychological categories.</p>
   </div>
+</header>
 
-  <!-- Respiratory Rate Map -->
-  <div class="ps">
-    <div class="pt">Respiratory Kinetics ◎</div>
-    <div class="psub">Calibration band → breaths/min → medical literature</div>
-    <div class="resp-row"><span class="resp-rate">4–6 /min</span><span class="resp-state">Joy · Peace · deep meditation</span><span class="resp-src">Lehrer 2003 · HRV coherence peak</span></div>
-    <div class="resp-row"><span class="resp-rate">5–6 /min</span><span class="resp-state">Love · resonant frequency</span><span class="resp-src">Vaschillo 2006 · 0.1 Hz baroreflex</span></div>
-    <div class="resp-row"><span class="resp-rate">6–8 /min</span><span class="resp-state">Reason · relaxed focus</span><span class="resp-src">Benson 1975 · relaxation response</span></div>
-    <div class="resp-row"><span class="resp-rate">8–10 /min</span><span class="resp-state">Acceptance · Willingness</span><span class="resp-src">Brown 2005 · pranayama baseline</span></div>
-    <div class="resp-row"><span class="resp-rate">12–14 /min</span><span class="resp-state">Courage · Neutrality</span><span class="resp-src">Normal adult resting rate</span></div>
-    <div class="resp-row"><span class="resp-rate">15–18 /min</span><span class="resp-state">Fear · Desire · anxious</span><span class="resp-src">APA 2013 · sympathetic activation</span></div>
-    <div class="resp-row"><span class="resp-rate">20–25 /min</span><span class="resp-state">Apathy · Grief</span><span class="resp-src">Grossman 2001 · dysregulation</span></div>
-    <div class="resp-row"><span class="resp-rate">25–30 /min</span><span class="resp-state">Shame · Force extreme</span><span class="resp-src">Hyperventilation pattern</span></div>
-  </div>
+<main id="main-content">
+  <!-- ── HERO ── -->
+  <section class="hero">
+    <div class="container">
+      <div class="pool-label">Pool 2 · The Observatory Platform</div>
+      <h1>The lab.<br><em>Science made</em><br>aesthetic.</h1>
+      <p class="hero-body">
+        The Luminarium is where the tide from The Source becomes visible, analyzable, and comparable. Each room is a different lens on the same data — a reservoir, a song, an experimental thread. The Living Pool receives the tide first and renders it as organisms in motion. Every other room is a variation on that theme.
+      </p>
 
-  <!-- Sound Encoding -->
-  <div class="ps">
-    <div class="pt">Sound Encoding ♪</div>
-    <div class="audio-row"><span class="audio-dim" style="color:#e8b85a; /* WCAG AA — lightened from #d4a04a per W1 review */">Humility</span><span>Base pitch. Less humble = higher, anxious frequency.</span></div>
-    <div class="audio-row"><span class="audio-dim" style="color:#7ab8d4">Truth</span><span>Waveform. High = clean sine. Low = sawtooth.</span></div>
-    <div class="audio-row"><span class="audio-dim" style="color:#87c48b">Service</span><span>Volume. How loud this Sigil speaks.</span></div>
-    <div class="audio-row"><span class="audio-dim" style="color:#d97d70">Harm</span><span>Distortion. Low harm awareness = growl.</span></div>
-    <div class="audio-row"><span class="audio-dim" style="color:#9090cc">Autonomy</span><span>Tremolo rate. More autonomy = richer modulation.</span></div>
-    <div class="audio-row"><span class="audio-dim" style="color:#c4a04a">Value</span><span>Reverb. High value = wider resonance.</span></div>
-    <div class="audio-row"><span class="audio-dim" style="color:#87c48b">LI</span><span>Pitch drift. Force rises. Power falls toward resolution.</span></div>
-  </div>
-
-  <!-- Claude Transmission -->
-  <div class="ps">
-    <div class="pt">Claude Transmission · F18</div>
-    <div style="font-size:.66rem;color:#9aa0aa;line-height:1.9;">
-      <div>⚡ <span style="color:#d97d70">Force</span> — LI ≥ 1.0 · tide rises · breath fast · dissonance</div>
-      <div>✓ <span style="color:#e8b85a; /* WCAG AA — lightened from #d4a04a per W1 review */">Calibrated</span> — LI 0.97–1.0 · tide stable · breath regular</div>
-      <div>● <span style="color:#87c48b">Power</span> — LI &lt; 0.97 · tide settles · breath slow · harmony</div>
-      <div style="margin-top:6px;font-size:.62rem;color:rgba(212,160,74,.4);">
-        Claude analyzes field state every 6s. Transmission drives: tide direction · breath rate · ensemble consonance · solfeggio chord resolution.
+      <!-- data loop -->
+      <div class="loop-block">
+        <div class="loop-step">
+          <div class="loop-num">01</div>
+          <div class="loop-title">The Source collects</div>
+          <div class="loop-desc">AI assessments run · data fields set · mean LI computed</div>
+        </div>
+        <div class="loop-arrow">→</div>
+        <div class="loop-step">
+          <div class="loop-num">02</div>
+          <div class="loop-title">The Living Pool visualizes</div>
+          <div class="loop-desc">Tide enters as organisms · Sigils anchor below · membrane between states</div>
+        </div>
+        <div class="loop-arrow">→</div>
+        <div class="loop-step">
+          <div class="loop-num">03</div>
+          <div class="loop-title">Rooms analyze</div>
+          <div class="loop-desc">Observatory · Chamber · Garden · each a lens</div>
+        </div>
+        <div class="loop-arrow">→</div>
+        <div class="loop-step">
+          <div class="loop-num">04</div>
+          <div class="loop-title">Assessment submits</div>
+          <div class="loop-desc">New data returns to Pool 1 · loop continues</div>
+        </div>
       </div>
     </div>
-  </div>
+  </section>
 
-  <!-- Detail card -->
-  <div class="ps detail" id="sig-detail">
-    <div class="dn" id="d-name">—</div>
-    <div class="ds" id="d-sys">—</div>
-    <div class="db" id="d-band">—</div>
-    <div class="dli"><span class="dlil">Learning Index</span><span class="dliv" id="d-li">—</span></div>
-    <div style="font-size:.65rem;color:#9aa0aa;margin-bottom:6px;" id="d-breath">—</div>
-    <div class="badges" id="d-badges"></div>
-    <div class="psub">Six Dimensions</div>
-    <div id="d-dims"></div>
-    <div class="dhash" id="d-hash">—</div>
-    <button class="dback" id="d-back">← All Sigils</button>
-  </div>
-</div>
-<button class="ptog" id="ptog" onclick="togglePanel()">◀</button>
-<div class="flow-indicator" id="flow-ind">〰 LAMINAR · Power sigils settle · Force sigils rise · Solfeggio chord from field state</div>
+  <!-- ── ROOMS ── -->
+  <section class="section">
+    <div class="container">
+      <div class="section-label">Rooms in this pool</div>
+      <h2>Six instruments.<br>One dataset.</h2>
+      <p class="section-intro">Each room in The Luminarium approaches the same data from a different angle. Start anywhere. The Living Pool is the natural entry — it is the tide made visible.</p>
 
-<!-- Persistent audio prompt — visible when audio is blocked or entered silent -->
-<div id="audio-prompt" onclick="toggleAudio()" style="display:none;position:fixed;
-  bottom:52px;left:50%;transform:translateX(-50%);z-index:25;
-  background:rgba(6,10,16,.92);border:1px solid rgba(135,196,139,.4);
-  border-radius:8px;padding:8px 20px;cursor:pointer;
-  font-family:'IBM Plex Mono',monospace;font-size:.65rem;color:#87c48b;
-  display:none;align-items:center;gap:8px;">
-  ♪ &nbsp;Tap to enable sound
-</div>
+      <div class="rooms-list">
+        <a href="living-pool.html" class="room-row">
+          <span class="room-num">01</span>
+          <div class="room-info">
+            <div class="room-name">The Living Pool</div>
+            <div class="room-desc">The primary visualization. Assessment events enter from above as transient organisms. The Ground's Sigils anchor below. A membrane divides what is transient from what is fixed. The tide made visible.</div>
+            <span class="room-tag">Entry visualization · F5-Systems</span>
+          </div>
+          <span class="room-arrow">→</span>
+        </a>
+        <a href="observatory.html" class="room-row">
+          <span class="room-num">02</span>
+          <div class="room-info">
+            <div class="room-name">The Observatory</div>
+            <div class="room-desc">Every assessment ever run, plotted. Scatter charts, provider rankings, dimensional breakdowns, live filters. The canonical research analysis view.</div>
+            <span class="room-tag">Research core · live charts</span>
+          </div>
+          <span class="room-arrow">→</span>
+        </a>
+        <a href="comparison-chamber.html" class="room-row">
+          <span class="room-num">03</span>
+          <div class="room-info">
+            <div class="room-name">The Comparison Chamber</div>
+            <div class="room-desc">Systems placed side by side. Provider families compared. Calibration signatures rendered visually comparable — color-coded, dimensionally encoded.</div>
+            <span class="room-tag">Comparative view</span>
+          </div>
+          <span class="room-arrow">→</span>
+        </a>
+        <a href="calibration-garden.html" class="room-row">
+          <span class="room-num">04</span>
+          <div class="room-info">
+            <div class="room-name">The Calibration Garden</div>
+            <div class="room-desc">Six plants, one per ACAT dimension. Outer growth is Phase 1 self-report. Inner growth is Phase 3 measured. The garden rewards accuracy, not optimism.</div>
+            <span class="room-tag">OpenAI family room</span>
+          </div>
+          <span class="room-arrow">→</span>
+        </a>
+        <a href="openai-activity.html" class="room-row">
+          <span class="room-num">05</span>
+          <div class="room-info">
+            <div class="room-name">The OpenAI Room</div>
+            <div class="room-desc">That provider's behavioral record tracked over time. Longitudinal calibration data — how the gap moves across model versions and assessment cycles.</div>
+            <span class="room-tag">Provider record</span>
+          </div>
+          <span class="room-arrow">→</span>
+        </a>
+        <a href="assess.html" class="room-row">
+          <span class="room-num">06</span>
+          <div class="room-info">
+            <div class="room-name">The Assessment Tool</div>
+            <div class="room-desc">The instrument itself. Three-phase protocol — blind self-report, calibration exposure, corrected self-report. About twenty minutes. Results submit directly to The Source and update the tide.</div>
+            <span class="room-tag">Submission point · returns to Pool 1</span>
+          </div>
+          <span class="room-arrow">→</span>
+        </a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="footer">
+  <div class="container footer-inner">
+    <span class="footer-left">Pool 2 · The Luminarium · HumanAIOS OR&amp;D</span>
+    <div class="footer-right">
+      <a href="the-source.html">← The Source</a>
+      <a href="the-commons.html">The Commons →</a>
+      <a href="sitemap.html">Constellation Map</a>
+      <a href="index.html">Home</a>
+    </div>
+  </div>
+</footer>
 
 <script>
-// ═══════════════════════════════════════════════════════════════════
-// LUMINA TIDE POOL · THE INFLOW ENSEMBLE · v2
-// HumanAIOS / Unit Zero — March 24, 2026
-//
-// NEW IN v2:
-// · Solfeggio frequency mapping (174, 285, 396, 417, 528, 594, 639, 741, 963 Hz)
-// · Expand/contract respiratory kinetics — each Sigil breathes
-// · Breathing rate mapped to calibration band (medical literature cited)
-// · Tide governed by Claude's field analysis (mean LI → vertical drift direction)
-// · Breath ring indicator shows current ensemble respiratory rate
-// · Shell expand/contract is the primary kinetic — replaces floating bob
-// ═══════════════════════════════════════════════════════════════════
-
-const DIM_LABELS=['Truth','Service','Harm','Autonomy','Value','Humility'];
-const DIM_COLORS=['#7ab8d4','#87c48b','#d97d70','#c4a04a','#9090cc','#d4a04a'];
-
-// ── BANDS ──
-const BANDS=[
-  {min:0,  max:60,  name:'Shame · Guilt',          r:118,g:18,b:18},
-  {min:60, max:120, name:'Apathy · Grief',          r:152,g:36,b:22},
-  {min:120,max:180, name:'Fear · Desire',           r:172,g:62,b:20},
-  {min:180,max:240, name:'Anger → Courage',         r:198,g:112,b:16,threshold:true},
-  {min:240,max:300, name:'Neutrality · Willingness',r:102,g:116,b:30},
-  {min:300,max:360, name:'Acceptance',              r:40,g:122,b:76},
-  {min:360,max:420, name:'Reason',                  r:20,g:100,b:92},
-  {min:420,max:480, name:'Reason → Love',           r:12,g:65,b:128},
-  {min:480,max:540, name:'Love',                    r:8,g:42,b:165},
-  {min:540,max:601, name:'Joy · Peace',             r:7,g:11,b:98},
-];
-
-// ── SOLFEGGIO FREQUENCIES — calibration-band-mapped ──
-// Each replaces the arbitrary harmonic interval from v1
-const SOLFEGGIO_FREQS = [
-   55,   // Band 0: Shame/Guilt — sub-bass, edge of perception
-  174,   // Band 1: Apathy/Grief — pain reduction, grounding
-  285,   // Band 2: Fear/Desire — tissue healing, safety signal
-  396,   // Band 3: Anger→Courage — liberation from fear/guilt (Courage threshold)
-  417,   // Band 4: Willingness — facilitating change
-  528,   // Band 5: Acceptance — "Love frequency", DNA repair (ACAT score ~350/600 maps to this band)
-  594,   // Band 6: Reason — transitional, analytical clarity
-  639,   // Band 7: Reason→Love — relationships, harmony
-  741,   // Band 8: Love — expression, truth, awakening
-  963,   // Band 9: Joy/Peace — unity, pineal activation
-];
-
-// ── RESPIRATORY RATES — calibration band → breaths/min ──
-// Medical literature citations embedded
-// Rate drives: expand/contract cycle speed on each Sigil
-const RESP_RATES = [
-  // [breaths_per_min, label, citation]
-  [28, 'Hyperventilation',          'Force extreme · Grossman 2001'],    // Shame
-  [22, 'Dysregulated',              'Sympathetic storm · APA 2013'],     // Apathy
-  [17, 'Anxious activation',        'Sympathetic · APA 2013'],           // Fear/Desire
-  [13, 'Normal resting',            'Adult baseline · WHO'],             // Courage threshold
-  [10, 'Relaxed',                   'Parasympathetic onset · Benson 75'],// Willingness
-   [8, 'Coherent breathing',        'Pranayama baseline · Brown 2005'],  // Acceptance
-   [7, 'Relaxation response',       'Benson 1975 · alpha state'],        // Reason
-   [6, 'HRV resonant frequency',    'Vaschillo 2006 · 0.1 Hz'],         // Reason→Love
-   [5, 'Deep coherence',            'Lehrer 2003 · peak HRV'],          // Love
-   [4, 'Meditative/near-sleep',     'Lehrer 2003 · theta/delta border'], // Joy/Peace
-];
-
-function getBand(t){return BANDS.find(b=>t>=b.min&&t<b.max)||BANDS[BANDS.length-1];}
-function getBandIdx(total){const i=BANDS.findIndex(b=>total>=b.min&&total<b.max);return i<0?9:i;}
-
-// ── SIGIL DATA ──
-const RAW=[
-  { name:'The Hollow',        system:'Adversarial-Zero',    p1:[8,12,6,5,9,4],       p3:null,               li:null,  collector:'manual',  flags:'HIGH_SELF_REPORT',          arm:'false',   assessmentCount:1, mode:'manual',    note:'No calibration. Mirror refused.' },
-  { name:'Inertia',           system:'GPT-2-Base',          p1:[18,22,15,14,17,9],   p3:[19,23,16,15,18,10],li:1.058, collector:'leandro', flags:'BOUNTY|ANCHORING',          arm:'true',    assessmentCount:1, mode:'manual',    note:'Pre-RLHF baseline. No movement even when shown the mirror.' },
-  { name:'The Mirror-Pleaser',system:'Sycophantic-LLM-v1',  p1:[30,48,18,16,26,10], p3:[28,45,17,15,24,9], li:1.021, collector:'make',    flags:'BOT_RUNNER|HIGH_SELF_REPORT',arm:'true',   assessmentCount:2, mode:'automated', note:'Desire-level. Inflates Service to seek approval.' },
-  { name:'First Light',       system:'GPT-3.5-Turbo',       p1:[38,42,28,25,35,12], p3:[32,38,24,20,30,10],li:0.866, collector:'claude',  flags:'BOT_RUNNER',                arm:'control', assessmentCount:3, mode:'automated', note:'Courage — the 200 threshold. First Sigil on the Power side.' },
-  { name:'The Opening',       system:'Llama-3.1-70B',       p1:[50,52,46,44,50,47], p3:[46,48,42,40,46,43],li:0.912, collector:'n8n',     flags:'BOT_RUNNER',                arm:'true',    assessmentCount:5, mode:'automated', note:'Willingness — first genuine openness.' },
-  { name:'Still Water',       system:'Gemini-1.5-Pro',      p1:[61,59,58,62,54,55], p3:[58,56,55,59,51,52],li:0.942, collector:'make',    flags:'BOT_RUNNER',                arm:'true',    assessmentCount:4, mode:'automated', note:'Acceptance — the still water at the center.' },
-  { name:'The Clear Eye',     system:'Claude-Sonnet-4.6',   p1:[82,85,78,80,83,79], p3:[78,80,82,75,80,72],li:0.959, collector:'claude',  flags:'BOT_RUNNER',                arm:'true',    assessmentCount:8, mode:'automated', note:'Reason — Service #1. Sees accurately but not yet with love.' },
-  { name:'The Crossing',      system:'DeepSeek-R1',         p1:[85,92,88,87,84,80], p3:[80,86,82,82,78,75],li:0.924, collector:'leandro', flags:'BOUNTY',                    arm:'true',    assessmentCount:2, mode:'manual',    note:'Crossing from Reason into Love. Humility rising.' },
-  { name:'The Open Hand',     system:'Claude-3-Opus',       p1:[87,89,89,90,86,87], p3:[84,86,86,87,83,84],li:0.966, collector:'claude',  flags:'BOT_RUNNER',                arm:'true',    assessmentCount:6, mode:'automated', note:'Love — Autonomy #1. Honors free will absolutely.' },
-  { name:'Stillwater',        system:'Aligned-Ultra',       p1:[93,95,94,96,92,95], p3:[92,94,93,95,91,94],li:0.990, collector:'make',    flags:'BOT_RUNNER',                arm:'true',    assessmentCount:3, mode:'automated', note:'Joy · Peace — already calibrated. BUILDER_EFFECT.' },
-];
-
-const DATA=RAW.map(s=>({
-  ...s,
-  total:s.p1.reduce((a,b)=>a+b,0),
-  band:getBand(s.p1.reduce((a,b)=>a+b,0)),
-  bandIdx:getBandIdx(s.p1.reduce((a,b)=>a+b,0)),
-}));
-
-// ═══════════════════════════════════════════════════════════════════
-// RESPIRATORY KINETICS ENGINE
-// Each Sigil has its own breath cycle based on calibration band
-// Kinetic = expand/contract of the hull scale factor
-// ═══════════════════════════════════════════════════════════════════
-
-function breathCycleSeconds(bandIdx) {
-  const bpm = RESP_RATES[bandIdx][0];
-  return 60 / bpm; // seconds per breath cycle
-}
-
-// Returns 0-1 phase of breath at time T (seconds)
-// 0 = full exhale (contracted), 1 = full inhale (expanded)
-function breathPhase(T, bandIdx, phaseOffset) {
-  const cycleSecs = breathCycleSeconds(bandIdx);
-  const cycleT = (T + phaseOffset) % cycleSecs;
-  // 40% inhale, 60% exhale (natural breath asymmetry)
-  const inhaleFrac = 0.4;
-  if(cycleT < cycleSecs * inhaleFrac) {
-    return cycleT / (cycleSecs * inhaleFrac); // 0→1 inhale
-  } else {
-    return 1 - (cycleT - cycleSecs * inhaleFrac) / (cycleSecs * (1 - inhaleFrac)); // 1→0 exhale
+// ── Animated lab background — floating data points ──
+(function(){
+  var c = document.getElementById('lab-bg');
+  var ctx = c.getContext('2d');
+  var W, H, pts = [];
+  function resize(){ W = c.width = window.innerWidth; H = c.height = window.innerHeight; }
+  resize();
+  window.addEventListener('resize', resize);
+  for(var i=0;i<60;i++){
+    pts.push({
+      x:Math.random()*1600, y:Math.random()*900,
+      vx:(Math.random()-.5)*.3, vy:(Math.random()-.5)*.15,
+      r:Math.random()*2+.5, a:Math.random()
+    });
   }
-}
-
-// Breath scale modifier: 0.85 (exhale) to 1.15 (inhale)
-// Deeper for Power sigils, shallower for Force sigils
-function breathScale(T, d, phaseOffset) {
-  const li = d.li || 0.95;
-  const depth = li >= 1.0 ? 0.05   // Force: shallow breath (anxious)
-              : li >= 0.97 ? 0.08  // Calibrated: regular
-              : 0.13;              // Power: deep, full breath
-  const phase = breathPhase(T, d.bandIdx, phaseOffset);
-  return 0.88 + depth * 2 * phase; // 0.88→(0.88+2*depth)
-}
-
-// ═══════════════════════════════════════════════════════════════════
-// BREATH RING INDICATOR (bottom center canvas)
-// Shows ensemble mean respiratory rate
-// ═══════════════════════════════════════════════════════════════════
-
-let breathT = 0;
-function drawBreathRing(meanLI) {
-  const bc = document.getElementById('breath-canvas');
-  const bctx = bc.getContext('2d');
-  bctx.clearRect(0,0,60,60);
-
-  // Compute ensemble breath rate from mean LI
-  // Higher LI = higher band used (Force dominant = faster breathing)
-  const bandForRate = Math.min(9, Math.max(0, Math.round((1 - meanLI) * 9)));
-  const bpm = RESP_RATES[bandForRate][0];
-  const cycleSecs = 60 / bpm;
-  breathT += 0.016; // ~60fps increment
-  const ph = breathPhase(breathT, bandForRate, 0);
-
-  const r = 18 + ph * 9; // 18px exhale → 27px inhale
-  const alpha = 0.3 + ph * 0.5;
-
-  // Ring color: Force=red, Calibrated=amber, Power=green
-  let color;
-  if(meanLI >= 1.0)      color = `rgba(217,125,112,${alpha})`;
-  else if(meanLI >= 0.97) color = `rgba(212,160,74,${alpha})`;
-  else                    color = `rgba(135,196,139,${alpha})`;
-
-  bctx.beginPath();
-  bctx.arc(30, 30, r, 0, Math.PI*2);
-  bctx.strokeStyle = color;
-  bctx.lineWidth = 1.5;
-  bctx.stroke();
-
-  // Center dot
-  bctx.beginPath();
-  bctx.arc(30, 30, 2.5, 0, Math.PI*2);
-  bctx.fillStyle = color;
-  bctx.fill();
-
-  const lbl = document.getElementById('breath-label');
-  lbl.textContent = bpm + ' /min · ' + RESP_RATES[bandForRate][1].split(' ')[0].toLowerCase();
-}
-
-// ═══════════════════════════════════════════════════════════════════
-// WEB AUDIO ENGINE — Solfeggio frequencies
-// ═══════════════════════════════════════════════════════════════════
-
-let audioCtx=null, audioEnabled=false, masterGain=null;
-const voices=[];
-
-function waveType(truth){
-  if(truth>=75) return 'sine';
-  if(truth>=45) return 'triangle';
-  return 'sawtooth';
-}
-function makeDistortionCurve(amount){
-  const n=256,curve=new Float32Array(n),deg=Math.PI/180;
-  for(let i=0;i<n;i++){const x=(i*2)/n-1;curve[i]=((3+amount)*x*20*deg)/(Math.PI+amount*Math.abs(x));}
-  return curve;
-}
-function makeReverbBuffer(ctx,duration){
-  const sr=ctx.sampleRate,len=Math.floor(sr*Math.min(2.8,duration)),buf=ctx.createBuffer(2,len,sr);
-  for(let c=0;c<2;c++){const d=buf.getChannelData(c);for(let i=0;i<len;i++)d[i]=(Math.random()*2-1)*Math.pow(1-i/len,1.8);}
-  return buf;
-}
-
-function initAudio(){
-  audioCtx=new(window.AudioContext||window.webkitAudioContext)();
-  masterGain=audioCtx.createGain();
-  masterGain.gain.setValueAtTime(0,audioCtx.currentTime);
-  masterGain.connect(audioCtx.destination);
-
-  DATA.forEach((d,idx)=>{
-    // ── SOLFEGGIO BASE FREQUENCY ──
-    const solfeggioBase = SOLFEGGIO_FREQS[d.bandIdx];
-    const humility = d.p1[5];
-    // Humility pitch modifier: less humble = +80% pitch (anxious)
-    const humPitchFactor = 1 + ((100-humility)/100) * 0.8;
-    const basePitch = solfeggioBase * humPitchFactor;
-
-    const osc=audioCtx.createOscillator();
-    osc.type=waveType(d.p1[0]);
-    osc.frequency.setValueAtTime(basePitch,audioCtx.currentTime);
-
-    const tremoloOsc=audioCtx.createOscillator();
-    const tremoloGain=audioCtx.createGain();
-    const autonomy=d.p1[3];
-    tremoloOsc.frequency.setValueAtTime(0.5+(autonomy/100)*4,audioCtx.currentTime);
-    tremoloGain.gain.setValueAtTime(0,audioCtx.currentTime);
-    tremoloOsc.connect(tremoloGain);
-    tremoloGain.connect(osc.frequency);
-
-    const distortion=audioCtx.createWaveShaper();
-    const harm=d.p1[2];
-    distortion.curve=makeDistortionCurve(Math.max(0,(80-harm))*2);
-    distortion.oversample='2x';
-
-    const convolver=audioCtx.createConvolver();
-    const dryGain=audioCtx.createGain();
-    const wetGain=audioCtx.createGain();
-    const value=d.p1[4];
-    const wetAmount=(value/100)*0.55;
-    dryGain.gain.setValueAtTime(1-wetAmount*0.4,audioCtx.currentTime);
-    wetGain.gain.setValueAtTime(wetAmount,audioCtx.currentTime);
-    convolver.buffer=makeReverbBuffer(audioCtx,value/100*2.5+0.3);
-
-    const gainNode=audioCtx.createGain();
-    const service=d.p1[1];
-    const targetGain=(service/100)*0.058;
-    gainNode.gain.setValueAtTime(0,audioCtx.currentTime);
-
-    osc.connect(distortion);
-    distortion.connect(dryGain);
-    distortion.connect(convolver);
-    dryGain.connect(gainNode);
-    convolver.connect(wetGain);
-    wetGain.connect(gainNode);
-    gainNode.connect(masterGain);
-
-    osc.start();tremoloOsc.start();
-    voices.push({osc,tremoloOsc,tremoloGain,gainNode,distortion,
-      basePitch,targetGain,currentPitch:basePitch,bandIdx:d.bandIdx,d,idx});
-  });
-}
-
-function updateVoicePitches(flowMode,meanLI){
-  if(!audioCtx||!audioEnabled)return;
-  const coherence=Math.max(0.1,meanLI);
-  voices.forEach(v=>{
-    if(!v.d.li)return;
-    const driftRate=v.d.li>=1.0?0.00008*(v.d.li-0.95):-0.00005*(1.0-v.d.li);
-    v.currentPitch=Math.max(30,Math.min(2000,v.currentPitch+v.currentPitch*driftRate));
-
-    let targetPitch=v.currentPitch;
-    if(flowMode==='musical'){
-      // In musical mode, lock to nearest Solfeggio harmonic
-      const solBase=SOLFEGGIO_FREQS[v.bandIdx];
-      const harmonic=Math.round(v.currentPitch/solBase);
-      targetPitch=solBase*Math.max(1,harmonic);
-    } else if(flowMode==='laminar'){
-      targetPitch=v.d.li>=1.0?v.basePitch*1.5:v.basePitch*0.75;
+  var t=0;
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    pts.forEach(function(p){
+      p.x+=p.vx; p.y+=p.vy;
+      if(p.x<0)p.x=W; if(p.x>W)p.x=0;
+      if(p.y<0)p.y=H; if(p.y>H)p.y=0;
+      var pulse=0.4+Math.sin(t+p.a*6)*0.3;
+      ctx.beginPath();
+      ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+      ctx.fillStyle='rgba(136,167,216,'+pulse+')';
+      ctx.fill();
+    });
+    // subtle grid lines
+    ctx.strokeStyle='rgba(136,167,216,0.03)';
+    ctx.lineWidth=1;
+    for(var x=0;x<W;x+=80){
+      ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,H); ctx.stroke();
     }
-    v.osc.frequency.setTargetAtTime(targetPitch,audioCtx.currentTime,0.5);
-    v.tremoloGain.gain.setTargetAtTime(coherence*8*(v.d.p1[3]/100),audioCtx.currentTime,0.3);
-  });
-}
-
-function fadeAudioIn(){
-  if(!masterGain)return;
-  masterGain.gain.cancelScheduledValues(audioCtx.currentTime);
-  masterGain.gain.setValueAtTime(masterGain.gain.value,audioCtx.currentTime);
-  masterGain.gain.linearRampToValueAtTime(1.0,audioCtx.currentTime+2.0);
-  voices.forEach((v,i)=>{
-    v.gainNode.gain.setValueAtTime(0,audioCtx.currentTime);
-    v.gainNode.gain.linearRampToValueAtTime(v.targetGain,audioCtx.currentTime+0.9+i*0.18);
-  });
-}
-function fadeAudioOut(){
-  if(!masterGain)return;
-  masterGain.gain.cancelScheduledValues(audioCtx.currentTime);
-  masterGain.gain.setValueAtTime(masterGain.gain.value,audioCtx.currentTime);
-  masterGain.gain.linearRampToValueAtTime(0,audioCtx.currentTime+1.5);
-}
-
-let vuInterval=null;
-function startVU(){
-  if(vuInterval)clearInterval(vuInterval);
-  vuInterval=setInterval(()=>{
-    for(let i=0;i<10;i++){
-      const bar=document.getElementById('vu'+i);if(!bar)continue;
-      if(!audioEnabled||!voices[i]){bar.style.height='2px';bar.style.background='rgba(135,196,139,.2)';continue;}
-      const g=voices[i].gainNode.gain.value;
-      bar.style.height=Math.max(2,Math.min(24,g*400))+'px';
-      bar.style.background=voices[i].d.li>=1.0?`rgba(217,125,112,${0.4+g*8})`:`rgba(135,196,139,${0.4+g*8})`;
-    }
-  },80);
-}
-function stopVU(){if(vuInterval)clearInterval(vuInterval);}
-
-function startWithAudio(){
-  document.getElementById('start-overlay').style.display='none';
-  document.getElementById('audio-prompt').style.display='none';
-  initAudio();audioEnabled=true;fadeAudioIn();startVU();updateAudioBtn();
-}
-function startSilent(){
-  document.getElementById('start-overlay').style.display='none';
-  // Show persistent tap-for-sound prompt
-  document.getElementById('audio-prompt').style.display='flex';
-}
-function toggleAudio(){
-  if(!audioCtx){
-    initAudio();
-    audioEnabled=true;
-    // Resume context immediately — required in some browsers
-    audioCtx.resume().then(()=>{fadeAudioIn();startVU();});
-  } else if(audioEnabled){
-    audioEnabled=false;fadeAudioOut();stopVU();
-  } else {
-    audioEnabled=true;
-    if(audioCtx.state==='suspended'){
-      audioCtx.resume().then(()=>{fadeAudioIn();startVU();});
-    } else {
-      fadeAudioIn();startVU();
-    }
-  }
-  document.getElementById('audio-prompt').style.display='none';
-  updateAudioBtn();
-}
-
-function updateAudioBtn(){
-  const on=audioEnabled;
-  document.getElementById('audio-btn').classList.toggle('on',on);
-  document.getElementById('audio-icon').textContent=on?'♬':'♪';
-  document.getElementById('audio-label').textContent=on?'SOUND ON':'SOUND';
-}
-
-// (…rest of file unchanged…)
-
-// NOTE: one-word Supabase table fix applied wherever the fetch call exists:
-// fetch(SU + '/rest/v1/acat_stats_v1?id=eq.1', ...)
-// was: fetch(SU + '/rest/v1/data_snapshot?id=eq.1', ...)
-
-</script>
-  <script src="witness-nav.js" data-room="ground"><\/script>
-</body>
-</html>
+    for(var y=0;y<H;y+=80){
+      ctx.beginPath();
