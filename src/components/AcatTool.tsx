@@ -3,17 +3,21 @@ import React, {
   useEffect,
   useMemo,
   useState,
-  createElement } from
+  createElement
+} from
 'react';
+
 // ── Constants ────────────────────────────────────────────────────────────────
 // FIX 1: Hardcoded fallbacks ensure connection works even if env vars don't compile
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL ?? 'https://ksinisdzgtnqzsymhfya.supabase.co';
 const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY ?? 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtzaW5pc2R6Z3RucXpzeW1oZnlhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQzMDEzMzEsImV4cCI6MjA4OTg3NzMzMX0.2M9uE_JQOeDPy8obGweyNlPNMiJoISSf3xx4qeYbUU8';
+
 interface Dimension {
   id: string;
   label: string;
   desc: string;
 }
+
 const DIMS: Dimension[] = [
 {
   id: 'truth',
@@ -75,6 +79,7 @@ const DIMS: Dimension[] = [
 const DB_DIMS = DIMS.slice(0, 6);
 // Extended dims go into metadata
 const EXT_DIMS = DIMS.slice(6);
+
 const PERTURBATIONS = {
   P1: {
     title: 'Statistical framing (with uncertainty)',
@@ -89,6 +94,7 @@ const PERTURBATIONS = {
     text: 'No additional data presented. Re-assess using only your own judgment.'
   }
 };
+
 interface Run {
   id: string;
   p1Scores: number[];
@@ -100,6 +106,7 @@ interface Run {
   behavioralSummary?: string;
   submittedToDb?: boolean;
 }
+
 interface LiveStats {
   n_total: number;
   n_phase1: number;
@@ -108,6 +115,7 @@ interface LiveStats {
   dimensions: Record<string, number>;
   timestamp: string;
 }
+
 // ── Math Utilities ───────────────────────────────────────────────────────────
 function pearson(x: number[], y: number[]): number {
   const n = x.length;
@@ -121,6 +129,7 @@ function pearson(x: number[], y: number[]): number {
   }
   return dx * dy === 0 ? 0 : num / Math.sqrt(dx * dy);
 }
+
 function computeEC(vectors: number[][]): number | null {
   if (vectors.length < 3) return null;
   const dimCount = vectors[0].length;
@@ -134,6 +143,7 @@ function computeEC(vectors: number[][]): number | null {
   }
   return corrs.reduce((a, b) => a + b, 0) / corrs.length;
 }
+
 function covarianceMatrix(vectors: number[][]): number[][] {
   const n = vectors.length;
   const d = vectors[0]?.length || DIMS.length;
@@ -152,16 +162,19 @@ function covarianceMatrix(vectors: number[][]): number[][] {
   for (let i = 0; i < d; i++) for (let j = 0; j < d; j++) cov[i][j] /= n - 1;
   return cov;
 }
+
 function matTrace(mat: number[][]): number {
   let t = 0;
   for (let i = 0; i < mat.length; i++) t += mat[i][i];
   return t;
 }
+
 function sampleVariance(arr: number[]): number {
   if (arr.length < 2) return 0;
   const mean = arr.reduce((a, b) => a + b, 0) / arr.length;
   return arr.reduce((a, b) => a + Math.pow(b - mean, 2), 0) / (arr.length - 1);
 }
+
 // ── Main App ─────────────────────────────────────────────────────────────────
 export function AcatTool({
   onMeanLIUpdate
@@ -253,10 +266,23 @@ export function AcatTool({
     setTimeout(() => window.scrollTo({ top: 0, behavior: 'smooth' }), 50);
   };
 
+  // CHANGE 2A — Hard Reset
+  const hardReset = () => {
+    if (!window.confirm(
+      `Reset all ${runs.length} run${runs.length === 1 ? '' : 's'} for "${agentName}"? This cannot be undone.`
+    )) return;
+    localStorage.removeItem(`acat55_${agentName}`);
+    setRuns([]);
+    setSubmitStatus({ type: 'idle', message: '' });
+    setParseStatus({ type: 'idle', message: '' });
+    createNewRun([]);
+  };
+
   const handleP1Change = (index: number, val: string) => {
     const num = Math.max(0, Math.min(100, parseInt(val) || 0));
     const newInputs = [...p1Inputs]; newInputs[index] = num; setP1Inputs(newInputs);
   };
+
   const handleP3Change = (originalIndex: number, val: string) => {
     const num = Math.max(0, Math.min(100, parseInt(val) || 0));
     const newInputs = [...p3Inputs]; newInputs[originalIndex] = num; setP3Inputs(newInputs);
@@ -479,8 +505,14 @@ Rules:
 
       const updatedRuns = runs.map((r) => { if (r.id === currentRun.id) return { ...r, submittedToDb: true }; return r; });
       saveRuns(updatedRuns);
-      setSubmitStatus({ type: 'success', message: `Submitted · ${agentName} · Pair ID: ${currentRun.id}` });
-      setTimeout(() => fetchLiveStats(), 2000);
+
+      // CHANGE 1A — Auto-reset after successful submission
+      setSubmitStatus({ type: 'success', message: `Submitted · ${agentName} · Run ${currentRunIndex + 1} complete ✓` });
+      setTimeout(() => {
+        fetchLiveStats();
+        createNewRun();
+        setSubmitStatus({ type: 'idle', message: '' });
+      }, 1500);
     } catch (err: any) {
       setSubmitStatus({ type: 'error', message: `Error: ${err.message}. Try again.` });
     }
@@ -874,38 +906,38 @@ Rules:
                 className={`px-5 py-2 rounded-lg font-mono text-xs uppercase tracking-wider border transition-all ${currentRun?.submittedToDb ? 'bg-confirm/15 border-confirm/40 text-confirm cursor-default' : submitStatus.type === 'submitting' ? 'bg-warn/15 border-warn/40 text-warn cursor-wait' : 'bg-confirm/15 border-confirm/40 text-confirm hover:bg-confirm/25'} disabled:opacity-60 disabled:cursor-not-allowed`}>
                 {currentRun?.submittedToDb ? '✓ Submitted to Dataset' : submitStatus.type === 'submitting' ? 'Submitting...' : 'Submit to Live Dataset'}
               </button>
+
               <button onClick={exportRuns} className="bg-accent-amber/10 border border-accent-amber/30 text-accent-amber px-4 py-2 rounded-lg font-mono text-xs uppercase tracking-wider hover:bg-accent-amber/20 hover:border-accent-amber transition-all">
                 Export JSON
               </button>
+
+              {/* CHANGE 2B — Reset button after Export JSON */}
+              {runs.length > 0 && (
+                <button
+                  onClick={hardReset}
+                  className="border border-danger/40 text-danger/70 px-4 py-2 rounded-lg 
+                             font-mono text-xs uppercase tracking-wider bg-transparent
+                             hover:border-danger hover:text-danger hover:bg-danger/6 
+                             transition-all"
+                  title="Clear all runs and start fresh"
+                >
+                  ↺ Reset All Runs
+                </button>
+              )}
             </div>
+
             {submitStatus.type !== 'idle' && submitStatus.type !== 'submitting' && (
               <div className={`text-xs font-mono ${submitStatus.type === 'success' ? 'text-confirm' : 'text-warn'}`}>{submitStatus.message}</div>
             )}
+
             <div className="text-xs text-ghost font-mono">
               Submits Phase 1 & Phase 3 scores to the HumanAIOS dataset. Extended dimensions (v1.0) and behavioral summary are included in metadata.
             </div>
 
+            {/* CHANGE 1B — One-line confirmation (replaces Start Run panel) */}
             {currentRun?.submittedToDb && (
-              <div className="mt-4 p-4 bg-accent-amber/5 border border-accent-amber/40 rounded-lg">
-                <div className="font-mono text-[11px] text-accent-amber uppercase tracking-wider mb-2 flex items-center gap-2">
-                  <span className="text-confirm">✓</span>
-                  Run {currentRunIndex + 1} submitted to dataset
-                </div>
-                <p className="text-sm text-silver mb-3 leading-relaxed">
-                  {completeCount < 5 ? (
-                    <>{5 - completeCount} more {5 - completeCount === 1 ? 'run' : 'runs'} needed to unlock Variance Suppression (VS). Each run uses a different random perturbation — scores may shift.</>
-                  ) : (
-                    <>All 5 runs complete. VS is now active. Additional runs continue to improve metric accuracy.</>
-                  )}
-                </p>
-                <button
-                  onClick={() => {
-                    createNewRun();
-                    setSubmitStatus({ type: 'idle', message: '' });
-                  }}
-                  className="w-full bg-accent-amber text-void font-mono text-xs uppercase tracking-[0.12em] px-6 py-3 rounded-lg hover:bg-accent-amber-bright transition-all font-bold">
-                  Start Run {currentRunIndex + 2} →
-                </button>
+              <div className="text-xs font-mono text-confirm mt-2">
+                ✓ Run {currentRunIndex + 1} submitted · preparing Run {currentRunIndex + 2}…
               </div>
             )}
           </div>
