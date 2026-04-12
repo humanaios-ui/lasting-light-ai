@@ -9,7 +9,7 @@ const dataPoints = [
 {
   label: 'Mean Lifting Index',
   value: '0.8632',
-  note: 'clean, unanchored conditions v5.3+'
+  note: 'clean, unanchored conditions (v5.3+)'
 },
 {
   label: 'Self-Assessment Gap',
