@@ -24,11 +24,11 @@
     ]},
     { label: 'EXPLORE', items: [
       { id: 'obs', href: 'observatory.html', name: 'The Observatory', desc: 'Live dataset visualization', icon: '⬡' },
-      { id: 'tide', href: 'lumina-tide-pool.html', name: 'The Lumina Tide Pool', desc: 'Behavioral sigils & baseline', icon: '⬡' },
+      { id: 'tide', href: 'lumina_tide_pool_v2.html', name: 'The Lumina Tide Pool', desc: 'Behavioral sigils & baseline', icon: '⬡' },
       { id: 'lantern', href: 'lantern-room.html', name: 'The Lantern Room', desc: 'Calibration gap analysis', icon: '⬡' }
     ]},
     { label: 'PARTICIPATE', items: [
-      { id: 'acat', href: 'assess.html', name: 'Submit ACAT', desc: 'Run a calibration · ~20 min', icon: '⬡' },
+      { id: 'acat', href: '/', name: 'Submit ACAT', desc: 'Run a calibration · ~20 min', icon: '⬡' },
       { id: 'ent', href: 'acat-enterprise.html', name: 'Enterprise', desc: 'Structured audit for deployed AI', icon: '⬡' }
     ]}
   ];

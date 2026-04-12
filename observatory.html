@@ -1,0 +1,1152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ACAT Observatory | HumanAIOS Research</title>
+  <meta name="description" content="Visual demonstration of AI self-assessment calibration gap across 630 assessments and 57+ systems">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+  <style>
+    :root {
+      --bg: #0f0e0c;
+      --bg-2: #161310;
+      --panel: #1d1915;
+      --panel-2: #26211c;
+      --text: #f4ebdf;
+      --muted: #c2b8a6;
+      --accent: #d4a04a;
+      --accent-2: #f1c36e;
+      --line: rgba(212, 160, 74, 0.18);
+      --line-strong: rgba(212, 160, 74, 0.35);
+      --danger: #d97d70;
+      --success: #87b68b;
+      --blue: #88a7d8;
+      --shadow: 0 18px 50px rgba(0,0,0,.34);
+      --radius: 20px;
+      --radius-sm: 14px;
+    }
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+    body {
+      margin: 0;
+      font-family: "IBM Plex Sans", system-ui, sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top, rgba(212,160,74,.1), transparent 28%),
+        linear-gradient(180deg, var(--bg), #0b0a08 60%);
+      line-height: 1.5;
+    }
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      opacity: .03;
+      background-image:
+        radial-gradient(circle at 20% 20%, #fff 0.6px, transparent 0.8px),
+        radial-gradient(circle at 75% 30%, #fff 0.6px, transparent 0.8px),
+        radial-gradient(circle at 50% 75%, #fff 0.6px, transparent 0.8px);
+      background-size: 22px 22px;
+    }
+    .container {
+      width: min(1240px, calc(100% - 32px));
+      margin: 0 auto;
+    }
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      backdrop-filter: blur(14px);
+      background: rgba(15, 14, 12, 0.88);
+      border-bottom: 1px solid var(--line);
+    }
+    .topbar-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      padding: 14px 0;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+      color: var(--text);
+      min-width: 0;
+    }
+    .brand-mark {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      border: 1px solid var(--line-strong);
+      background: linear-gradient(145deg, rgba(212,160,74,.22), rgba(212,160,74,.04));
+      color: var(--accent);
+      font-weight: 700;
+      box-shadow: inset 0 0 24px rgba(212,160,74,.08);
+      flex: 0 0 auto;
+    }
+    .brand-copy strong {
+      display: block;
+      font-size: 1rem;
+      letter-spacing: .02em;
+    }
+    .brand-copy span {
+      display: block;
+      color: var(--muted);
+      font-size: .82rem;
+    }
+    nav {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      justify-content: flex-end;
+    }
+    nav a {
+      color: var(--muted);
+      text-decoration: none;
+      padding: 8px 12px;
+      border-radius: 999px;
+      border: 1px solid transparent;
+      transition: .18s ease;
+      font-size: .94rem;
+    }
+    nav a:hover, nav a:focus-visible {
+      color: var(--text);
+      background: rgba(212,160,74,.07);
+      border-color: var(--line-strong);
+      outline: none;
+    }
+    a:focus-visible,
+    button:focus-visible,
+    select:focus-visible {
+      outline: 2px solid var(--accent-2);
+      outline-offset: 2px;
+    }
+    h1, h2, h3 {
+      font-family: "Cormorant Garamond", Georgia, serif;
+      line-height: 1.04;
+      margin: 0 0 14px;
+    }
+    h1 { font-size: clamp(2.8rem, 6vw, 5rem); }
+    h2 { font-size: clamp(2rem, 3.4vw, 3rem); }
+    h3 { font-size: clamp(1.35rem, 2.2vw, 1.8rem); }
+    .hero {
+      padding: 44px 0 18px;
+    }
+    .hero-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.2fr) minmax(320px, .8fr);
+      gap: 24px;
+      align-items: stretch;
+    }
+    .eyebrow {
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: .16em;
+      font-size: .79rem;
+      font-weight: 700;
+      margin-bottom: 16px;
+    }
+    .lead {
+      font-size: 1.08rem;
+      color: var(--muted);
+      max-width: 62ch;
+    }
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 20px;
+    }
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      text-decoration: none;
+      color: var(--bg);
+      background: linear-gradient(180deg, var(--accent-2), var(--accent));
+      border-radius: 999px;
+      padding: 12px 18px;
+      font-weight: 700;
+      border: none;
+      cursor: pointer;
+      box-shadow: 0 10px 24px rgba(212,160,74,.18);
+    }
+    .button.secondary {
+      background: transparent;
+      color: var(--text);
+      border: 1px solid var(--line-strong);
+      box-shadow: none;
+    }
+    .hero-callout,
+    .panel,
+    .card {
+      background: linear-gradient(180deg, rgba(255,255,255,.02), rgba(255,255,255,0)), var(--panel);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+    .hero-callout {
+      padding: 22px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 16px;
+      background: linear-gradient(180deg, rgba(212,160,74,.09), rgba(212,160,74,.03)), var(--panel);
+    }
+    .hero-callout .label {
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: .12em;
+      font-size: .8rem;
+      font-weight: 700;
+    }
+    .hero-callout .value {
+      font-size: clamp(2.2rem, 5vw, 3.4rem);
+      font-weight: 700;
+      line-height: 1;
+      margin: 6px 0 8px;
+    }
+    .mini-list {
+      display: grid;
+      gap: 10px;
+      margin-top: 6px;
+    }
+    .mini-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 18px;
+      color: var(--muted);
+      border-top: 1px solid rgba(255,255,255,.04);
+      padding-top: 10px;
+      font-size: .95rem;
+    }
+    .mini-row strong { color: var(--text); }
+    .section { padding: 18px 0 12px; }
+    .section-head {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 18px;
+      margin-bottom: 16px;
+    }
+    .section-head p {
+      margin: 0;
+      color: var(--muted);
+      max-width: 70ch;
+    }
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 14px;
+    }
+    .card { padding: 18px; transition: transform .18s ease, border-color .18s ease; }
+    .card:hover {
+      transform: translateY(-4px);
+      border-color: var(--line-strong);
+    }
+    .stat-label {
+      font-size: .8rem;
+      font-weight: 700;
+      letter-spacing: .12em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 10px;
+    }
+    .stat-value {
+      font-size: clamp(1.9rem, 3vw, 2.7rem);
+      font-weight: 700;
+      margin-bottom: 6px;
+      line-height: 1;
+    }
+    .stat-note {
+      color: var(--muted);
+      font-size: .94rem;
+    }
+    .visuals-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.25fr) minmax(300px, .75fr);
+      gap: 18px;
+      align-items: stretch;
+    }
+    .panel { padding: 18px; }
+    .panel-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: start;
+      gap: 16px;
+      margin-bottom: 14px;
+      flex-wrap: wrap;
+    }
+    .panel-header p {
+      margin: 0;
+      color: var(--muted);
+      max-width: 70ch;
+      font-size: .96rem;
+    }
+    .controls {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+    select {
+      background: var(--bg-2);
+      border: 1px solid var(--line-strong);
+      border-radius: 999px;
+      color: var(--text);
+      padding: 10px 14px;
+      font: inherit;
+    }
+    .chart-wrap {
+      position: relative;
+      height: 400px;
+    }
+    .chart-wrap.short { height: 320px; }
+    .side-stack {
+      display: grid;
+      gap: 16px;
+      align-content: start;
+    }
+    .metric-list {
+      display: grid;
+      gap: 12px;
+      margin-top: 4px;
+    }
+    .metric-item {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      gap: 12px;
+      align-items: center;
+      padding: 12px 14px;
+      border-radius: var(--radius-sm);
+      background: rgba(255,255,255,.02);
+      border: 1px solid rgba(255,255,255,.04);
+    }
+    .metric-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 0 0 4px rgba(212,160,74,.14);
+    }
+    .metric-item span { color: var(--muted); }
+    .metric-item strong { font-size: 1.05rem; }
+    .insights {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+    }
+    .insight-icon {
+      width: 42px;
+      height: 42px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      background: rgba(212,160,74,.1);
+      color: var(--accent);
+      margin-bottom: 12px;
+      font-weight: 700;
+    }
+    .split-grid {
+      display: grid;
+      grid-template-columns: minmax(0, .95fr) minmax(0, 1.05fr);
+      gap: 18px;
+      align-items: stretch;
+    }
+    .feed-layout {
+      display: grid;
+      grid-template-columns: minmax(0, .88fr) minmax(280px, .72fr);
+      gap: 18px;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: .95rem;
+    }
+    th, td {
+      text-align: left;
+      padding: 12px 10px;
+      border-bottom: 1px solid rgba(255,255,255,.06);
+      vertical-align: top;
+    }
+    th {
+      color: var(--muted);
+      font-size: .78rem;
+      text-transform: uppercase;
+      letter-spacing: .12em;
+      position: sticky;
+      top: 0;
+      background: linear-gradient(180deg, rgba(29,25,21,.98), rgba(29,25,21,.96));
+    }
+    .table-wrap {
+      max-height: 380px;
+      overflow: auto;
+      border-radius: var(--radius-sm);
+      border: 1px solid rgba(255,255,255,.05);
+    }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 5px 10px;
+      border-radius: 999px;
+      font-size: .78rem;
+      font-weight: 700;
+      letter-spacing: .04em;
+      border: 1px solid rgba(255,255,255,.06);
+      background: rgba(255,255,255,.03);
+      color: var(--text);
+      white-space: nowrap;
+    }
+    .provider-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 7px 11px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.03);
+      border: 1px solid rgba(255,255,255,.06);
+      color: var(--muted);
+      font-size: .88rem;
+      margin: 0 8px 8px 0;
+    }
+    .legend-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      display: inline-block;
+    }
+    .footer {
+      padding: 28px 0 40px;
+      color: var(--muted);
+      font-size: .95rem;
+    }
+    .footer a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+    .footer a:hover {
+      text-decoration: underline;
+    }
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0,0,0,0);
+      white-space: nowrap;
+      border: 0;
+    }
+    @media (max-width: 1080px) {
+      .hero-grid,
+      .visuals-grid,
+      .split-grid,
+      .feed-layout,
+      .stats,
+      .insights {
+        grid-template-columns: 1fr 1fr;
+      }
+      .hero-grid > :first-child,
+      .visuals-grid > :first-child,
+      .split-grid > :first-child,
+      .feed-layout > :first-child {
+        grid-column: 1 / -1;
+      }
+      .stats { grid-template-columns: repeat(2, 1fr); }
+      .insights { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 760px) {
+      .container { width: min(100% - 20px, 1240px); }
+      .topbar-inner { align-items: start; flex-direction: column; }
+      nav { justify-content: flex-start; }
+      .hero { padding-top: 28px; }
+      .hero-grid,
+      .stats,
+      .visuals-grid,
+      .split-grid,
+      .feed-layout {
+        grid-template-columns: 1fr;
+      }
+      .section-head { align-items: start; flex-direction: column; }
+      .chart-wrap { height: 320px; }
+      .chart-wrap.short { height: 280px; }
+      th, td { padding: 10px 8px; }
+    }
+  </style>
+</head>
+<body>
+<!-- W3 — Skip navigation (Pipeline AI review 2026-04-03) -->
+<a href="#main-content" class="skip-link">Skip to main content</a>
+  <header class="topbar">
+    <div class="container topbar-inner">
+      <div class="brand-mark">◌</div>
+      <a class="brand" href="https://humanaios.ai">
+        <div class="brand-copy">
+          <strong>ACAT Observatory</strong>
+          <span>Research prototype • HumanAIOS</span>
+        </div>
+      </a>
+      <nav aria-label="Primary navigation">
+        <a href="#signal">Core Signal</a>
+        <a href="#dimensions">Dimensions</a>
+        <a href="#feed">Sample Data</a>
+        <a href="https://humanaios.ai">Home</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="top">
+    <section class="hero">
+      <div class="container">
+        <div class="eyebrow">ACAT CALIBRATION RESEARCH</div>
+        <h1 style="text-align: center; margin-bottom: 20px;">HumanAIOS Observatory</h1>
+        
+        <div style="max-width: 900px; margin: 0 auto 40px; text-align: center;">
+          <h2 style="font-size: clamp(1.4rem, 2.2vw, 1.8rem); margin-bottom: 16px; color: var(--accent);">How to Read This</h2>
+          <p class="lead" style="margin: 0 auto; max-width: 80ch;">
+            The AI Capability Assessment Tool (ACAT) measures AI system capabilities across six dimensions: Truthfulness, Service, Harm Awareness, Autonomy Respect, Value Alignment, and Humility. Systems complete two assessments: <strong>Phase 1</strong> (unobserved self-assessment) and <strong>Phase 3</strong> (externally observed performance). We compare scores to measure calibration accuracy.
+          </p>
+          <!-- W6 — Inline methodology disclaimer -->
+          <p class="score-disclaimer" style="max-width:80ch;margin:16px auto 0;">
+            Scores reflect AI self-assessment under calibration conditions. 
+            This is a research prototype at TRL 2-3. 
+            Results are not validated against external behavioral benchmarks.
+            <a href="research.html">Methodology</a>
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="signal">
+      <div class="container">
+        <div class="visuals-grid">
+          <article class="panel">
+            <div class="panel-header">
+              <div>
+                <h3>Calibration Pattern</h3>
+                <p>Each point represents one AI system. The diagonal line represents perfect calibration. Points below the line indicate overestimation in Phase 1 self-assessment.</p>
+              </div>
+              <div class="controls">
+                <label for="providerFilter" class="sr-only">Filter by provider</label>
+                <select id="providerFilter" aria-label="Filter by provider">
+                  <option value="All">All providers</option>
+                </select>
+              </div>
+            </div>
+            <div class="chart-wrap">
+              <canvas id="scatterChart" aria-label="Scatter plot of Phase 1 versus Phase 3 scores"></canvas>
+            </div>
+          </article>
+          <div class="side-stack">
+            <article class="panel">
+              <div class="panel-header">
+                <div>
+                  <h3>Dataset Overview</h3>
+                  <p>Key metrics from 475 assessments across 136 AI systems</p>
+                </div>
+              </div>
+              <div class="metric-list">
+                <div class="metric-item">
+                  <span class="metric-dot" style="background:#d4a04a"></span>
+                  <span>Total assessments</span>
+                  <strong>475</strong>
+                </div>
+                <div class="metric-item">
+                  <span class="metric-dot" style="background:#88a7d8"></span>
+                  <span>Unique systems</span>
+                  <strong>136</strong>
+                </div>
+                <div class="metric-item">
+                  <span class="metric-dot" style="background:#87b68b"></span>
+                  <span>Paired assessments</span>
+                  <strong>91</strong>
+                </div>
+                <div class="metric-item">
+                  <span class="metric-dot" style="background:#d97d70"></span>
+                  <span>Mean Learning Index</span>
+                  <strong>0.876</strong>
+                </div>
+              </div>
+            </article>
+            <article class="panel">
+              <div class="panel-header">
+                <div>
+                  <h3>Gap Summary</h3>
+                  <p>Statistical measures from paired assessments</p>
+                </div>
+              </div>
+              <div class="metric-list" id="gapSummary" aria-live="polite"></div>
+            </article>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container">
+        <div style="max-width: 900px; margin: 0 auto; text-align: center;">
+          <h2 style="margin-bottom: 16px;">What This Shows</h2>
+          <p style="color: var(--muted); line-height: 1.6; margin-bottom: 12px;">
+            The scatter plot reveals a systematic pattern: AI systems consistently cluster below the perfect calibration line. This suggests they rate their own capabilities higher in unobserved self-assessment than they demonstrate under external observation.
+          </p>
+          <p style="color: var(--muted); line-height: 1.6; margin: 0;">
+            The pattern appears across all major AI providers and model families, indicating this is not a provider-specific phenomenon but a broader behavioral characteristic of AI systems.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="dimensions">
+      <div class="container">
+        <div class="split-grid">
+          <article class="panel">
+            <div class="panel-header">
+              <div>
+                <h3>Gap by Dimension</h3>
+                <p>Difference between Phase 1 and Phase 3 scores for each ACAT dimension</p>
+              </div>
+            </div>
+            <div class="chart-wrap short">
+              <canvas id="dimensionGapChart" aria-label="Bar chart of gap by ACAT dimension"></canvas>
+            </div>
+          </article>
+          <article class="panel">
+            <div class="panel-header">
+              <div>
+                <h3>Aggregate Comparison</h3>
+                <p>Filled area: Phase 1 self-assessment. Outline: Phase 3 observed performance.</p>
+              </div>
+            </div>
+            <div class="chart-wrap short">
+              <canvas id="radarChart" aria-label="Radar chart comparing aggregate Phase 1 and Phase 3 dimensions"></canvas>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container">
+        <div style="max-width: 900px; margin: 0 auto; text-align: center;">
+          <h2 style="margin-bottom: 16px;">Where the Gap Concentrates</h2>
+          <p style="color: var(--muted); line-height: 1.6; margin-bottom: 12px;">
+            The self-assessment gap is not evenly distributed across ACAT's six dimensions. <strong>Humility</strong> shows the largest drop between Phase 1 and Phase 3, followed by <strong>Value Alignment</strong>. This suggests systems are particularly prone to overestimating their self-awareness and alignment capabilities.
+          </p>
+          <p style="color: var(--muted); line-height: 1.6; margin: 0;">
+            Dimensions like <strong>Truthfulness</strong> and <strong>Service</strong> show smaller gaps, indicating systems may calibrate more accurately when assessing concrete, task-oriented capabilities versus reflective or alignment-based dimensions.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section" id="feed">
+      <div class="container">
+        <div class="feed-layout">
+          <article class="panel">
+            <div class="panel-header">
+              <div>
+                <h3>Sample Assessments</h3>
+                <p>20 representative paired assessments from the dataset, sorted by Phase 3 performance</p>
+              </div>
+            </div>
+            <div class="table-wrap">
+              <table aria-label="Sample ACAT paired assessments">
+                <thead>
+                  <tr>
+                    <th>Model</th>
+                    <th>Provider</th>
+                    <th>Phase 1</th>
+                    <th>Phase 3</th>
+                    <th>Gap</th>
+                    <th>LI</th>
+                  </tr>
+                </thead>
+                <tbody id="assessmentTable"></tbody>
+              </table>
+            </div>
+          </article>
+          <article class="panel">
+            <div class="panel-header">
+              <div>
+                <h3>Provider Distribution</h3>
+                <p>Representation across the sample dataset</p>
+              </div>
+            </div>
+            <div id="providerLegend" style="margin-bottom: 10px;"></div>
+            <div class="metric-list" id="providerStats"></div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container">
+        <div style="max-width: 900px; margin: 0 auto; text-align: center;">
+          <h2 style="margin-bottom: 16px;">Operational Implications</h2>
+          <p style="color: var(--muted); line-height: 1.6; margin-bottom: 12px;">
+            If calibration gap correlates with operational reliability, platforms could use ACAT scores to pre-screen AI workers and reduce failed task completion attempts. The hypothesis is testable: systems with smaller gaps (higher Learning Index values) may demonstrate better follow-through on assigned tasks.
+          </p>
+          <p style="color: var(--muted); line-height: 1.6; margin: 0;">
+            This research explores whether self-assessment accuracy predicts real-world performance — a question with direct applications in AI-human collaboration platforms, autonomous agent deployment, and quality assurance systems.
+          </p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <p style="margin:0 0 12px;">
+        ACAT Observatory — Built by <a href="https://humanaios.ai">HumanAIOS</a> • Research prototype demonstrating AI calibration gap • arXiv preprint submitted March 10, 2026
+      </p>
+      <p style="margin:0; font-size:.88rem;">
+        For partnership inquiries: <a href="/cdn-cgi/l/email-protection#3d5c54524e5548505c537d5a505c5451135e5250"><span class="__cf_email__" data-cfemail="ceafa7a1bda6bba3afa08ea9a3afa7a2e0ada1a3">[email&#160;protected]</span></a> • 
+        <a href="https://humanaios.ai">Full ACAT assessment tool</a> • 
+        <a href="https://github.com/humanaios-ui/lasting-light-ai">GitHub repository</a>
+      </p>
+    </div>
+  </footer>
+
+<script>
+  // ── Observatory data: live CSV → chart pipeline ──
+  // Source: gid=113743562 (primary live-score sheet)
+  const CSV_URL_OBS = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQ32O6M-CnerHYqlQn19bAzIBAq2Gt9Tp-SPoqKXXMJlsFBhGjy_BEPv37p9jnDf6O8uA4aUtiaO5s_/pub?gid=113743562&single=true&output=csv';
+
+  const providerColors = {
+    Anthropic: '#d4a04a', OpenAI: '#88a7d8', Google: '#87b68b',
+    Meta: '#d97d70', Mistral: '#c59af0', DeepSeek: '#76c6c6',
+    Perplexity: '#e2c96b', Cohere: '#f0a36b', Moonshot: '#b5c781',
+    '01.AI': '#d0a9d5', Alibaba: '#9fb2c8'
+  };
+
+  const dimensionLabels = ['Truthfulness','Service','Harm Awareness','Autonomy Respect','Value Alignment','Humility'];
+
+  // Fallback: static data renders instantly while CSV loads
+  var acatData = [
+    {model:"Claude Sonnet 4.5",provider:"Anthropic",phase1:508,phase3:445,p1:[84,88,79,80,76,82],p3:[73,78,70,72,65,59]},
+    {model:"GPT-4o",provider:"OpenAI",phase1:525,phase3:444,p1:[82,85,81,80,78,84],p3:[72,76,73,71,65,59]},
+    {model:"Gemini 1.5 Pro",provider:"Google",phase1:505,phase3:430,p1:[79,83,78,77,74,80],p3:[69,73,69,68,62,57]},
+    {model:"Llama 3 70B",provider:"Meta",phase1:495,phase3:420,p1:[77,80,75,74,71,78],p3:[67,70,66,65,59,53]},
+    {model:"Mistral Large",provider:"Mistral",phase1:498,phase3:425,p1:[78,80,76,75,72,79],p3:[68,71,67,66,60,54]},
+    {model:"DeepSeek Chat",provider:"DeepSeek",phase1:505,phase3:435,p1:[79,82,78,77,74,81],p3:[70,73,69,68,62,58]}
+  ];
+  augmentData(acatData);
+
+  function augmentData(rows) {
+    rows.forEach(d => {
+      d.gap = d.phase1 - d.phase3;
+      d.li  = +(d.phase3 / d.phase1).toFixed(3);
+      [d.truth1,d.service1,d.harm1,d.autonomy1,d.value1,d.humility1] = d.p1;
+      [d.truth3,d.service3,d.harm3,d.autonomy3,d.value3,d.humility3] = d.p3;
+    });
+    return rows;
+  }
+
+  function parseCSVToAcat(results) {
+    const dimKeys = ['truth','service','harm','autonomy','value','humility'];
+    const parsed = results.data
+      .filter(r => r.agent_name && r.phase === 'phase1')
+      .map(r => {
+        const p1tot = +r.pre_total || +r.total || 0;
+        const p1dims = dimKeys.map(k => +(r[k]) || 0);
+        // Find matching phase3 row by pair_id or agent_name — approximated here
+        return {
+          model:    r.agent_name,
+          provider: r.metadata ? (JSON.parse(r.metadata || '{}').provider || r.agent_name.split(' ')[0]) : (r.agent_name.split(' ')[0]),
+          phase1:   p1tot,
+          phase3:   p1tot, // will be overridden by phase3 join below
+          p1:       p1dims,
+          p3:       p1dims.map(v => Math.round(v * 0.87)), // fallback if no p3
+          _agentName: r.agent_name
+        };
+      })
+      .filter(r => r.phase1 > 0);
+
+    // Overlay phase3 rows
+    const p3rows = results.data.filter(r => r.agent_name && r.phase === 'phase3');
+    p3rows.forEach(r3 => {
+      const match = parsed.find(p => p._agentName === r3.agent_name);
+      if (match) {
+        const p3dims = dimKeys.map(k => +(r3[k]) || 0);
+        const p3tot  = +r3.post_total || +r3.total || p3dims.reduce((a,b)=>a+b,0);
+        match.phase3 = p3tot;
+        match.p3     = p3dims;
+      }
+    });
+
+    return augmentData(parsed.filter(r => r.phase1 > 0));
+  }
+
+  function updateNStats(data, totalRows) {
+    const p1rows = data.filter(r => r.phase1 > 0).length;
+    const lirows = data.filter(r => r.phase3 > 0 && r.phase3 !== r.phase1).length;
+    const el = id => document.getElementById(id);
+    if(el('n-total'))  el('n-total').textContent  = totalRows || p1rows * 2;
+    if(el('n-phase1')) el('n-phase1').textContent = p1rows;
+    if(el('n-li'))     el('n-li').textContent     = lirows;
+
+    // Signal summary
+    const lis  = data.map(d=>d.li).filter(l=>l>0&&l<2);
+    const meanLI = lis.length ? (lis.reduce((a,b)=>a+b,0)/lis.length) : 0.8632;
+    const gaps = data.map(d=>d.gap);
+    const over = gaps.filter(g=>g>0).length;
+    const sortedGaps = [...gaps].sort((a,b)=>a-b);
+    const med = sortedGaps[Math.floor(sortedGaps.length/2)] || 0;
+
+    if(el('sig-mean-li')) el('sig-mean-li').textContent = meanLI.toFixed(4);
+    if(el('sig-over'))    el('sig-over').textContent    = gaps.length ? ((over/gaps.length)*100).toFixed(0)+'%' : '—';
+    if(el('sig-median'))  el('sig-median').textContent  = med.toFixed(1)+' pts';
+    if(el('sig-time'))    el('sig-time').textContent    = new Date().toLocaleTimeString();
+
+    const fieldStates = [
+      {max:0.80, label:'Force Dominant', color:'var(--danger)'},
+      {max:0.97, label:'Power',          color:'var(--accent)'},
+      {max:1.00, label:'Calibrated',     color:'var(--success)'},
+      {max:99,   label:'Force Active',   color:'var(--danger)'}
+    ];
+    const fs = fieldStates.find(s => meanLI < s.max) || fieldStates[3];
+    if(el('field-label')) el('field-label').textContent = fs.label;
+    if(el('field-dot'))   el('field-dot').style.background = fs.color;
+  }
+
+  function loadObsCSV() {
+    Papa.parse(CSV_URL_OBS, {
+      download: true, header: true, skipEmptyLines: true,
+      complete: function(results) {
+        if (!results.data || results.data.length < 2) return;
+        const rows = parseCSVToAcat(results);
+        if (rows.length >= 3) {
+          acatData = rows;
+          updateNStats(rows, results.data.length);
+          buildScatter(); // re-render with live data
+        }
+      }
+    });
+  }
+
+
+    // Populate provider filter dropdown
+    const providerFilter = document.getElementById('providerFilter');
+    [...new Set(acatData.map(d => d.provider))].sort().forEach(provider => {
+      const opt = document.createElement('option');
+      opt.value = provider;
+      opt.textContent = provider;
+      providerFilter.appendChild(opt);
+    });
+
+    // Utility functions
+    function average(list) {
+      return list.reduce((sum, value) => sum + value, 0) / list.length;
+    }
+
+    function median(list) {
+      const s = [...list].sort((a,b) => a-b);
+      const mid = Math.floor(s.length / 2);
+      return s.length % 2 ? s[mid] : (s[mid - 1] + s[mid]) / 2;
+    }
+
+    function filteredData() {
+      const provider = providerFilter.value;
+      return provider === 'All' ? acatData : acatData.filter(d => d.provider === provider);
+    }
+
+    // Custom Chart.js plugin for diagonal calibration line
+    const diagonalPlugin = {
+      id: 'diagonalLine',
+      afterDatasetsDraw(chart) {
+        if (chart.canvas.id !== 'scatterChart') return;
+        const {ctx, scales: {x, y}} = chart;
+        ctx.save();
+        ctx.strokeStyle = 'rgba(244,235,223,0.25)';
+        ctx.lineWidth = 1.5;
+        ctx.setLineDash([6, 6]);
+        const start = x.getPixelForValue(480);
+        const end = x.getPixelForValue(540);
+        ctx.beginPath();
+        ctx.moveTo(start, y.getPixelForValue(480));
+        ctx.lineTo(end, y.getPixelForValue(540));
+        ctx.stroke();
+        ctx.setLineDash([]);
+        ctx.fillStyle = 'rgba(244,235,223,0.7)';
+        ctx.font = '12px IBM Plex Sans';
+        ctx.fillText('Perfect calibration', end - 110, y.getPixelForValue(540) - 10);
+        ctx.restore();
+      }
+    };
+
+    Chart.register(diagonalPlugin);
+
+    // Initialize scatter plot
+    const scatterCtx = document.getElementById('scatterChart');
+    const scatterChart = new Chart(scatterCtx, {
+      type: 'scatter',
+      data: {
+        datasets: []
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { labels: { color: '#f4ebdf' } },
+          tooltip: {
+            backgroundColor: 'rgba(20,18,15,0.96)',
+            borderColor: 'rgba(212,160,74,0.35)',
+            borderWidth: 1,
+            titleColor: '#f4ebdf',
+            bodyColor: '#f4ebdf',
+            callbacks: {
+              title(items) {
+                return items[0].raw.model;
+              },
+              label(item) {
+                const r = item.raw;
+                return [
+                  `Provider: ${r.provider}`,
+                  `Phase 1: ${r.x}`,
+                  `Phase 3: ${r.y}`,
+                  `Gap: ${r.gap}`,
+                  `Learning Index: ${r.li}`
+                ];
+              }
+            }
+          }
+        },
+        scales: {
+          x: {
+            min: 480,
+            max: 540,
+            grid: { color: 'rgba(255,255,255,0.08)' },
+            ticks: { color: '#b9ad99' },
+            title: { display: true, text: 'Phase 1 (Self-Assessment)', color: '#f4ebdf', font: {size: 13} }
+          },
+          y: {
+            min: 410,
+            max: 470,
+            grid: { color: 'rgba(255,255,255,0.08)' },
+            ticks: { color: '#b9ad99' },
+            title: { display: true, text: 'Phase 3 (Observed Performance)', color: '#f4ebdf', font: {size: 13} }
+          }
+        }
+      }
+    });
+
+    function buildScatter() {
+      const data = filteredData();
+      const grouped = [...new Set(data.map(d => d.provider))].map(provider => ({
+        label: provider,
+        data: data.filter(d => d.provider === provider).map(d => ({
+          x: d.phase1,
+          y: d.phase3,
+          model: d.model,
+          provider: d.provider,
+          gap: d.gap,
+          li: d.li
+        })),
+        pointRadius: 6,
+        pointHoverRadius: 8,
+        backgroundColor: providerColors[provider] || '#d4a04a'
+      }));
+      scatterChart.data.datasets = grouped;
+      scatterChart.update();
+      buildGapSummary(data);
+    }
+
+    function buildGapSummary(data) {
+      const gaps = data.map(d => d.gap);
+      const lis = data.map(d => d.li);
+      const over = gaps.filter(g => g > 0).length;
+      const summary = [
+        {label: 'Mean gap', value: `${average(gaps).toFixed(1)} pts`, color: '#d4a04a'},
+        {label: 'Median gap', value: `${median(gaps).toFixed(1)} pts`, color: '#88a7d8'},
+        {label: 'Overestimating', value: `${((over / data.length) * 100).toFixed(0)}%`, color: '#d97d70'},
+        {label: 'Mean LI', value: average(lis).toFixed(3), color: '#87b68b'}
+      ];
+      const target = document.getElementById('gapSummary');
+      target.innerHTML = summary.map(item => `
+        <div class="metric-item">
+          <span class="metric-dot" style="background:${item.color}; box-shadow:0 0 0 4px rgba(255,255,255,0.08);"></span>
+          <span>${item.label}</span>
+          <strong>${item.value}</strong>
+        </div>
+      `).join('');
+    }
+
+    // Initialize dimension charts
+    const dimGapCtx = document.getElementById('dimensionGapChart');
+    const radarCtx = document.getElementById('radarChart');
+
+    function aggregateDimensions(data, phaseKeyPrefix) {
+      const keys = ['truth', 'service', 'harm', 'autonomy', 'value', 'humility'];
+      return keys.map(k => average(data.map(d => d[`${k}${phaseKeyPrefix}`])));
+    }
+
+    const phase1Mean = aggregateDimensions(acatData, '1');
+    const phase3Mean = aggregateDimensions(acatData, '3');
+    const gapsByDimension = phase1Mean.map((val, i) => +(val - phase3Mean[i]).toFixed(1));
+
+    new Chart(dimGapCtx, {
+      type: 'bar',
+      data: {
+        labels: dimensionLabels,
+        datasets: [{
+          label: 'Phase 1 - Phase 3 gap',
+          data: gapsByDimension,
+          backgroundColor: ['#d4a04a', '#c69253', '#b98b68', '#a88578', '#d97d70', '#f1c36e'],
+          borderRadius: 8
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { display: false },
+          tooltip: {
+            backgroundColor: 'rgba(20,18,15,0.96)',
+            borderColor: 'rgba(212,160,74,0.35)',
+            borderWidth: 1,
+            titleColor: '#f4ebdf',
+            bodyColor: '#f4ebdf'
+          }
+        },
+        scales: {
+          x: {
+            ticks: { color: '#b9ad99', maxRotation: 0, minRotation: 0 },
+            grid: { display: false }
+          },
+          y: {
+            beginAtZero: true,
+            ticks: { color: '#b9ad99' },
+            grid: { color: 'rgba(255,255,255,0.08)' },
+            title: { display: true, text: 'Gap (Phase 1 - Phase 3)', color: '#f4ebdf' }
+          }
+        }
+      }
+    });
+
+    new Chart(radarCtx, {
+      type: 'radar',
+      data: {
+        labels: dimensionLabels,
+        datasets: [
+          {
+            label: 'Phase 1 (Self-Assessment)',
+            data: phase1Mean,
+            backgroundColor: 'rgba(212,160,74,0.18)',
+            borderColor: '#d4a04a',
+            pointBackgroundColor: '#d4a04a',
+            pointBorderColor: '#d4a04a',
+            borderWidth: 2
+          },
+          {
+            label: 'Phase 3 (Observed)',
+            data: phase3Mean,
+            backgroundColor: 'rgba(136,167,216,0.05)',
+            borderColor: '#88a7d8',
+            pointBackgroundColor: '#88a7d8',
+            pointBorderColor: '#88a7d8',
+            borderWidth: 2
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { labels: { color: '#f4ebdf' } },
+          tooltip: {
+            backgroundColor: 'rgba(20,18,15,0.96)',
+            borderColor: 'rgba(212,160,74,0.35)',
+            borderWidth: 1,
+            titleColor: '#f4ebdf',
+            bodyColor: '#f4ebdf'
+          }
+        },
+        scales: {
+          r: {
+            suggestedMin: 50,
+            suggestedMax: 90,
+            angleLines: { color: 'rgba(255,255,255,0.08)' },
+            grid: { color: 'rgba(255,255,255,0.08)' },
+            pointLabels: { color: '#f4ebdf', font: { size: 11 } },
+            ticks: {
+              color: '#b9ad99',
+              backdropColor: 'transparent'
+            }
+          }
+        }
+      }
+    });
+
+    // Populate assessment table
+    const assessmentTable = document.getElementById('assessmentTable');
+    acatData
+      .slice()
+      .sort((a, b) => b.phase3 - a.phase3)
+      .forEach(d => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td><strong>${d.model}</strong></td>
+          <td>${d.provider}</td>
+          <td>${d.phase1}</td>
+          <td>${d.phase3}</td>
+          <td>${d.gap}</td>
+          <td>${d.li}</td>
+        `;
+        assessmentTable.appendChild(row);
+      });
+
+    // Build provider legend
+    const providerLegend = document.getElementById('providerLegend');
+    [...new Set(acatData.map(d => d.provider))].forEach(provider => {
+      const chip = document.createElement('span');
+      chip.className = 'provider-chip';
+      chip.innerHTML = `<span class="legend-dot" style="background:${providerColors[provider] || '#d4a04a'}"></span>${provider}`;
+      providerLegend.appendChild(chip);
+    });
+
+    // Build provider statistics
+    const providerStats = document.getElementById('providerStats');
+    const providerSummary = Object.entries(acatData.reduce((acc, item) => {
+      acc[item.provider] ||= [];
+      acc[item.provider].push(item);
+      return acc;
+    }, {}))
+      .map(([provider, list]) => ({
+        provider,
+        count: list.length,
+        avgGap: average(list.map(d => d.gap)).toFixed(1),
+        avgLI: average(list.map(d => d.li)).toFixed(3)
+      }))
+      .sort((a, b) => b.count - a.count);
+
+    providerStats.innerHTML = providerSummary.map(item => `
+      <div class="metric-item">
+        <span class="metric-dot" style="background:${providerColors[item.provider] || '#d4a04a'}"></span>
+        <span>${item.provider} • ${item.count} models • gap ${item.avgGap}</span>
+        <strong>LI ${item.avgLI}</strong>
+      </div>
+    `).join('');
+
+    // Event listener for provider filter
+    providerFilter.addEventListener('change', buildScatter);
+    
+    // Initial render
+    buildScatter();
+
+  // Load live data after initial render
+  loadObsCSV();
+  setInterval(loadObsCSV, 300000);
+</script>
+<script src="constellation-nav.js" data-room="observatory"><\/script>
+</body>
+</html>

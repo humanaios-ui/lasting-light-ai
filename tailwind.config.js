@@ -16,6 +16,7 @@ export default {
         'pale-orange': 'var(--pale-orange)',
         'bg-primary': 'var(--bg-primary)',
         'muted-orange-2': 'var(--muted-orange-2)',
+        'danger': '#d97d70',
         'void': 'var(--void)',
         'deep': 'var(--deep)',
         'surface': 'var(--surface)',
