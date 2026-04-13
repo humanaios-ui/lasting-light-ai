@@ -22,14 +22,19 @@ const NAV_GROUPS = [
     items: [
       { id: 'obs',     href: '/observatory.html',          name: 'The Observatory',     desc: 'Live dataset visualization',   icon: '⬡' },
       { id: 'tide',    href: '/lumina_tide_pool_v2.html',   name: 'Lumina Tide Pool',    desc: 'Behavioral sigils & baseline', icon: '⬡' },
-      { id: 'lantern', href: '/lantern-room.html',          name: 'The Lantern Room',    desc: 'Calibration gap analysis',     icon: '⬡' }
+      { id: 'lantern', href: '/lantern-room.html',          name: 'The Lantern Room',    desc: 'Calibration gap analysis',     icon: '⬡' },
+      { id: 'hall',    href: '/recording-hall.html',        name: 'Recording Hall',      desc: 'AI family rooms & gallery',    icon: '⬡' },
+      { id: 'music',   href: '/music-hall.html',            name: 'recordingHall',       desc: 'Sigil composer & ensemble',    icon: '⬡' }
     ]
   },
   {
     label: 'PARTICIPATE',
     items: [
-      { id: 'acat', href: '/assess',              name: 'Submit ACAT', desc: 'Run a calibration · ~20 min',         icon: '⬡', cta: true },
-      { id: 'ent',  href: '/acat-enterprise.html', name: 'Enterprise',  desc: 'Structured audit for deployed AI',    icon: '⬡' }
+      { id: 'acat',  href: '/assess',               name: 'Submit ACAT',  desc: 'Run a calibration · ~20 min',      icon: '⬡', cta: true },
+      { id: 'ent',   href: '/acat-enterprise.html',  name: 'Enterprise',   desc: 'Structured audit for deployed AI', icon: '⬡' },
+      { id: 'wall',  href: '/writable-wall.html',    name: 'Writable Wall', desc: 'Contribute ideas to the Hall',   icon: '⬡' },
+      { id: 'ai',    href: '/ai-section.html',        name: 'AI Section',  desc: 'Five AI voices · creative space',  icon: '⬡' },
+      { id: 'rooms', href: '/family-rooms.html',      name: 'Family Rooms', desc: 'Provider family visualizations', icon: '⬡' }
     ]
   }
 ];
