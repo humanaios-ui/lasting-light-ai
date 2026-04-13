@@ -6,8 +6,10 @@ import {
   Link,
   useLocation,
   Navigate,
+  useNavigate,
 } from 'react-router-dom';
 import { TideCanvas } from './components/TideCanvas';
+import { WitnessNav } from './components/WitnessNav';
 import { TideRail } from './components/TideRail';
 import { Hero } from './components/Hero';
 import { ProblemSection } from './components/ProblemSection';
@@ -197,12 +199,14 @@ function AssessPage({ onMeanLIUpdate }: { onMeanLIUpdate: (li: number) => void }
 // ── Root app shell ──────────────────────────────────────────────────────────
 function AppShell() {
   const [meanLI, setMeanLI] = useState(0.8632);
+  const navigate = useNavigate();
+  const location = useLocation();
 
-  // Legacy prop: Hero and SiteMap use onNavigate to jump to /assess
+  const currentView: 'home' | 'acat' =
+    location.pathname === '/assess' ? 'acat' : 'home';
+
   const handleNavigate = (view: 'home' | 'acat') => {
-    if (view === 'acat') {
-      window.location.pathname = '/assess';
-    }
+    navigate(view === 'acat' ? '/assess' : '/');
   };
 
   return (
@@ -210,6 +214,7 @@ function AppShell() {
       className="relative min-h-screen bg-bg-primary text-pale-orange selection:bg-accent-amber selection:text-void"
     >
       <TideCanvas />
+      <WitnessNav currentView={currentView} onNavigate={handleNavigate} />
       <TopNav meanLI={meanLI} />
       <TideRail li={meanLI} />
 
@@ -217,9 +222,7 @@ function AppShell() {
         <Routes>
           <Route path="/" element={<HomePage onNavigate={handleNavigate} />} />
           <Route path="/assess" element={<AssessPage onMeanLIUpdate={setMeanLI} />} />
-          {/* Redirect old hash-based or state-based acat path */}
           <Route path="/acat" element={<Navigate to="/assess" replace />} />
-          {/* Catch-all → home */}
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </main>
