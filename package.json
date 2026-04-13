@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build && for f in $(ls *.html | grep -v ^index.html); do cp $f dist/; done; cp witness-nav.js dist/ 2>/dev/null; cp _redirects dist/ 2>/dev/null; true",
+    "build": "vite build",
     "preview": "vite preview"
   },
   "dependencies": {
