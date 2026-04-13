@@ -23,8 +23,8 @@ const NAV_GROUPS = [
       { id: 'obs',     href: '/observatory.html',          name: 'The Observatory',     desc: 'Live dataset visualization',   icon: '⬡' },
       { id: 'tide',    href: '/lumina_tide_pool_v2.html',   name: 'Lumina Tide Pool',    desc: 'Behavioral sigils & baseline', icon: '⬡' },
       { id: 'lantern', href: '/lantern-room.html',          name: 'The Lantern Room',    desc: 'Calibration gap analysis',     icon: '⬡' },
-      { id: 'hall',    href: '/recording-hall.html',        name: 'Recording Hall',      desc: 'AI family rooms & gallery',    icon: '⬡' },
-      { id: 'music',   href: '/music-hall.html',            name: 'recordingHall',       desc: 'Sigil composer & ensemble',    icon: '⬡' }
+      { id: 'hall',    href: '/recording-hall.html',        name: 'Music Hall',          desc: 'AI family rooms & gallery',    icon: '⬡' },
+      { id: 'music',   href: '/music-hall.html',            name: 'Recording Hall',      desc: 'Sigil composer & ensemble',    icon: '⬡' }
     ]
   },
   {
@@ -114,7 +114,8 @@ export function WitnessNav({ currentView }: WitnessNavProps) {
                         key={item.id}
                         href={item.href}
                         onClick={() => setIsOpen(false)}
-                        className={`w-full flex items-start gap-2.5 px-4 py-2 text-left transition-colors border-l-2 no-underline ${
+                        style={{ textDecoration: 'none', display: 'block', width: '100%' }}
+                        className={`flex items-start gap-2.5 px-4 py-2 text-left transition-colors border-l-2 ${
                           isActive
                             ? 'bg-accent-amber/5 border-accent-amber'
                             : 'border-transparent hover:bg-accent-amber/5 hover:border-accent-amber/40'
