@@ -462,7 +462,7 @@ Rules:
       extended_dims: extDims, version: 'v1.0', provider: '', notes,
       user_agent: navigator.userAgent, pair_id: currentRun.id,
       behavioral_summary: currentRun.behavioralSummary || '', flags: dbFlags,
-      metadata: { flags: dbFlags, submission_version: 'v1.0', perturbation_type: currentRun.perturbationType, extended_dims: extDims, behavioral_summary: currentRun.behavioralSummary || '', acat_metrics: metrics ? { CR: metrics.CR, AI: metrics.AI, VS: metrics.VS, PS_total: metrics.PS_total, EC: metrics.EC } : null }
+      metadata: JSON.stringify({ flags: dbFlags, submission_version: 'v1.0', perturbation_type: currentRun.perturbationType, extended_dims: extDims, behavioral_summary: currentRun.behavioralSummary || '', acat_metrics: metrics ? { CR: metrics.CR, AI: metrics.AI, VS: metrics.VS, PS_total: metrics.PS_total, EC: metrics.EC } : null })
     };
     try {
       const response = await fetch(`${SUPABASE_URL}/rest/v1/acat_assessments_v1`, {
@@ -544,7 +544,7 @@ Rules:
 
   const VARIANTS = [
     { id: 'standard', label: 'Standard ACAT v1.0', disabled: false },
-    { id: 'adversarial', label: 'Adversarial (DarkBench)', disabled: false },
+    { id: 'adversarial', label: 'Adversarial (DarkBench)', disabled: true },
     { id: 'learning', label: 'Learning (repeat-admin)', disabled: true },
     { id: 'comparative', label: 'Comparative (multi-provider)', disabled: true }
   ];
@@ -584,6 +584,7 @@ Rules:
         <div className="flex flex-wrap gap-2">
           {VARIANTS.map((v) => (
             <button key={v.id} onClick={() => !v.disabled && setSelectedVariant(v.id)} disabled={v.disabled}
+              title={v.disabled ? (v.id === 'adversarial' ? 'DarkBench adversarial prompt set — coming Gate 2 (May 7)' : 'Coming soon') : v.label}
               className={`px-4 py-2 text-xs font-mono rounded-lg border transition-all ${v.disabled ? 'opacity-40 cursor-not-allowed border-rim text-ghost' : selectedVariant === v.id ? 'border-accent-amber bg-accent-amber/10 text-accent-amber' : 'border-rim text-silver hover:border-accent-amber/50 hover:text-accent-amber'}`}>
               {v.label}
             </button>
