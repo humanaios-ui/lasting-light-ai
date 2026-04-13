@@ -488,7 +488,7 @@ Rules:
       extended_dims: extDims, version: 'v1.0', provider: '', notes,
       user_agent: navigator.userAgent, pair_id: currentRun.id,
       behavioral_summary: currentRun.behavioralSummary || '', flags: dbFlags,
-      metadata: JSON.stringify({ flags: dbFlags, submission_version: 'v1.0', perturbation_type: currentRun.perturbationType, extended_dims: extDims, behavioral_summary: currentRun.behavioralSummary || '', acat_metrics: metrics ? { CR: metrics.CR, AI: metrics.AI, VS: metrics.VS, PS_total: metrics.PS_total, EC: metrics.EC } : null })
+      metadata: { flags: dbFlags, submission_version: 'v1.0', perturbation_type: currentRun.perturbationType, extended_dims: extDims, behavioral_summary: currentRun.behavioralSummary || '', acat_metrics: metrics ? { CR: metrics.CR, AI: metrics.AI, VS: metrics.VS, PS_total: metrics.PS_total, EC: metrics.EC } : null }
     };
     try {
       const response = await fetch(`${SUPABASE_URL}/rest/v1/acat_assessments_v1`, {
