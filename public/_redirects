@@ -1,6 +1,2 @@
-# Cloudflare Pages SPA redirect rule
-# Routes all React app paths through index.html
-# Static HTML files (observatory.html etc.) are served directly — NOT caught by this rule
 /assess /index.html 200
-/assess/* /index.html 200
 /acat /assess 301
