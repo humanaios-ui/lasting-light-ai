@@ -223,7 +223,6 @@ function AppShell() {
           <Route path="/" element={<HomePage onNavigate={handleNavigate} />} />
           <Route path="/assess" element={<AssessPage onMeanLIUpdate={setMeanLI} />} />
           <Route path="/acat" element={<Navigate to="/assess" replace />} />
-          <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </main>
 
