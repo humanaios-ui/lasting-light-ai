@@ -145,6 +145,15 @@ blockquote{font-family:var(--serif);font-style:italic;font-size:clamp(1.2rem,3vw
 </style>
 </head>
 <body>
+<!-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ -->
+<!-- DATASET RECONCILIATION NOTICE · S-041326-D · F25 / Witness Effect -->
+<!-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ -->
+<aside id="reconciliation-notice" role="note" aria-label="Dataset reconciliation in progress" style="max-width:880px;margin:16px auto 24px;padding:16px 20px;border-left:3px solid #d97d70;background:rgba(217,125,112,0.06);border-radius:4px;font-family:-apple-system,system-ui,sans-serif;font-size:14px;line-height:1.55;color:#2a2a2a;">
+  <div style="font-weight:600;letter-spacing:.02em;text-transform:uppercase;font-size:11px;color:#a04a3e;margin-bottom:6px;">Dataset reconciliation in progress</div>
+  <p style="margin:0 0 6px;">Published dataset on HuggingFace shows <strong>N=598 / 450 / 148 · mean LI=0.9542</strong> (unfiltered). Internal working figure <strong>N=630 / 517 / 308 · mean LI=0.8632</strong> reflects rows pending publication and the clean, unanchored, v5.3+ filter applied to the LI denominator. Reconciliation in progress &mdash; target Gate 1 (Apr 21, 2026).</p>
+  <p style="margin:0;font-size:13px;color:#555;">Verification path: pull N_LI directly from the live source sheet &rarr; confirm in CI &rarr; Observatory displays it live. That is what behavioral observability infrastructure means here. <a href="methodology.html#reconciliation" style="color:#a04a3e;">See methodology &rarr;</a></p>
+</aside>
+
 
 <nav class="page-nav"><a href="index.html">← Home</a></nav>
 
@@ -341,7 +350,7 @@ blockquote{font-family:var(--serif);font-style:italic;font-size:clamp(1.2rem,3vw
           <div class="tile-body"><div class="tile-name">HuggingFace Repository</div><div class="tile-sub">Raw data · N=308 LI pairs</div></div>
           <span class="tile-arrow">→</span>
         </a>
-        <a href="https://arxiv.org/abs/submit/7336774" class="access-tile" target="_blank" rel="noopener">
+        <a href="methodology.html" class="access-tile" target="_blank" rel="noopener">
           <div class="tile-icon" style="font-family:var(--serif);font-weight:700;font-size:.85rem;color:var(--dim);">arX</div>
           <div class="tile-body"><div class="tile-name">arXiv Preprint</div><div class="tile-sub">v5.2 · Methodology &amp; findings</div></div>
           <span class="tile-arrow">→</span>

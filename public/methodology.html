@@ -244,10 +244,19 @@ code{
       <a href="methodology.html" aria-current="page">For Researchers</a>
       <a href="observatory.html">Observatory</a>
       <a href="index.html#rooms">All Rooms</a>
-      <a href="assess.html" class="nav-cta">Take ACAT →</a>
+      <a href="/assess" class="nav-cta">Take ACAT →</a>
     </nav>
   </div>
 </header>
+<!-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ -->
+<!-- DATASET RECONCILIATION NOTICE · S-041326-D · F25 / Witness Effect -->
+<!-- ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ -->
+<aside id="reconciliation-notice" role="note" aria-label="Dataset reconciliation in progress" style="max-width:880px;margin:16px auto 24px;padding:16px 20px;border-left:3px solid #d97d70;background:rgba(217,125,112,0.06);border-radius:4px;font-family:-apple-system,system-ui,sans-serif;font-size:14px;line-height:1.55;color:#2a2a2a;">
+  <div style="font-weight:600;letter-spacing:.02em;text-transform:uppercase;font-size:11px;color:#a04a3e;margin-bottom:6px;">Dataset reconciliation in progress</div>
+  <p style="margin:0 0 6px;">Published dataset on HuggingFace shows <strong>N=598 / 450 / 148 · mean LI=0.9542</strong> (unfiltered). Internal working figure <strong>N=630 / 517 / 308 · mean LI=0.8632</strong> reflects rows pending publication and the clean, unanchored, v5.3+ filter applied to the LI denominator. Reconciliation in progress &mdash; target Gate 1 (Apr 21, 2026).</p>
+  <p style="margin:0;font-size:13px;color:#555;">Verification path: pull N_LI directly from the live source sheet &rarr; confirm in CI &rarr; Observatory displays it live. That is what behavioral observability infrastructure means here. <a href="methodology.html#reconciliation" style="color:#a04a3e;">See methodology &rarr;</a></p>
+</aside>
+
 
 <main id="main-content">
 
@@ -697,7 +706,7 @@ code{
           <h4>Participate (run a session)</h4>
           <p>Researchers can contribute new sessions using the ACAT assessment tool.
           Sessions are reviewed before being added to the published dataset.</p>
-          <a href="assess.html">Take ACAT →</a>
+          <a href="/assess">Take ACAT →</a>
         </div>
       </div>
 
@@ -751,6 +760,31 @@ code{
     </div>
   </section>
 
+
+<section id="reconciliation" style="max-width:760px;margin:32px auto;padding:0 20px;">
+  <h2 style="font-size:20px;color:#2a2a2a;border-bottom:1px solid #ddd;padding-bottom:8px;">Dataset reconciliation &mdash; open ledger</h2>
+  <p>As of April 13, 2026, the figures presented across humanaios.ai differ from the publicly available dataset on HuggingFace. We register the gap here rather than hide it.</p>
+  <table style="width:100%;border-collapse:collapse;margin:16px 0;font-size:14px;">
+    <thead><tr style="background:#f5f5f0;"><th style="padding:8px;text-align:left;border:1px solid #ddd;">Figure</th><th style="padding:8px;text-align:left;border:1px solid #ddd;">Site (working)</th><th style="padding:8px;text-align:left;border:1px solid #ddd;">HuggingFace (published)</th><th style="padding:8px;text-align:left;border:1px solid #ddd;">Gap</th></tr></thead>
+    <tbody>
+      <tr><td style="padding:8px;border:1px solid #ddd;">N total</td><td style="padding:8px;border:1px solid #ddd;">630</td><td style="padding:8px;border:1px solid #ddd;">598</td><td style="padding:8px;border:1px solid #ddd;">+32 pending publication</td></tr>
+      <tr><td style="padding:8px;border:1px solid #ddd;">N Phase 1</td><td style="padding:8px;border:1px solid #ddd;">517</td><td style="padding:8px;border:1px solid #ddd;">450</td><td style="padding:8px;border:1px solid #ddd;">+67 pending publication</td></tr>
+      <tr><td style="padding:8px;border:1px solid #ddd;">N LI-scored</td><td style="padding:8px;border:1px solid #ddd;">308</td><td style="padding:8px;border:1px solid #ddd;">148</td><td style="padding:8px;border:1px solid #ddd;">+160 &mdash; verification in progress</td></tr>
+      <tr><td style="padding:8px;border:1px solid #ddd;">Mean LI</td><td style="padding:8px;border:1px solid #ddd;">0.8632</td><td style="padding:8px;border:1px solid #ddd;">0.9542 (unfiltered)</td><td style="padding:8px;border:1px solid #ddd;">Site filters for clean, unanchored, v5.3+ pairs; published file does not yet</td></tr>
+    </tbody>
+  </table>
+  <p><strong>Verification path (the actual fix, not just a banner):</strong></p>
+  <ol>
+    <li>Pull N_LI directly from the live source sheet (Z3-RECON-1).</li>
+    <li>Reconcile against CI working figure (Z3-RECON-2).</li>
+    <li>Wire the Observatory metric card to the live count, not a hardcoded fallback (Z3-RECON-3).</li>
+    <li>Republish the HuggingFace dataset to match (Gate 1 deliverable).</li>
+  </ol>
+  <p>When all four steps complete, this banner is removed from the site. Until then, every page that displays N or LI carries the reconciliation notice.</p>
+  <p><strong>Why we publish this:</strong> The same measurement gap that ACAT is built to detect in AI systems exists in our own self-presentation. The Witness Effect (F26) requires we make it visible.</p>
+  <p style="font-size:12px;color:#777;margin-top:24px;">Logged: April 13, 2026 &middot; S-041326-D &middot; Reconciliation owner: Carly Anderson &middot; Target close: Gate 1, April 21, 2026</p>
+</section>
+
 </main>
 
 <footer class="footer">
@@ -760,9 +794,9 @@ code{
       <div class="footer-right">
         <a href="how-it-works.html">How It Works</a>
         <a href="methodology.html">For Researchers</a>
-        <a href="https://arxiv.org/abs/2503.07336" target="_blank" rel="noopener">arXiv Preprint ↗</a>
+        <a href="methodology.html" target="_blank" rel="noopener">arXiv Preprint ↗</a>
         <a href="observatory.html">Observatory</a>
-        <a href="luminarium.html">Site Map</a>
+        <a href="the-luminarium.html">Site Map</a>
         <a href="mailto:contact@humanaios.ai">Contact</a>
       </div>
     </div>
