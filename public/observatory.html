@@ -41,17 +41,6 @@
     .topbar { position: sticky; top: 0; z-index: 50; backdrop-filter: blur(14px);
       background: rgba(15,14,12,.88); border-bottom: 1px solid var(--line); }
     .topbar-inner { display: flex; align-items: center; justify-content: space-between; gap: 20px; padding: 14px 0; }
-    .witness-header-btn {
-      display: flex; align-items: center; gap: 8px;
-      background: rgba(212,160,74,.07); border: 1px solid var(--line-strong);
-      border-radius: 999px; padding: 8px 14px; color: var(--accent);
-      font-size: .82rem; font-weight: 700; letter-spacing: .06em; text-transform: uppercase;
-      cursor: pointer; transition: background .18s; flex-shrink: 0;
-    }
-    .witness-header-btn:hover { background: rgba(212,160,74,.14); }
-    .witness-pulse { width: 7px; height: 7px; border-radius: 50%; background: var(--accent);
-      box-shadow: 0 0 0 2px rgba(212,160,74,.25); animation: wpulse 2.8s ease-in-out infinite; }
-    @keyframes wpulse { 0%,100%{box-shadow:0 0 0 2px rgba(212,160,74,.25);} 50%{box-shadow:0 0 0 5px rgba(212,160,74,.08);} }
     .brand { display: flex; align-items: center; gap: 12px; text-decoration: none; color: var(--text); min-width: 0; }
     .brand-mark { width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center;
       border: 1px solid var(--line-strong); background: linear-gradient(145deg,rgba(212,160,74,.22),rgba(212,160,74,.04));
@@ -203,10 +192,6 @@
 
   <header class="topbar">
     <div class="container topbar-inner">
-      <button class="witness-header-btn" id="witnessHeaderBtn" aria-label="Open Witness Navigator">
-        <span class="witness-pulse"></span>
-        Witness
-      </button>
       <a class="brand" href="index.html">
         <div class="brand-mark">◌</div>
         <div class="brand-copy">
@@ -806,12 +791,6 @@
   }
   loadObsCSV();
   setInterval(loadObsCSV, 300000);
-
-  // ── Witness button ──
-  document.getElementById('witnessHeaderBtn').addEventListener('click', () => {
-    const btn = document.querySelector('.wit-v3-btn');
-    if (btn) btn.click();
-  });
 </script>
 
 <script src="witness-nav.js"></script>
