@@ -28,10 +28,6 @@
   #scroll-bar{position:fixed;top:0;left:0;height:2px;width:0%;background:linear-gradient(90deg,var(--gold-dim),var(--gold));z-index:999;transition:width .1s linear;}
   /* NAV */
   nav{position:fixed;top:0;left:0;right:0;padding:20px 40px;display:flex;align-items:center;gap:20px;z-index:100;background:linear-gradient(180deg,rgba(10,9,8,.95) 0%,transparent 100%);}
-  .nav-witness{display:flex;align-items:center;gap:8px;font-family:'DM Mono',monospace;font-size:.62em;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);background:rgba(212,160,74,.08);border:1px solid rgba(212,160,74,.25);border-radius:2px;padding:8px 14px;cursor:pointer;transition:background .25s,border-color .25s;flex-shrink:0;}
-  .nav-witness:hover{background:rgba(212,160,74,.15);border-color:var(--gold-dim);}
-  .nav-witness-dot{width:6px;height:6px;border-radius:50%;background:var(--gold);box-shadow:0 0 0 2px rgba(212,160,74,.2);animation:nav-pulse 2.8s ease-in-out infinite;flex-shrink:0;}
-  @keyframes nav-pulse{0%,100%{box-shadow:0 0 0 2px rgba(212,160,74,.2);}50%{box-shadow:0 0 0 5px rgba(212,160,74,.06);}}
   .nav-mark{font-family:'DM Mono',monospace;font-size:.7em;letter-spacing:.15em;color:var(--gold);text-decoration:none;opacity:.8;}
   .nav-links{display:flex;gap:32px;list-style:none;margin-left:auto;}
   .nav-links a{font-family:'DM Mono',monospace;font-size:.65em;letter-spacing:.12em;color:var(--ash);text-decoration:none;transition:color .3s;}
@@ -201,11 +197,6 @@
 <div id="scroll-bar"></div>
 
 <nav>
-  <!-- Witness button — upper left -->
-  <button class="nav-witness" id="navWitnessBtn" aria-label="Open Witness Navigator">
-    <span class="nav-witness-dot"></span>
-    Witness
-  </button>
   <a href="/" class="nav-mark">HUMANAIOS</a>
   <ul class="nav-links">
     <li><a href="how-it-works.html">How It Works</a></li>
@@ -566,12 +557,6 @@ async function fetchLiveStats(){
 }
 fetchLiveStats();
 setInterval(fetchLiveStats,120000);
-
-/* WITNESS NAV TRIGGER */
-document.getElementById('navWitnessBtn').addEventListener('click',()=>{
-  const btn=document.querySelector('.wit-v3-btn');
-  if(btn) btn.click();
-});
 </script>
 
 <script src="witness-nav.js"></script>
