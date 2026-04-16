@@ -75,34 +75,6 @@
       justify-content: space-between;
       gap: 20px; padding: 14px 0;
     }
-    /* Witness button — upper left of header */
-    .witness-header-btn {
-      display: flex; align-items: center; gap: 8px;
-      background: rgba(212,160,74,.07);
-      border: 1px solid var(--line-strong);
-      border-radius: 999px;
-      padding: 8px 14px;
-      color: var(--accent);
-      font-size: .82rem; font-weight: 700;
-      letter-spacing: .06em; text-transform: uppercase;
-      cursor: pointer; text-decoration: none;
-      transition: background .18s, box-shadow .18s;
-      flex-shrink: 0;
-    }
-    .witness-header-btn:hover {
-      background: rgba(212,160,74,.14);
-      box-shadow: 0 0 20px rgba(212,160,74,.12);
-    }
-    .witness-pulse {
-      width: 7px; height: 7px; border-radius: 50%;
-      background: var(--accent);
-      box-shadow: 0 0 0 2px rgba(212,160,74,.25);
-      animation: wpulse 2.8s ease-in-out infinite;
-    }
-    @keyframes wpulse {
-      0%,100% { box-shadow: 0 0 0 2px rgba(212,160,74,.25); }
-      50%      { box-shadow: 0 0 0 5px rgba(212,160,74,.08); }
-    }
     .brand {
       display: flex; align-items: center; gap: 12px;
       text-decoration: none; color: var(--text); min-width: 0;
@@ -475,12 +447,6 @@
   <!-- ── TOPBAR ── -->
   <header class="topbar">
     <div class="container topbar-inner">
-      <!-- Witness button — upper left, per audit spec -->
-      <button class="witness-header-btn" id="witnessHeaderBtn" aria-label="Open Witness Navigator">
-        <span class="witness-pulse"></span>
-        Witness
-      </button>
-
       <a class="brand" href="https://humanaios.ai">
         <div class="brand-mark">◌</div>
         <div class="brand-copy">
@@ -959,16 +925,10 @@
       }
     }
     loadStats();
-
-    // ── Witness header button → trigger witness-nav.js panel ──
-    document.getElementById('witnessHeaderBtn').addEventListener('click', () => {
-      const btn = document.querySelector('.wit-v3-btn');
-      if (btn) btn.click();
-    });
   </script>
 
   <!-- Witness Navigator -->
-  <script src="public/witness-nav.js"></script>
+  <script src="witness-nav.js"></script>
   <script>
     // fallback path if public/ doesn't resolve
     (function() {
