@@ -29,7 +29,7 @@
     ]},
     { label: 'PARTICIPATE', items: [
       { id: 'acat', href: 'assess.html', name: 'Submit ACAT', desc: 'Run a calibration · ~20 min', icon: '⬡' },
-      { id: 'ent', href: 'acat-enterprise.html', name: 'Enterprise', desc: 'Structured audit for deployed AI', icon: '⬡' }
+      { id: 'ent', href: 'acat-enterprise.html', name: 'Research Hub', desc: 'Open findings · probes · submit data', icon: '⬡' }
     ]}
   ];
 
