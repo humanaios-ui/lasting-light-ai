@@ -1,2 +1,4 @@
-/assess /index.html 200
-/acat /assess 301
+# Cloudflare Pages redirects — humanaios.ai
+/acat-assessment-tool.html  /assess.html  301
+/acat-assessment  /assess.html  301
+/acat  /assess.html  301
