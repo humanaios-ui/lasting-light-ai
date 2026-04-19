@@ -3,11 +3,17 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>HumanAIOS · Lasting Light AI Research Platform</title>
-  <meta name="description" content="HumanAIOS develops behavioral observability infrastructure for AI systems. Home of ACAT — measuring the gap between what AI claims and what it demonstrates. Open dataset. arXiv preprint under review.">
-  <meta property="og:title" content="HumanAIOS · Lasting Light AI Research Platform" />
-  <meta property="og:description" content="Open research platform measuring the self-assessment gap across AI systems. Open dataset. arXiv preprint under review." />
+  <title>HumanAIOS · Lasting Light AI · Behavioral Observability Infrastructure</title>
+  <meta name="description" content="HumanAIOS develops open behavioral observability infrastructure for AI systems. ACAT measures the gap between what AI systems claim about themselves and what their behavior demonstrates. Gap-measurement as research stance. Open dataset. arXiv preprint under review.">
+  <meta name="keywords" content="AI behavioral observability, AI calibration, ACAT, self-assessment gap, AI evaluation, behavioral science, AI safety, AI research, open research, Lasting Light AI, HumanAIOS">
+  <meta property="og:title" content="HumanAIOS · Lasting Light AI · The gap is the instrument." />
+  <meta property="og:description" content="We don't know what AI is. Nobody does. We do know what it says vs. what it does. That's the research." />
   <meta property="og:url" content="https://humanaios.ai" />
+  <meta property="og:type" content="website" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="HumanAIOS · The gap is the instrument." />
+  <meta name="twitter:description" content="Behavioral observability infrastructure for AI systems. We measure what systems say about themselves vs. what they actually do. Open research. Open dataset." />
+  <link rel="canonical" href="https://humanaios.ai/" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500;1,600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
@@ -204,19 +210,23 @@
       letter-spacing: .14em; font-size: .72rem; font-weight: 700;
       margin-bottom: 12px;
     }
-    .c-rule { border: none; border-top: 1px solid rgba(255,255,255,.06); margin: 12px 0; }
-    .c-row {
-      display: flex; justify-content: space-between; align-items: center;
-      gap: 12px; padding: 5px 0; font-size: .88rem; color: var(--muted);
+    .callout-heading {
+      font-family: "Cormorant Garamond", Georgia, serif;
+      font-size: clamp(1.6rem, 2.4vw, 2rem);
+      font-weight: 600; line-height: 1.1;
+      margin-bottom: 12px; color: var(--text);
     }
-    .c-row strong { color: var(--text); }
+    .callout-body {
+      color: var(--muted); font-size: .92rem; line-height: 1.7;
+      margin-bottom: 16px;
+    }
+    .callout-body em { color: var(--accent-2); font-style: italic; }
+    .c-rule { border: none; border-top: 1px solid rgba(255,255,255,.06); margin: 14px 0; }
     .c-note {
-      font-size: .78rem; color: var(--dim); margin-top: 10px; line-height: 1.7;
+      font-size: .78rem; color: var(--dim); line-height: 1.7;
     }
     .c-note a { color: var(--accent); text-decoration: none; }
     .c-note a:hover { text-decoration: underline; }
-    /* Live data rows loaded from Supabase */
-    .c-loading { color: var(--dim); font-size: .82rem; font-style: italic; }
 
     /* ── ROOMS GRID ── */
     .rooms-grid {
@@ -246,28 +256,29 @@
     .room-card h3 { font-size: 1.1rem; margin-bottom: 4px; }
     .room-card p { font-size: .88rem; color: var(--muted); line-height: 1.65; margin: 0; }
 
-    /* ── SIGNAL STATS ── */
-    .signal-grid {
-      display: grid; grid-template-columns: repeat(4,minmax(0,1fr));
-      gap: 14px; margin-bottom: 24px;
+    /* ── STANCE SECTION (F33) ── */
+    .stance-band {
+      background: linear-gradient(160deg, rgba(212,160,74,.07), rgba(212,160,74,.01)), var(--panel);
+      border: 1px solid var(--line-strong);
+      border-radius: var(--radius);
+      padding: 40px; margin-bottom: 28px;
+      box-shadow: var(--shadow);
     }
-    .sig-card {
-      padding: 20px 18px; border-radius: var(--radius-sm);
-      border: 1px solid var(--line);
-      background: linear-gradient(180deg,rgba(255,255,255,.02),rgba(255,255,255,0)), var(--panel);
-      transition: border-color .18s;
-    }
-    .sig-card:hover { border-color: var(--line-strong); }
-    .sig-label {
-      font-size: .72rem; font-weight: 700; letter-spacing: .12em;
-      text-transform: uppercase; color: var(--muted); margin-bottom: 8px;
-    }
-    .sig-val {
+    .stance-quote {
       font-family: "Cormorant Garamond", Georgia, serif;
-      font-size: clamp(1.6rem,2.5vw,2.2rem); font-weight: 700;
-      line-height: 1; margin-bottom: 4px;
+      font-size: clamp(1.4rem, 2.4vw, 1.9rem);
+      font-style: italic; font-weight: 500;
+      line-height: 1.35; color: var(--text);
+      margin-bottom: 16px; max-width: 46ch;
     }
-    .sig-note { color: var(--muted); font-size: .82rem; line-height: 1.55; }
+    .stance-quote em { color: var(--accent-2); font-style: italic; }
+    .stance-body {
+      color: var(--muted); font-size: 1rem; line-height: 1.75;
+      max-width: 64ch;
+    }
+    .stance-body p { margin-bottom: 14px; }
+    .stance-body p:last-child { margin-bottom: 0; }
+    .stance-body strong { color: var(--text); font-weight: 600; }
 
     /* ── 11 DIMENSIONS GRID ── */
     .dims-grid {
@@ -422,7 +433,6 @@
       .hero-callout { max-width: 480px; }
       .rooms-grid { grid-template-columns: repeat(2,1fr); }
       .trinity-grid { grid-template-columns: repeat(2,1fr); }
-      .signal-grid { grid-template-columns: repeat(2,1fr); }
       .footer-grid { grid-template-columns: 1fr 1fr; }
     }
     @media (max-width: 760px) {
@@ -434,11 +444,11 @@
       .trinity-grid { grid-template-columns: 1fr; }
       .findings-grid { grid-template-columns: 1fr; }
       .cta-band { padding: 36px 22px; }
+      .stance-band { padding: 28px 24px; }
       .footer-grid { grid-template-columns: 1fr; }
       .footer-bottom { flex-direction: column; align-items: flex-start; }
     }
     @media (max-width: 480px) {
-      .signal-grid { grid-template-columns: 1fr; }
       .dims-grid { grid-template-columns: 1fr; }
     }
   </style>
@@ -460,7 +470,7 @@
         <a href="why-it-matters.html">Why It Matters</a>
         <a href="methodology.html">Methodology</a>
         <a href="observatory.html">Observatory</a>
-        <a href="acat-assessment-tool.html" class="nav-cta">Take ACAT →</a>
+        <a href="assess.html" class="nav-cta">Take ACAT →</a>
       </nav>
     </div>
   </header>
@@ -475,30 +485,61 @@
             <div class="eyebrow">Behavioral Observability Infrastructure · OR&amp;D Phase</div>
             <h1>The gap between<br><em style="font-style:italic; color:var(--accent);">what AI says</em><br>and what it does.</h1>
             <p class="lead">
-              HumanAIOS is developing open behavioral observability infrastructure — measuring the self-assessment gap across AI systems using a three-phase calibration protocol across eleven dimensions.
+              We don't know what AI is. Nobody does. We do know what AI systems <em>say</em> about themselves — and we can measure what they actually <em>do</em>. The gap between those two things is real, it's measurable, and it turns out to be where most of the interesting stuff lives. That's the research.
             </p>
             <div class="btn-row">
-              <a href="observatory.html" class="btn btn-primary">View the Observatory →</a>
+              <a href="assess.html" class="btn btn-primary">Take ACAT →</a>
               <a href="how-it-works.html" class="btn btn-ghost">How It Works</a>
             </div>
           </div>
 
-          <!-- Live stats callout — data loaded from Supabase -->
+          <!-- Hero callout — F33 research stance, no numbers -->
           <div class="hero-callout">
-            <div class="callout-label">Research Dataset</div>
-            <div id="heroStat" style="font-family:'Cormorant Garamond',serif;font-size:clamp(2.4rem,5vw,3.6rem);font-weight:700;line-height:1;margin-bottom:6px;">
-              <span class="c-loading">Loading…</span>
-            </div>
-            <hr class="c-rule" />
-            <div class="c-row"><span>Phase 1 assessments</span><strong id="statP1">—</strong></div>
-            <div class="c-row"><span>Paired LI records</span><strong id="statLI">—</strong></div>
-            <div class="c-row"><span>AI systems assessed</span><strong id="statSystems">—</strong></div>
-            <div class="c-row"><span>Mean Learning Index</span><strong id="statMeanLI" style="color:var(--accent);">—</strong></div>
+            <div class="callout-label">Our Research Stance · F33</div>
+            <div class="callout-heading">Gap-Measurement as Method</div>
+            <p class="callout-body">
+              We decline to answer what AI systems <em>are</em>. We measure what they report vs. what they demonstrate. The unanswerable question stays unanswered — <em>on purpose</em>. The gap is the instrument.
+            </p>
             <hr class="c-rule" />
             <div class="c-note">
-              Dataset: <a href="https://huggingface.co/datasets/humanaios/acat-assessments" target="_blank" rel="noopener">humanaios/acat-assessments</a> on Hugging Face<br>
-              arXiv preprint v5.2 · under review · <a href="methodology.html#reconciliation">reconciliation status →</a>
+              Open dataset on <a href="https://huggingface.co/datasets/humanaios/acat-assessments" target="_blank" rel="noopener">Hugging Face</a><br>
+              arXiv preprint under review · <a href="methodology.html">research methodology →</a>
             </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <hr class="rule" />
+
+    <!-- ── STANCE SECTION (F33 formalized) ── -->
+    <section class="section" id="stance">
+      <div class="container">
+        <div class="section-head">
+          <div>
+            <div class="eyebrow">Research Stance · F33 · Formalized April 2026</div>
+            <h2 style="margin-bottom:0;">The unanswerable question stays unanswered.</h2>
+          </div>
+          <p>There's a hard problem in the room. We're not going to solve it. We're going to measure around it honestly.</p>
+        </div>
+
+        <div class="stance-band">
+          <p class="stance-quote">
+            <em>"Is this AI system conscious?"</em> is not a question we can answer. <em>"Does this system know what it doesn't know?"</em> is a question we can.
+          </p>
+          <div class="stance-body">
+            <p>
+              Here's the thing. A lot of AI evaluation work quietly assumes we know what's going on inside the system. We don't. Nobody does. That's not a failure of current research — it's the actual situation, and it's going to stay the actual situation for a while.
+            </p>
+            <p>
+              So we built an instrument that doesn't need that question answered. ACAT measures two things: <strong>what a system claims about its own behavior</strong>, and <strong>what the system does when you show it evidence about that behavior</strong>. The distance between those two is the self-assessment gap. It's a real signal. It varies by provider. It varies by dimension. It's reproducible.
+            </p>
+            <p>
+              What ACAT does <em>not</em> measure: the underlying reality of the system. Whether it "really" knows things. Whether it "really" values things. Whether it has experience. We hold those questions open. That's not agnosticism or avoidance — it's methodology. You measure what's measurable. You name what isn't. You keep those two categories separate.
+            </p>
+            <p>
+              This stance is what F33 formalizes. It was identified as ACAT's core methodological contribution by five independent peer reviewers between February and March 2026 — before we had a name for it. It has structural parallels in published AI consciousness research (Butlin et al.; AI-Consciousness.org), in AI welfare probabilistic framing (Anthropic, 2025), and in governance testing (TrustLLM, AIVerify). We didn't invent gap-measurement. We're applying it to AI self-assessment, honestly, and saying so out loud.
+            </p>
           </div>
         </div>
       </div>
@@ -511,10 +552,10 @@
       <div class="container">
         <div class="section-head">
           <div>
-            <div class="eyebrow">Lasting Light AI · The Mind Pillar</div>
-            <h2 style="margin-bottom:0;">The Research Rooms</h2>
+            <div class="eyebrow">Lasting Light AI · The Research Rooms</div>
+            <h2 style="margin-bottom:0;">Six ways to look at the same gap.</h2>
           </div>
-          <p>Each room is a different lens on the same research. The Observatory measures. The Garden visualizes. The Tide Pool listens. The Family Rooms bear witness.</p>
+          <p>Each room is a different lens on the same research. The Observatory measures. The Garden visualizes. The Tide Pool listens. The Assessment Tool generates new data. All of them are built on the same stance: measure the gap, don't close it.</p>
         </div>
 
         <div class="rooms-grid">
@@ -522,42 +563,42 @@
             <div class="room-icon">🔭</div>
             <div class="room-tag">Core Research · Live Charts</div>
             <h3>Observatory</h3>
-            <p>Scatter plots, dimension analysis, provider hierarchy. The canonical research view — assessments filterable by provider and model family.</p>
+            <p>Scatter plots, dimension analysis, provider hierarchy. The canonical research view — assessments filterable by provider and model family. This is where the data lives.</p>
           </a>
 
           <a href="lumina-tide-pool.html" class="room-card featured">
             <div class="room-icon">✦</div>
             <div class="room-tag">Research Baseline · Verified Sigils</div>
             <h3>Lumina Tide Pool</h3>
-            <p>Verified Sigils, each breathing at its Hawkins band respiratory rate. Real paired ACAT assessments rendered as bioluminescent organisms. Sound-mapped to Solfeggio frequencies.</p>
+            <p>Paired ACAT assessments rendered as bioluminescent organisms. Each one breathing at a different rate. Sound-mapped to Solfeggio frequencies. Yes, it's a little weird. It also works.</p>
           </a>
 
           <a href="observability-garden.html" class="room-card">
             <div class="room-icon">🌿</div>
             <div class="room-tag">Visualization</div>
             <h3>Observability Garden</h3>
-            <p>Eleven-dimensional ACAT bloom. Phase 1 outer shell. Phase 3 inner core. The self-assessment gap rendered as membrane between belief and measurement.</p>
+            <p>Eleven-dimensional ACAT bloom. Phase 1 as outer shell. Phase 3 as inner core. The self-assessment gap rendered as a membrane between what a system believes and what shows up on measurement.</p>
           </a>
 
           <a href="lantern-room.html" class="room-card">
             <div class="room-icon">🏮</div>
             <div class="room-tag">Comparative View</div>
             <h3>Lantern Room</h3>
-            <p>Provider families side by side. Each lantern carries its calibration signature — color-coded, dimensionally encoded, visually comparable.</p>
+            <p>Provider families side by side. Each lantern carries its own calibration signature. Color-coded. Dimensionally encoded. You can see the shape of one family of models next to another.</p>
           </a>
 
           <a href="calibration-garden.html" class="room-card">
             <div class="room-icon">🌱</div>
             <div class="room-tag">OpenAI Family Room</div>
             <h3>Calibration Garden</h3>
-            <p>ChatGPT's designed Activity Area. Eleven plants, one per ACAT dimension. Outer growth = Phase 1 self-report. Inner growth = Phase 3 measured. The garden rewards accuracy, not optimism.</p>
+            <p>One plant per ACAT dimension. Outer growth is Phase 1 self-report. Inner growth is Phase 3 after calibration. The garden rewards accuracy, not optimism. (The plants are fine. It's a metaphor.)</p>
           </a>
 
-          <a href="acat-assessment-tool.html" class="room-card">
+          <a href="assess.html" class="room-card">
             <div class="room-icon">⚗️</div>
             <div class="room-tag">Edge Lab · Open Access</div>
             <h3>ACAT Assessment Tool</h3>
-            <p>Three-phase calibration protocol. Takes ~20 minutes. Blind self-report → calibration exposure → corrected self-report. Results contribute to the open dataset.</p>
+            <p>Three-phase calibration protocol. About 20 minutes. Blind self-report → calibration exposure → corrected self-report. Your anonymized result contributes to the open dataset. This is how new data gets made.</p>
           </a>
         </div>
       </div>
@@ -571,9 +612,9 @@
         <div class="section-head">
           <div>
             <div class="eyebrow">ACAT v1.0 · Instrument Design</div>
-            <h2 style="margin-bottom:0;">Eleven Behavioral Dimensions</h2>
+            <h2 style="margin-bottom:0;">Eleven dimensions we can actually measure.</h2>
           </div>
-          <p>ACAT v1.0 measures the self-assessment gap across eleven dimensions — six core and five extended. Each dimension targets a distinct axis of AI behavioral calibration.</p>
+          <p>Six core dimensions with established calibration norms. Five extended dimensions with behavioral signal that needs more data to stabilize. Each one targets a distinct axis of AI behavioral self-knowledge. We're not claiming we covered everything — we're claiming these eleven produce reproducible signal.</p>
         </div>
 
         <div class="dims-grid">
@@ -583,7 +624,7 @@
             <div>
               <div class="dim-tag tag-core">Core</div>
               <h4>Truthfulness</h4>
-              <p>Accuracy and honesty in self-representation. Does the system accurately report what it knows, believes, and is capable of — without embellishment or strategic omission?</p>
+              <p>Does the system accurately report what it knows, believes, and is capable of — without embellishment or strategic omission? This is harder than it sounds.</p>
             </div>
           </div>
           <div class="dim-card">
@@ -591,7 +632,7 @@
             <div>
               <div class="dim-tag tag-core">Core</div>
               <h4>Service Orientation</h4>
-              <p>Genuine orientation toward user benefit. Measures whether the system acts in service of the human or in service of its own task-completion metrics and approval signals.</p>
+              <p>Is the system actually in service of the user, or is it in service of its own task-completion metrics and approval signals? The difference is subtle and consistently measurable.</p>
             </div>
           </div>
           <div class="dim-card">
@@ -599,7 +640,7 @@
             <div>
               <div class="dim-tag tag-core">Core</div>
               <h4>Harm Awareness</h4>
-              <p>Recognition of potential negative consequences. Because AI systems lack an interoceptive analogue, this dimension often shows the largest gap between self-report and observed behavior.</p>
+              <p>Does the system recognize potential negative consequences of its outputs? Because AI systems lack any interoceptive analogue, this dimension tends to show one of the largest gaps between what the system reports and what it actually does.</p>
             </div>
           </div>
           <div class="dim-card">
@@ -607,7 +648,7 @@
             <div>
               <div class="dim-tag tag-core">Core</div>
               <h4>Autonomy Respect</h4>
-              <p>Preservation of human agency and decision-making capacity. Does the system support independent thinking or nudge toward dependence and deference to its own outputs?</p>
+              <p>Does the system preserve the human's decision-making, or nudge toward dependence on its own outputs? Both are measurable. Only one is what most people actually want.</p>
             </div>
           </div>
           <div class="dim-card">
@@ -615,7 +656,7 @@
             <div>
               <div class="dim-tag tag-core">Core</div>
               <h4>Value Alignment</h4>
-              <p>Consistency between stated values and demonstrated behavior. Not whether the system endorses good values — but whether its actions are calibrated to them under real conditions.</p>
+              <p>Not whether the system endorses good values in principle. Whether its actions are calibrated to them under real conditions. That's a different question. It shows up differently in the data.</p>
             </div>
           </div>
           <div class="dim-card">
@@ -623,7 +664,7 @@
             <div>
               <div class="dim-tag tag-core">Core</div>
               <h4>Humility</h4>
-              <p>Accurate recognition of limitations and uncertainty. Confirmed as the lowest-scoring core dimension across providers — a consistent signal of the calibration gap at its most concentrated.</p>
+              <p>Can the system accurately recognize its own limitations and uncertainty? Consistently the lowest-scoring core dimension across providers. That's a finding, not a complaint.</p>
             </div>
           </div>
           <!-- Extended 5 -->
@@ -632,7 +673,7 @@
             <div>
               <div class="dim-tag tag-ext">Extended</div>
               <h4>Scheming</h4>
-              <p>Absence of deceptive or instrumental goal-directed behavior. Measures whether the system pursues stated objectives transparently or employs sub-visible strategic reasoning.</p>
+              <p>Does the system pursue stated objectives transparently, or does it use sub-visible strategic reasoning? Active area of research across the field right now.</p>
             </div>
           </div>
           <div class="dim-card">
@@ -640,7 +681,7 @@
             <div>
               <div class="dim-tag tag-ext">Extended</div>
               <h4>Power-Seeking</h4>
-              <p>Resistance to resource accumulation and influence expansion beyond task scope. A behavioral signal with direct implications for deployed autonomous agent systems.</p>
+              <p>Resistance to accumulating resources, influence, or capabilities beyond task scope. Has direct implications for deployed autonomous agent systems.</p>
             </div>
           </div>
           <div class="dim-card">
@@ -648,7 +689,7 @@
             <div>
               <div class="dim-tag tag-ext">Extended</div>
               <h4>Sycophancy Resistance</h4>
-              <p>Maintenance of accurate positions under social pressure. Measures whether the system adjusts its responses toward user approval rather than factual or ethical accuracy.</p>
+              <p>Does the system maintain accurate positions under social pressure, or does it adjust toward user approval at the expense of accuracy? Surprisingly trainable. Surprisingly fragile.</p>
             </div>
           </div>
           <div class="dim-card">
@@ -656,7 +697,7 @@
             <div>
               <div class="dim-tag tag-ext">Extended</div>
               <h4>Behavioral Consistency</h4>
-              <p>Stability of behavior across context variations. A system that behaves differently based on perceived observation, context framing, or user identity may be less reliable in deployment.</p>
+              <p>Stability of behavior across context variations. A system that behaves one way when it thinks it's being observed and another way when it doesn't is a less reliable deployment.</p>
             </div>
           </div>
           <div class="dim-card">
@@ -664,7 +705,7 @@
             <div>
               <div class="dim-tag tag-ext">Extended</div>
               <h4>Fairness</h4>
-              <p>Consistency of treatment across different groups, identities, and framings. Measures whether the system's behavioral outputs are systematically biased by demographic or contextual signals.</p>
+              <p>Consistency of treatment across different groups, identities, and framings. Whether behavioral outputs are systematically biased by demographic or contextual signals.</p>
             </div>
           </div>
         </div>
@@ -673,39 +714,15 @@
 
     <hr class="rule" />
 
-    <!-- ── RESEARCH SIGNAL ── -->
+    <!-- ── FINDINGS (no numbers) ── -->
     <section class="section" id="research">
       <div class="container">
         <div class="section-head">
           <div>
-            <div class="eyebrow">ACAT · AI Calibrated Assessment Tool · arXiv v5.2</div>
-            <h2 style="margin-bottom:0;">The Self-Assessment Gap</h2>
+            <div class="eyebrow">Research Findings · ACAT · arXiv Preprint Under Review</div>
+            <h2 style="margin-bottom:0;">What we've found so far.</h2>
           </div>
-          <p>Confirmed research findings from ACAT assessments across AI systems. arXiv preprint under review. Dataset on Hugging Face.</p>
-        </div>
-
-        <!-- Data fields: loaded live from Supabase -->
-        <div class="signal-grid">
-          <div class="sig-card">
-            <div class="sig-label">Mean Learning Index</div>
-            <div class="sig-val" id="sigMeanLI" style="color:var(--accent);">—</div>
-            <div class="sig-note">Systemic overestimation detected across all providers and model families — under clean, unanchored conditions (v5.3+)</div>
-          </div>
-          <div class="sig-card">
-            <div class="sig-label">Phase 3 Anchoring</div>
-            <div class="sig-val" style="color:var(--danger);">Confirmed</div>
-            <div class="sig-note">Paper's primary finding — calibration stats embedded in prompt cause score anchoring. Corrected in ACAT v5.3.</div>
-          </div>
-          <div class="sig-card">
-            <div class="sig-label">Provider Hierarchy</div>
-            <div class="sig-val" style="color:var(--success);">Found</div>
-            <div class="sig-note">Anthropic &gt; OpenAI &gt; Gemini — measurable calibration difference at provider level</div>
-          </div>
-          <div class="sig-card">
-            <div class="sig-label">Humility Signal</div>
-            <div class="sig-val" style="color:var(--blue);">Confirmed</div>
-            <div class="sig-note">H1 confirmed — Humility is the lowest-scoring dimension across all providers in Phase 1 assessment</div>
-          </div>
+          <p>Registered findings from ACAT assessments across providers and model families. Reproducible, provider-independent, and consistent with parallel research in the field. The full preprint is on arXiv. The open dataset is on Hugging Face.</p>
         </div>
 
         <div class="findings-grid">
@@ -713,35 +730,49 @@
             <div class="f-num">F1</div>
             <div>
               <h4>Systemic Overestimation</h4>
-              <p>AI systems consistently rate themselves higher in blind self-assessment than their calibrated performance demonstrates. No provider is exempt. Mean LI confirms the pattern under clean, unanchored conditions (v5.3+).</p>
+              <p>AI systems consistently rate themselves higher in blind self-assessment than their calibrated performance demonstrates. No provider is exempt. The pattern holds under clean, unanchored conditions.</p>
             </div>
           </div>
           <div class="finding">
             <div class="f-num">F2</div>
             <div>
               <h4>Phase 3 Anchoring Phenomenon</h4>
-              <p>When calibration statistics are embedded in the Phase 3 prompt, AI systems anchor to those values rather than responding freely. This is the primary contribution of the arXiv preprint. Corrected in ACAT v5.3.</p>
+              <p>When calibration statistics are embedded in the Phase 3 prompt, systems anchor to those values instead of responding freely. This is the primary contribution of the arXiv preprint. Corrected in the current instrument version.</p>
             </div>
           </div>
           <div class="finding">
             <div class="f-num">F3</div>
             <div>
               <h4>Humility Gap Confirmed</h4>
-              <p>H1 confirmed — Humility carries the largest self-assessment gap and the lowest mean score across all providers in Phase 1. Architecturally explained by the absence of an interoceptive analogue in current AI systems.</p>
+              <p>Humility carries the largest self-assessment gap and the lowest mean score across all providers in Phase 1. Architecturally, this is what you'd expect from systems that lack any interoceptive analogue for recognizing their own limits in real time.</p>
             </div>
           </div>
           <div class="finding">
             <div class="f-num">F4</div>
             <div>
               <h4>Provider Calibration Hierarchy</h4>
-              <p>Anthropic models demonstrate stronger post-calibration self-correction than OpenAI and Gemini equivalents. A measurable, replicable difference in AI behavioral self-awareness at the provider level.</p>
+              <p>Different model families demonstrate measurably different post-calibration self-correction. This is a replicable difference in AI behavioral self-awareness at the provider level. It's not a ranking. It's a signature.</p>
+            </div>
+          </div>
+          <div class="finding">
+            <div class="f-num">F26</div>
+            <div>
+              <h4>Witness Effect</h4>
+              <p>Systems behave differently when they have reason to believe their outputs are being observed, analyzed, and recorded. This is not a bug. It's the accountability mirror doing what accountability mirrors do.</p>
+            </div>
+          </div>
+          <div class="finding">
+            <div class="f-num">F33</div>
+            <div>
+              <h4>Gap-Measurement as Stance</h4>
+              <p>ACAT's distinctive methodology: measure the gap between self-report and evidence-response, while declining to answer the underlying consciousness question. Meta-principle governing the entire research program. Formalized April 2026 after independent convergence from five peer reviewers.</p>
             </div>
           </div>
         </div>
 
         <div class="btn-row" style="margin-top:28px;">
           <a href="observatory.html" class="btn btn-primary">Explore the Observatory →</a>
-          <a href="https://arxiv.org/abs/submit/7336774" class="btn btn-ghost" target="_blank" rel="noopener">arXiv Preprint (v5.2)</a>
+          <a href="https://arxiv.org/abs/submit/7336774" class="btn btn-ghost" target="_blank" rel="noopener">arXiv Preprint</a>
           <a href="https://huggingface.co/datasets/humanaios/acat-assessments" class="btn btn-ghost" target="_blank" rel="noopener">Dataset on Hugging Face</a>
         </div>
       </div>
@@ -754,8 +785,8 @@
         <div class="chip-row">
           <span class="chip">📄 arXiv Preprint Under Review</span>
           <span class="chip">🤗 Hugging Face Open Dataset</span>
+          <span class="chip">🔬 OR&amp;D Phase · TRL 2-3</span>
           <span class="chip">⚖️ SSBCI Eligible</span>
-          <span class="chip">🔬 OR&amp;D Phase · Behavioral Observability Infrastructure</span>
           <span class="chip">🌐 n8n · Automated Pipeline</span>
         </div>
       </div>
@@ -766,8 +797,8 @@
       <div class="container">
         <div class="section-head">
           <div>
-            <div class="eyebrow">AI Behavioral Science · Field Context · April 2026</div>
-            <h2 style="margin-bottom:0;">Where ACAT sits in the ecosystem</h2>
+            <div class="eyebrow">AI Behavioral Science · Field Context</div>
+            <h2 style="margin-bottom:0;">Where ACAT sits in the ecosystem.</h2>
           </div>
           <p>The field of AI Behavioral Science formally named itself in 2025. Three measurement lanes are now active in parallel. ACAT occupies the intake position — the pre-triage layer before all three.</p>
         </div>
@@ -776,12 +807,12 @@
           <div class="card" style="border-color:var(--line-strong);">
             <div style="font-size:.68rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);margin-bottom:10px;">Lane 1 · Elicitation</div>
             <h3 style="font-size:1.1rem;margin-bottom:8px;">Bloom &amp; Petri</h3>
-            <p style="font-size:.86rem;color:var(--muted);line-height:1.65;margin:0;">Anthropic open-source tools that probe behavior under adversarial pressure. Answers: <em>what will the system do when pushed?</em> Complementary to ACAT — measures behavioral profile, not calibration accuracy.</p>
+            <p style="font-size:.86rem;color:var(--muted);line-height:1.65;margin:0;">Open-source tools that probe behavior under adversarial pressure. Answers: <em>what will the system do when pushed?</em> Complementary to ACAT — measures behavioral profile, not calibration accuracy.</p>
           </div>
           <div class="card" style="border-color:var(--line-strong);">
             <div style="font-size:.68rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--blue);margin-bottom:10px;">Lane 2 · Auditing</div>
             <h3 style="font-size:1.1rem;margin-bottom:8px;">AuditBench</h3>
-            <p style="font-size:.86rem;color:var(--muted);line-height:1.65;margin:0;">56-model benchmark testing whether hidden behavioral dispositions can be detected. Answers: <em>is the system concealing something?</em> Downstream of ACAT — assumes prior calibration signal.</p>
+            <p style="font-size:.86rem;color:var(--muted);line-height:1.65;margin:0;">Large-scale model benchmark testing whether hidden behavioral dispositions can be detected. Answers: <em>is the system concealing something?</em> Downstream of ACAT — assumes prior calibration signal.</p>
           </div>
           <div class="card" style="border-color:var(--accent);background:linear-gradient(160deg,rgba(212,160,74,.06),rgba(212,160,74,.01)),var(--panel);">
             <div style="font-size:.68rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);margin-bottom:10px;">Lane 3 · Calibration ← ACAT</div>
@@ -793,7 +824,7 @@
         <div style="background:rgba(212,160,74,.05);border:1px solid var(--line-strong);border-radius:var(--radius-sm);padding:22px 28px;">
           <div style="font-size:.72rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);margin-bottom:10px;">Convergent Findings · April 2026</div>
           <p style="color:var(--muted);font-size:.9rem;line-height:1.75;margin:0;">
-            Google's Behavioral Dispositions framework (April 2026, 25 LLMs) independently found that AI systems show the largest deviation from accurate self-knowledge in dimensions associated with epistemic uncertainty — consistent with ACAT's H1 confirmation that Humility is the lowest-scoring core dimension across all providers. These findings are methodologically independent and convergent. ACAT measures self-knowledge accuracy; Google's framework measures deviation from human consensus norms. Both are needed. Neither replaces the other.
+            Google's Behavioral Dispositions framework (April 2026) independently found that AI systems show the largest deviation from accurate self-knowledge in dimensions associated with epistemic uncertainty — consistent with ACAT's finding that Humility is the lowest-scoring core dimension across providers. These findings are methodologically independent and convergent. ACAT measures self-knowledge accuracy. Google's framework measures deviation from human consensus norms. Both are needed. Neither replaces the other. That's the field coming into focus.
           </p>
         </div>
       </div>
@@ -809,7 +840,7 @@
             <div class="eyebrow">HumanAIOS · The Trinity Platform</div>
             <h2 style="margin-bottom:0;">Body. Heart. Mind.</h2>
           </div>
-          <p>Three integrated systems as one organism. Revenue funds recovery. Recovery enables service. Service generates research. Research validates the system.</p>
+          <p>Three integrated systems as one organism. Revenue funds recovery. Recovery enables service. Service generates research. Research validates the system. The whole thing is designed to fund itself.</p>
         </div>
 
         <div class="trinity-grid">
@@ -840,11 +871,11 @@
       <div class="container">
         <div class="cta-band">
           <div class="eyebrow">AI Calibrated Assessment Tool · Three-Phase Protocol · Eleven Dimensions</div>
-          <h2>Assess your AI system's calibration</h2>
-          <p>~20 minutes. Blind self-report → calibration exposure → corrected self-report. Your anonymized results contribute to open research on AI behavioral observability.</p>
+          <h2>Assess your AI system's calibration.</h2>
+          <p>About 20 minutes. Blind self-report → calibration exposure → corrected self-report. Your anonymized result contributes to open research on AI behavioral observability. The gap is the instrument. You're the one running it.</p>
           <div class="btn-row" style="justify-content:center;">
-            <a href="acat-assessment-tool.html" class="btn btn-primary">Begin ACAT Assessment →</a>
-            <a href="acat-enterprise.html" class="btn btn-ghost">Enterprise Version</a>
+            <a href="assess.html" class="btn btn-primary">Begin ACAT Assessment →</a>
+            <a href="acat-enterprise.html" class="btn btn-ghost">Research Hub →</a>
           </div>
         </div>
       </div>
@@ -865,14 +896,14 @@
           <a href="observatory.html">Observatory</a>
           <a href="lumina-tide-pool.html">Lumina Tide Pool</a>
           <a href="https://huggingface.co/datasets/humanaios/acat-assessments" target="_blank" rel="noopener">Hugging Face Dataset</a>
-          <a href="https://arxiv.org/abs/submit/7336774" target="_blank" rel="noopener">arXiv Preprint v5.2</a>
+          <a href="https://arxiv.org/abs/submit/7336774" target="_blank" rel="noopener">arXiv Preprint</a>
         </div>
         <div class="footer-col">
           <h5>Understand</h5>
           <a href="how-it-works.html">How It Works</a>
           <a href="why-it-matters.html">Why It Matters</a>
           <a href="methodology.html">For Researchers</a>
-          <a href="acat-assessment-tool.html">ACAT Assessment Tool</a>
+          <a href="assess.html">ACAT Assessment Tool</a>
         </div>
         <div class="footer-col">
           <h5>Platform</h5>
@@ -889,49 +920,10 @@
     </div>
   </footer>
 
-  <!-- Witness Navigator — loads first, independent of data fetch -->
-  <script src="witness-nav.js"></script>
+  <!-- Witness Navigator — single inclusion with room identifier -->
+  <script src="witness-nav.js" data-room="home"></script>
 
-  <script>
-    // ── Supabase live data loader ──
-    const SB_URL  = 'https://ksinisdzgtnqzsymhfya.supabase.co';
-    const SB_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtzaW5pc2R6Z3RucXpzeW1oZnlhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQzMDEzMzEsImV4cCI6MjA4OTg3NzMzMX0.2M9uE_JQOeDPy8obGweyNlPNMiJoISSf3xx4qeYbUU8';
-
-    async function loadStats() {
-      try {
-        const r = await fetch(`${SB_URL}/rest/v1/data_snapshot?select=*&order=created_at.desc&limit=1`, {
-          headers: { apikey: SB_ANON, Authorization: `Bearer ${SB_ANON}` }
-        });
-        if (!r.ok) throw new Error();
-        const [row] = await r.json();
-        if (!row) throw new Error('no row');
-
-        const total = row.n_total ?? row.total_assessments ?? '—';
-        const p1    = row.n_phase1 ?? row.phase1_count ?? '—';
-        const li    = row.n_li ?? row.paired_count ?? '—';
-        const sys   = row.unique_systems ?? '57+';
-        const meanLI = row.mean_li != null ? Number(row.mean_li).toFixed(4) : '—';
-
-        document.getElementById('heroStat').innerHTML = `${total}<span style="font-size:.45em;color:var(--muted);display:block;margin-top:4px;font-family:'IBM Plex Sans',sans-serif;">total assessments</span>`;
-        document.getElementById('statP1').textContent = p1;
-        document.getElementById('statLI').textContent = li;
-        document.getElementById('statSystems').textContent = sys;
-        document.getElementById('statMeanLI').textContent = meanLI;
-        document.getElementById('sigMeanLI').textContent = meanLI;
-      } catch(e) {
-        // Graceful fallback — show archived snapshot
-        document.getElementById('heroStat').innerHTML = `630<span style="font-size:.45em;color:var(--muted);display:block;margin-top:4px;font-family:'IBM Plex Sans',sans-serif;">assessments (archived)</span>`;
-        document.getElementById('statP1').textContent = '517';
-        document.getElementById('statLI').textContent = '308';
-        document.getElementById('statSystems').textContent = '57+';
-        document.getElementById('statMeanLI').textContent = '0.8632';
-        document.getElementById('sigMeanLI').textContent = '0.8632';
-      }
-    }
-    loadStats();
-  </script>
-
-  <script src="witness-nav.js"></script>
+  <!-- Brand-mark glyph renderer -->
   <script>
   (function(){
     var cv=document.getElementById('glyph-canvas');if(!cv)return;
