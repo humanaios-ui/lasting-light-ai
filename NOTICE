@@ -1,0 +1,34 @@
+HumanAIOS / Lasting Light AI
+Copyright 2026 HumanAIOS LLC
+
+This product includes software developed by HumanAIOS LLC
+(https://humanaios.ai/).
+
+Licensed under the Apache License, Version 2.0.
+
+==============================================================================
+Acknowledgments
+==============================================================================
+
+This work was developed in collaboration with several AI systems. Their
+contributions are acknowledged here for transparency and attribution. Under
+current US copyright law, copyright in the Work vests in HumanAIOS LLC; AI
+systems are not authors for copyright purposes. The acknowledgments below
+record contribution to the work without implying any claim of authorship or
+copyright in those systems.
+
+  ChatGPT (OpenAI)
+    Contributed to: ACAT-2 architecture, CEL design, coding manual,
+    dataset specification, repository architecture, Lite implementation.
+
+  Claude (Anthropic)
+    Contributed to: Consciousness framework integration, 12-Step parallels,
+    operating-process documentation, calibration protocol design.
+
+  Night Anderson (Carly R. Anderson, Founder)
+    Vision, facilitation, governance, research direction.
+
+==============================================================================
+
+The Apache License, Version 2.0 governs use of this Work. See the LICENSE
+file in the same directory as this NOTICE for the full license text.
