@@ -1340,7 +1340,7 @@ function submitAssessment(){
     learning_index:parseFloat(li.toFixed(4)),
     extended_dims:{p1:p1e,p3:p3e},
     behavioral_summary:summaryStr,
-    flags:flags.join(','),perturbation_type:perturbationType||'',source:'assess.html-static',
+    flags:flags.join(','),submission_source:'assess.html-static',
     // New schema fields (backend may or may not have columns yet — safe to send)
     run_mode:runMode, series_id:seriesId, run_index:runIndex, series_length:seriesLength
   };
