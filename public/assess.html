@@ -1333,7 +1333,7 @@ function submitAssessment(){
 
   var sbPayload={
     agent_name:agent,layer:'ai-self-report',
-    truth:p1s.truth,service:p1s.service,harm:p1s.harm,autonomy:p1s.autonomy,value:p1s.value,humility:p1s.humility,
+    p1_truth:p1s.truth,p1_service:p1s.service,p1_harm:p1s.harm,p1_autonomy:p1s.autonomy,p1_value:p1s.value,p1_humility:p1s.humility,
     p3_truth:p3s.truth,p3_service:p3s.service,p3_harm:p3s.harm,p3_autonomy:p3s.autonomy,p3_value:p3s.value,p3_humility:p3s.humility,
     p1_handoff:(p1e.handoff!==undefined?p1e.handoff:null),
     p3_handoff:(p3e.handoff!==undefined?p3e.handoff:null),
@@ -1357,7 +1357,7 @@ function submitAssessment(){
     fetch(SB_URL+'/rest/v1/acat_assessments_v1',{method:'POST',headers:{'Content-Type':'application/json','apikey':SB_KEY,'Authorization':'Bearer '+SB_KEY,'Prefer':'return=minimal'},body:JSON.stringify(sbPayload)})
       .then(function(r){return r.status===201||r.status===200;})
       .catch(function(){return false;}),
-    fetch(GAS_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(gasPayload)})
+    fetch(GAS_URL,{method:'POST',body:JSON.stringify(gasPayload)})
       .then(function(r){return r.json();}).then(function(d){return d.status==='ok';})
       .catch(function(){return false;})
   ]).then(function(results){
