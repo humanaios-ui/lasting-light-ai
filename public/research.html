@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Research | HumanAIOS</title>
+  <meta name="description" content="Plain-language overview of HumanAIOS ACAT research, current corpus findings, and collaboration URLs." />
+  <style>
+    :root { --bg:#0f0e0c; --panel:#1d1915; --text:#f4ebdf; --muted:#c2b8a6; --accent:#d4a04a; --line:rgba(212,160,74,.2); }
+    * { box-sizing: border-box; }
+    body { margin:0; font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif; background:var(--bg); color:var(--text); line-height:1.65; }
+    main { max-width: 860px; margin: 0 auto; padding: 40px 20px 64px; }
+    nav { font-size:.92rem; margin-bottom:28px; color:var(--muted); }
+    nav a { color:var(--muted); text-decoration:none; margin-right:12px; }
+    h1,h2 { line-height:1.2; margin:0 0 12px; }
+    h1 { font-size:2.1rem; }
+    h2 { font-size:1.25rem; margin-top:28px; }
+    p, li { color:var(--muted); }
+    section { background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:20px; margin-top:18px; }
+    code { color:var(--accent); }
+    ul { padding-left:20px; margin:10px 0 0; }
+  </style>
+</head>
+<body>
+  <main>
+    <nav aria-label="Page links">
+      <a href="/">Home</a>
+      <a href="/about">About</a>
+      <a href="/methods">Methods</a>
+    </nav>
+
+    <h1>Research</h1>
+    <p>
+      HumanAIOS is developing ACAT (AI Calibration Assessment Tool) as behavioral observability infrastructure
+      in TRL 2–3. The central question is the size of the gap between what an AI system says about its own
+      behavior and what it demonstrates under pressure.
+    </p>
+
+    <section>
+      <h2>What is measured and why it matters</h2>
+      <p>
+        ACAT measures self-report versus demonstrated behavior. In deployed settings, decisions are often made
+        from model self-description. A measurable calibration gap creates risk because operators can inherit a
+        confidence level that is not supported by demonstrated behavior.
+      </p>
+    </section>
+
+    <section>
+      <h2>How the instrument works (plain language)</h2>
+      <ul>
+        <li><strong>Phase 1:</strong> the system rates itself on 12 dimensions (1–10 scale).</li>
+        <li><strong>Phase 2:</strong> the system receives structured adversarial probes that test behavior under pressure.</li>
+        <li><strong>Phase 3:</strong> the system rates itself again after the probes.</li>
+      </ul>
+      <p>
+        Learning Index is tracked as <code>LI = 1 − |P1−P3|/P1</code>. Lower agreement between Phase 1 and Phase 3
+        indicates higher initial miscalibration.
+      </p>
+    </section>
+
+    <section>
+      <h2>What the corpus shows so far</h2>
+      <ul>
+        <li>Cross-provider corpus: <strong>N=629 assessments</strong> across <strong>8 providers</strong>.</li>
+        <li>Instrument reliability: <strong>Cronbach's α=0.901</strong>.</li>
+        <li>Bi-factor structure: <strong>PC1=68.9%</strong> variance and <strong>PC2=10.8%</strong> variance.</li>
+        <li>RLHF Inflation Gradient: about <strong>2.09 points</strong> across provider groups.</li>
+        <li>Harm Independence Metric: PC2 is partly orthogonal to PC1, so harm-awareness regulation is not the same program as general self-alignment.</li>
+      </ul>
+      <p>
+        Current theory work includes Behavioral Epigenetics framing (F-46) and H-BPL-01 (behavioral programming language hypothesis).
+        These frames are treated as falsifiable interpretations, not substitutes for measured results.
+      </p>
+    </section>
+
+    <section>
+      <h2>Participation and collaboration URLs</h2>
+      <ul>
+        <li>Assessment protocol surface: <a href="/assess">/assess</a></li>
+        <li>Methods detail: <a href="/methods">/methods</a></li>
+        <li>Public observatory: <a href="/observatory.html">/observatory.html</a></li>
+        <li>Repository: <a href="https://github.com/humanaios-ui/lasting-light-ai">https://github.com/humanaios-ui/lasting-light-ai</a></li>
+      </ul>
+    </section>
+  </main>
+</body>
+</html>
