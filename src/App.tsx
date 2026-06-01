@@ -25,8 +25,9 @@ const NAV_GROUPS = [
   {
     label: 'UNDERSTAND',
     items: [
-      { href: '/how-it-works.html',  name: 'How It Works',    desc: 'Plain-language ACAT guide' },
-      { href: '/methodology.html',   name: 'For Researchers', desc: 'Protocol · schema · findings' },
+      { href: '/research',           name: 'Research',        desc: 'What ACAT measures and current findings' },
+      { href: '/methods',            name: 'Methods',         desc: 'Three-phase protocol and analysis details' },
+      { href: '/about',              name: 'About',           desc: 'Three-entity structure and mission' },
     ],
   },
   {

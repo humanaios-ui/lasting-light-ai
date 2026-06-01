@@ -12,9 +12,9 @@ const NAV_GROUPS = [
   {
     label: 'UNDERSTAND',
     items: [
-      { id: 'how',    href: '/how-it-works.html',  name: 'How It Works',    desc: 'Plain-language ACAT guide',         icon: '⬡' },
-      { id: 'why',    href: '/why-it-matters.html', name: 'Why It Matters',  desc: 'Research context & stakes',         icon: '⬡' },
-      { id: 'method', href: '/methodology.html',    name: 'For Researchers', desc: 'Protocol · schema · findings',       icon: '⬡' }
+      { id: 'research', href: '/research', name: 'Research', desc: 'What ACAT measures and findings', icon: '⬡' },
+      { id: 'methods', href: '/methods', name: 'Methods', desc: 'Three-phase protocol and rigor', icon: '⬡' },
+      { id: 'about', href: '/about', name: 'About', desc: 'Three-entity structure and mission', icon: '⬡' }
     ]
   },
   {
