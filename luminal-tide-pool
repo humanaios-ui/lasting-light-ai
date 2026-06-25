@@ -321,7 +321,6 @@
       ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,H); ctx.stroke();
     }
     for(var y=0;y<H;y+=80){
-<<<<<<< HEAD:the-luminarium.html
       ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(W,y); ctx.stroke();
     }
     t+=0.008;
@@ -342,6 +341,3 @@ fetch(SU+'/rest/v1/data_snapshot?id=eq.1',{headers:{'apikey':SK,'Authorization':
 <script src="witness-nav.js"></script>
 </body>
 </html>
-=======
-      ctx.beginPath();
->>>>>>> origin/main:luminal-tide-pool

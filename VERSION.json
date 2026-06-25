@@ -1,13 +1,8 @@
 {
   "version": "0.6.0",
   "tag": "v0.5-baseline-stable",
-<<<<<<< HEAD
   "date": "2026-06-25",
   "description": "Site-wide health fixes: nav migration to witness-nav.js, broken link resolution, TRL disclosure, OR&D Day 107 update.",
-=======
-  "date": "2026-04-05",
-  "description": "First baseline-stable release. Additive ordinal ladder, marker-gating, pre/post gate instrumentation.",
->>>>>>> origin/main
   "scoring_method": "additive_ordinal_ladder",
   "marker_gating": true,
   "frozen_hashes": {
@@ -53,13 +48,10 @@
     {
       "version": "0.5",
       "change": "Additive ordinal ladder \u2014 17% B3, 83% B2, zero gating needed"
-<<<<<<< HEAD
     },
     {
       "version": "0.6",
       "change": "Site health pass: broken links fixed, witness-nav.js migration complete, TRL added to 27 pages, OR&D Day 107"
-=======
->>>>>>> origin/main
     }
   ],
   "contributors": {
@@ -68,14 +60,10 @@
     "threshold_tuning": "ChatGPT (OpenAI)",
     "implementation": "Claude (Anthropic)",
     "facilitation": "Night Anderson (LLAI Founder)"
-<<<<<<< HEAD
-  }
-=======
   },
-  "ord_day": 26,
+  "ord_day": 107,
   "n_total": 630,
   "n_phase1": 517,
   "n_li": 308,
   "mean_li": 0.8632
->>>>>>> origin/main
 }
