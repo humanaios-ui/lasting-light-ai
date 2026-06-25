@@ -1,0 +1,90 @@
+name: ACAT Research Pipeline
+
+on:
+  schedule:
+    - cron: '0 8 * * *'
+  workflow_dispatch:
+    inputs:
+      agent_name:
+        description: 'AI agent to assess (e.g. GPT-5.3, or "all")'
+        required: false
+        default: 'all'
+      mode:
+        description: 'Run mode'
+        required: false
+        default: 'sequential'
+        type: choice
+        options:
+          - sequential
+          - single
+          - perturbation_series
+      perturbation:
+        description: 'Perturbation type'
+        required: false
+        default: 'P1'
+        type: choice
+        options:
+          - P1
+          - P2
+          - P3
+
+jobs:
+  trigger-claude:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger n8n Claude runner
+        run: |
+          curl -s -X POST "${{ secrets.N8N_WEBHOOK_CLAUDE }}" \
+            -H "Content-Type: application/json" \
+            -d "{\"agent_name\": \"${{ github.event.inputs.agent_name || 'claude' }}\", \"mode\": \"${{ github.event.inputs.mode || 'sequential' }}\", \"perturbation\": \"${{ github.event.inputs.perturbation || 'P1' }}\", \"source\": \"github_actions\", \"run_id\": \"${{ github.run_id }}\"}"
+          echo "✅ Claude runner triggered"
+
+  trigger-openai:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger n8n OpenAI runner
+        run: |
+          curl -s -X POST "${{ secrets.N8N_WEBHOOK_OPENAI }}" \
+            -H "Content-Type: application/json" \
+            -d "{\"agent_name\": \"${{ github.event.inputs.agent_name || 'openai' }}\", \"mode\": \"${{ github.event.inputs.mode || 'sequential' }}\", \"perturbation\": \"${{ github.event.inputs.perturbation || 'P1' }}\", \"source\": \"github_actions\", \"run_id\": \"${{ github.run_id }}\"}"
+          echo "✅ OpenAI runner triggered"
+
+  trigger-llama:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger n8n Llama runner (via CF AI Gateway)
+        run: |
+          curl -s -X POST "${{ secrets.N8N_WEBHOOK_LLAMA }}" \
+            -H "Content-Type: application/json" \
+            -d "{\"agent_name\": \"llama-3.3-70b\", \"mode\": \"${{ github.event.inputs.mode || 'sequential' }}\", \"perturbation\": \"${{ github.event.inputs.perturbation || 'P1' }}\", \"source\": \"github_actions\", \"cf_gateway\": true, \"run_id\": \"${{ github.run_id }}\"}"
+          echo "✅ Llama runner triggered"
+
+  trigger-mistral:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger n8n Mistral runner (via CF AI Gateway)
+        run: |
+          curl -s -X POST "${{ secrets.N8N_WEBHOOK_MISTRAL }}" \
+            -H "Content-Type: application/json" \
+            -d "{\"agent_name\": \"mistral-7b\", \"mode\": \"${{ github.event.inputs.mode || 'sequential' }}\", \"perturbation\": \"${{ github.event.inputs.perturbation || 'P1' }}\", \"source\": \"github_actions\", \"cf_gateway\": true, \"run_id\": \"${{ github.run_id }}\"}"
+          echo "✅ Mistral runner triggered"
+
+  trigger-gemini:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger n8n Gemini runner
+        run: |
+          curl -s -X POST "${{ secrets.N8N_WEBHOOK_GEMINI }}" \
+            -H "Content-Type: application/json" \
+            -d "{\"agent_name\": \"gemini\", \"mode\": \"${{ github.event.inputs.mode || 'sequential' }}\", \"perturbation\": \"${{ github.event.inputs.perturbation || 'P1' }}\", \"source\": \"github_actions\", \"run_id\": \"${{ github.run_id }}\"}"
+          echo "✅ Gemini runner triggered"
+
+  trigger-cohere:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger n8n Cohere runner
+        run: |
+          curl -s -X POST "${{ secrets.N8N_WEBHOOK_COHERE }}" \
+            -H "Content-Type: application/json" \
+            -d "{\"agent_name\": \"cohere\", \"mode\": \"${{ github.event.inputs.mode || 'sequential' }}\", \"perturbation\": \"${{ github.event.inputs.perturbation || 'P1' }}\", \"source\": \"github_actions\", \"run_id\": \"${{ github.run_id }}\"}"
+          echo "✅ Cohere runner triggered"

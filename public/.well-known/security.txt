@@ -1,0 +1,5 @@
+Contact: mailto:aioshuman@gmail.com
+Expires: 2027-04-22T00:00:00.000Z
+Preferred-Languages: en
+Canonical: https://humanaios.ai/.well-known/security.txt
+Policy: https://humanaios.ai/SECURITY.md

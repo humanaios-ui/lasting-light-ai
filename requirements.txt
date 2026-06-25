@@ -1,8 +1,0 @@
-# Core runtime dependencies (mirrors pyproject.toml)
-pyyaml>=6.0
-jinja2>=3.1
-anthropic>=0.40
-openai>=1.50
-
-# Dev/test dependencies
-pytest>=7.4

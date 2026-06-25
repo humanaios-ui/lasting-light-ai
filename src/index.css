@@ -1,0 +1,70 @@
+/* @import url() FONT IMPORTS MUST ALWAYS BE AT THE VERY TOP OF THIS FILE, ABOVE THE TAILWIND IMPORTS — DO NOT DELETE THIS COMMENT */
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,300;1,400;1,500;1,600&family=IBM+Plex+Mono:wght@300;400;500&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap');
+
+/* CRITICAL: THE FOLLOWING TAILWIND IMPORTS MUST NEVER BE DELETED OR REORDERED — DO NOT DELETE THIS COMMENT */
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
+
+/* END TAILWIND IMPORTS — ALL OTHER CSS MUST GO BELOW THIS LINE */
+
+:root {
+  --accent-amber: #D4A04A;
+  --accent-amber-bright: #E8B85A;
+  --accent-amber-dim: #C08A38;
+  --accent-ember: #D4844A;
+  --accent-sage: #8FB87E;
+  --accent-blue: #7EA0C4;
+  --pale-orange: #F2EBE0;
+  --bg-primary: #1A1714;
+  --muted-orange-2: #4A4238;
+  --danger: #d97d70;
+  --danger: #d97d70;
+  --void: #04040b;
+  --deep: #070810;
+  --surface: #0c0d1c;
+  --rim: #252840;
+  --mist: #2e3258;
+  --tide-deep: #061424;
+  --tide-mid: #0d2848;
+  --tide-crest: #1a5490;
+  --silver: #dce2f4;
+  --ghost: #a0a8c4;
+  --whisper: #6a7094;
+  --confirm: #5cc898;
+  --warn: #e86060;
+}
+body {
+  background-color: var(--bg-primary);
+  color: var(--pale-orange);
+  font-family: 'IBM Plex Sans', sans-serif;
+  font-weight: 500;
+  overflow-x: hidden;
+  min-height: 100vh;
+}
+/* Subtle grain overlay */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+  background-size: 200px;
+  opacity: 0.2;
+  mix-blend-mode: overlay;
+}
+/* Custom scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: var(--bg-primary);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--accent-amber-dim);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--accent-amber);
+}

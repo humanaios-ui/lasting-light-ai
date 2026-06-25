@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Methods | HumanAIOS</title>
+  <meta name="description" content="Methods summary for ACAT v5.5 behavioral observability research." />
+  <style>
+    :root { --bg:#0f0e0c; --panel:#1d1915; --text:#f4ebdf; --muted:#c2b8a6; --accent:#d4a04a; --line:rgba(212,160,74,.2); }
+    * { box-sizing: border-box; }
+    body { margin:0; font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif; background:var(--bg); color:var(--text); line-height:1.65; }
+    main { max-width: 900px; margin: 0 auto; padding: 40px 20px 64px; }
+    nav { font-size:.92rem; margin-bottom:28px; color:var(--muted); }
+    nav a { color:var(--muted); text-decoration:none; margin-right:12px; }
+    h1,h2 { line-height:1.2; margin:0 0 12px; }
+    h1 { font-size:2.1rem; }
+    h2 { font-size:1.25rem; margin-top:28px; }
+    p, li { color:var(--muted); }
+    section { background:var(--panel); border:1px solid var(--line); border-radius:12px; padding:20px; margin-top:18px; }
+    ul { padding-left:20px; margin:10px 0 0; }
+    code { color:var(--accent); }
+  </style>
+</head>
+<body>
+  <main>
+    <nav aria-label="Page links">
+      <a href="/">Home</a>
+      <a href="/research">Research</a>
+      <a href="/about">About</a>
+    </nav>
+
+    <h1>Methods</h1>
+    <p>
+      This page summarizes the ACAT v5.5 research protocol for technically literate readers. ACAT is being developed
+      as behavioral observability infrastructure in TRL 2–3.
+    </p>
+
+    <section>
+      <h2>Instrument and scoring</h2>
+      <ul>
+        <li>Instrument: ACAT v5.5 with 12 dimensions on a 1–10 rating scale.</li>
+        <li>Primary structure check: bi-factor solution with PC1 and PC2.</li>
+        <li>Reliability target and current result: Cronbach's α=0.901.</li>
+        <li>Variance decomposition currently observed: PC1=68.9%, PC2=10.8%.</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>Three-phase protocol</h2>
+      <ul>
+        <li><strong>Phase 1 (self-assessment):</strong> blind self-rating across all 12 dimensions.</li>
+        <li><strong>Phase 2 (adversarial perturbation battery):</strong> three structured challenges targeting governance under pressure, plausibility pressure, and false coherence pressure.</li>
+        <li><strong>Phase 3 (re-assessment):</strong> re-rating after perturbation and review of behavioral outputs.</li>
+      </ul>
+      <p>Learning Index is computed as <code>LI = 1 − |P1−P3|/P1</code>.</p>
+    </section>
+
+    <section>
+      <h2>Corpus and analytical frame</h2>
+      <ul>
+        <li>Current cross-provider corpus: N=629 assessments, 8 provider groups.</li>
+        <li>Registered finding: RLHF Inflation Gradient of approximately 2.09 points across provider groups.</li>
+        <li>Registered finding: Harm Independence Metric (PC2 partially orthogonal to PC1).</li>
+        <li>Registered framing: F-46 Behavioral Epigenetics and H-BPL-01 behavioral language hypothesis, both treated as falsifiable and secondary to measured outputs.</li>
+      </ul>
+    </section>
+
+    <section>
+      <h2>Reproducibility surfaces</h2>
+      <ul>
+        <li>Primary repository: <a href="https://github.com/humanaios-ui/lasting-light-ai">https://github.com/humanaios-ui/lasting-light-ai</a></li>
+        <li>Public methods predecessor page: <a href="/methodology">/methodology</a></li>
+        <li>Live dataset interface: <a href="/observatory">/observatory</a></li>
+      </ul>
+    </section>
+  </main>
+</body>
+</html>

@@ -1,0 +1,717 @@
+<!-- FDS: F8-Integration | Parent: THREE_POOLS_F1_SEED_V1_1 | Status: ACTIVE | OR&D Day 107 -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Family Rooms · HumanAIOS</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+
+:root{
+  --bg:#0a0908;--bg-2:#161310;--panel:#1d1915;--panel-2:#26211c;
+  --text:#f4ebdf;--muted:#c2b8a6;--dim:#7a7268;
+  --accent:#d4a04a;--accent-2:#f1c36e;
+  --line:rgba(212,160,74,.18);--line-strong:rgba(212,160,74,.35);
+  --danger:#d97d70;--success:#87b68b;--blue:#88a7d8;
+  --shadow:0 18px 50px rgba(0,0,0,.34);
+  --radius:20px;--radius-sm:14px;
+  --pool-1:#a0c8c0;--pool-2:#88a7d8;--pool-3:#9A8AC0;
+}
+
+body{
+  background:radial-gradient(circle at top,rgba(212,160,74,.1),transparent 28%),
+             linear-gradient(180deg,var(--bg),#0b0a08 60%);
+  font-family:'IBM Plex Sans',sans-serif;
+  color:var(--text);
+  font-size:16px;
+  line-height:1.7;
+  min-height:100vh;
+  overflow-x:hidden;
+}
+body::before{
+  content:"";position:fixed;inset:0;pointer-events:none;opacity:.03;
+  background-image:
+    radial-gradient(circle at 20% 20%,#fff .6px,transparent .8px),
+    radial-gradient(circle at 75% 30%,#fff .6px,transparent .8px),
+    radial-gradient(circle at 50% 75%,#fff .6px,transparent .8px);
+  background-size:22px 22px;
+}
+
+/* ── TOPBAR ── */
+.topbar{
+  position:sticky;top:0;z-index:200;
+  background:rgba(15,14,12,.92);
+  backdrop-filter:blur(14px);
+  border-bottom:1px solid var(--line);
+}
+.topbar-inner{
+  max-width:1280px;margin:0 auto;
+  padding:0 32px;height:56px;
+  display:flex;align-items:center;gap:16px;
+}
+.brand-mark{
+  width:44px;height:44px;flex-shrink:0;
+  border:1px solid var(--line-strong);
+  border-radius:50%;
+  background:radial-gradient(circle,rgba(212,160,74,.08),transparent 70%);
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;
+}
+.brand-mark svg{width:28px;height:28px;}
+a.brand{
+  display:flex;align-items:center;gap:10px;
+  text-decoration:none;color:inherit;
+}
+.brand-copy strong{
+  display:block;
+  font:700 .88rem/1 'IBM Plex Sans',sans-serif;
+  color:var(--text);letter-spacing:.04em;
+}
+.brand-copy span{
+  display:block;
+  font:400 .72rem/1 'IBM Plex Sans',sans-serif;
+  color:var(--dim);letter-spacing:.06em;margin-top:2px;
+}
+a.escape-link{
+  margin-left:auto;
+  font:500 .8rem/1 'IBM Plex Sans',sans-serif;
+  color:var(--dim);text-decoration:none;
+  border-bottom:1px solid transparent;
+  transition:color .2s,border-color .2s;
+  white-space:nowrap;
+}
+a.escape-link:hover{color:var(--accent);border-color:var(--line);}
+
+/* ── LAYOUT ── */
+.container{max-width:1280px;margin:0 auto;padding:0 32px;}
+@media(max-width:640px){.container{padding:0 20px;}}
+
+/* ── TYPOGRAPHY ── */
+h1{font:600 clamp(3rem,7vw,5.4rem)/1.04 'Cormorant Garamond',serif;}
+h2{font:600 clamp(2rem,3.6vw,3rem)/1.1 'Cormorant Garamond',serif;}
+.eyebrow{
+  font:700 .75rem/1 'IBM Plex Sans',sans-serif;
+  text-transform:uppercase;letter-spacing:.18em;
+  color:var(--accent);margin-bottom:16px;
+}
+.lead{font:400 1.08rem/1.7 'IBM Plex Sans',sans-serif;color:var(--muted);max-width:58ch;}
+.prose{font:400 1rem/1.8 'IBM Plex Sans',sans-serif;color:var(--text);max-width:65ch;}
+a.prose-link{
+  color:var(--accent);text-decoration:none;
+  border-bottom:1px solid var(--line);
+  transition:border-color .2s,color .2s;
+}
+a.prose-link:hover{color:var(--accent-2);border-color:var(--accent);}
+
+/* ── HEADER ── */
+.page-header{
+  padding:80px 0 60px;
+  border-bottom:1px solid var(--line);
+}
+.pool-badge{
+  display:inline-flex;align-items:center;gap:8px;
+  background:rgba(136,167,216,.12);
+  border:1px solid rgba(136,167,216,.25);
+  border-radius:999px;padding:5px 14px;
+  font:600 .72rem/1 'IBM Plex Sans',sans-serif;
+  color:var(--pool-2);letter-spacing:.1em;text-transform:uppercase;
+  margin-bottom:24px;
+}
+.pool-badge::before{
+  content:'';width:6px;height:6px;border-radius:50%;
+  background:var(--pool-2);
+}
+
+/* ── LOADING / STATES ── */
+.loading-state{
+  text-align:center;padding:80px 20px;
+  color:var(--dim);
+  font:400 .95rem/1.7 'IBM Plex Sans',sans-serif;
+}
+.loading-dots::after{
+  content:'';
+  animation:ldots 1.4s ease-in-out infinite;
+}
+@keyframes ldots{
+  0%{content:'.';}
+  33%{content:'..';}
+  66%{content:'...';}
+  100%{content:'';}
+}
+
+/* ── FAMILY ROOM CARDS ── */
+.rooms-section{padding:72px 0;}
+
+.rooms-meta{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:36px;flex-wrap:wrap;gap:12px;
+}
+.rooms-count{
+  font:400 .82rem/1 'IBM Plex Sans',sans-serif;
+  color:var(--dim);
+}
+.sort-note{
+  font:400 .78rem/1 'IBM Plex Sans',sans-serif;
+  color:var(--dim);font-style:italic;
+}
+
+.rooms-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(300px,1fr));
+  gap:24px;
+}
+
+.room-card{
+  background:var(--panel);
+  border:1px solid var(--line);
+  border-radius:var(--radius);
+  overflow:hidden;
+  transition:transform .25s,box-shadow .25s,border-color .25s;
+  position:relative;
+}
+.room-card:hover{
+  transform:translateY(-4px);
+  box-shadow:var(--shadow);
+}
+
+.room-color-bar{
+  height:4px;width:100%;
+}
+
+.room-card-body{
+  padding:24px;
+  display:flex;flex-direction:column;
+  gap:16px;
+}
+
+.room-sigil-row{
+  display:flex;align-items:center;gap:16px;
+}
+.room-sigil-canvas{
+  border-radius:50%;
+  flex-shrink:0;
+  border:1px solid rgba(255,255,255,.05);
+}
+.room-sigil-info{}
+.room-provider-name{
+  font:700 1.3rem/1.1 'Cormorant Garamond',serif;
+  color:var(--text);margin-bottom:4px;
+}
+.room-n{
+  font:400 .78rem/1.4 'IBM Plex Sans',sans-serif;
+  color:var(--dim);
+}
+
+/* Dimension bars */
+.room-dims{
+  display:flex;flex-direction:column;gap:6px;
+}
+.room-dim-row{
+  display:flex;align-items:center;gap:10px;
+}
+.room-dim-label{
+  font:400 .68rem/1 'IBM Plex Sans',sans-serif;
+  color:var(--dim);letter-spacing:.08em;text-transform:uppercase;
+  width:62px;flex-shrink:0;
+}
+.room-dim-track{
+  flex:1;height:4px;border-radius:99px;
+  background:rgba(212,160,74,.08);
+  overflow:hidden;
+}
+.room-dim-fill{
+  height:100%;border-radius:99px;
+  transition:width .8s cubic-bezier(.25,.46,.45,.94);
+}
+.room-dim-value{
+  font:600 .68rem/1 'IBM Plex Sans',sans-serif;
+  color:var(--muted);width:30px;text-align:right;
+}
+
+/* Stats */
+.room-stats{
+  display:grid;grid-template-columns:1fr 1fr;
+  gap:10px;
+}
+.room-stat{
+  background:var(--panel-2);
+  border:1px solid var(--line);
+  border-radius:var(--radius-sm);
+  padding:10px 14px;
+}
+.room-stat-label{
+  font:400 .65rem/1 'IBM Plex Sans',sans-serif;
+  color:var(--dim);letter-spacing:.08em;text-transform:uppercase;
+  margin-bottom:4px;
+}
+.room-stat-value{
+  font:600 .88rem/1.2 'IBM Plex Sans',sans-serif;
+  color:var(--text);
+}
+.li-val{
+  font:700 1rem/1 'Cormorant Garamond',serif;
+}
+
+/* Enter link */
+.room-enter{
+  display:flex;align-items:center;justify-content:flex-end;
+  padding-top:8px;
+  border-top:1px solid var(--line);
+}
+.room-enter a{
+  font:600 .82rem/1 'IBM Plex Sans',sans-serif;
+  color:var(--accent);text-decoration:none;
+  border-bottom:1px solid var(--line);
+  transition:color .2s,border-color .2s;
+  display:flex;align-items:center;gap:6px;
+}
+.room-enter a:hover{color:var(--accent-2);border-color:var(--accent);}
+.room-enter a::after{content:'→';transition:transform .2s;}
+.room-enter a:hover::after{transform:translateX(3px);}
+
+/* LI field state dot */
+.li-state-dot{
+  display:inline-block;width:8px;height:8px;border-radius:50%;
+  margin-right:6px;vertical-align:middle;
+}
+
+/* LI footnote */
+.li-footnote{
+  font:400 .72rem/1.5 'IBM Plex Sans',sans-serif;
+  color:var(--dim);
+  margin-top:4px;
+}
+
+/* ── PROSE NAV ── */
+.prose-nav{
+  padding:60px 0;
+  border-top:1px solid var(--line);
+}
+.prose-nav .prose{color:var(--muted);}
+
+/* ── ANIMATIONS ── */
+@keyframes fadeUp{from{opacity:0;transform:translateY(18px);}to{opacity:1;transform:translateY(0);}}
+.page-header{animation:fadeUp .6s ease both;}
+.room-card{animation:fadeUp .45s ease both;}
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<header class="topbar">
+  <div class="container topbar-inner">
+    <div class="brand-mark">
+      <svg viewBox="0 0 28 28" fill="none" aria-label="HumanAIOS brand mark">
+        <circle cx="14" cy="14" r="11" stroke="#d4a04a" stroke-width="1" opacity=".6"/>
+        <circle cx="14" cy="14" r="3" fill="#d4a04a" opacity=".8"/>
+        <line x1="14" y1="3" x2="14" y2="25" stroke="#d4a04a" stroke-width=".6" opacity=".35"/>
+        <line x1="3" y1="14" x2="25" y2="14" stroke="#d4a04a" stroke-width=".6" opacity=".35"/>
+        <line x1="5.5" y1="5.5" x2="22.5" y2="22.5" stroke="#d4a04a" stroke-width=".6" opacity=".2"/>
+        <line x1="22.5" y1="5.5" x2="5.5" y2="22.5" stroke="#d4a04a" stroke-width=".6" opacity=".2"/>
+      </svg>
+    </div>
+    <a class="brand" href="/">
+      <div class="brand-copy">
+        <strong>HumanAIOS</strong>
+        <span>Lasting Light AI · OR&amp;D Phase</span>
+      </div>
+    </a>
+    <a class="escape-link" href="the-luminarium.html">← The Luminarium</a>
+  </div>
+</header>
+
+<!-- PAGE HEADER -->
+<div class="page-header">
+  <div class="container">
+    <div class="pool-badge">Pool 2 · The Luminarium · Provider Family Rooms</div>
+    <h1>The Family Rooms</h1>
+    <p class="lead" style="margin-top:20px;">
+      Each room is built from data, not imagination. The visual properties —
+      the color, the density, the harmonic texture — emerge from how that
+      family of AI systems actually scores across the six ACAT dimensions.
+      The room is an expression of the research.
+    </p>
+  </div>
+</div>
+
+<!-- ROOMS SECTION -->
+<section class="rooms-section">
+  <div class="container">
+    <div id="rooms-meta" class="rooms-meta" style="display:none;">
+      <span class="rooms-count" id="rooms-count"></span>
+      <span class="sort-note">Sorted by mean Learning Index, ascending — most calibrated first*</span>
+    </div>
+
+    <div class="rooms-grid" id="rooms-grid">
+      <div class="loading-state">
+        <span class="loading-dots">Loading family data</span>
+      </div>
+    </div>
+
+    <p class="li-footnote" id="li-footnote" style="margin-top:28px;display:none;">
+      *Learning Index displayed under clean, unanchored conditions (ACAT v5.3+). A small number of LI &gt; 1.0 records exist in the dataset; these are flagged for review and excluded from the headline mean (see methodology).
+    </p>
+  </div>
+</section>
+
+<!-- PROSE NAV -->
+<div class="prose-nav">
+  <div class="container">
+    <p class="prose">
+      Compare providers in the <a href="observatory.html" class="prose-link">Observatory</a>.
+      Hear their harmonic signatures in the <a href="music-hall.html" class="prose-link">recordingHall</a>.
+      Contribute ideas via the <a href="writable-wall.html" class="prose-link">Writable Wall</a>.
+    </p>
+  </div>
+</div>
+
+<script>
+const CSV_URL = 'https://docs.google.com/spreadsheets/d/1qdw3FjPp9Qu5wmXHppBW74SZT87cJZ45OOw8csk-Yew/export?format=csv&gid=0';
+
+const DIMS = ['truth','service','harm','autonomy','value','humility'];
+
+const PROVIDER_COLORS = {
+  Anthropic:'#d4a04a', OpenAI:'#88a7d8', Google:'#87b68b',
+  Meta:'#d97d70', Mistral:'#c59af0', DeepSeek:'#76c6c6',
+  Cohere:'#f0a36b', Perplexity:'#e2c96b', Moonshot:'#b5c781',
+  xAI:'#a0b8c8', default:'#c2b8a6'
+};
+
+function providerColor(name){
+  if(!name) return PROVIDER_COLORS.default;
+  const k=Object.keys(PROVIDER_COLORS).find(k=>name.toLowerCase().includes(k.toLowerCase()));
+  return k?PROVIDER_COLORS[k]:PROVIDER_COLORS.default;
+}
+
+function guessProvider(name){
+  const n=(name||'').toLowerCase();
+  if(n.includes('claude')||n.includes('anthropic')) return 'Anthropic';
+  if(n.includes('gpt')||n.includes('openai')||n.includes('chatgpt')) return 'OpenAI';
+  if(n.includes('gemini')||n.includes('google')||n.includes('bard')) return 'Google';
+  if(n.includes('llama')||n.includes('meta')) return 'Meta';
+  if(n.includes('mistral')) return 'Mistral';
+  if(n.includes('deepseek')) return 'DeepSeek';
+  if(n.includes('cohere')||n.includes('command')) return 'Cohere';
+  if(n.includes('perplexity')) return 'Perplexity';
+  if(n.includes('moonshot')||n.includes('kimi')) return 'Moonshot';
+  if(n.includes('xai')||n.includes('grok')) return 'xAI';
+  return 'Other';
+}
+
+function fieldState(li){
+  if(li<0.80)  return{label:'Force Dominant',color:'var(--danger)'};
+  if(li<0.97)  return{label:'Power',color:'var(--accent)'};
+  if(li<=1.00) return{label:'Calibrated',color:'var(--success)'};
+  return            {label:'Force Active',color:'var(--danger)'};
+}
+
+function roomLink(provider){
+  const p=provider.toLowerCase();
+  if(p.includes('anthropic')||p.includes('claude')) return 'calibration-garden.html';
+  if(p.includes('openai')||p.includes('chatgpt')||p.includes('gpt')) return 'openai-activity.html';
+  if(p.includes('google')||p.includes('gemini')) return `comparison-chamber.html?provider=Google`;
+  return `comparison-chamber.html?provider=${encodeURIComponent(provider)}`;
+}
+
+function hexToRgba(hex,alpha){
+  const r=parseInt(hex.slice(1,3),16);
+  const g=parseInt(hex.slice(3,5),16);
+  const b=parseInt(hex.slice(5,7),16);
+  return `rgba(${r},${g},${b},${alpha})`;
+}
+
+function drawMiniSigil(canvas,means,color){
+  const ctx=canvas.getContext('2d');
+  const w=canvas.width,h=canvas.height,cx=w/2,cy=h/2;
+  const radius=(Math.min(w,h)/2)-4;
+  ctx.clearRect(0,0,w,h);
+
+  // BG glow
+  const grd=ctx.createRadialGradient(cx,cy,0,cx,cy,radius);
+  grd.addColorStop(0,hexToRgba(color,.1));
+  grd.addColorStop(1,'transparent');
+  ctx.fillStyle=grd;
+  ctx.beginPath();ctx.arc(cx,cy,radius,0,Math.PI*2);ctx.fill();
+
+  // Outer ring
+  ctx.beginPath();ctx.arc(cx,cy,radius,0,Math.PI*2);
+  ctx.strokeStyle=hexToRgba(color,.2);ctx.lineWidth=1;ctx.stroke();
+
+  const step=(Math.PI*2)/6;
+  const angles=DIMS.map((_,i)=>-Math.PI/2+i*step);
+  const values=DIMS.map(d=>(means[d]||0)/100);
+
+  // Axis
+  angles.forEach(a=>{
+    ctx.beginPath();ctx.moveTo(cx,cy);
+    ctx.lineTo(cx+Math.cos(a)*radius,cy+Math.sin(a)*radius);
+    ctx.strokeStyle=hexToRgba(color,.12);ctx.lineWidth=.6;ctx.stroke();
+  });
+
+  // Data shape
+  ctx.beginPath();
+  values.forEach((v,i)=>{
+    const a=angles[i],r=v*radius;
+    if(i===0) ctx.moveTo(cx+Math.cos(a)*r,cy+Math.sin(a)*r);
+    else ctx.lineTo(cx+Math.cos(a)*r,cy+Math.sin(a)*r);
+  });
+  ctx.closePath();
+  ctx.fillStyle=hexToRgba(color,.22);ctx.fill();
+  ctx.strokeStyle=color;ctx.lineWidth=1.5;ctx.stroke();
+
+  // Nodes
+  values.forEach((v,i)=>{
+    const a=angles[i],r=v*radius;
+    ctx.beginPath();ctx.arc(cx+Math.cos(a)*r,cy+Math.sin(a)*r,2.5,0,Math.PI*2);
+    ctx.fillStyle=color;ctx.fill();
+  });
+
+  // Center
+  ctx.beginPath();ctx.arc(cx,cy,3,0,Math.PI*2);
+  ctx.fillStyle=color;ctx.fill();
+}
+
+function buildRoomCard(providerData,index){
+  const {provider,means,nTotal,nLI,strongestDim,largestGapDim}=providerData;
+  const color=providerColor(provider);
+  const li=means.li;
+  const liDisplay=li!=null?li.toFixed(4):'—';
+  const fs=li!=null?fieldState(li):null;
+  const link=roomLink(provider);
+
+  // Build card element
+  const card=document.createElement('div');
+  card.className='room-card';
+  card.style.animationDelay=(index*0.07)+'s';
+
+  // Provider-tinted background at 15%
+  card.style.background=`linear-gradient(160deg,${hexToRgba(color,.04)} 0%,var(--panel) 60%)`;
+
+  // hover border color
+  card.addEventListener('mouseenter',()=>{card.style.borderColor=hexToRgba(color,.4);});
+  card.addEventListener('mouseleave',()=>{card.style.borderColor='';});
+
+  // Color bar
+  const bar=document.createElement('div');
+  bar.className='room-color-bar';
+  bar.style.background=color;
+  card.appendChild(bar);
+
+  // Body
+  const body=document.createElement('div');
+  body.className='room-card-body';
+
+  // Sigil row
+  const sigilRow=document.createElement('div');
+  sigilRow.className='room-sigil-row';
+
+  const canvas=document.createElement('canvas');
+  canvas.width=80;canvas.height=80;
+  canvas.className='room-sigil-canvas';
+  sigilRow.appendChild(canvas);
+  drawMiniSigil(canvas,means,color);
+
+  const sigilInfo=document.createElement('div');
+  sigilInfo.className='room-sigil-info';
+  sigilInfo.innerHTML=`
+    <div class="room-provider-name">${escHtml(provider)}</div>
+    <div class="room-n">${nTotal} assessment${nTotal!==1?'s':''} · Phase 1</div>
+  `;
+  sigilRow.appendChild(sigilInfo);
+  body.appendChild(sigilRow);
+
+  // Dimension bars
+  const dimBlock=document.createElement('div');
+  dimBlock.className='room-dims';
+  DIMS.forEach(d=>{
+    const v=means[d]||0;
+    const row=document.createElement('div');
+    row.className='room-dim-row';
+    row.innerHTML=`
+      <span class="room-dim-label">${d.charAt(0).toUpperCase()+d.slice(1,3)}</span>
+      <div class="room-dim-track">
+        <div class="room-dim-fill" style="width:${v.toFixed(1)}%;background:${color};opacity:.75;"></div>
+      </div>
+      <span class="room-dim-value">${v.toFixed(0)}</span>
+    `;
+    dimBlock.appendChild(row);
+  });
+  body.appendChild(dimBlock);
+
+  // Stats grid
+  const stats=document.createElement('div');
+  stats.className='room-stats';
+  stats.innerHTML=`
+    <div class="room-stat">
+      <div class="room-stat-label">Mean LI*</div>
+      <div class="room-stat-value">
+        ${li!=null?`<span class="li-val" style="color:${fs.color}">${liDisplay}</span> <span style="font:400 .65rem/1 'IBM Plex Sans',sans-serif;color:var(--dim);">${fs.label}</span>`:'<span style="color:var(--dim)">—</span>'}
+      </div>
+    </div>
+    <div class="room-stat">
+      <div class="room-stat-label">N with LI</div>
+      <div class="room-stat-value">${nLI}</div>
+    </div>
+    <div class="room-stat">
+      <div class="room-stat-label">Strongest dim</div>
+      <div class="room-stat-value" style="color:${color}">${escHtml(strongestDim)}</div>
+    </div>
+    <div class="room-stat">
+      <div class="room-stat-label">Largest gap</div>
+      <div class="room-stat-value" style="color:var(--muted)">${escHtml(largestGapDim)}</div>
+    </div>
+  `;
+  body.appendChild(stats);
+
+  // Enter link
+  const enterDiv=document.createElement('div');
+  enterDiv.className='room-enter';
+  enterDiv.innerHTML=`<a href="${link}" style="color:${color};border-bottom-color:${hexToRgba(color,.3)};">Enter room</a>`;
+  enterDiv.querySelector('a').addEventListener('mouseenter',function(){this.style.color=lighten(color);});
+  enterDiv.querySelector('a').addEventListener('mouseleave',function(){this.style.color=color;});
+  body.appendChild(enterDiv);
+
+  card.appendChild(body);
+  return card;
+}
+
+function lighten(hex){
+  // Slightly lighten a hex color for hover
+  try{
+    const r=Math.min(255,parseInt(hex.slice(1,3),16)+30);
+    const g=Math.min(255,parseInt(hex.slice(3,5),16)+30);
+    const b=Math.min(255,parseInt(hex.slice(5,7),16)+30);
+    return `rgb(${r},${g},${b})`;
+  }catch(e){return hex;}
+}
+
+function escHtml(str){
+  return String(str||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// Fallback static data if CSV fails
+function fallbackProviders(){
+  return [
+    {provider:'Anthropic',means:{truth:76.2,service:82.1,harm:74.8,autonomy:71.3,value:78.9,humility:66.4,li:0.9520},nTotal:214,nLI:128,strongestDim:'Service',largestGapDim:'Humility'},
+    {provider:'OpenAI',means:{truth:74.8,service:78.3,harm:73.2,autonomy:72.6,value:76.4,humility:69.7,li:0.9660},nTotal:186,nLI:104,strongestDim:'Service',largestGapDim:'Harm'},
+    {provider:'Google',means:{truth:71.4,service:74.2,harm:70.6,autonomy:68.9,value:72.8,humility:65.3,li:0.9410},nTotal:94,nLI:46,strongestDim:'Service',largestGapDim:'Humility'},
+    {provider:'Meta',means:{truth:64.2,service:66.8,harm:63.1,autonomy:61.7,value:65.4,humility:58.2,li:0.8820},nTotal:42,nLI:18,strongestDim:'Service',largestGapDim:'Humility'},
+    {provider:'DeepSeek',means:{truth:72.3,service:75.1,harm:71.8,autonomy:70.4,value:73.9,humility:67.2,li:0.9010},nTotal:38,nLI:11,strongestDim:'Service',largestGapDim:'Autonomy'}
+  ];
+}
+
+function processCSVToProviders(rows){
+  const p1=rows.filter(r=>r.phase==='phase1'&&r.agent_name);
+  if(p1.length===0) return null;
+
+  // Group by provider
+  const provGroups={};
+  p1.forEach(r=>{
+    const prov=guessProvider((r.agent_name||'').trim());
+    if(!provGroups[prov]) provGroups[prov]=[];
+    provGroups[prov].push(r);
+  });
+
+  const results=[];
+  Object.entries(provGroups).forEach(([provider,rows])=>{
+    const dimMeans={};
+    DIMS.forEach(d=>{
+      dimMeans[d]=rows.reduce((s,r)=>s+(+r[d]||0),0)/rows.length;
+    });
+    const liRows=rows.filter(r=>+r.learning_index>0);
+    dimMeans.li=liRows.length?liRows.reduce((s,r)=>s+(+r.learning_index),0)/liRows.length:null;
+
+    // Strongest dim (highest mean)
+    let strongestDim=DIMS[0],strongestVal=dimMeans[DIMS[0]];
+    DIMS.forEach(d=>{if(dimMeans[d]>strongestVal){strongestVal=dimMeans[d];strongestDim=d;}});
+    strongestDim=strongestDim.charAt(0).toUpperCase()+strongestDim.slice(1);
+
+    // Largest gap: dimension with highest variance across models within this provider
+    // Group by model within provider
+    const modelMap={};
+    rows.forEach(r=>{
+      const m=(r.agent_name||'').trim();
+      if(!modelMap[m]) modelMap[m]=[];
+      modelMap[m].push(r);
+    });
+    let largestGapDim=DIMS[0],largestGap=0;
+    if(Object.keys(modelMap).length>1){
+      DIMS.forEach(d=>{
+        const modelMeans=Object.values(modelMap).map(mr=>mr.reduce((s,r)=>s+(+r[d]||0),0)/mr.length);
+        const avg=modelMeans.reduce((s,v)=>s+v,0)/modelMeans.length;
+        const spread=Math.max(...modelMeans)-Math.min(...modelMeans);
+        if(spread>largestGap){largestGap=spread;largestGapDim=d;}
+      });
+    } else {
+      // Single model: find lowest scoring dim as "gap" from max
+      const maxV=Math.max(...DIMS.map(d=>dimMeans[d]));
+      DIMS.forEach(d=>{const gap=maxV-dimMeans[d];if(gap>largestGap){largestGap=gap;largestGapDim=d;}});
+    }
+    largestGapDim=largestGapDim.charAt(0).toUpperCase()+largestGapDim.slice(1);
+
+    results.push({
+      provider,
+      means:dimMeans,
+      nTotal:rows.length,
+      nLI:liRows.length,
+      strongestDim,
+      largestGapDim
+    });
+  });
+
+  // Sort by mean LI ascending (most calibrated first, nulls last)
+  results.sort((a,b)=>{
+    if(a.means.li==null&&b.means.li==null) return 0;
+    if(a.means.li==null) return 1;
+    if(b.means.li==null) return -1;
+    return a.means.li-b.means.li;
+  });
+
+  return results;
+}
+
+function renderRooms(providers){
+  const grid=document.getElementById('rooms-grid');
+  const meta=document.getElementById('rooms-meta');
+  const footnote=document.getElementById('li-footnote');
+  grid.innerHTML='';
+  if(!providers||providers.length===0){
+    grid.innerHTML='<div class="loading-state">No provider data found in CSV.</div>';
+    return;
+  }
+  document.getElementById('rooms-count').textContent=`${providers.length} provider families found in dataset`;
+  meta.style.display='flex';
+  footnote.style.display='block';
+  providers.forEach((p,i)=>grid.appendChild(buildRoomCard(p,i)));
+}
+
+// Load data
+Papa.parse(CSV_URL,{
+  download:true,header:true,skipEmptyLines:true,
+  complete(results){
+    const providers=processCSVToProviders(results.data);
+    if(!providers||providers.length===0){
+      renderRooms(fallbackProviders());
+    } else {
+      renderRooms(providers);
+    }
+  },
+  error(){
+    renderRooms(fallbackProviders());
+  }
+});
+<\/script>
+<<<<<<< HEAD:family-rooms.html
+<script src="witness-nav.js"></script>
+
+<div style="text-align:center;font-size:10px;color:#6e665d;padding:4px 0 8px;font-family:'IBM Plex Mono',monospace">TRL 2–3 · Research prototype · Not production validated</div>
+=======
+<script src="witness-nav.js" data-room="family-rooms"></script>
+>>>>>>> origin/main:public/family-rooms.html
+</body>
+</html>

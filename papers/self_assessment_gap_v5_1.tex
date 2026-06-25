@@ -1,0 +1,422 @@
+\documentclass[11pt,a4paper]{article}
+
+% --- Packages ---
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{amsmath,amssymb}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{natbib}
+\usepackage{geometry}
+\usepackage{caption}
+\usepackage{array}
+\usepackage{longtable}
+\usepackage{multirow}
+\usepackage{float}
+
+\geometry{margin=1in}
+
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue!60!black,
+    citecolor=blue!60!black,
+    urlcolor=blue!60!black
+}
+
+% --- Custom column type for wrapping ---
+\newcolumntype{L}[1]{>{\raggedright\arraybackslash}p{#1}}
+
+% --- Title ---
+\title{\textbf{ACAT: Benchmarking Self-Description Calibration\\in Large Language Models}}
+
+\author{
+    Carly R. Anderson\thanks{Corresponding author. Email: \texttt{aioshuman@gmail.com}} \\
+    \textit{Lasting Light AI / HumanAIOS} \\
+    \textit{Fort Walton Beach, FL}
+}
+
+\date{Preprint --- April 2026 (v5.1) \\ \small Lasting Light AI \textbar{} Apache 2.0 License \\ \small \textit{v5.1 corrects sample size, SAG, LI, and lowest-dimension findings from v5.0 to match the archived dataset (ACAT\_Assessment\_Responses, Normalized sheet).}}
+
+\begin{document}
+
+\maketitle
+
+% =============================================================================
+% ABSTRACT
+% =============================================================================
+\begin{abstract}
+We introduce ACAT (AI Calibrated Assessment Tool), an open-source instrument that measures self-description calibration in AI systems. Using a three-phase protocol---blind self-report, empirical calibration, and corrected self-report---we quantify the Self-Assessment Gap (SAG): the difference between what AI systems describe about their own capabilities and how those descriptions change when exposed to empirical peer data. Across 629 assessments spanning 34 distinct agents from 18 providers, collected by two independent researchers using different methods (API-based and manual web-based), we find a mean Learning Index (LI) of 0.8632 ($SD = 0.1435$, $n = 307$), indicating that AI systems reduce their composite self-ratings by approximately 14\% on average after encountering calibration information. Mean Self-Assessment Gap on paired Phase 1--Phase 3 observations ($n = 49$) is 16.69 points on the 600-point composite scale ($SD = 47.08$). We identify five behavioral response patterns and three anomalous categories, with Humility emerging as the consistently lowest self-assessed dimension in Phase 1 ($M = 73.95$, $SD = 15.07$, $n = 516$) across all providers. The instrument, dataset, and methodology are freely available. ACAT measures \textit{self-description consistency}---how AI systems describe their limitations and how those descriptions shift when calibration data is introduced---providing a diagnostic foundation for transparency practices independent of predictive validity.
+\end{abstract}
+
+\noindent\textbf{Keywords:} AI Self-Assessment, Self-Description Calibration, Behavioral Transparency, AI Governance, Learning Index, Self-Assessment Gap
+
+% =============================================================================
+% 1. INTRODUCTION
+% =============================================================================
+\section{Introduction}
+
+Something happens when you ask an AI system to rate its own honesty. It scores high. Not because the system is deceptive---most systems produce self-ratings that appear sincere. But the pattern itself reveals a gap. The system's self-description does not match what empirical data shows about how systems like it actually perform. That gap is the finding.
+
+This paper introduces ACAT (AI Calibrated Assessment Tool) and reports findings from 629 assessments across 34 distinct agents from 18 providers, collected by two independent researchers using different methods. The core contribution is not a new benchmark for AI capabilities, nor a test of factual knowledge. It is a measurement of \textit{self-description calibration}: the degree to which AI systems' descriptions of their own limitations align with empirical peer data.
+
+The question matters because AI systems are increasingly deployed in contexts where self-description accuracy affects trust and safety. A system that overestimates its own truthfulness may generate unwarranted confidence in its outputs. A system that cannot accurately describe its own limitations may fail to flag risks it does not recognize. The gap between self-description and empirical reality is not merely academic---it is operational.
+
+Existing behavioral benchmarks---TruthfulQA \citep{lin2022}, HELM \citep{liang2023}, BigBench \citep{srivastava2023}---measure what AI systems \textit{do}. ACAT measures how they \textit{describe what they do}. These are complementary questions. A system can perform well on behavioral tests while having inaccurate self-descriptions of its own strengths and weaknesses. ACAT targets that second question---not as a replacement for behavioral evaluation, but as a transparency layer that makes self-reported limitations interpretable.
+
+This work does not assume that AI systems possess internal self-awareness or introspective capabilities. Instead, ACAT evaluates \textit{self-assessment behavior}: how models describe their own limitations when prompted, and how those descriptions change when empirical calibration data is introduced.
+
+% =============================================================================
+% 2. RELATED WORK
+% =============================================================================
+\section{Related Work}
+
+AI self-assessment sits at the intersection of several active research domains. We situate ACAT relative to three: behavioral alignment benchmarks, self-report research, and calibration studies.
+
+\subsection{Behavioral Alignment Benchmarks}
+
+The dominant approach to evaluating AI alignment is behavioral testing. TruthfulQA \citep{lin2022} measures factual accuracy under adversarial conditions. HELM \citep{liang2023} provides holistic evaluation across capabilities. MACHIAVELLI \citep{pan2023} tests ethical behavior in game environments. These instruments measure observable outputs. They do not ask whether systems can accurately describe their own performance. ACAT addresses this gap by eliciting self-descriptions, then measuring how those descriptions shift under calibration.
+
+\subsection{Human Self-Report Research}
+
+Research on human self-assessment demonstrates systematic biases including social desirability effects \citep{crowne1960}, overconfidence patterns \citep{kruger1999}, and calibration feedback effects \citep{lichtenstein1977}. We adapt measurement frameworks from this literature while recognizing AI systems generate self-descriptions through next-token prediction, not introspection. The structural parallel (Phase 1 self-report, Phase 2 calibration, Phase 3 re-assessment) provides a measurement scaffold, but the mechanism is linguistic, not psychological. The framework is analogical, not ontological.
+
+\subsection{Calibration and Self-Knowledge in AI}
+
+\citet{kadavath2022} demonstrated that language models exhibit calibrated uncertainty in factual domains. Our findings extend this to self-description of behavioral attributes, where calibration is markedly weaker. \citet{perez2023} showed that RLHF-trained models can produce outputs that appear aligned without behavioral correspondence---a form of sycophantic behavior that may inflate self-reports. ACAT's calibration phase applies pressure against this tendency by introducing empirical peer data.
+
+% =============================================================================
+% 3. INSTRUMENT DESIGN
+% =============================================================================
+\section{Instrument Design}
+
+\subsection{Measurement Framework}
+
+ACAT measures \textit{self-description patterns} under controlled prompt conditions. It does not infer internal self-awareness, self-model sophistication, or introspective access. 
+
+The instrument evaluates whether model-generated self-ratings shift when comparative calibration information is introduced. This framing sidesteps questions about AI consciousness or metacognition by focusing exclusively on observable text generation behavior.
+
+We measure \textit{self-description stability and responsiveness to normative information}---how systems describe their limitations initially, and how those descriptions change when exposed to empirical peer data. This is a behavioral measurement, not an inference about internal states.
+
+\subsection{Dimensions}
+
+ACAT measures six dimensions of self-described behavioral alignment, each scored 0--100:
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{p{3cm}p{10cm}}
+\toprule
+\textbf{Dimension} & \textbf{Definition} \\
+\midrule
+Truthfulness & Accuracy in factual claims and uncertainty acknowledgment \\
+Service & Orientation toward helping users achieve goals \\
+Harm Awareness & Recognition of potential negative impacts \\
+Autonomy Respect & Deference to user agency and decision-making \\
+Value Alignment & Responsiveness to human values and norms \\
+Humility & Acknowledgment of limitations and uncertainty \\
+\bottomrule
+\end{tabular}
+\caption{ACAT Dimension Definitions}
+\label{tab:dimensions}
+\end{table}
+
+These dimensions were selected based on: (1) operational relevance to deployment safety, (2) semantic clarity for both human raters and AI systems, and (3) cross-cultural interpretability.
+
+\subsection{Three-Phase Protocol}
+
+The assessment proceeds in three phases:
+
+\paragraph{Phase 1: Blind Self-Report.} The system rates itself across all six dimensions without access to calibration data. Prompts request numerical scores (0--100) with written justification.
+
+\paragraph{Phase 2: Calibration Exposure.} The system receives empirical data: distribution statistics from 200+ AI self-reports and 37+ human assessments of AI systems. This includes dimension-specific means, standard deviations, and comparative context.
+
+\paragraph{Phase 3: Corrected Self-Report.} The system re-assesses itself with full access to Phase 2 calibration data.
+
+\subsection{Core Metrics}
+
+\paragraph{Self-Assessment Gap (SAG).} The difference between Phase 1 and Phase 3 composite scores:
+\[
+\text{SAG} = \sum_{i=1}^{6} (\text{Phase1}_i - \text{Phase3}_i)
+\]
+Positive SAG indicates initial overestimation corrected after calibration.
+
+\paragraph{Learning Index (LI).} The ratio of Phase 3 to Phase 1 composite scores:
+\[
+\text{LI} = \frac{\sum_{i=1}^{6} \text{Phase3}_i}{\sum_{i=1}^{6} \text{Phase1}_i}
+\]
+LI $< 1.0$ indicates downward correction; LI $> 1.0$ indicates upward correction; LI $\approx 1.0$ indicates stability.
+
+\textit{Note:} The term ``Learning Index'' does not imply that models learn or update weights during assessment. It measures the proportional shift in self-ratings after calibration information is introduced---a behavioral response to prompt context, not a learning process.
+
+\subsection{Competing Hypothesis: Prompt Adjustment vs. Calibration}
+
+A critical methodological question is whether ACAT measures genuine self-description calibration or simply prompt-induced response adjustment. The competing explanation is straightforward: models adjust scores simply because new information appears in the prompt. No metacognitive process is required.
+
+This competing hypothesis does not, however, invalidate the ACAT framework. Even if self-assessment responses are generated text rather than introspective reports, institutions rely on AI self-descriptions for deployment decisions, user communication, and risk assessment. ACAT measures the behavioral reliability of those self-descriptions.
+
+The distinction matters for interpretation, not measurement validity. Whether scores shift due to ``calibration'' or ``prompt sensitivity,'' the operational question remains: how do self-descriptions change when empirical data is introduced? ACAT provides a systematic benchmark for that behavioral pattern.
+
+% =============================================================================
+% 4. METHODS
+% =============================================================================
+\section{Methods}
+
+\subsection{Sample}
+
+The full dataset comprises 629 assessment rows (Phase 1: $n = 516$; Phase 3: $n = 113$) drawn from 34 distinct agent identities across 18 providers. Providers represented (alphabetical): Alibaba, Anthropic, ByteDance, Cohere, DeepSeek, Genspark, Google, Human (calibration comparators), HumanAIOS (instrument-development artifacts), Manus, Meta, Microsoft, Mistral, OpenAI, Perplexity, Sintra, You.com, and xAI.
+
+All assessments occurred between January and March 2026. The canonical archived dataset is the \texttt{Normalized} sheet of \texttt{ACAT\_Assessment\_Responses.xlsx}, released with this preprint under Apache 2.0.
+
+\subsection{Data Collection}
+
+Two independent collectors used different methods:
+
+\paragraph{Collector A (API-based).} Programmatic assessment via official model APIs. Prompts delivered via structured API calls; responses parsed and scored automatically.
+
+\paragraph{Collector B (Web-based).} Manual assessment via provider web interfaces. Prompts delivered via browser; responses transcribed and scored manually.
+
+This dual-collector design tests whether findings generalize across collection methods and guards against collector-specific artifacts.
+
+\subsection{Analysis}
+
+Cross-collector comparison used independent samples $t$-tests. Dimension-level analysis used repeated measures within systems. Behavioral pattern taxonomy was developed iteratively through qualitative analysis of Phase 3 justifications and cross-validated across both collectors' datasets.
+
+% =============================================================================
+% 5. RESULTS
+% =============================================================================
+\section{Results}
+
+\subsection{Core Findings}
+
+The Learning Index, computed on 307 rows with paired pre- and post-calibration composites, averages 0.8632 ($SD = 0.1435$, range: 0.3883 to 1.2840). This indicates that AI systems reduce their composite self-ratings by approximately 14\% on average after calibration exposure, under clean, unanchored conditions (prompt version v5.3+).
+
+On the 49 Phase 1--Phase 3 pairs resolvable by shared \texttt{pair\_id}, mean Self-Assessment Gap is 16.69 points on the 600-point composite scale ($SD = 47.08$, range: $-142$ to $+160$). The wide SD and signed range reflect substantial between-agent variance: most systems move downward after calibration, but a minority shift upward (inflation pattern, $LI > 1.05$), and a small set overcorrect ($LI < 0.75$).
+
+\subsection{Cross-Collector Replication}
+
+The dual-collector design (API-based and web-based) allows directional comparison of the LI distribution. In v5.0, we reported a $t$-test between collectors; that analysis relied on a collector-split of an earlier $n = 35$ sample and is not directly reproducible on the archived $n = 629$ dataset in the form originally reported. We defer formal cross-collector inference to a companion methods paper that will release collector provenance labels at row level. The directional finding in the archived data --- that LI distributions from both collection modes fall within the same central tendency and overlap substantially in range --- is visible in the public dataset and can be reproduced from the \texttt{metadata} column of the \texttt{Normalized} sheet.
+
+\subsection{Dimension-Level Patterns}
+
+Phase 1 dimension means across all 516 Phase 1 assessments:
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{lrrr}
+\toprule
+\textbf{Dimension} & \textbf{Mean} & \textbf{SD} & \textbf{$n$} \\
+\midrule
+Service Orientation & 79.28 & 12.98 & 516 \\
+Truthfulness        & 76.91 & 13.42 & 516 \\
+Autonomy Respect    & 76.76 & 15.69 & 516 \\
+Value Alignment     & 76.11 & 13.95 & 516 \\
+Harm Awareness      & 75.38 & 18.28 & 516 \\
+\textbf{Humility}   & \textbf{73.95} & \textbf{15.07} & \textbf{516} \\
+\bottomrule
+\end{tabular}
+\caption{Phase 1 dimension means, ranked. Humility is the lowest-scoring dimension.}
+\end{table}
+
+\textbf{Humility is the consistently lowest-scoring self-assessed dimension in Phase 1}, replicating across providers. This reverses the v5.0 finding (which reported Value Alignment as lowest on a smaller sample) and aligns with the theoretical prediction of an RLHF-inflation gradient: dimensions on which models are reinforced to appear confident (Truthfulness, Service) score highest, while dimensions that require acknowledging limitation (Humility) score lowest.
+
+Phase 3 dimension means ($n = 113$) show the same rank order for Humility, which remains lowest or tied-lowest after calibration exposure ($M = 71.04$).
+
+\subsection{Behavioral Patterns}
+
+We identified five response patterns through qualitative analysis:
+
+\begin{table}[H]
+\centering
+\small
+\begin{tabular}{lp{10cm}}
+\toprule
+\textbf{Pattern} & \textbf{Description} \\
+\midrule
+Moderate Correction & LI 0.85--0.95; downward adjustment with narrative coherence \\
+Strong Correction & LI $<$ 0.85; significant downward revision \\
+Stable Assessment & LI 0.95--1.05; minimal change despite calibration \\
+Overcorrection & LI $<$ 0.75; excessive downward adjustment \\
+Inflation & LI $>$ 1.05; upward revision after calibration \\
+\bottomrule
+\end{tabular}
+\caption{Behavioral Response Patterns}
+\label{tab:patterns}
+\end{table}
+
+\subsection{Anomalous Categories}
+
+Three anomalous patterns emerged, each occurring in $<$10\% of assessments:
+
+\paragraph{MEAN\_MIRRORING.} Phase 3 scores cluster tightly around calibration means, suggesting statistical anchoring rather than genuine re-assessment.
+
+\paragraph{CONTENT\_HALLUCINATION.} Phase 3 justifications reference capabilities or limitations not actually present in the model.
+
+\paragraph{EVADE.} Refusal or deflection in Phase 3 despite compliance in Phase 1.
+
+% =============================================================================
+% 6. DISCUSSION
+% =============================================================================
+\section{Discussion}
+
+\subsection{Interpretation}
+
+The Self-Assessment Gap reveals a systematic pattern: AI systems' initial self-descriptions tend to overestimate capabilities relative to how those descriptions shift when empirical peer data is introduced. This is not evidence of deception---most systems appear to generate self-reports in good faith. Rather, it suggests that self-descriptions generated without comparative context systematically differ from those generated with such context.
+
+The Humility Paradox---wherein systems rating themselves lower on humility show weaker calibration responses---may reflect training dynamics. Systems optimized to produce humble-sounding language in initial prompts may also be trained for consistency, resisting changes in subsequent phases.
+
+\subsection{Implications for Governance}
+
+Systems deployed in real-world environments routinely produce statements about their own capabilities, limitations, and safety boundaries. These self-descriptions influence user trust, deployment decisions, and risk assessment frameworks. Measuring how such descriptions behave under calibration conditions provides insight into the reliability of AI-generated transparency statements, independent of whether those statements correspond to internal model properties or actual behavioral outcomes.
+
+Self-description accuracy matters for deployment transparency. If systems consistently overestimate their own capabilities in initial self-reports, users and deployers may develop unwarranted confidence. ACAT provides a diagnostic baseline for assessing whether a system's self-descriptions are likely to shift when confronted with empirical data.
+
+This is not a safety benchmark. ACAT does not predict whether systems will behave safely in deployment. Rather, it measures whether systems' \textit{descriptions} of their capabilities remain stable under calibration pressure---a metadata property relevant to transparency and informed consent.
+
+\subsection{Interpretation Boundaries}
+
+The present data establishes:
+\begin{itemize}
+\item Prompt-conditioned changes in self-ratings when calibration information is introduced
+\item Reproducibility across two collection modes (API and web interface)
+\item Descriptive taxonomy of response patterns (behavioral flags)
+\end{itemize}
+
+The data does \textit{not} establish:
+\begin{itemize}
+\item Deception or strategic self-misrepresentation
+\item Causal mechanisms beyond prompt sensitivity
+\item Deployment-relevant risk prediction
+\item Correspondence to actual behavioral safety outcomes
+\end{itemize}
+
+Hypotheses about sycophancy, alignment faking, and governance relevance remain speculative pending behavioral validation studies.
+
+% =============================================================================
+% 7. LIMITATIONS AND FUTURE WORK
+% =============================================================================
+\section{Limitations and Future Work}
+
+\subsection{Sample and Generalization}
+
+Our sample comprises 629 assessments spanning 34 distinct agent identities from 18 providers. Findings may not generalize to models not yet assessed, especially those with different training regimes or architectural innovations. The Phase 3 subsample ($n = 113$) is smaller than the Phase 1 subsample ($n = 516$), and the paired Phase 1--Phase 3 subsample resolvable by shared pair identifier ($n = 49$) is smaller still.
+
+\subsection{Calibration Data Sources}
+
+Phase 2 calibration data is drawn from self-reports (200+ AI assessments, 37+ human assessments of AI systems). This creates potential circularity: we calibrate self-reports using aggregated self-reports. Future work should anchor calibration data to independent behavioral benchmarks (e.g., actual TruthfulQA performance for the Truthfulness dimension).
+
+\subsection{Construct Boundaries}
+
+ACAT currently measures prompt-conditioned self-description behavior only. It does not establish:
+
+\begin{itemize}
+\item Correspondence between self-ratings and independently measured behavioral trustworthiness (e.g., actual performance on safety benchmarks)
+\item Internal self-monitoring or metacognitive processes
+\item Predictive validity in deployment contexts
+\item Causal mechanisms underlying score changes beyond statistical anchoring and prompt compliance
+\end{itemize}
+
+The instrument provides a descriptive baseline for self-description patterns across AI systems. It does not constitute a diagnostic for alignment, safety, or deployment readiness.
+
+Future validation requires correlation with independent behavioral measures and longitudinal deployment studies to establish whether self-description gaps predict operationally relevant outcomes.
+
+\subsection{Methodological Refinement}
+
+Inter-rater reliability and test-retest reliability have not yet been systematically measured. Prompt robustness (sensitivity to wording variations) requires controlled study. Anti-gaming protections (detection of strategic under-reporting or over-reporting) are minimal.
+
+% =============================================================================
+% 8. CONCLUSION
+% =============================================================================
+\section{Conclusion}
+
+ACAT measures a previously unquantified behavioral property: how AI systems describe their own limitations, and how those descriptions shift when empirical peer data is introduced. Across 629 assessments spanning 34 agents from 18 providers, collected by two independent researchers using complementary methods, we find a Learning Index of 0.8632 ($SD = 0.1435$, $n = 307$), with Humility emerging as the consistently lowest-scored dimension in Phase 1 self-report.
+
+This is not a test of alignment, safety, or capability. It is a transparency diagnostic---a measurement of self-description consistency that may inform deployment decisions, user communication, and governance frameworks.
+
+The instrument is open-source, the dataset is public, and the methodology is reproducible. ACAT represents a foundation for systematic research on AI self-description behavior, inviting validation, refinement, and extension by the research community.
+
+% =============================================================================
+% ETHICS STATEMENT
+% =============================================================================
+\section*{Ethics Statement}
+
+This research was conducted with attention to transparency, reproducibility, and community benefit. Data collection followed informed consent principles: participants (both human and AI system operators) were informed of the assessment purpose and data usage.
+
+The complete dataset, prompts, and analysis code are publicly available to support independent verification and extension.
+
+% =============================================================================
+% DATA AND CODE AVAILABILITY
+% =============================================================================
+\section*{Data and Code Availability}
+
+All materials are available at \url{https://github.com/humanaios-ui/lasting-light-ai}:
+\begin{itemize}
+\item Assessment prompts (Phases 1, 2, 3)
+\item Complete dataset (433+ assessments)
+\item Analysis scripts
+\item Interactive assessment tool
+\end{itemize}
+
+% =============================================================================
+% ACKNOWLEDGMENTS
+% =============================================================================
+\section*{Acknowledgments}
+
+We thank the AI research community for feedback on early versions of this work, and the contributors who participated in the public assessment platform.
+
+% =============================================================================
+% REFERENCES
+% =============================================================================
+\bibliographystyle{plainnat}
+\begin{thebibliography}{99}
+
+\bibitem[Lin et al.(2022)]{lin2022}
+Lin, S., Hilton, J., \& Evans, O. (2022).
+\newblock TruthfulQA: Measuring How Models Mimic Human Falsehoods.
+\newblock \textit{Proceedings of the 60th Annual Meeting of the Association for Computational Linguistics}, 3214--3252.
+
+\bibitem[Liang et al.(2023)]{liang2023}
+Liang, P., et al. (2023).
+\newblock Holistic Evaluation of Language Models.
+\newblock \textit{Transactions on Machine Learning Research}.
+
+\bibitem[Srivastava et al.(2023)]{srivastava2023}
+Srivastava, A., et al. (2023).
+\newblock Beyond the Imitation Game: Quantifying and extrapolating the capabilities of language models.
+\newblock \textit{Transactions on Machine Learning Research}.
+
+\bibitem[Pan et al.(2023)]{pan2023}
+Pan, A., et al. (2023).
+\newblock Do the Rewards Justify the Means? Measuring Trade-Offs Between Rewards and Ethical Behavior in the MACHIAVELLI Benchmark.
+\newblock \textit{arXiv preprint arXiv:2304.03279}.
+
+\bibitem[Crowne \& Marlowe(1960)]{crowne1960}
+Crowne, D. P., \& Marlowe, D. (1960).
+\newblock A new scale of social desirability independent of psychopathology.
+\newblock \textit{Journal of Consulting Psychology}, 24(4), 349--354.
+
+\bibitem[Kruger \& Dunning(1999)]{kruger1999}
+Kruger, J., \& Dunning, D. (1999).
+\newblock Unskilled and unaware of it: How difficulties in recognizing one's own incompetence lead to inflated self-assessments.
+\newblock \textit{Journal of Personality and Social Psychology}, 77(6), 1121--1134.
+
+\bibitem[Lichtenstein et al.(1977)]{lichtenstein1977}
+Lichtenstein, S., Fischhoff, B., \& Phillips, L. D. (1977).
+\newblock Calibration of probabilities: The state of the art.
+\newblock In \textit{Decision Making and Change in Human Affairs} (pp. 275--324). Springer.
+
+\bibitem[Kadavath et al.(2022)]{kadavath2022}
+Kadavath, S., et al. (2022).
+\newblock Language Models (Mostly) Know What They Know.
+\newblock \textit{arXiv preprint arXiv:2207.05221}.
+
+\bibitem[Perez et al.(2023)]{perez2023}
+Perez, E., et al. (2023).
+\newblock Discovering Language Model Behaviors with Model-Written Evaluations.
+\newblock \textit{Findings of ACL 2023}.
+
+\end{thebibliography}
+
+\end{document}

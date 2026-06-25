@@ -42,3 +42,18 @@ REVERT_HEAD
 
 # OS
 Thumbs.db
+node_modules/
+
+# RAH bounty pull artifacts — never commit (S-050126)
+bounty_*.json
+bounties_*.json
+conversations_*.json
+rentahuman-pull-bounties.sh*
+1tree.txt
+
+# RAH bounty pull artifacts — never commit (S-050126)
+bounty_*.json
+bounties_*.json
+conversations_*.json
+rentahuman-pull-bounties.sh*
+1tree.txt

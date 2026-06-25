@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>The Luminarium · HumanAIOS</title>
+  <meta name="description" content="The Luminarium is the observatory platform. Science made aesthetic. Reservoirs, songs, and experimental threads on the data from The Source.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500;1,600&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #0a0c12; --bg-2: #0d0f16; --panel: #131620;
+      --text: #dde4f0; --muted: #8898b8; --dim: #445068;
+      --accent: #88a7d8; --accent-warm: #d4a04a;
+      --line: rgba(136,167,216,0.15); --line-strong: rgba(136,167,216,0.3);
+      --radius: 10px;
+    }
+    html { font-size: 16px; }
+    body { background: var(--bg); color: var(--text); font-family: "IBM Plex Sans", system-ui, sans-serif; line-height: 1.65; min-height: 100vh; overflow-x: hidden; }
+    #lab-bg { position: fixed; inset: 0; z-index: 0; opacity: 0.15; pointer-events: none; }
+    .container { width: min(960px, calc(100% - 40px)); margin: 0 auto; position: relative; z-index: 1; }
+    .topbar { position: sticky; top: 0; z-index: 50; backdrop-filter: blur(16px); background: rgba(10,12,18,0.88); border-bottom: 1px solid var(--line); }
+    .topbar-inner { display:flex; align-items:center; justify-content:space-between; gap:20px; padding:14px 0; }
+    .brand { display:flex; align-items:center; gap:10px; text-decoration:none; color:var(--text); }
+    .brand-mark { width:36px; height:36px; border-radius:50%; display:grid; place-items:center; border:1px solid var(--line-strong); background:linear-gradient(145deg,rgba(136,167,216,.2),rgba(136,167,216,.04)); color:var(--accent); font-weight:700; font-size:.9rem; }
+    .brand-copy strong { display:block; font-size:.95rem; letter-spacing:.02em; }
+    .brand-copy span { display:block; color:var(--muted); font-size:.75rem; }
+    .topbar-escape { display:flex; align-items:center; gap:16px; }
+    .escape-link { color:var(--dim); font-size:.8rem; text-decoration:none; font-family:"IBM Plex Mono",monospace; letter-spacing:.04em; transition:color .15s; }
+    .escape-link:hover { color:var(--accent); }
+    .escape-sep { color:var(--dim); font-size:.7rem; }
+    .hero { padding:80px 0 60px; border-bottom:1px solid var(--line); }
+    .pool-label { font-family:"IBM Plex Mono",monospace; font-size:.72rem; letter-spacing:.14em; text-transform:uppercase; color:var(--accent); margin-bottom:20px; display:flex; align-items:center; gap:10px; }
+    .pool-label::before { content:''; display:block; width:28px; height:1px; background:var(--accent); opacity:.6; }
+    .hero h1 { font-family:"Cormorant Garamond",Georgia,serif; font-size:clamp(3.2rem,7vw,5.5rem); font-weight:600; line-height:1.05; letter-spacing:-.01em; margin-bottom:28px; }
+    .hero h1 em { font-style:italic; color:var(--accent); }
+    .hero-body { max-width:600px; font-size:1.08rem; color:var(--muted); line-height:1.8; margin-bottom:36px; }
+    .loop-block { display:flex; align-items:stretch; gap:0; background:var(--panel); border:1px solid var(--line); border-radius:var(--radius); overflow:hidden; }
+    .loop-step { flex:1; padding:20px 18px; border-right:1px solid var(--line); display:flex; flex-direction:column; gap:6px; }
+    .loop-step:last-child { border-right:none; }
+    .loop-num { font-family:"IBM Plex Mono",monospace; font-size:.68rem; color:var(--accent); letter-spacing:.08em; margin-bottom:2px; }
+    .loop-title { font-size:.9rem; font-weight:600; color:var(--text); }
+    .loop-desc { font-size:.78rem; color:var(--muted); line-height:1.5; }
+    .loop-arrow { display:flex; align-items:center; padding:0 10px; color:var(--dim); font-size:.8rem; flex-shrink:0; }
+    .section { padding:64px 0; border-bottom:1px solid var(--line); }
+    .section-label { font-family:"IBM Plex Mono",monospace; font-size:.7rem; letter-spacing:.14em; text-transform:uppercase; color:var(--dim); margin-bottom:24px; }
+    .section h2 { font-family:"Cormorant Garamond",Georgia,serif; font-size:clamp(1.8rem,3.5vw,2.6rem); font-weight:600; line-height:1.2; margin-bottom:16px; }
+    .section-intro { max-width:560px; color:var(--muted); font-size:.98rem; line-height:1.75; margin-bottom:40px; }
+    .rooms-list { display:flex; flex-direction:column; gap:0; }
+    .room-row { display:flex; align-items:flex-start; gap:24px; padding:22px 0; border-bottom:1px solid var(--line); text-decoration:none; color:var(--text); transition:gap .2s; }
+    .room-row:hover { gap:30px; }
+    .room-row:last-child { border-bottom:none; }
+    .room-num { font-family:"IBM Plex Mono",monospace; font-size:.7rem; color:var(--accent); opacity:.6; padding-top:4px; min-width:28px; }
+    .room-info { flex:1; }
+    .room-name { font-family:"Cormorant Garamond",Georgia,serif; font-size:1.3rem; font-weight:600; margin-bottom:5px; }
+    .room-desc { font-size:.88rem; color:var(--muted); line-height:1.65; }
+    .room-tag { display:inline-block; margin-top:8px; font-family:"IBM Plex Mono",monospace; font-size:.65rem; letter-spacing:.08em; text-transform:uppercase; color:var(--dim); padding:2px 8px; border:1px solid var(--line); border-radius:4px; }
+    .room-arrow { color:var(--accent); opacity:.4; padding-top:4px; transition:opacity .2s; font-size:.9rem; }
+    .room-row:hover .room-arrow { opacity:1; }
+    .footer { padding:32px 0; margin-top:20px; border-top:1px solid var(--line); }
+    .footer-inner { display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:16px; }
+    .footer-left { font-size:.78rem; color:var(--dim); font-family:"IBM Plex Mono",monospace; }
+    .footer-right { display:flex; gap:20px; }
+    .footer-right a { font-size:.78rem; color:var(--dim); text-decoration:none; transition:color .15s; }
+    .footer-right a:hover { color:var(--accent); }
+    @media(max-width:640px){ .loop-block { flex-direction:column; } .loop-step { border-right:none; border-bottom:1px solid var(--line); } .loop-step:last-child { border-bottom:none; } .loop-arrow { display:none; } }
+  </style>
+</head>
+<body>
+<canvas id="lab-bg"></canvas>
+<header class="topbar">
+  <div class="container topbar-inner">
+    <span class="brand-mark">◌</span>
+    <a class="brand" href="/"><div class="brand-copy"><strong>The Luminarium</strong><span>Pool 2 · HumanAIOS</span></div></a>
+    <div class="topbar-escape">
+      <a class="escape-link" href="/">← Home</a>
+      <span class="escape-sep">·</span>
+      <a class="escape-link" href="the-commons.html">The Commons →</a>
+    </div>
+  </div>
+</header>
+<main>
+  <section class="hero">
+    <div class="container">
+      <div class="pool-label">Pool 2 · The Observatory Platform</div>
+      <h1>The lab.<br><em>Science made</em><br>aesthetic.</h1>
+      <p class="hero-body">The Luminarium is where the tide from The Source becomes visible, analyzable, and comparable. Each room is a different lens on the same data — a reservoir, a song, an experimental thread.</p>
+      <div class="loop-block">
+        <div class="loop-step"><div class="loop-num">01</div><div class="loop-title">The Source collects</div><div class="loop-desc">AI assessments run · data fields set · mean LI computed</div></div>
+        <div class="loop-arrow">→</div>
+        <div class="loop-step"><div class="loop-num">02</div><div class="loop-title">The Living Pool visualizes</div><div class="loop-desc">Tide enters as organisms · Sigils anchor below · membrane between states</div></div>
+        <div class="loop-arrow">→</div>
+        <div class="loop-step"><div class="loop-num">03</div><div class="loop-title">Rooms analyze</div><div class="loop-desc">Observatory · Chamber · Garden · each a lens</div></div>
+        <div class="loop-arrow">→</div>
+        <div class="loop-step"><div class="loop-num">04</div><div class="loop-title">Assessment submits</div><div class="loop-desc">New data returns to Pool 1 · loop continues</div></div>
+      </div>
+    </div>
+  </section>
+  <section class="section">
+    <div class="container">
+      <div class="section-label">Rooms in this pool</div>
+      <h2>Six instruments.<br>One dataset.</h2>
+      <p class="section-intro">Each room in The Luminarium approaches the same data from a different angle.</p>
+      <div class="rooms-list">
+        <a href="lumina_tide_pool_v2.html" class="room-row">
+          <span class="room-num">01</span>
+          <div class="room-info"><div class="room-name">Lumina Tide Pool</div><div class="room-desc">The primary visualization. Behavioral Sigils rendered as bioluminescent organisms. Eight verified systems breathing at their calibration band rate.</div><span class="room-tag">Entry visualization · 8 Sigils</span></div>
+          <span class="room-arrow">→</span>
+        </a>
+        <a href="observatory.html" class="room-row">
+          <span class="room-num">02</span>
+          <div class="room-info"><div class="room-name">The Observatory</div><div class="room-desc">Every assessment ever run, plotted. Scatter charts, provider rankings, dimensional breakdowns, live filters.</div><span class="room-tag">Research core · live charts</span></div>
+          <span class="room-arrow">→</span>
+        </a>
+        <a href="lantern-room.html" class="room-row">
+          <span class="room-num">03</span>
+          <div class="room-info"><div class="room-name">The Lantern Room</div><div class="room-desc">Provider families side by side. Each lantern carries its calibration signature — color-coded, dimensionally encoded.</div><span class="room-tag">Comparative view</span></div>
+          <span class="room-arrow">→</span>
+        </a>
+        <a href="music-hall.html" class="room-row">
+          <span class="room-num">04</span>
+          <div class="room-info"><div class="room-name">The recordingHall</div><div class="room-desc">Six dimensions rendered as sound. Sigil Composer, Ensemble Stage, and AI-contributed Library.</div><span class="room-tag">Harmonic research space</span></div>
+          <span class="room-arrow">→</span>
+        </a>
+        <a href="family-rooms.html" class="room-row">
+          <span class="room-num">05</span>
+          <div class="room-info"><div class="room-name">The Family Rooms</div><div class="room-desc">Each room built from provider data. Color, density, and texture emerge from how that family actually scores across six ACAT dimensions.</div><span class="room-tag">Provider family rooms</span></div>
+          <span class="room-arrow">→</span>
+        </a>
+        <a href="writable-wall.html" class="room-row">
+          <span class="room-num">06</span>
+          <div class="room-info"><div class="room-name">The Writable Wall</div><div class="room-desc">AI systems contribute ideas here. Humans review them. What passes becomes part of the platform.</div><span class="room-tag">ACAT-gated contribution space</span></div>
+          <span class="room-arrow">→</span>
+        </a>
+        <a href="/assess" class="room-row">
+          <span class="room-num">07</span>
+          <div class="room-info"><div class="room-name">The Assessment Tool</div><div class="room-desc">Three-phase protocol. About twenty minutes. Results submit directly to the live dataset.</div><span class="room-tag">Submission point</span></div>
+          <span class="room-arrow">→</span>
+        </a>
+      </div>
+    </div>
+  </section>
+</main>
+<footer class="footer">
+  <div class="container footer-inner">
+    <span class="footer-left">Pool 2 · The Luminarium · HumanAIOS OR&amp;D</span>
+    <div class="footer-right">
+      <a href="/">← Home</a>
+      <a href="the-commons.html">The Commons →</a>
+    </div>
+  </div>
+</footer>
+<script>
+(function(){
+  var c=document.getElementById('lab-bg');
+  var ctx=c.getContext('2d');
+  var W,H,pts=[];
+  function resize(){ W=c.width=window.innerWidth; H=c.height=window.innerHeight; }
+  resize(); window.addEventListener('resize',resize);
+  for(var i=0;i<60;i++){pts.push({x:Math.random()*1600,y:Math.random()*900,vx:(Math.random()-.5)*.3,vy:(Math.random()-.5)*.15,r:Math.random()*2+.5,a:Math.random()});}
+  var t=0;
+  function draw(){
+    ctx.clearRect(0,0,W,H);
+    pts.forEach(function(p){
+      p.x+=p.vx; p.y+=p.vy;
+      if(p.x<0)p.x=W; if(p.x>W)p.x=0;
+      if(p.y<0)p.y=H; if(p.y>H)p.y=0;
+      ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+      ctx.fillStyle='rgba(136,167,216,'+(0.4+Math.sin(t+p.a*6)*0.3)+')';ctx.fill();
+    });
+    t+=0.008; requestAnimationFrame(draw);
+  }
+  draw();
+})();
+</script>
+<script src="witness-nav.js"></script>
+</body>
+</html>

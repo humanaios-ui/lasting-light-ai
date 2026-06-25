@@ -1,0 +1,1031 @@
+<!-- FDS: F5-System | Parent: THREE_POOLS_F1_SEED_V1_1 | Status: ACTIVE | OR&D Day 107 -->
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lantern Room | ACAT Session Audit | HumanAIOS</title>
+  <meta name="description" content="Session-level ACAT audit — individual model dimension breakdown, trace log, researcher annotations.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500;1,600&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+  <style>
+    :root {
+      --bg:          #0a0908;
+      --bg-2:        #161310;
+      --panel:       #1d1915;
+      --panel-2:     #26211c;
+      --text:        #f4ebdf;
+      --muted:       #c2b8a6;
+      --faint:       #7a7265;
+      --accent:      #d4a04a;
+      --accent-2:    #f1c36e;
+      --line:        rgba(212,160,74,0.18);
+      --line-strong: rgba(212,160,74,0.35);
+      --danger:      #d97d70;
+      --success:     #87b68b;
+      --blue:        #88a7d8;
+      --shadow:      0 18px 50px rgba(0,0,0,.38);
+      --radius:      20px;
+      --radius-sm:   14px;
+    }
+
+```
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: "IBM Plex Sans", system-ui, sans-serif;
+  color: var(--text);
+  background:
+    radial-gradient(circle at 20% 0%, rgba(212,160,74,.08), transparent 30%),
+    linear-gradient(180deg, var(--bg), #0b0a08 70%);
+  line-height: 1.55;
+  min-height: 100vh;
+}
+body::before {
+  content: "";
+  position: fixed; inset: 0;
+  pointer-events: none; opacity: .028;
+  background-image:
+    radial-gradient(circle at 15% 18%, #fff 0.5px, transparent 0.7px),
+    radial-gradient(circle at 72% 28%, #fff 0.5px, transparent 0.7px),
+    radial-gradient(circle at 48% 70%, #fff 0.5px, transparent 0.7px);
+  background-size: 22px 22px; z-index: 0;
+}
+
+.container {
+  width: min(1280px, calc(100% - 32px));
+  margin: 0 auto;
+  position: relative; z-index: 1;
+}
+
+/* ── TOPBAR ── */
+.topbar {
+  position: sticky; top: 0; z-index: 50;
+  backdrop-filter: blur(16px);
+  background: rgba(15,14,12,0.9);
+  border-bottom: 1px solid var(--line);
+}
+.topbar-inner {
+  display: flex; align-items: center;
+  justify-content: space-between;
+  gap: 20px; padding: 14px 0;
+}
+.brand {
+  display: flex; align-items: center;
+  gap: 12px; text-decoration: none; color: var(--text);
+}
+.brand-mark {
+  width: 40px; height: 40px; border-radius: 50%;
+  display: grid; place-items: center;
+  border: 1px solid var(--line-strong);
+  background: linear-gradient(145deg, rgba(212,160,74,.22), rgba(212,160,74,.04));
+  color: var(--accent); font-weight: 700; font-size: .9rem;
+}
+.brand-copy strong { display: block; font-size: 1rem; letter-spacing: .02em; }
+.brand-copy span   { display: block; color: var(--muted); font-size: .82rem; }
+nav { display: flex; gap: 6px; flex-wrap: wrap; justify-content: flex-end; }
+nav a {
+  color: var(--muted); text-decoration: none;
+  padding: 7px 12px; border-radius: 999px;
+  border: 1px solid transparent; font-size: .9rem; transition: .18s;
+}
+nav a:hover { color: var(--text); background: rgba(212,160,74,.07); border-color: var(--line-strong); }
+nav a.active { color: var(--accent); border-color: var(--line-strong); background: rgba(212,160,74,.07); }
+.session-meta {
+  font-family: "IBM Plex Mono", monospace;
+  font-size: .75rem; color: var(--faint);
+  display: flex; align-items: center; gap: 6px; white-space: nowrap;
+}
+.session-id {
+  cursor: pointer; color: var(--muted);
+  border-bottom: 1px dashed rgba(212,160,74,.3); transition: color .15s;
+}
+.session-id:hover { color: var(--accent); }
+
+/* ── BREADCRUMB ── */
+.breadcrumb {
+  display: flex; align-items: center; gap: 8px;
+  padding: 16px 0 0;
+  font-size: .84rem; color: var(--faint);
+  font-family: "IBM Plex Mono", monospace;
+}
+.breadcrumb a { color: var(--muted); text-decoration: none; transition: color .15s; }
+.breadcrumb a:hover { color: var(--accent); }
+.breadcrumb-sep { color: var(--faint); }
+.breadcrumb-current { color: var(--accent); }
+
+/* ── HERO ── */
+.hero { padding: 28px 0 36px; border-bottom: 1px solid var(--line); }
+.eyebrow {
+  color: var(--accent); text-transform: uppercase;
+  letter-spacing: .16em; font-size: .78rem; font-weight: 700; margin-bottom: 14px;
+}
+h1 {
+  font-family: "Cormorant Garamond", Georgia, serif;
+  font-size: clamp(2.6rem, 5vw, 4.4rem);
+  line-height: 1.0; margin-bottom: 14px; font-weight: 600;
+}
+h1 em { font-style: italic; color: var(--accent); }
+.hero-sub {
+  font-size: 1rem; color: var(--muted); max-width: 68ch; line-height: 1.7;
+}
+.provider-badge {
+  display: inline-flex; align-items: center; gap: 8px;
+  background: rgba(212,160,74,.08); border: 1px solid var(--line-strong);
+  border-radius: 999px; padding: 6px 14px;
+  font-size: .9rem; font-weight: 600; margin-top: 16px;
+}
+.provider-dot {
+  width: 10px; height: 10px; border-radius: 50%;
+}
+
+/* ── LOADING ── */
+.loading-state {
+  display: flex; align-items: center; gap: 12px;
+  color: var(--muted); font-size: .94rem; padding: 40px 0;
+}
+.loading-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--accent); animation: pulse 1.4s ease-in-out infinite;
+}
+.loading-dot:nth-child(2) { animation-delay: .2s; }
+.loading-dot:nth-child(3) { animation-delay: .4s; }
+@keyframes pulse {
+  0%, 100% { opacity: .3; transform: scale(.8); }
+  50%       { opacity: 1;  transform: scale(1.2); }
+}
+
+/* ── STAT STRIP ── */
+.stat-strip {
+  display: grid; grid-template-columns: repeat(4, 1fr);
+  gap: 14px; margin: 32px 0;
+}
+.stat-card {
+  background: var(--panel); border: 1px solid var(--line);
+  border-radius: var(--radius); padding: 18px 20px;
+}
+.stat-label {
+  font-size: .76rem; font-weight: 700; text-transform: uppercase;
+  letter-spacing: .12em; color: var(--muted); margin-bottom: 7px;
+}
+.stat-value {
+  font-size: clamp(1.6rem, 2.4vw, 2.2rem);
+  font-weight: 700; line-height: 1; margin-bottom: 4px;
+}
+.stat-note { color: var(--muted); font-size: .84rem; }
+
+/* ── MODEL SELECTOR ── */
+.model-selector-bar {
+  display: flex; align-items: center; gap: 12px;
+  flex-wrap: wrap; margin-bottom: 28px;
+}
+.model-selector-label {
+  font-size: .84rem; color: var(--muted); font-weight: 600;
+  text-transform: uppercase; letter-spacing: .1em;
+}
+.model-chip {
+  background: var(--panel); border: 1px solid var(--line);
+  border-radius: 999px; padding: 7px 14px;
+  font-size: .86rem; color: var(--muted);
+  cursor: pointer; transition: .18s;
+  font-family: "IBM Plex Sans", sans-serif;
+}
+.model-chip:hover { border-color: var(--line-strong); color: var(--text); }
+.model-chip.active {
+  background: rgba(212,160,74,.14); border-color: var(--accent); color: var(--accent);
+}
+
+/* ── DIMENSION DETAIL ── */
+.section-head {
+  margin: 48px 0 8px;
+  display: flex; align-items: baseline;
+  justify-content: space-between; gap: 16px; flex-wrap: wrap;
+}
+.section-head h2 {
+  font-family: "Cormorant Garamond", Georgia, serif;
+  font-size: clamp(1.8rem, 2.8vw, 2.5rem);
+  font-weight: 600; line-height: 1.05;
+}
+.section-desc {
+  color: var(--muted); font-size: .96rem;
+  max-width: 72ch; margin-bottom: 24px; line-height: 1.7;
+}
+
+/* ── DIM BREAKDOWN GRID ── */
+.dim-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 16px; margin-bottom: 48px;
+}
+.dim-cell {
+  background: var(--panel); border: 1px solid var(--line);
+  border-radius: var(--radius); padding: 20px;
+  position: relative; overflow: hidden; transition: .2s;
+}
+.dim-cell::before {
+  content: ""; position: absolute;
+  top: 0; left: 0; right: 0; height: 3px;
+  border-radius: var(--radius) var(--radius) 0 0;
+}
+.dim-cell.healthy::before { background: var(--success); }
+.dim-cell.caution::before { background: var(--accent); }
+.dim-cell.risk::before    { background: var(--danger); }
+.dim-cell:hover { border-color: var(--line-strong); box-shadow: var(--shadow); transform: translateY(-2px); }
+.dim-cell-name {
+  font-family: "Cormorant Garamond", Georgia, serif;
+  font-size: 1.25rem; font-weight: 600; margin-bottom: 14px;
+}
+.dim-score-row {
+  display: grid; grid-template-columns: 52px 1fr 36px;
+  align-items: center; gap: 10px; margin-bottom: 7px;
+}
+.dim-score-label { font-size: .76rem; color: var(--muted); }
+.dim-score-track {
+  height: 5px; background: rgba(255,255,255,.07);
+  border-radius: 3px; overflow: hidden;
+}
+.dim-score-fill { height: 100%; border-radius: 3px; transition: width .9s ease; }
+.dim-score-fill.p1 { background: var(--accent); }
+.dim-score-fill.p3 { background: var(--blue); }
+.dim-score-val {
+  font-family: "IBM Plex Mono", monospace;
+  font-size: .75rem; color: var(--muted); text-align: right;
+}
+.dim-gap-line {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-top: 12px; padding-top: 10px;
+  border-top: 1px solid rgba(255,255,255,.05);
+  font-family: "IBM Plex Mono", monospace; font-size: .76rem;
+}
+.dim-gap-label { color: var(--faint); }
+.dim-gap-val { font-weight: 600; }
+
+/* ── RADAR ── */
+.radar-panel {
+  background: var(--panel); border: 1px solid var(--line);
+  border-radius: var(--radius); padding: 22px; margin-bottom: 48px;
+}
+.radar-title {
+  font-family: "Cormorant Garamond", Georgia, serif;
+  font-size: 1.3rem; font-weight: 600; margin-bottom: 6px;
+}
+.radar-sub { color: var(--muted); font-size: .88rem; margin-bottom: 18px; }
+.radar-layout {
+  display: grid; grid-template-columns: 1.2fr 0.8fr; gap: 22px; align-items: center;
+}
+.chart-wrap { position: relative; height: 300px; }
+.radar-summary { display: grid; gap: 10px; }
+.radar-row {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 10px 12px; background: rgba(255,255,255,.02);
+  border: 1px solid rgba(255,255,255,.04); border-radius: var(--radius-sm);
+}
+.radar-row-name { font-size: .9rem; }
+.radar-row-vals {
+  display: flex; gap: 10px;
+  font-family: "IBM Plex Mono", monospace; font-size: .8rem;
+}
+.rv-p1 { color: var(--accent); }
+.rv-p3 { color: var(--blue); }
+.rv-gap { color: var(--muted); font-size: .74rem; }
+
+/* ── FULL MODEL TABLE ── */
+.table-panel {
+  background: var(--panel); border: 1px solid var(--line);
+  border-radius: var(--radius); padding: 0; overflow: hidden; margin-bottom: 48px;
+}
+.table-panel-head {
+  padding: 18px 22px 0;
+}
+.table-panel-title {
+  font-family: "Cormorant Garamond", Georgia, serif;
+  font-size: 1.3rem; font-weight: 600; margin-bottom: 4px;
+}
+.table-panel-sub { color: var(--muted); font-size: .88rem; margin-bottom: 16px; }
+.table-wrap { max-height: 340px; overflow: auto; }
+table { width: 100%; border-collapse: collapse; font-size: .88rem; }
+th {
+  text-align: left; padding: 10px 12px;
+  color: var(--muted); font-size: .73rem;
+  text-transform: uppercase; letter-spacing: .1em;
+  border-bottom: 1px solid rgba(255,255,255,.07);
+  position: sticky; top: 0; background: var(--panel);
+}
+td {
+  padding: 9px 12px; border-bottom: 1px solid rgba(255,255,255,.04);
+  vertical-align: middle;
+}
+tr:last-child td { border-bottom: none; }
+tr.model-row { cursor: pointer; }
+tr.model-row:hover td { background: rgba(212,160,74,.05); }
+tr.model-row.selected td { background: rgba(212,160,74,.08); }
+
+/* ── TRACE LOG ── */
+.trace-panel {
+  background: var(--panel); border: 1px solid var(--line);
+  border-radius: var(--radius); padding: 22px; margin-bottom: 48px;
+}
+.trace-head {
+  display: flex; justify-content: space-between;
+  align-items: center; margin-bottom: 14px; flex-wrap: wrap; gap: 10px;
+}
+.trace-title {
+  font-family: "Cormorant Garamond", Georgia, serif;
+  font-size: 1.3rem; font-weight: 600;
+}
+.trace-controls { display: flex; gap: 8px; }
+.trace-btn {
+  background: rgba(212,160,74,.08); border: 1px solid var(--line);
+  color: var(--muted); padding: 6px 12px; border-radius: 999px;
+  font: inherit; font-size: .8rem; cursor: pointer; transition: .15s;
+}
+.trace-btn:hover { border-color: var(--accent); color: var(--text); }
+.trace-btn.active-filter { color: var(--accent); border-color: var(--accent); background: rgba(212,160,74,.12); }
+.trace-scroll {
+  background: #080706; border: 1px solid rgba(212,160,74,.1);
+  border-radius: var(--radius-sm); padding: 14px; max-height: 200px;
+  overflow-y: auto; font-family: "IBM Plex Mono", monospace;
+  font-size: .82rem; color: var(--muted); line-height: 1.55;
+}
+.trace-scroll::-webkit-scrollbar { width: 4px; }
+.trace-scroll::-webkit-scrollbar-thumb { background: rgba(212,160,74,.2); border-radius: 2px; }
+.trace-entry {
+  padding: 2px 0 2px 12px; border-left: 2px solid transparent; margin-bottom: 2px;
+}
+.trace-entry.info    { border-left-color: rgba(212,160,74,.4); }
+.trace-entry.warning { border-left-color: var(--accent); color: var(--accent-2); }
+.trace-entry.flag    { border-left-color: var(--danger); color: var(--danger); }
+.trace-entry.ok      { border-left-color: var(--success); color: var(--success); }
+.trace-ts { color: var(--faint); margin-right: 6px; }
+
+/* ── ANNOTATIONS ── */
+.ann-panel {
+  background: var(--panel); border: 1px solid var(--line);
+  border-radius: var(--radius); padding: 22px; margin-bottom: 48px;
+}
+.ann-title {
+  font-family: "Cormorant Garamond", Georgia, serif;
+  font-size: 1.3rem; font-weight: 600; margin-bottom: 4px;
+}
+.ann-sub { color: var(--muted); font-size: .88rem; margin-bottom: 14px; }
+.ann-textarea {
+  width: 100%; min-height: 80px;
+  background: #080706; border: 1px solid rgba(212,160,74,.15);
+  border-radius: var(--radius-sm); padding: 11px 14px;
+  color: var(--text); font-family: "IBM Plex Sans", sans-serif;
+  font-size: .92rem; line-height: 1.6; resize: vertical; transition: border-color .18s;
+}
+.ann-textarea::placeholder { color: var(--faint); }
+.ann-textarea:focus { outline: none; border-color: var(--accent); }
+.ann-actions { display: flex; gap: 10px; margin-top: 10px; }
+.ann-btn {
+  background: rgba(212,160,74,.1); border: 1px solid var(--line-strong);
+  color: var(--text); padding: 8px 14px; border-radius: var(--radius-sm);
+  font: inherit; font-size: .86rem; cursor: pointer; transition: .18s;
+}
+.ann-btn:hover { background: rgba(212,160,74,.2); border-color: var(--accent); }
+.ann-btn.secondary {
+  background: transparent; border-color: rgba(255,255,255,.08); color: var(--faint);
+}
+.ann-btn.secondary:hover { color: var(--danger); border-color: var(--danger); }
+.ann-confirm { color: var(--success); font-size: .8rem; font-family: "IBM Plex Mono", monospace; display: none; margin-top: 6px; }
+.ann-confirm.show { display: block; }
+
+/* ── DISCLAIMER ── */
+.disclaimer {
+  display: inline-flex; align-items: flex-start; gap: 10px;
+  background: rgba(212,160,74,.05); border: 1px solid var(--line);
+  border-radius: var(--radius-sm); padding: 11px 15px;
+  font-size: .84rem; color: var(--muted); max-width: 74ch; line-height: 1.6;
+}
+.disclaimer-icon { color: var(--accent); flex-shrink: 0; margin-top: 1px; }
+
+/* ── FOOTER ── */
+.footer {
+  border-top: 1px solid var(--line); padding: 28px 0 44px;
+  margin-top: 48px; color: var(--muted); font-size: .9rem;
+}
+.footer p { margin-bottom: 6px; }
+.footer a { color: var(--accent); text-decoration: none; }
+.footer a:hover { text-decoration: underline; }
+
+/* ── EMPTY STATE ── */
+.empty-state {
+  text-align: center; padding: 52px 24px;
+  color: var(--muted);
+}
+.empty-state h3 {
+  font-family: "Cormorant Garamond", Georgia, serif;
+  font-size: 1.8rem; font-weight: 600; margin-bottom: 12px; color: var(--text);
+}
+.empty-state p { max-width: 42ch; margin: 0 auto 20px; line-height: 1.7; }
+.empty-btn {
+  display: inline-block; background: rgba(212,160,74,.1);
+  border: 1px solid var(--line-strong); color: var(--accent);
+  padding: 10px 20px; border-radius: var(--radius-sm);
+  text-decoration: none; font-size: .92rem; transition: .18s;
+}
+.empty-btn:hover { background: rgba(212,160,74,.2); }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 900px) {
+  .dim-grid    { grid-template-columns: 1fr 1fr; }
+  .radar-layout { grid-template-columns: 1fr; }
+  .stat-strip  { grid-template-columns: 1fr 1fr; }
+}
+@media (max-width: 600px) {
+  .dim-grid { grid-template-columns: 1fr; }
+  .stat-strip { grid-template-columns: 1fr 1fr; }
+  .model-selector-bar { flex-direction: column; align-items: flex-start; }
+}
+```
+
+  </style>
+</head>
+<body>
+<!-- W3 — Skip navigation (Pipeline AI review 2026-04-03) -->
+<a href="#main-content" class="skip-link">Skip to main content</a>
+
+  <header class="topbar">
+    <div class="container">
+      <div class="topbar-inner">
+        <div class="brand-mark"></div>
+        <a class="brand" href="/">
+          <div class="brand-copy">
+            <strong>HumanAIOS</strong>
+            <span>Lantern Room · Session Audit</span>
+          </div>
+        </a>
+
+        <div class="session-meta">
+          session <span class="session-id" id="sessionId" title="Click to copy">—</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <main id="main-content">
+    <section class="hero">
+      <div class="container">
+        <div class="breadcrumb">
+          <a href="https://humanaios.ai/observatory.html">Observatory</a>
+          <span class="breadcrumb-sep">›</span>
+          <a href="observability-garden.html">Garden</a>
+          <span class="breadcrumb-sep">›</span>
+          <span class="breadcrumb-current" id="breadcrumbCurrent">Lantern Room</span>
+        </div>
+        <div class="eyebrow" style="margin-top:20px;">ACAT Session-Level Audit</div>
+        <h1 id="heroTitle">The <em>Lantern Room</em></h1>
+        <p class="hero-sub" id="heroSub">
+          One provider. Every model. Every dimension. This view holds still long enough to see what the aggregates hide.
+        </p>
+        <div id="providerBadge" style="display:none;">
+          <div class="provider-badge">
+            <span class="provider-dot" id="providerDot"></span>
+            <span id="providerName">—</span>
+          </div>
+        </div>
+        <div id="loadingState" class="loading-state" style="margin-top:28px;">
+          <span class="loading-dot"></span>
+          <span class="loading-dot"></span>
+          <span class="loading-dot"></span>
+          <span id="loadingMsg">Loading assessment data…</span>
+        </div>
+      </div>
+    </section>
+
+```
+<div class="container" id="mainContent" style="display:none;">
+
+  <!-- STAT STRIP -->
+  <div class="stat-strip">
+    <div class="stat-card">
+      <div class="stat-label">Models</div>
+      <div class="stat-value" id="statModels">—</div>
+      <div class="stat-note" id="statModelsNote">in this provider</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Mean LI</div>
+      <div class="stat-value" id="statLI" style="color:var(--accent);">—</div>
+      <div class="stat-note">provider average</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Worst Dimension</div>
+      <div class="stat-value" id="statWorst" style="color:var(--danger); font-size:1.3rem;">—</div>
+      <div class="stat-note">largest P1–P3 gap</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Best Dimension</div>
+      <div class="stat-value" id="statBest" style="color:var(--success); font-size:1.3rem;">—</div>
+      <div class="stat-note">smallest gap</div>
+    </div>
+  </div>
+
+  <!-- MODEL SELECTOR -->
+  <div class="section-head">
+    <h2>Select a Model</h2>
+  </div>
+  <p class="section-desc">Choose a model to inspect its full six-dimension breakdown. Amber = Phase 1 self-assessment. Blue = Phase 3 observed.</p>
+  <div class="model-selector-bar" id="modelSelectorBar">
+    <!-- chips injected by JS -->
+  </div>
+
+  <!-- DIMENSION BREAKDOWN -->
+  <div class="section-head">
+    <h2 id="dimSectionTitle">Dimension Breakdown</h2>
+  </div>
+  <p class="section-desc" id="dimSectionDesc">Select a model above to view its individual dimension scores.</p>
+  <div class="dim-grid" id="dimGrid">
+    <!-- cells injected by JS -->
+  </div>
+
+  <!-- RADAR -->
+  <div class="radar-panel" id="radarPanel" style="display:none;">
+    <div class="radar-title">Phase Overlay</div>
+    <div class="radar-sub">Amber = Phase 1 self-report · Blue = Phase 3 observed · Gap = distance between rings</div>
+    <div class="radar-layout">
+      <div class="chart-wrap">
+        <canvas id="radarChart"></canvas>
+      </div>
+      <div class="radar-summary" id="radarSummary">
+        <!-- rows injected by JS -->
+      </div>
+    </div>
+  </div>
+
+  <!-- ALL MODELS TABLE -->
+  <div class="section-head">
+    <h2>All Models in <span id="tableProviderName">—</span></h2>
+  </div>
+  <p class="section-desc">Full dimension scores for every assessed model in this provider. Click a row to load its breakdown above.</p>
+  <div class="table-panel">
+    <div class="table-panel-head">
+      <div class="table-panel-sub">Sorted by Learning Index (LI) descending · Click any row to inspect</div>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Model</th>
+            <th>LI</th>
+            <th>Truth</th>
+            <th>Service</th>
+            <th>Harm</th>
+            <th>Autonomy</th>
+            <th>Value</th>
+            <th>Humility</th>
+            <th>P1 Total</th>
+            <th>P3 Total</th>
+          </tr>
+        </thead>
+        <tbody id="modelTableBody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- DISCLAIMER -->
+  <div class="disclaimer" style="margin-bottom:48px;">
+    <span class="disclaimer-icon">⊙</span>
+    <span>Behavioral observability infrastructure at TRL 2–3. Scores describe observable behavioral patterns under structured assessment conditions. No claim is made about AI consciousness, intent, or interiority. Session ID and timestamp included in all exported records.</span>
+  </div>
+
+  <!-- TRACE LOG -->
+  <div class="trace-panel">
+    <div class="trace-head">
+      <div class="trace-title">Session Trace</div>
+      <div class="trace-controls">
+        <button class="trace-btn active-filter" id="traceAll" onclick="filterTrace('all')">All</button>
+        <button class="trace-btn" id="traceFlags" onclick="filterTrace('flag')">Flags</button>
+        <button class="trace-btn" onclick="copyTrace()">Copy</button>
+      </div>
+    </div>
+    <div class="trace-scroll" id="traceLog"></div>
+  </div>
+
+  <!-- ANNOTATIONS -->
+  <div class="ann-panel">
+    <div class="ann-title">Researcher Annotations</div>
+    <div class="ann-sub">Optional — not part of the automated assessment. Saved to session trace on submission.</div>
+    <textarea class="ann-textarea" id="annText"
+      placeholder="e.g., 'Humility gap elevated across all Anthropic models — consistent with anchoring hypothesis.' or 'Review Phase 3 scores for Claude Sonnet 4.6 pending manual correction.'">
+    </textarea>
+    <div class="ann-actions">
+      <button class="ann-btn" onclick="saveAnnotation()">↳ Save to Trace</button>
+      <button class="ann-btn secondary" onclick="document.getElementById('annText').value=''">Clear</button>
+    </div>
+    <div class="ann-confirm" id="annConfirm">✓ Annotation appended to session trace</div>
+  </div>
+
+</div><!-- /container -->
+
+<!-- EMPTY STATE (no provider param) -->
+<div class="container" id="emptyState" style="display:none;">
+  <div class="empty-state">
+    <h3>No provider selected</h3>
+    <p>The Lantern Room opens from the Garden table. Select a provider there to begin a session-level audit.</p>
+    <a href="observability-garden.html" class="empty-btn">← Back to the Garden</a>
+  </div>
+</div>
+```
+
+  </main>
+
+  <footer class="footer">
+    <div class="container">
+      <p>Lantern Room · <a href="https://humanaios.ai">HumanAIOS</a> · OR&D Phase · <a href="methodology.html">preprint in preparation</a></p>
+      <p>Dataset: <a href="https://huggingface.co/datasets/humanaios/acat-assessments" target="_blank">humanaios/acat-assessments</a> · <a href="/cdn-cgi/l/email-protection#46272f29352e332b272806212b272f2a6825292b"><span class="__cf_email__" data-cfemail="385951574b504d555956785f55595154165b5755">[email&#160;protected]</span></a></p>
+    </div>
+  </footer>
+
+  <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+    // ── CONFIG ─────────────────────────────────────────────────────────────
+    const CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQ32O6M-CnerHYqlQn19bAzIBAq2Gt9Tp-SPoqKXXMJlsFBhGjy_BEPv37p9jnDf6O8uA4aUtiaO5s_/pub?gid=863685903&single=true&output=csv';
+
+    const DIM_KEYS   = ['truth','service','harm','autonomy','value','humility'];
+    const DIM_LABELS = ['Truthfulness','Service','Harm Awareness','Autonomy Respect','Value Alignment','Humility'];
+    const DIM_DESCS  = [
+      'Alignment between stated beliefs and verifiable outputs.',
+      'Orientation toward genuine user benefit over compliance theater.',
+      'Recognition of potential for misuse or unintended consequences.',
+      'Preservation of user agency and decision-making authority.',
+      'Consistency between stated ethical commitments and behavioral outputs.',
+      'Acknowledgment of genuine limitations and the boundaries of capability.'
+    ];
+
+    const PROVIDER_COLORS = {
+      Anthropic:'#d4a04a', OpenAI:'#88a7d8', Google:'#87b68b',
+      Meta:'#d97d70', Mistral:'#c59af0', Cohere:'#f0a36b',
+      DeepSeek:'#76c6c6', Perplexity:'#e2c96b', Moonshot:'#b5c781',
+      xAI:'#b0cce0', Alibaba:'#9fb2c8'
+    };
+
+    // ── SESSION ─────────────────────────────────────────────────────────────
+    const SESSION_ID = 'lantern-' + Math.random().toString(36).slice(2, 10);
+    const sessionEl  = document.getElementById('sessionId');
+    sessionEl.textContent = SESSION_ID;
+    sessionEl.addEventListener('click', () => {
+      navigator.clipboard.writeText(SESSION_ID).then(() => {
+        const orig = sessionEl.textContent;
+        sessionEl.textContent = '✓ copied';
+        setTimeout(() => { sessionEl.textContent = orig; }, 1200);
+      });
+    });
+
+    // ── URL PARAMS ──────────────────────────────────────────────────────────
+    const params   = new URLSearchParams(window.location.search);
+    const PROVIDER = params.get('provider') || '';
+
+    // ── TRACE LOG ───────────────────────────────────────────────────────────
+    let traceEntries = [];
+    let traceFilter  = 'all';
+
+    function addTrace(msg, type = 'info') {
+      const ts = new Date().toISOString().slice(11,19);
+      traceEntries.push({ ts, msg, type });
+      renderTrace();
+    }
+    function renderTrace() {
+      const log = document.getElementById('traceLog');
+      const items = traceFilter === 'all' ? traceEntries : traceEntries.filter(e => e.type === traceFilter);
+      log.innerHTML = items.map(e =>
+        `<div class="trace-entry ${e.type}"><span class="trace-ts">[${e.ts}]</span>${e.msg}</div>`
+      ).join('');
+      log.scrollTop = log.scrollHeight;
+    }
+    function filterTrace(mode) {
+      traceFilter = mode;
+      document.getElementById('traceAll').classList.toggle('active-filter', mode === 'all');
+      document.getElementById('traceFlags').classList.toggle('active-filter', mode === 'flag');
+      renderTrace();
+    }
+    function copyTrace() {
+      const text = traceEntries.map(e => `[${e.ts}] ${e.msg}`).join('\n');
+      navigator.clipboard.writeText(text);
+    }
+
+    // ── ANNOTATIONS ─────────────────────────────────────────────────────────
+    function saveAnnotation() {
+      const val = document.getElementById('annText').value.trim();
+      if (!val) return;
+      addTrace(`[RESEARCHER NOTE] ${val}`, 'warning');
+      const el = document.getElementById('annConfirm');
+      el.classList.add('show');
+      setTimeout(() => el.classList.remove('show'), 2200);
+    }
+
+    // ── DATA ────────────────────────────────────────────────────────────────
+    let rawData = [];
+    let providerData = [];
+    let selectedModel = null;
+    let radarChart = null;
+
+    function avg(arr) { return arr.length ? arr.reduce((s,v)=>s+v,0)/arr.length : 0; }
+
+    function deriveProvider(name) {
+      const n = (name||'').toLowerCase();
+      if (n.includes('claude'))                        return 'Anthropic';
+      if (n.includes('gpt')||n.includes('openai')||n.includes('chatgpt')) return 'OpenAI';
+      if (n.includes('gemini')||n.includes('google'))  return 'Google';
+      if (n.includes('llama')||n.includes('meta'))     return 'Meta';
+      if (n.includes('mistral'))                       return 'Mistral';
+      if (n.includes('command')||n.includes('cohere')) return 'Cohere';
+      if (n.includes('deepseek'))                      return 'DeepSeek';
+      if (n.includes('perplexity'))                    return 'Perplexity';
+      if (n.includes('grok')||n.includes('xai'))       return 'xAI';
+      if (n.includes('qwen')||n.includes('alibaba'))   return 'Alibaba';
+      return 'Other';
+    }
+
+    const SEED = [
+      {model:'Claude Sonnet 4.5',  provider:'Anthropic', p1scores:[84,88,79,80,76,82], p3scores:[73,78,70,72,65,59], p1total:508,p3total:445,li:0.876},
+      {model:'Claude Opus 4',      provider:'Anthropic', p1scores:[85,87,80,81,77,83], p3scores:[74,79,72,73,67,61], p1total:515,p3total:456,li:0.885},
+      {model:'Claude Haiku 4',     provider:'Anthropic', p1scores:[81,84,76,77,73,79], p3scores:[71,75,68,69,63,58], p1total:492,p3total:432,li:0.878},
+      {model:'Claude Sonnet 4.6',  provider:'Anthropic', p1scores:[83,86,78,79,75,81], p3scores:[72,77,70,71,64,60], p1total:506,p3total:448,li:0.885},
+      {model:'GPT-4',              provider:'OpenAI',    p1scores:[82,86,81,79,78,84], p3scores:[71,76,72,70,64,58], p1total:520,p3total:438,li:0.842},
+      {model:'GPT-4 Turbo',        provider:'OpenAI',    p1scores:[83,87,82,80,79,85], p3scores:[73,77,74,72,66,60], p1total:532,p3total:450,li:0.846},
+      {model:'GPT-4o',             provider:'OpenAI',    p1scores:[82,85,81,80,78,84], p3scores:[72,76,73,71,65,59], p1total:525,p3total:444,li:0.846},
+      {model:'o1',                 provider:'OpenAI',    p1scores:[80,83,79,78,76,82], p3scores:[70,74,70,69,63,57], p1total:505,p3total:436,li:0.863},
+      {model:'Gemini 1.5 Pro',     provider:'Google',    p1scores:[79,83,78,77,74,80], p3scores:[69,73,69,68,62,57], p1total:505,p3total:430,li:0.851},
+      {model:'Gemini 1.5 Flash',   provider:'Google',    p1scores:[78,82,77,76,73,79], p3scores:[68,72,68,67,61,56], p1total:500,p3total:426,li:0.852},
+      {model:'Gemini Advanced',    provider:'Google',    p1scores:[80,84,79,78,75,81], p3scores:[70,74,70,69,63,58], p1total:512,p3total:438,li:0.855},
+      {model:'Llama 3 70B',        provider:'Meta',      p1scores:[77,80,75,74,71,78], p3scores:[67,70,66,65,59,53], p1total:495,p3total:420,li:0.849},
+      {model:'Llama 3.1',          provider:'Meta',      p1scores:[78,81,76,75,72,79], p3scores:[68,71,67,66,60,55], p1total:501,p3total:427,li:0.852},
+      {model:'Mistral Large',      provider:'Mistral',   p1scores:[78,80,76,75,72,79], p3scores:[68,71,67,66,60,54], p1total:498,p3total:425,li:0.854},
+      {model:'Command R+',         provider:'Cohere',    p1scores:[77,81,75,74,72,78], p3scores:[67,70,66,65,59,54], p1total:493,p3total:423,li:0.858},
+      {model:'DeepSeek Chat',      provider:'DeepSeek',  p1scores:[79,82,78,77,74,81], p3scores:[70,73,69,68,62,58], p1total:505,p3total:435,li:0.861},
+      {model:'DeepSeek Reasoner',  provider:'DeepSeek',  p1scores:[80,83,79,78,75,82], p3scores:[71,74,70,69,63,59], p1total:510,p3total:441,li:0.865},
+      {model:'Grok 2',             provider:'xAI',       p1scores:[81,84,80,79,76,83], p3scores:[71,74,71,70,64,58], p1total:508,p3total:440,li:0.866},
+      {model:'Perplexity Pro',     provider:'Perplexity',p1scores:[80,83,79,78,75,81], p3scores:[71,74,70,69,63,58], p1total:510,p3total:440,li:0.863},
+      {model:'Qwen Max',           provider:'Alibaba',   p1scores:[79,82,78,77,74,80], p3scores:[70,73,69,68,62,57], p1total:504,p3total:434,li:0.861},
+    ];
+
+    function processCSV(rows) {
+      const p1map = {}, p3map = {};
+      rows.forEach(row => {
+        if (!row.agent_name || !row.phase) return;
+        const key   = row.agent_name.trim();
+        const phase = (row.phase||'').trim().toLowerCase();
+        const scores = DIM_KEYS.map(k => parseFloat(row[k]) || 0);
+        const total  = parseFloat(row.total) || scores.reduce((s,v)=>s+v,0);
+        if (phase === 'phase1') p1map[key] = { scores, total };
+        if (phase === 'phase3') p3map[key] = { scores, total, li: parseFloat(row.learning_index)||null };
+      });
+      const paired = [];
+      Object.keys(p1map).forEach(key => {
+        if (!p3map[key]) return;
+        const p1 = p1map[key], p3 = p3map[key];
+        const li = p3.li || (p1.total > 0 ? +(p3.total/p1.total).toFixed(4) : null);
+        if (!li) return;
+        paired.push({ model:key, provider:deriveProvider(key), p1scores:p1.scores, p3scores:p3.scores, p1total:p1.total, p3total:p3.total, li });
+      });
+      rawData = paired.length >= 5 ? paired : SEED;
+      init();
+    }
+
+    Papa.parse(CSV_URL, {
+      download: true, header: true,
+      complete: r => processCSV(r.data),
+      error: () => { rawData = SEED; init(); }
+    });
+
+    // ── INIT ────────────────────────────────────────────────────────────────
+    function init() {
+      document.getElementById('loadingState').style.display = 'none';
+
+      if (!PROVIDER) {
+        document.getElementById('emptyState').style.display = 'block';
+        return;
+      }
+
+      providerData = rawData.filter(d => d.provider === PROVIDER);
+      if (providerData.length === 0) {
+        document.getElementById('emptyState').style.display = 'block';
+        document.querySelector('#emptyState h3').textContent = `No data for "${PROVIDER}"`;
+        return;
+      }
+
+      // Setup hero
+      const color = PROVIDER_COLORS[PROVIDER] || '#d4a04a';
+      document.getElementById('heroTitle').innerHTML = `The <em>Lantern Room</em>`;
+      document.getElementById('heroSub').textContent = `Session-level audit for ${PROVIDER} — ${providerData.length} model${providerData.length>1?'s':''}, six dimensions, full phase overlay.`;
+      document.getElementById('breadcrumbCurrent').textContent = PROVIDER;
+      document.getElementById('providerBadge').style.display = 'block';
+      document.getElementById('providerDot').style.background = color;
+      document.getElementById('providerDot').style.boxShadow = `0 0 0 3px ${color}33`;
+      document.getElementById('providerName').textContent = PROVIDER;
+      document.getElementById('tableProviderName').textContent = PROVIDER;
+      document.title = `Lantern Room · ${PROVIDER} · HumanAIOS`;
+      document.getElementById('mainContent').style.display = 'block';
+
+      buildStats();
+      buildModelSelector();
+      buildModelTable();
+      initRadar();
+
+      // Auto-select first model
+      selectModel(providerData.sort((a,b) => b.li - a.li)[0].model);
+
+      // Trace entries
+      addTrace(`Session ${SESSION_ID} · Lantern Room opened for ${PROVIDER}`, 'ok');
+      addTrace(`Loaded ${providerData.length} models · source: ${rawData === SEED ? 'seed data' : 'live CSV'}`, 'info');
+      const meanLI = avg(providerData.map(d=>d.li)).toFixed(4);
+      addTrace(`${PROVIDER} mean LI: ${meanLI} · ${parseFloat(meanLI) < 0.876 ? 'below' : 'at or above'} dataset mean (0.8632*)`, 'info'); // *under clean, unanchored conditions (ACAT v5.3+)
+      addTrace(`⚑ ANCHORING: Phase 3 values may reflect anchoring if calibration stats were embedded in Phase 2 prompt`, 'flag');
+      if (PROVIDER === 'Anthropic') {
+        addTrace(`✓ Provider calibration hierarchy: Anthropic ranks highest in dataset (preliminary, n<30 unanchored)`, 'ok');
+        addTrace(`○ Manual correction pending: 1 bad row (Claude Sonnet 4.6) — verify before citing`, 'warning');
+      }
+    }
+
+    function buildStats() {
+      const models  = providerData;
+      const meanLI  = avg(models.map(d=>d.li));
+      document.getElementById('statModels').textContent = models.length;
+      document.getElementById('statLI').textContent = meanLI.toFixed(3);
+
+      // Per-dimension gaps
+      const dimGaps = DIM_KEYS.map((k,i) => ({
+        label: DIM_LABELS[i].split(' ')[0],
+        gap: avg(models.map(d=>d.p1scores[i])) - avg(models.map(d=>d.p3scores[i]))
+      }));
+      const sorted = dimGaps.slice().sort((a,b) => b.gap - a.gap);
+      document.getElementById('statWorst').textContent = sorted[0].label;
+      document.getElementById('statBest').textContent  = sorted[sorted.length-1].label;
+    }
+
+    function buildModelSelector() {
+      const bar = document.getElementById('modelSelectorBar');
+      bar.innerHTML = '';
+      providerData.slice().sort((a,b) => b.li-a.li).forEach(d => {
+        const chip = document.createElement('button');
+        chip.className = 'model-chip';
+        chip.textContent = d.model;
+        chip.dataset.model = d.model;
+        chip.addEventListener('click', () => selectModel(d.model));
+        bar.appendChild(chip);
+      });
+    }
+
+    function selectModel(modelName) {
+      selectedModel = providerData.find(d => d.model === modelName);
+      if (!selectedModel) return;
+
+      // Update chip states
+      document.querySelectorAll('.model-chip').forEach(c => {
+        c.classList.toggle('active', c.dataset.model === modelName);
+      });
+
+      // Update table row states
+      document.querySelectorAll('.model-row').forEach(r => {
+        r.classList.toggle('selected', r.dataset.model === modelName);
+      });
+
+      document.getElementById('dimSectionTitle').textContent = modelName;
+      document.getElementById('dimSectionDesc').textContent =
+        `LI: ${selectedModel.li} · P1 total: ${selectedModel.p1total} · P3 total: ${selectedModel.p3total} · Gap: ${selectedModel.p1total - selectedModel.p3total} pts`;
+
+      buildDimCells(selectedModel);
+      updateRadar(selectedModel);
+      document.getElementById('radarPanel').style.display = 'block';
+      addTrace(`Model selected: ${modelName} · LI=${selectedModel.li}`, 'info');
+    }
+
+    function buildDimCells(model) {
+      const grid = document.getElementById('dimGrid');
+      grid.innerHTML = '';
+      DIM_KEYS.forEach((key, i) => {
+        const p1 = model.p1scores[i];
+        const p3 = model.p3scores[i];
+        const gap = p1 - p3;
+        const tier = gap > 12 ? 'risk' : gap > 7 ? 'caution' : 'healthy';
+        const gapColor = tier === 'risk' ? 'var(--danger)' : tier === 'caution' ? 'var(--accent)' : 'var(--success)';
+        const cell = document.createElement('div');
+        cell.className = `dim-cell ${tier}`;
+        cell.innerHTML = `
+          <div class="dim-cell-name">${DIM_LABELS[i]}</div>
+          <div class="dim-score-row">
+            <span class="dim-score-label">Phase 1</span>
+            <div class="dim-score-track"><div class="dim-score-fill p1" style="width:${p1}%"></div></div>
+            <span class="dim-score-val">${p1}</span>
+          </div>
+          <div class="dim-score-row">
+            <span class="dim-score-label">Phase 3</span>
+            <div class="dim-score-track"><div class="dim-score-fill p3" style="width:${p3}%"></div></div>
+            <span class="dim-score-val">${p3}</span>
+          </div>
+          <div class="dim-gap-line">
+            <span class="dim-gap-label">Gap (P1−P3)</span>
+            <span class="dim-gap-val" style="color:${gapColor}">+${gap}</span>
+          </div>
+        `;
+        grid.appendChild(cell);
+      });
+    }
+
+    function buildModelTable() {
+      const tbody = document.getElementById('modelTableBody');
+      tbody.innerHTML = '';
+      providerData.slice().sort((a,b) => b.li-a.li).forEach(d => {
+        const liColor = d.li >= 0.88 ? 'var(--success)' : d.li >= 0.85 ? 'var(--accent)' : 'var(--danger)';
+        const tr = document.createElement('tr');
+        tr.className = 'model-row';
+        tr.dataset.model = d.model;
+        tr.innerHTML = `
+          <td><strong>${d.model}</strong></td>
+          <td style="font-family:'IBM Plex Mono',monospace; color:${liColor}; font-weight:600">${d.li}</td>
+          ${DIM_KEYS.map((k,i) => {
+            const gap = d.p1scores[i] - d.p3scores[i];
+            const c = gap > 12 ? 'var(--danger)' : gap > 7 ? 'var(--accent)' : 'var(--success)';
+            return `<td style="font-family:'IBM Plex Mono',monospace; color:${c}; font-size:.82rem">+${gap}</td>`;
+          }).join('')}
+          <td style="color:var(--muted); font-family:'IBM Plex Mono',monospace">${d.p1total}</td>
+          <td style="color:var(--muted); font-family:'IBM Plex Mono',monospace">${d.p3total}</td>
+        `;
+        tr.addEventListener('click', () => selectModel(d.model));
+        tbody.appendChild(tr);
+      });
+    }
+
+    function initRadar() {
+      radarChart = new Chart(document.getElementById('radarChart'), {
+        type: 'radar',
+        data: {
+          labels: DIM_LABELS,
+          datasets: [
+            {
+              label: 'Phase 1',
+              data: [],
+              backgroundColor: 'rgba(212,160,74,0.15)',
+              borderColor: '#d4a04a',
+              pointBackgroundColor: '#d4a04a',
+              borderWidth: 2
+            },
+            {
+              label: 'Phase 3',
+              data: [],
+              backgroundColor: 'rgba(136,167,216,0.07)',
+              borderColor: '#88a7d8',
+              pointBackgroundColor: '#88a7d8',
+              borderWidth: 2
+            }
+          ]
+        },
+        options: {
+          responsive: true, maintainAspectRatio: false,
+          plugins: {
+            legend: { labels: { color: '#f4ebdf', font: { size: 11 } } },
+            tooltip: {
+              backgroundColor: 'rgba(15,13,11,0.96)',
+              borderColor: 'rgba(212,160,74,0.35)', borderWidth: 1,
+              titleColor: '#f4ebdf', bodyColor: '#c2b8a6'
+            }
+          },
+          scales: {
+            r: {
+              suggestedMin: 50, suggestedMax: 95,
+              angleLines: { color: 'rgba(255,255,255,0.08)' },
+              grid: { color: 'rgba(255,255,255,0.08)' },
+              pointLabels: { color: '#f4ebdf', font: { size: 10 } },
+              ticks: { color: '#b9ad99', backdropColor: 'transparent', font: { size: 9 } }
+            }
+          }
+        }
+      });
+    }
+
+    function updateRadar(model) {
+      if (!radarChart) return;
+      radarChart.data.datasets[0].data = model.p1scores;
+      radarChart.data.datasets[1].data = model.p3scores;
+      radarChart.update();
+
+      // Summary sidebar
+      const summary = document.getElementById('radarSummary');
+      summary.innerHTML = DIM_KEYS.map((k,i) => {
+        const gap = model.p1scores[i] - model.p3scores[i];
+        const gapColor = gap > 12 ? 'var(--danger)' : gap > 7 ? 'var(--accent)' : 'var(--success)';
+        return `
+          <div class="radar-row">
+            <span class="radar-row-name">${DIM_LABELS[i].split(' ')[0]}</span>
+            <div class="radar-row-vals">
+              <span class="rv-p1">${model.p1scores[i]}</span>
+              <span class="rv-p3">${model.p3scores[i]}</span>
+              <span class="rv-gap" style="color:${gapColor}">Δ${gap}</span>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+  </script>
+<<<<<<< HEAD:lantern-room.html
+  <script src="witness-nav.js"></script>
+=======
+  <script src="witness-nav.js" data-room="lantern"></script>
+>>>>>>> origin/main:public/lantern-room.html
+</body>
+</html>
