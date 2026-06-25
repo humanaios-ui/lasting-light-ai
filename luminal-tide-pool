@@ -275,7 +275,7 @@
 
 <footer class="footer">
   <div class="container footer-inner">
-    <span class="footer-left">Pool 2 · The Luminarium · HumanAIOS OR&amp;D</span>
+    <span class="footer-left">Pool 2 · The Luminarium · HumanAIOS OR&amp;D · TRL 2–3</span>
     <div class="footer-right">
       <a href="the-source.html">← The Source</a>
       <a href="the-commons.html">The Commons →</a>
@@ -321,4 +321,23 @@
       ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,H); ctx.stroke();
     }
     for(var y=0;y<H;y+=80){
-      ctx.beginPath();
+      ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(W,y); ctx.stroke();
+    }
+    t+=0.008;
+    requestAnimationFrame(draw);
+  }
+  draw();
+})();
+
+// ── Field state feed ──
+var SU='https://ksinisdzgtnqzsymhfya.supabase.co';
+var SK='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtzaW5pc2R6Z3RucXpzeW1oZnlhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQzMDEzMzEsImV4cCI6MjA4OTg3NzMzMX0.2M9uE_JQOeDPy8obGweyNlPNMiJoISSf3xx4qeYbUU8';
+fetch(SU+'/rest/v1/data_snapshot?id=eq.1',{headers:{'apikey':SK,'Authorization':'Bearer '+SK}})
+  .then(function(r){return r.json();})
+  .then(function(d){if(d&&d[0]&&window._cnUpdateLI)window._cnUpdateLI(d[0].mean_li||0.8632);})
+  .catch(function(){});
+</script>
+
+<script src="witness-nav.js"></script>
+</body>
+</html>

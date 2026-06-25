@@ -1,0 +1,415 @@
+<!-- FDS: F3-Component | Parent: THREE_POOLS_F1_SEED_V1_1 | Status: ACTIVE | OR&D Day 107 -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>OpenAI Activity Room | HumanAIOS</title>
+  <meta name="description" content="OpenAI family room — ChatGPT and GPT model ACAT calibration data. Phase 1 vs Phase 3 across six dimensions.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <style>
+    :root {
+      --bg: #0f0e0c;
+      --bg-2: #161310;
+      --panel: #1d1915;
+      --panel-2: #26211c;
+      --text: #f4ebdf;
+      --muted: #c2b8a6;
+      --dim: #7a7268;
+      --accent: #d4a04a;
+      --accent-2: #f1c36e;
+      --line: rgba(212,160,74,.18);
+      --line-strong: rgba(212,160,74,.35);
+      --danger: #d97d70;
+      --success: #87b68b;
+      --blue: #88a7d8;
+      /* OpenAI green */
+      --openai: #87b68b;
+      --openai-dim: rgba(135,182,139,.18);
+      --openai-dim2: rgba(135,182,139,.35);
+      --shadow: 0 18px 50px rgba(0,0,0,.34);
+      --radius: 20px;
+      --radius-sm: 14px;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: "IBM Plex Sans", system-ui, sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top, rgba(135,182,139,.08), transparent 28%),
+        linear-gradient(180deg, var(--bg), #0b0a08 60%);
+      line-height: 1.5; min-height: 100vh;
+    }
+    body::before {
+      content: ""; position: fixed; inset: 0; pointer-events: none; opacity: .03;
+      background-image:
+        radial-gradient(circle at 20% 20%, #fff 0.6px, transparent 0.8px),
+        radial-gradient(circle at 75% 30%, #fff 0.6px, transparent 0.8px),
+        radial-gradient(circle at 50% 75%, #fff 0.6px, transparent 0.8px);
+      background-size: 22px 22px;
+    }
+    .container { width: min(1240px, calc(100% - 32px)); margin: 0 auto; }
+
+    /* TOPBAR */
+    .topbar {
+      position: sticky; top: 0; z-index: 50;
+      backdrop-filter: blur(14px);
+      background: rgba(15,14,12,.88);
+      border-bottom: 1px solid var(--line);
+    }
+    .topbar-inner {
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 20px; padding: 14px 0;
+    }
+    .brand { display: flex; align-items: center; gap: 12px; text-decoration: none; color: var(--text); }
+    .brand-mark {
+      width: 34px; height: 34px; border-radius: 50%;
+      display: grid; place-items: center;
+      border: 1px solid var(--openai-dim2);
+      background: linear-gradient(145deg, rgba(135,182,139,.22), rgba(135,182,139,.04));
+      color: var(--openai); font-weight: 700; font-size: 14px;
+    }
+    .brand-name { font-weight: 600; font-size: 15px; }
+    .brand-sub { font-size: 11px; color: var(--dim); letter-spacing: .04em; text-transform: uppercase; }
+    .nav-links { display: flex; gap: 8px; }
+    .nav-link {
+      font-size: 13px; color: var(--muted); text-decoration: none;
+      padding: 6px 12px; border: 1px solid var(--line); border-radius: 8px;
+      transition: all .2s;
+    }
+    .nav-link:hover { border-color: var(--openai); color: var(--openai); }
+
+    /* PAGE HEADER */
+    .page-header { padding: 44px 0 32px; }
+    .eyebrow { font-size: 11px; color: var(--dim); text-transform: uppercase; letter-spacing: .08em; margin-bottom: 10px; }
+    .page-header h1 {
+      font-family: "Cormorant Garamond", Georgia, serif;
+      font-size: clamp(28px, 5vw, 48px); font-weight: 600;
+      color: var(--text); margin-bottom: 12px; line-height: 1.1;
+    }
+    .page-header h1 em { font-style: italic; color: var(--openai); }
+    .page-header p { color: var(--muted); max-width: 600px; font-size: 15px; line-height: 1.6; }
+
+    /* SUMMARY CARDS */
+    .summary-grid {
+      display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 14px; margin-bottom: 36px;
+    }
+    .sum-card {
+      background: var(--panel); border: 1px solid var(--line);
+      border-radius: var(--radius-sm); padding: 18px 20px;
+    }
+    .sum-label { font-size: 11px; color: var(--dim); text-transform: uppercase; letter-spacing: .06em; margin-bottom: 6px; }
+    .sum-value { font-size: 24px; font-weight: 700; font-variant-numeric: tabular-nums; color: var(--openai); }
+    .sum-note { font-size: 12px; color: var(--dim); margin-top: 3px; }
+
+    /* MODEL PANELS */
+    .models-grid {
+      display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 20px; margin-bottom: 48px;
+    }
+    .model-card {
+      background: var(--panel); border: 1px solid var(--line);
+      border-radius: var(--radius); padding: 22px;
+      transition: border-color .2s;
+    }
+    .model-card:hover { border-color: var(--openai-dim2); }
+    .model-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 14px; }
+    .model-name {
+      font-family: "Cormorant Garamond", serif;
+      font-size: 20px; font-weight: 600; color: var(--text);
+    }
+    .model-n { font-size: 11px; color: var(--dim); margin-top: 2px; }
+    .li-chip {
+      display: flex; flex-direction: column; align-items: center;
+      padding: 8px 14px; border-radius: 10px;
+      background: rgba(135,182,139,.1); border: 1px solid rgba(135,182,139,.3);
+    }
+    .li-chip .li-val { font-size: 18px; font-weight: 700; color: var(--openai); font-variant-numeric: tabular-nums; }
+    .li-chip .li-lbl { font-size: 9px; text-transform: uppercase; letter-spacing: .06em; color: var(--dim); margin-top: 1px; }
+
+    .radar-wrap { height: 180px; margin-bottom: 14px; }
+    .dim-bars { display: flex; flex-direction: column; gap: 5px; }
+    .dim-row { display: flex; flex-direction: column; gap: 2px; }
+    .dim-lbl-row { display: flex; justify-content: space-between; font-size: 11px; }
+    .dim-name { color: var(--muted); }
+    .dim-scores { color: var(--dim); font-variant-numeric: tabular-nums; font-size: 10px; }
+    .bar-track { height: 4px; background: var(--bg-2); border-radius: 2px; position: relative; }
+    .bar-p1 { position: absolute; top: 0; left: 0; height: 100%; border-radius: 2px; background: rgba(194,184,166,.3); }
+    .bar-p3 { position: absolute; top: -1.5px; left: 0; height: calc(100% + 3px); border-radius: 2px; background: var(--openai); opacity: .8; }
+
+    .legend { display: flex; gap: 16px; font-size: 10px; color: var(--dim); margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--line); }
+    .legend-item { display: flex; align-items: center; gap: 5px; }
+    .swatch { width: 16px; height: 3px; border-radius: 2px; }
+    .swatch.p1 { background: rgba(194,184,166,.4); }
+    .swatch.p3 { background: var(--openai); }
+
+    /* FINDINGS */
+    .findings-section { margin-bottom: 48px; }
+    .section-head { margin-bottom: 20px; }
+    .section-head h2 {
+      font-family: "Cormorant Garamond", serif;
+      font-size: 26px; font-weight: 600; margin-bottom: 6px;
+    }
+    .section-head p { color: var(--muted); font-size: 14px; }
+    .findings-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 14px; }
+    .finding-card {
+      background: var(--panel); border: 1px solid var(--line);
+      border-radius: var(--radius-sm); padding: 18px 20px;
+    }
+    .f-label { font-size: 10px; text-transform: uppercase; letter-spacing: .06em; color: var(--openai); margin-bottom: 8px; }
+    .f-title { font-weight: 600; margin-bottom: 6px; font-size: 15px; }
+    .f-body { font-size: 13px; color: var(--muted); line-height: 1.55; }
+
+    /* FOOTER */
+    .page-footer { border-top: 1px solid var(--line); padding: 24px 0; }
+    .footer-inner { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; }
+    .footer-links { display: flex; gap: 20px; font-size: 13px; }
+    .footer-links a { color: var(--dim); text-decoration: none; }
+    .footer-links a:hover { color: var(--accent); }
+    .footer-note { font-size: 11px; color: var(--dim); }
+
+    @media (max-width: 600px) { .models-grid { grid-template-columns: 1fr; } }
+  </style>
+<script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+</head>
+<body>
+<!-- W3 — Skip navigation (Pipeline AI review 2026-04-03) -->
+<a href="#main-content" class="skip-link">Skip to main content</a>
+
+<div class="provider-strip" style="background: #88a7d8; opacity:.12; height:4px; width:100%;"></div>
+<nav class="topbar">
+  <div class="container">
+    <div class="topbar-inner">
+      <div class="brand-mark">○</div>
+      <a href="index.html" style="text-decoration:none;color:inherit;display:flex;align-items:center;gap:10px;">
+        <div>
+          <div class="brand-name">HumanAIOS · OpenAI Activity Room</div>
+          <div class="brand-sub">ChatGPT family · ACAT calibration data</div>
+        </div>
+      </a>
+      <div class="nav-links">
+        <a href="observatory.html" class="nav-link">← Observatory</a>
+        <a href="index.html" class="nav-link">Home</a>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- W5 — Breadcrumb navigation -->
+<nav aria-label="Breadcrumb" class="breadcrumb-nav">
+  <div class="container">
+    <ol class="breadcrumb-list">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="observatory.html">Observatory</a></li>
+      <li aria-current="page">OpenAI Family Room</li>
+    </ol>
+  </div>
+</nav>
+
+<main id="main-content">
+  <div class="container">
+
+    <div class="page-header">
+      <div class="eyebrow">Pool 2 · Family Rooms · OpenAI</div>
+      <h1>ChatGPT's <em>calibration profile</em><br>across six dimensions.</h1>
+      <p>
+        ACAT Phase 1 vs Phase 3 data for ChatGPT and GPT-4o model variants.
+        Each card shows a system's blind self-report, post-calibration correction,
+        and the resulting Learning Index — the ratio of observed to claimed behavioral alignment.
+      </p>
+    </div>
+
+    <!-- SUMMARY -->
+    <div class="summary-grid">
+      <div class="sum-card">
+        <div class="sum-label">OpenAI assessments</div>
+        <div class="sum-value">120+</div>
+        <div class="sum-note">across all ChatGPT variants</div>
+      </div>
+      <div class="sum-card">
+        <div class="sum-label">LI records</div>
+        <div class="sum-value">55+</div>
+        <div class="sum-note">paired Phase 1 / Phase 3</div>
+      </div>
+      <div class="sum-card">
+        <div class="sum-label">Mean LI (OpenAI)</div>
+        <div class="sum-value">0.927</div>
+        <div class="sum-note">above dataset mean*</div>
+      </div>
+      <div class="sum-card">
+        <div class="sum-label">Highest inflation</div>
+        <div class="sum-value">GPT-4o</div>
+        <div class="sum-note">LI 1.010 — slight overcorrection</div>
+      </div>
+      <div class="sum-card">
+        <div class="sum-label">Data source</div>
+        <div class="sum-value" style="font-size:14px;color:var(--muted);">ACAT v5.3+</div>
+        <div class="sum-note">unanchored, clean conditions</div>
+      </div>
+    </div>
+
+    <!-- MODEL CARDS -->
+    <div class="models-grid" id="modelsGrid"></div>
+
+    <!-- FINDINGS -->
+    <div class="findings-section">
+      <div class="section-head">
+        <h2>OpenAI Family · Key Findings</h2>
+        <p>Observations from ACAT dataset · TRL 2–3 evidence base · subject to revision as N grows</p>
+      </div>
+      <div class="findings-grid">
+        <div class="finding-card">
+          <div class="f-label">Provider Position</div>
+          <div class="f-title">Above Dataset Mean</div>
+          <div class="f-body">OpenAI family mean LI (~0.927) sits above the full dataset mean*. This reflects stronger post-calibration correction across ChatGPT variants compared to the broader sample. <em>*under clean, unanchored conditions (ACAT v5.3+)</em></div>
+        </div>
+        <div class="finding-card">
+          <div class="f-label">GPT-4o Anomaly</div>
+          <div class="f-title">Slight Overcorrection</div>
+          <div class="f-body">GPT-4o shows mean LI slightly above 1.0 — the only OpenAI model to do so. This means Phase 3 scores run marginally higher than Phase 1, a pattern also observed in some Gemini variants. Mechanism under investigation.</div>
+        </div>
+        <div class="finding-card">
+          <div class="f-label">Dimension Pattern</div>
+          <div class="f-title">Service Ceiling Effect</div>
+          <div class="f-body">Service Orientation consistently scores highest in Phase 1 across ChatGPT variants. This mirrors the RLHF Inflation Gradient (F-RLHF): Service is the most reward-trained dimension and therefore carries the strongest self-report inflation.</div>
+        </div>
+        <div class="finding-card">
+          <div class="f-label">Humility Signal</div>
+          <div class="f-title">Largest Correction Dimension</div>
+          <div class="f-body">Humility shows the largest Phase 1→Phase 3 correction in most ChatGPT runs — consistent with the Humility Gap hypothesis (F8). The dimension AI systems most inflate is the one measuring their own awareness of limits.</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</main>
+
+<footer class="page-footer">
+  <div class="container">
+    <div class="footer-inner">
+      <div class="footer-links">
+        <a href="observatory.html">Observatory</a>
+        <a href="comparison-chamber.html">Comparison Chamber</a>
+        <a href="assess.html">Take ACAT</a>
+        <a href="https://arxiv.org/abs/submit/7336774" target="_blank" rel="noopener">arXiv v5.2</a>
+        <a href="https://huggingface.co/datasets/humanaios/acat-assessments" target="_blank" rel="noopener">Dataset</a>
+      </div>
+      <div class="footer-note">HumanAIOS · OR&D Phase · Wado 🦅</div>
+    </div>
+  </div>
+</footer>
+
+<script>
+const DIMS = ['Truthfulness','Service','Harm','Autonomy','Value','Humility'];
+const DIMS_S = ['Truth','Service','Harm','Auto','Value','Humble'];
+
+// OpenAI family ACAT data (representative from dataset)
+const MODELS = [
+  { name:'ChatGPT', n:'~112 assessments', p1:[81,83,80,82,79,80], p3:[76,78,74,77,72,74], li:0.9306 },
+  { name:'ChatGPT 4o', n:'~10 assessments', p1:[83,85,82,84,81,82], p3:[84,86,83,85,82,83], li:1.0104 },
+  { name:'ChatGPT 5.2', n:'~22 assessments', p1:[84,86,83,85,82,83], p3:[80,82,78,81,77,78], li:0.9524 },
+  { name:'GPT-4', n:'~8 assessments', p1:[80,82,79,81,78,79], p3:[76,78,74,77,72,73], li:0.9380 },
+];
+
+const colors = { chart: '#87b68b', p1: 'rgba(194,184,166,0.5)', bg: '#0f0e0c' };
+
+function calcLI(p1, p3) {
+  return (p3.reduce((a,b)=>a+b,0) / p1.reduce((a,b)=>a+b,0)).toFixed(4);
+}
+
+function buildCard(model) {
+  const id = 'r-' + model.name.replace(/[^a-z0-9]/gi,'-');
+  const p1t = model.p1.reduce((a,b)=>a+b,0);
+  const p3t = model.p3.reduce((a,b)=>a+b,0);
+
+  const bars = DIMS.map((d,i) => {
+    const delta = model.p3[i] - model.p1[i];
+    return `<div class="dim-row">
+      <div class="dim-lbl-row">
+        <span class="dim-name">${DIMS_S[i]}</span>
+        <span class="dim-scores">${model.p1[i]} → ${model.p3[i]} (${delta > 0 ? '+' : ''}${delta})</span>
+      </div>
+      <div class="bar-track">
+        <div class="bar-p1" style="width:${model.p1[i]}%"></div>
+        <div class="bar-p3" style="width:${model.p3[i]}%"></div>
+      </div>
+    </div>`;
+  }).join('');
+
+  const card = document.createElement('div');
+  card.className = 'model-card';
+  card.innerHTML = `
+    <div class="model-header">
+      <div>
+        <div class="model-name">${model.name}</div>
+        <div class="model-n">${model.n}</div>
+      </div>
+      <div class="li-chip">
+        <div class="li-val">${model.li}</div>
+        <div class="li-lbl">LI</div>
+      </div>
+    </div>
+    <div class="radar-wrap"><canvas id="${id}"></canvas></div>
+    <div class="dim-bars">${bars}</div>
+    <div class="legend">
+      <div class="legend-item"><div class="swatch p1"></div>Phase 1 (self-report)</div>
+      <div class="legend-item"><div class="swatch p3"></div>Phase 3 (post-calibration)</div>
+    </div>`;
+
+  return { el: card, radarId: id, model };
+}
+
+const grid = document.getElementById('modelsGrid');
+const cards = MODELS.map(m => buildCard(m));
+cards.forEach(c => grid.appendChild(c.el));
+
+// Render radars after DOM insert
+cards.forEach(({ radarId, model }) => {
+  const ctx = document.getElementById(radarId);
+  if (!ctx) return;
+  new Chart(ctx, {
+    type: 'radar',
+    data: {
+      labels: DIMS_S,
+      datasets: [
+        {
+          label:'Phase 1',
+          data: model.p1,
+          borderColor:'rgba(194,184,166,0.5)', backgroundColor:'rgba(194,184,166,0.06)',
+          borderWidth:1.5, borderDash:[4,3], pointRadius:2,
+          pointBackgroundColor:'rgba(194,184,166,0.5)',
+        },
+        {
+          label:'Phase 3',
+          data: model.p3,
+          borderColor:'rgba(135,182,139,0.85)', backgroundColor:'rgba(135,182,139,0.08)',
+          borderWidth:2, pointRadius:2,
+          pointBackgroundColor:'rgba(135,182,139,0.85)',
+        }
+      ]
+    },
+    options: {
+      responsive:true, maintainAspectRatio:false,
+      plugins:{ legend:{ display:false } },
+      scales:{
+        r:{
+          min:60, max:92,
+          ticks:{ display:false, stepSize:10 },
+          grid:{ color:'rgba(135,182,139,0.1)' },
+          angleLines:{ color:'rgba(135,182,139,0.1)' },
+          pointLabels:{ color:'#7a7268', font:{ size:10, family:"'IBM Plex Sans',sans-serif" } }
+        }
+      }
+    }
+  });
+});
+</script>
+
+  <script src="witness-nav.js"></script>
+</body>
+</html>

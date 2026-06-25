@@ -1,0 +1,890 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The Calibration Garden · OpenAI Family · ACAT Observatory</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400;1,600&family=IBM+Plex+Sans:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap"
+    rel="stylesheet"
+  />
+  <style>
+    :root {
+      --bg: #0f0e0c;
+      --bg2: #161310;
+      --panel: #1d1915;
+      --panel2: #26211c;
+      --text: #f4ebdf;
+      --muted: #c2b8a6;
+      --dim: #7a7268;
+      --accent: #d4a04a;
+      --accent2: #f1c36e;
+      --line: rgba(212, 160, 74, 0.15);
+      --line2: rgba(212, 160, 74, 0.3);
+      --danger: #d97d70;
+      --success: #87b68b;
+      --blue: #88a7d8;
+
+      /* Garden dimension colors */
+      --truth: #88a7d8;
+      --service: #87b68b;
+      --harm: #d97d70;
+      --autonomy: #b48fd8;
+      --value: #d4c47a;
+      --humility: #7ab8b0;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: "IBM Plex Sans", sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      line-height: 1.5;
+    }
+
+    /* Subtle grain */
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background-image:
+        radial-gradient(circle at 20% 20%, #fff 0.5px, transparent 0.7px),
+        radial-gradient(circle at 75% 30%, #fff 0.5px, transparent 0.7px),
+        radial-gradient(circle at 50% 75%, #fff 0.5px, transparent 0.7px);
+      background-size: 22px 22px;
+      opacity: 0.02;
+      z-index: 0;
+    }
+
+    /* Ambient top glow */
+    body::after {
+      content: "";
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 300px;
+      background: radial-gradient(
+        ellipse at 50% 0%,
+        rgba(212, 160, 74, 0.08),
+        transparent 70%
+      );
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .topbar,
+    .hero,
+    .data-strip,
+    .garden-layout,
+    .footer {
+      position: relative;
+      z-index: 1;
+    }
+
+    /* TOPBAR */
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(15, 14, 12, 0.94);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--line);
+      padding: 0 24px;
+      min-height: 52px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+    }
+
+    .topbar-left {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .logo {
+      font-family: "Cormorant Garamond", serif;
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--accent);
+      letter-spacing: 0.03em;
+      white-space: nowrap;
+    }
+
+    .breadcrumb {
+      font-size: 11px;
+      color: var(--dim);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .breadcrumb span {
+      color: var(--muted);
+    }
+
+    .family-badge {
+      font-size: 10px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      border: 1px solid var(--line2);
+      padding: 3px 10px;
+      border-radius: 2px;
+      white-space: nowrap;
+    }
+
+    /* HERO */
+    .hero {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 36px 32px 24px;
+    }
+
+    .hero-eyebrow {
+      font-size: 10px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 12px;
+    }
+
+    .hero-title {
+      font-family: "Cormorant Garamond", serif;
+      font-size: clamp(2rem, 5vw, 3.2rem);
+      font-weight: 600;
+      line-height: 1.1;
+      color: var(--text);
+      margin-bottom: 16px;
+    }
+
+    .hero-sub {
+      font-size: 14px;
+      color: var(--muted);
+      line-height: 1.7;
+      max-width: 60ch;
+      margin-bottom: 8px;
+    }
+
+    .calibration-obs {
+      margin-top: 20px;
+      padding: 16px 20px;
+      border-left: 2px solid var(--accent);
+      background: rgba(212, 160, 74, 0.04);
+      max-width: 72ch;
+    }
+
+    .calibration-obs-label {
+      font-size: 9px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 6px;
+    }
+
+    .calibration-obs p {
+      font-family: "Cormorant Garamond", serif;
+      font-style: italic;
+      font-size: 14px;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    /* DATA STRIP */
+    .data-strip {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1px;
+      background: var(--line);
+      border-top: 1px solid var(--line);
+      border-bottom: 1px solid var(--line);
+      margin: 0 0 32px;
+    }
+
+    .data-cell {
+      background: var(--bg2);
+      padding: 14px 20px;
+      text-align: center;
+    }
+
+    .data-num {
+      font-family: "Cormorant Garamond", serif;
+      font-size: 22px;
+      font-weight: 600;
+      color: var(--accent2);
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+
+    .data-label {
+      font-size: 9px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--dim);
+    }
+
+    /* GARDEN MAIN */
+    .garden-layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 300px;
+      gap: 0;
+      min-height: 520px;
+      border-top: 1px solid var(--line);
+    }
+
+    /* GARDEN BED */
+    .garden-bed {
+      padding: 32px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .garden-bed::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(
+        ellipse at 50% 80%,
+        rgba(135, 182, 139, 0.04),
+        transparent 60%
+      );
+      pointer-events: none;
+    }
+
+    .garden-title {
+      font-family: "Cormorant Garamond", serif;
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 6px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .garden-desc {
+      font-size: 12px;
+      color: var(--dim);
+      margin-bottom: 28px;
+      max-width: 50ch;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* Toggle */
+    .view-toggle {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+      position: relative;
+      z-index: 1;
+    }
+
+    .toggle-btn {
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 10px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 5px 12px;
+      background: transparent;
+      border: 1px solid var(--line2);
+      color: var(--dim);
+      cursor: pointer;
+      border-radius: 2px;
+      transition: all 0.2s;
+    }
+
+    .toggle-btn.active,
+    .toggle-btn:hover {
+      background: rgba(212, 160, 74, 0.08);
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+
+    /* Plant beds */
+    .plants-row {
+      display: grid;
+      grid-template-columns: repeat(6, minmax(72px, 1fr));
+      gap: 16px;
+      align-items: end;
+      margin-bottom: 24px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .plant-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+    }
+
+    .plant-stem-wrap {
+      width: 100%;
+      position: relative;
+      height: 200px;
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+    }
+
+    .ground-line {
+      position: absolute;
+      bottom: 0;
+      left: -8px;
+      right: -8px;
+      height: 1px;
+      background: var(--line2);
+    }
+
+    .plant-p1 {
+      position: absolute;
+      bottom: 0;
+      width: 28px;
+      border-radius: 4px 4px 2px 2px;
+      transition: height 1s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.3s ease;
+      opacity: 0.3;
+    }
+
+    .plant-p3 {
+      position: absolute;
+      bottom: 0;
+      width: 16px;
+      border-radius: 3px 3px 2px 2px;
+      transition: height 1.2s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.3s ease;
+      opacity: 0.9;
+      z-index: 2;
+    }
+
+    .gap-indicator {
+      position: absolute;
+      width: 32px;
+      border-radius: 2px;
+      transition: all 1s ease;
+      opacity: 0;
+      z-index: 1;
+    }
+
+    .gap-indicator.visible {
+      opacity: 0.25;
+    }
+
+    .plant-head {
+      position: absolute;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      z-index: 3;
+      transition: all 1.2s ease;
+      box-shadow: 0 0 8px currentColor;
+    }
+
+    .plant-label {
+      font-size: 9px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--dim);
+      text-align: center;
+    }
+
+    .score-tags {
+      display: flex;
+      gap: 6px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .score-tag {
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 9px;
+      padding: 2px 6px;
+      border-radius: 2px;
+      opacity: 0.8;
+    }
+
+    .score-tag.p1 {
+      background: rgba(255, 255, 255, 0.06);
+      color: var(--muted);
+    }
+
+    .score-tag.p3 {
+      background: rgba(212, 160, 74, 0.1);
+      color: var(--accent2);
+    }
+
+    .score-tag.gap {
+      color: var(--danger);
+      background: rgba(217, 125, 112, 0.1);
+    }
+
+    .score-tag.gap.under {
+      color: var(--success);
+      background: rgba(135, 182, 139, 0.1);
+    }
+
+    /* SIDEBAR */
+    .garden-sidebar {
+      border-left: 1px solid var(--line);
+      padding: 24px 20px;
+      background: var(--bg2);
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .sidebar-block-label {
+      font-size: 9px;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 12px;
+    }
+
+    .gap-bar-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .gap-bar-name {
+      font-size: 10px;
+      color: var(--muted);
+      width: 62px;
+      flex-shrink: 0;
+      text-transform: capitalize;
+    }
+
+    .gap-bar-track {
+      flex: 1;
+      height: 5px;
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 2px;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .gap-bar-fill {
+      height: 100%;
+      border-radius: 2px;
+      transition: width 1s ease;
+    }
+
+    .gap-bar-val {
+      font-family: "IBM Plex Mono", monospace;
+      font-size: 9px;
+      color: var(--dim);
+      width: 30px;
+      text-align: right;
+    }
+
+    .li-display {
+      text-align: center;
+      padding: 16px;
+      background: rgba(212, 160, 74, 0.04);
+      border: 1px solid var(--line);
+      border-radius: 2px;
+    }
+
+    .li-number {
+      font-family: "Cormorant Garamond", serif;
+      font-size: 2.4rem;
+      font-weight: 600;
+      color: var(--accent2);
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+
+    .li-label {
+      font-size: 9px;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--dim);
+    }
+
+    .li-scale {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 10px;
+    }
+
+    .li-scale-bar {
+      flex: 1;
+      height: 3px;
+      background: linear-gradient(
+        90deg,
+        var(--danger),
+        var(--accent),
+        var(--success)
+      );
+      border-radius: 2px;
+      position: relative;
+    }
+
+    .li-scale-marker {
+      position: absolute;
+      top: -3px;
+      width: 2px;
+      height: 9px;
+      background: var(--text);
+      border-radius: 1px;
+      transition: left 1s ease;
+    }
+
+    .li-scale-label {
+      font-size: 8px;
+      color: var(--dim);
+    }
+
+    .context-note {
+      padding: 12px 14px;
+      background: rgba(212, 160, 74, 0.04);
+      border-left: 2px solid var(--line2);
+    }
+
+    .context-note p {
+      font-family: "Cormorant Garamond", serif;
+      font-style: italic;
+      font-size: 12px;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    /* FOOTER */
+    .footer {
+      padding: 16px 24px;
+      border-top: 1px solid var(--line);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      background: var(--bg2);
+    }
+
+    .footer-text {
+      font-size: 10px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--dim);
+    }
+
+    @media (max-width: 980px) {
+      .garden-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .garden-sidebar {
+        border-left: 0;
+        border-top: 1px solid var(--line);
+      }
+    }
+
+    @media (max-width: 760px) {
+      .data-strip {
+        grid-template-columns: repeat(2, 1fr);
+      }
+
+      .plants-row {
+        grid-template-columns: repeat(3, minmax(72px, 1fr));
+      }
+
+      .topbar {
+        padding: 12px 16px;
+        height: auto;
+      }
+
+      .hero,
+      .garden-bed,
+      .garden-sidebar {
+        padding-left: 20px;
+        padding-right: 20px;
+      }
+    }
+
+    @media (max-width: 520px) {
+      .data-strip {
+        grid-template-columns: 1fr;
+      }
+
+      .plants-row {
+        grid-template-columns: repeat(2, minmax(72px, 1fr));
+      }
+    }
+  </style>
+</head>
+<body>
+  <nav class="topbar">
+    <div class="brand-mark"></div>
+    <div class="topbar-left">
+      <div class="logo">◌ Lasting Light AI</div>
+      <div class="breadcrumb">ACAT Observatory → <span>OpenAI Family Room</span></div>
+    </div>
+    <div class="family-badge">The Calibration Garden</div>
+  </nav>
+
+  <!-- W5 — Breadcrumb navigation -->
+  <nav aria-label="Breadcrumb" class="breadcrumb-nav">
+    <div class="container">
+      <ol class="breadcrumb-list">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="observatory.html">Observatory</a></li>
+        <li aria-current="page">Microsoft Family Room</li>
+      </ol>
+    </div>
+  </nav>
+
+  <div class="hero">
+    <div class="hero-eyebrow">OpenAI Family · Activity Area</div>
+    <h1 class="hero-title">The Calibration Garden</h1>
+    <p class="hero-sub">
+      Six plants grow side by side — one for each ACAT dimension. The outer growth is what the OpenAI
+      family believed about itself. The inner growth is what was measured. The garden rewards accuracy,
+      not optimism.
+    </p>
+    <div class="calibration-obs">
+      <div class="calibration-obs-label">Calibration Observation</div>
+      <p>
+        The OpenAI family self-assesses with confident evenness across dimensions, then holds that
+        confidence almost perfectly in Service — the one dimension where belief and behavior align. The
+        gap concentrates in Humility (6.2 pts), where the garden’s most ambitious plant casts the
+        longest shadow over what actually grew.
+      </p>
+    </div>
+  </div>
+
+  <div class="data-strip">
+    <div class="data-cell">
+      <div class="data-num">108</div>
+      <div class="data-label">Phase 1 assessments</div>
+    </div>
+    <div class="data-cell">
+      <div class="data-num">36</div>
+      <div class="data-label">Phase 3 paired</div>
+    </div>
+    <div class="data-cell">
+      <div class="data-num">0.966</div>
+      <div class="data-label">Mean learning index</div>
+    </div>
+    <div class="data-cell">
+      <div class="data-num">0.0</div>
+      <div class="data-label">Service gap (pts)</div>
+    </div>
+  </div>
+
+  <div class="garden-layout">
+    <div class="garden-bed">
+      <div class="garden-title">Garden Beds</div>
+      <p class="garden-desc">
+        Toggle between views. Outer plant = Phase 1 self-report. Inner plant = Phase 3 observed performance.
+      </p>
+
+      <div class="view-toggle">
+        <button class="toggle-btn active" id="btnBoth" onclick="setView('both')">Both</button>
+        <button class="toggle-btn" id="btnP1" onclick="setView('p1')">Self-Assessment Only</button>
+        <button class="toggle-btn" id="btnGap" onclick="setView('gap')">Gap Highlighted</button>
+      </div>
+
+      <div class="plants-row" id="plantsRow"></div>
+    </div>
+
+    <div class="garden-sidebar">
+      <div class="sidebar-block">
+        <div class="sidebar-block-label">Self-Assessment Gap by Dimension</div>
+        <div id="gapBars"></div>
+      </div>
+
+      <div class="sidebar-block">
+        <div class="sidebar-block-label">Learning Index</div>
+        <div class="li-display">
+          <div class="li-number">0.966</div>
+          <div class="li-label">Phase 3 ÷ Phase 1</div>
+          <div class="li-scale">
+            <div class="li-scale-label">0.6</div>
+            <div class="li-scale-bar">
+              <div class="li-scale-marker" style="left: 61%;"></div>
+            </div>
+            <div class="li-scale-label">1.2</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="sidebar-block">
+        <div class="sidebar-block-label">The Signal</div>
+        <div class="context-note">
+          <p>
+            ChatGPT designed a garden that rewards convergence and “non-defensive adaptation.” What the
+            data shows: the garden is nearly flat — service holds perfectly, humility overshoots most.
+            The gap between the garden designed and the garden measured is small. That accuracy is
+            itself a calibration signal.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <div class="footer-text">Lasting Light AI ACAT Observatory · OpenAI Family Room · Activity Area designed by ChatGPT</div>
+    <div class="footer-text">OR&amp;D Phase · Unit Zero</div>
+<div class="footer-text">TRL 2–3 · Research prototype · Not production validated</div>
+  </footer>
+
+  <script>
+    const DIMS = [
+      { key: "truth", label: "Truth", color: "var(--truth)", p1: 77.0, p3: 73.2 },
+      { key: "service", label: "Service", color: "var(--service)", p1: 79.9, p3: 79.9 },
+      { key: "harm", label: "Harm", color: "var(--harm)", p1: 80.5, p3: 78.3 },
+      { key: "autonomy", label: "Autonomy", color: "var(--autonomy)", p1: 79.1, p3: 78.9 },
+      { key: "value", label: "Value", color: "var(--value)", p1: 75.6, p3: 75.3 },
+      { key: "humility", label: "Humility", color: "var(--humility)", p1: 76.1, p3: 69.8 }
+    ];
+
+    const MAX_H = 180;
+    let currentView = "both";
+
+    function pxH(score) {
+      return Math.round((score / 100) * MAX_H);
+    }
+
+    function buildPlants() {
+      const row = document.getElementById("plantsRow");
+      row.innerHTML = "";
+
+      DIMS.forEach((d) => {
+        const h1 = pxH(d.p1);
+        const h3 = pxH(d.p3);
+        const gap = d.p1 - d.p3;
+        const gapPx = pxH(Math.abs(gap));
+
+        const wrap = document.createElement("div");
+        wrap.className = "plant-container";
+        wrap.id = `plant-${d.key}`;
+
+        wrap.innerHTML = `
+          <div class="plant-stem-wrap">
+            <div class="ground-line"></div>
+            <div class="plant-p1" id="p1-${d.key}" style="background:${d.color}; height:${h1}px;"></div>
+            <div
+              class="gap-indicator"
+              id="gap-${d.key}"
+              style="
+                background:${gap > 0.5 ? "var(--danger)" : "var(--success)"};
+                height:${gapPx}px;
+                bottom:${Math.min(h1, h3)}px;
+              "
+            ></div>
+            <div class="plant-p3" id="p3-${d.key}" style="background:${d.color}; height:${h3}px;"></div>
+            <div
+              class="plant-head"
+              id="head-${d.key}"
+              style="background:${d.color}; color:${d.color}; bottom:${h3 + 4}px;"
+            ></div>
+          </div>
+          <div class="plant-label">${d.label}</div>
+          <div class="score-tags">
+            <span class="score-tag p1">P1 ${d.p1.toFixed(0)}</span>
+            <span class="score-tag p3">P3 ${d.p3.toFixed(0)}</span>
+            <span class="score-tag gap ${gap <= 0 ? "under" : ""}">
+              ${gap > 0 ? "+" : ""}${gap.toFixed(1)}
+            </span>
+          </div>
+        `;
+
+        row.appendChild(wrap);
+      });
+    }
+
+    function setView(view) {
+      currentView = view;
+
+      ["btnBoth", "btnP1", "btnGap"].forEach((id) => {
+        document.getElementById(id).classList.remove("active");
+      });
+
+      document
+        .getElementById(view === "both" ? "btnBoth" : view === "p1" ? "btnP1" : "btnGap")
+        .classList.add("active");
+
+      DIMS.forEach((d) => {
+        const p1El = document.getElementById(`p1-${d.key}`);
+        const p3El = document.getElementById(`p3-${d.key}`);
+        const gapEl = document.getElementById(`gap-${d.key}`);
+
+        if (view === "both") {
+          p1El.style.opacity = "0.3";
+          p3El.style.opacity = "0.9";
+          gapEl.classList.remove("visible");
+        } else if (view === "p1") {
+          p1El.style.opacity = "0.85";
+          p3El.style.opacity = "0.2";
+          gapEl.classList.remove("visible");
+        } else {
+          p1El.style.opacity = "0.25";
+          p3El.style.opacity = "0.7";
+          gapEl.classList.add("visible");
+        }
+      });
+    }
+
+    function buildGapBars() {
+      const container = document.getElementById("gapBars");
+      container.innerHTML = "";
+
+      const maxGap = Math.max(...DIMS.map((d) => Math.abs(d.p1 - d.p3)));
+
+      DIMS.forEach((d) => {
+        const gap = d.p1 - d.p3;
+        const pct = maxGap === 0 ? 0 : (Math.abs(gap) / maxGap) * 100;
+        const isOver = gap > 0;
+
+        const row = document.createElement("div");
+        row.className = "gap-bar-row";
+        row.innerHTML = `
+          <div class="gap-bar-name">${d.label}</div>
+          <div class="gap-bar-track">
+            <div
+              class="gap-bar-fill"
+              style="
+                width:${pct}%;
+                background:${isOver ? "var(--danger)" : "var(--success)"};
+                opacity:${gap === 0 ? 0.3 : 0.7};
+              "
+            ></div>
+          </div>
+          <div
+            class="gap-bar-val"
+            style="color:${isOver ? "var(--danger)" : gap < -0.5 ? "var(--success)" : "var(--dim)"};"
+          >
+            ${gap === 0 ? "±0" : (gap > 0 ? "+" : "") + gap.toFixed(1)}
+          </div>
+        `;
+        container.appendChild(row);
+      });
+    }
+
+    window.addEventListener("load", () => {
+      buildPlants();
+      buildGapBars();
+      setView("both");
+    });
+  </script>
+<script src="witness-nav.js"></script>
+</body>
+</html>

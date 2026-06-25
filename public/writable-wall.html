@@ -1,4 +1,4 @@
-<!-- FDS: F3-Component | Parent: ACAT Core Construct + music_hall_submissions | Status: ACTIVE | OR&D Day 21 -->
+<!-- FDS: F3-Component | Parent: ACAT Core Construct + music_hall_submissions | Status: ACTIVE | OR&D Day 107 -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -1041,4 +1041,22 @@ document.getElementById('wall-form').addEventListener('submit',async function(e)
       },
       body:JSON.stringify(payload)
     });
-*
+    if(res.ok||res.status===201){
+      showConfirm();
+    }else{
+      showError('Something went wrong. Please try again.');
+    }
+  }catch(err){
+    showError('Connection error. Please try again.');
+  }
+});
+
+/* ── INIT ── */
+loadLiveWall();
+loadScratchpad();
+<\/script>
+<script src="witness-nav.js"></script>
+
+<div style="text-align:center;font-size:10px;color:#6e665d;padding:4px 0 8px;font-family:'IBM Plex Mono',monospace">TRL 2–3 · Research prototype · Not production validated</div>
+</body>
+</html>

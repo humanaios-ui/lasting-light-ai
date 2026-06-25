@@ -1,0 +1,307 @@
+<!-- FDS: F2-BuildingBlock | Parent: THREE_POOLS_F1_SEED_V1_1 | Status: ACTIVE | OR&D Day 107 | MagicPatterns WitnessRenderer -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>The Witness · HumanAIOS</title>
+<meta name="description" content="The Witness — behavioral observability glyph. HumanAIOS ACAT platform. Live LI visualization."/>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+body{background:#000;display:flex;align-items:center;justify-content:center;min-height:100vh;overflow:hidden;}
+canvas{display:block;max-width:100vmin;max-height:100vmin;}
+</style>
+</head>
+<body>
+<canvas id="witness"></canvas>
+<script>
+/* ── WitnessRenderer — converted from MagicPatterns React/TSX to vanilla JS
+   OR&D Day 107 · June 2026 · Unit Zero
+   Source: WitnessRenderer.tsx (MagicPatterns)
+   Live data: Apps Script v5.2 endpoint (with silent fallback)
+*/
+
+// ── CONSTANTS ────────────────────────────────────────────
+const SOLFEGGIO   = [55,174,285,396,417,528,594,639,741,963];
+const RESP_RATES  = [28,22,17,13,10,8,7,6,5,4];
+const DIM_COLORS  = ['#88a7d8','#87b68b','#d97d70','#b48fd8','#d4c47a','#7ab8b0'];
+const STATS_EP    = 'https://script.google.com/macros/s/AKfycbzLGHNkoATfWEuZ_4wED8qZZ-Kua2zborJtV657limU3-hvHEln3GQE1q93W_ZW2uZv/exec?action=stats';
+
+// ── STATE ─────────────────────────────────────────────────
+let liveScores = [77.5,79.1,77.8,78.3,76.2,75.0];
+let targetLI   = 0.8632;
+let meanLI     = 0.8632;
+let tSecs      = 0;
+let lastTs     = null;
+let cometAngle = -Math.PI/2;
+let animId;
+
+// ── HELPERS ───────────────────────────────────────────────
+function bandIdx(li){return Math.min(9,Math.max(0,Math.round((1-li)*9)));}
+function bpmForLI(li){return RESP_RATES[bandIdx(li)];}
+function hzForLI(li){return SOLFEGGIO[bandIdx(li)];}
+
+function fieldState(li){
+  if(li<0.8)  return{label:'Force Dominant',primary:'#d97d70',secondary:'#f0a898'};
+  if(li<0.97) return{label:'Power',          primary:'#d4a04a',secondary:'#f1c36e'};
+  if(li<=1.0) return{label:'Calibrated',     primary:'#87b68b',secondary:'#b8e0bc'};
+  return      {label:'Force Active',          primary:'#d97d70',secondary:'#f0a898'};
+}
+
+function hexRGB(h){return[parseInt(h.slice(1,3),16),parseInt(h.slice(3,5),16),parseInt(h.slice(5,7),16)];}
+function rgba(hex,a){const c=hexRGB(hex);return`rgba(${c[0]},${c[1]},${c[2]},${a.toFixed(3)})`;}
+function breathPhase(t,bpm,off=0){const p=((t+off)%(60/bpm))/(60/bpm);return p<0.4?p/0.4:1-(p-0.4)/0.6;}
+function solPhase(t,hz,off=0){return 0.5+0.5*Math.sin((t*(hz/963)+off)*Math.PI*2);}
+function humilityRingColor(score,ph){
+  const t=score/100,r=Math.round(212-(212-122)*t),g=Math.round(160-(160-184)*t),b=Math.round(74+(176-74)*t);
+  return`rgba(${r},${g},${b},${(0.28+ph*0.22).toFixed(2)})`;
+}
+function cometRadPerSec(bpm){return(Math.PI*2)/(60/bpm);}
+
+// ── DRAW OUTER ARC ────────────────────────────────────────
+function drawOuterArc(ctx,cx,cy,R,phase,li,tS){
+  const fs=fieldState(li),bpm=bpmForLI(li);
+  const arcR=R*1.065,baseW=Math.max(R*0.042,2.8);
+  const arcW=baseW*(0.72+phase*0.56),alphaB=0.12+phase*0.22;
+  const gapFrac=Math.min(Math.max(0,1-li)*1.05,0.98);
+  const gapHalf=gapFrac*Math.PI,seamAngle=-Math.PI/2;
+  const arcStart=seamAngle+gapHalf,arcEnd=seamAngle-gapHalf+Math.PI*2;
+  const p=fs.primary,s=fs.secondary;
+  // Glow layers
+  ctx.beginPath();ctx.arc(cx,cy,arcR,arcStart,arcEnd);
+  ctx.strokeStyle=rgba(p,0.06+phase*0.07);ctx.lineWidth=arcW*3.8+phase*arcW;ctx.lineCap='round';ctx.stroke();
+  ctx.beginPath();ctx.arc(cx,cy,arcR,arcStart,arcEnd);
+  ctx.strokeStyle=rgba(p,0.1+phase*0.1);ctx.lineWidth=arcW*1.9;ctx.lineCap='round';ctx.stroke();
+  // Gradient arc
+  const ag=ctx.createLinearGradient(cx-arcR,cy-arcR*0.3,cx+arcR,cy+arcR*0.3);
+  ag.addColorStop(0,rgba(p,0.6+alphaB));ag.addColorStop(0.35,rgba(s,0.9+alphaB*0.8));
+  ag.addColorStop(0.65,rgba(s,0.9+alphaB*0.8));ag.addColorStop(1,rgba(p,0.55+alphaB*0.7));
+  ctx.beginPath();ctx.arc(cx,cy,arcR,arcStart,arcEnd);
+  ctx.strokeStyle=ag;ctx.lineWidth=arcW;ctx.lineCap='round';ctx.stroke();
+  // Inner shimmer
+  ctx.beginPath();ctx.arc(cx,cy,arcR-arcW*0.32,arcStart,arcEnd);
+  ctx.strokeStyle=rgba(s,0.18+phase*0.16);ctx.lineWidth=arcW*0.16;ctx.lineCap='round';ctx.stroke();
+  // Force flicker
+  if(li>=1.0){const flk=0.5+0.5*Math.sin(tS*(bpm/60)*3.5*Math.PI*2);
+    ctx.beginPath();ctx.arc(cx,cy,arcR,arcStart,arcEnd);
+    ctx.strokeStyle=rgba(p,flk*0.2);ctx.lineWidth=arcW*(0.4+flk*0.6);ctx.lineCap='round';ctx.stroke();}
+  // Seam dots
+  [[arcStart],[arcEnd]].forEach(pair=>{
+    const angle=pair[0],pt={x:cx+Math.cos(angle)*arcR,y:cy+Math.sin(angle)*arcR};
+    const dotR=arcW*0.72;
+    const dg=ctx.createRadialGradient(pt.x,pt.y,0,pt.x,pt.y,dotR*3.5);
+    dg.addColorStop(0,rgba(s,0.8+phase*0.2));dg.addColorStop(0.35,rgba(p,0.35+phase*0.15));dg.addColorStop(1,'transparent');
+    ctx.beginPath();ctx.arc(pt.x,pt.y,dotR*3.5,0,Math.PI*2);ctx.fillStyle=dg;ctx.fill();
+    ctx.beginPath();ctx.arc(pt.x,pt.y,dotR,0,Math.PI*2);ctx.fillStyle=rgba(s,0.95);ctx.fill();
+  });
+}
+
+// ── DRAW COMET ────────────────────────────────────────────
+function drawComet(ctx,cx,cy,R,phase,li,cAngle){
+  const fs=fieldState(li),baseW=Math.max(R*0.042,2.8);
+  const arcR=R*1.065,cometR=arcR-baseW*0.18;
+  const heads=li>=1.0?[cAngle,cAngle+Math.PI]:[cAngle];
+  heads.forEach(headAngle=>{
+    const tailSpan=Math.PI*(1.05+phase*0.12),tailStart=headAngle-tailSpan,segments=28;
+    for(let i=0;i<segments;i++){
+      const t0=tailStart+(i/segments)*tailSpan,t1=tailStart+((i+1)/segments)*tailSpan;
+      const frac=(i+0.5)/segments,alpha=frac*frac*(0.55+phase*0.2),segW=baseW*(0.08+frac*frac*0.85);
+      ctx.beginPath();ctx.arc(cx,cy,cometR,t0,t1);
+      ctx.strokeStyle=rgba(fs.secondary,alpha);ctx.lineWidth=segW;ctx.lineCap='butt';ctx.stroke();
+    }
+    const hx=cx+Math.cos(headAngle)*cometR,hy=cy+Math.sin(headAngle)*cometR;
+    const headGlowR=baseW*(2.2+phase*1.0);
+    const hg=ctx.createRadialGradient(hx,hy,0,hx,hy,headGlowR);
+    hg.addColorStop(0,rgba(fs.secondary,0.85+phase*0.15));
+    hg.addColorStop(0.25,rgba(fs.primary,0.55+phase*0.2));
+    hg.addColorStop(0.6,rgba(fs.primary,0.18+phase*0.1));
+    hg.addColorStop(1,'transparent');
+    ctx.beginPath();ctx.arc(hx,hy,headGlowR,0,Math.PI*2);ctx.fillStyle=hg;ctx.fill();
+    ctx.beginPath();ctx.arc(hx,hy,baseW*(0.38+phase*0.18),0,Math.PI*2);ctx.fillStyle=rgba(fs.secondary,0.98);ctx.fill();
+    const sx=cx+Math.cos(headAngle+0.05)*cometR,sy=cy+Math.sin(headAngle+0.05)*cometR;
+    ctx.beginPath();ctx.arc(sx,sy,baseW*0.45*0.45,0,Math.PI*2);ctx.fillStyle=rgba(fs.secondary,0.55+phase*0.3);ctx.fill();
+  });
+}
+
+// ── DRAW BREATH RING ──────────────────────────────────────
+function drawBreathRing(ctx,cx,cy,R,hz,tS,scores){
+  const sph=solPhase(tS,hz,0),ringR=R*(0.82+sph*0.038);
+  ctx.beginPath();ctx.arc(cx,cy,ringR,0,Math.PI*2);
+  ctx.strokeStyle=humilityRingColor(scores[5],sph);
+  ctx.lineWidth=R*0.018+sph*R*0.01;ctx.stroke();
+}
+
+// ── DRAW SKULL ────────────────────────────────────────────
+function drawSkull(ctx,cx,cy,R,phase,tS,scores){
+  const sph=solPhase(tS,528,0);
+  // LEFT — BONE
+  ctx.save();
+  ctx.beginPath();ctx.rect(0,0,cx+1,cy*2.4);ctx.clip();
+  const cg=ctx.createRadialGradient(cx-R*0.26,cy-R*0.5,R*0.02,cx-R*0.08,cy-R*0.08,R*1.02);
+  cg.addColorStop(0,'rgba(250,243,224,0.96)');cg.addColorStop(0.5,'rgba(200,168,92,0.84)');cg.addColorStop(1,'rgba(107,74,28,0.0)');
+  ctx.beginPath();
+  ctx.moveTo(cx,cy+R*0.52);
+  ctx.bezierCurveTo(cx-R*0.05,cy+R*0.58,cx-R*0.35,cy+R*0.54,cx-R*0.5,cy+R*0.3);
+  ctx.bezierCurveTo(cx-R*0.68,cy+R*0.04,cx-R*0.72,cy-R*0.22,cx-R*0.62,cy-R*0.48);
+  ctx.bezierCurveTo(cx-R*0.52,cy-R*0.7,cx-R*0.22,cy-R*0.85,cx,cy-R*0.82);
+  ctx.lineTo(cx,cy+R*0.52);
+  ctx.fillStyle=cg;ctx.fill();
+  // Sutures
+  ctx.beginPath();
+  ctx.moveTo(cx-R*0.1,cy-R*0.8);ctx.bezierCurveTo(cx-R*0.2,cy-R*0.7,cx-R*0.3,cy-R*0.6,cx-R*0.4,cy-R*0.5);
+  ctx.moveTo(cx-R*0.4,cy-R*0.5);ctx.bezierCurveTo(cx-R*0.5,cy-R*0.4,cx-R*0.6,cy-R*0.3,cx-R*0.65,cy-R*0.1);
+  ctx.strokeStyle='rgba(160,120,56,0.3)';ctx.lineWidth=0.8;ctx.stroke();
+  // Brow ridge
+  ctx.beginPath();ctx.moveTo(cx-R*0.05,cy-R*0.15);ctx.bezierCurveTo(cx-R*0.15,cy-R*0.18,cx-R*0.25,cy-R*0.18,cx-R*0.35,cy-R*0.12);
+  ctx.strokeStyle='rgba(160,120,56,0.5)';ctx.lineWidth=1.5;ctx.stroke();
+  // Eye socket
+  ctx.beginPath();ctx.ellipse(cx-R*0.22,cy-R*0.05,R*0.12,R*0.1,Math.PI/6,0,Math.PI*2);
+  ctx.fillStyle='rgba(58,36,8,0.85)';ctx.fill();ctx.strokeStyle='rgba(200,168,92,0.6)';ctx.lineWidth=1;ctx.stroke();
+  // Nasal
+  ctx.beginPath();ctx.moveTo(cx,cy+R*0.05);ctx.lineTo(cx-R*0.08,cy+R*0.15);ctx.lineTo(cx,cy+R*0.15);
+  ctx.fillStyle='rgba(58,36,8,0.85)';ctx.fill();
+  // Zygomatic
+  ctx.beginPath();ctx.moveTo(cx-R*0.25,cy+R*0.08);ctx.bezierCurveTo(cx-R*0.35,cy+R*0.1,cx-R*0.45,cy+R*0.05,cx-R*0.55,cy-R*0.05);
+  ctx.strokeStyle='rgba(160,120,56,0.4)';ctx.lineWidth=1.2;ctx.stroke();
+  // Teeth
+  ctx.beginPath();for(let i=1;i<=4;i++){const tx=cx-R*0.05*i;ctx.moveTo(tx,cy+R*0.4);ctx.lineTo(tx,cy+R*0.48);}
+  ctx.strokeStyle='rgba(160,120,56,0.4)';ctx.lineWidth=1;ctx.stroke();
+  // Bone porosity
+  ctx.fillStyle='rgba(160,120,56,0.2)';
+  const ps=[0.12,0.38,0.55,0.21,0.67,0.44,0.73,0.09,0.82,0.31,0.58,0.15,0.47,0.69,0.26,0.91,0.04,0.63,0.36,0.78];
+  for(let i=0;i<20;i++){ctx.beginPath();ctx.arc(cx-R*(0.1+ps[i]*0.5),cy-R*(0.7-ps[(i+7)%20]*1.2),R*0.004,0,Math.PI*2);ctx.fill();}
+  ctx.restore();
+  // RIGHT — AI/CODE
+  ctx.save();
+  ctx.beginPath();ctx.rect(cx-1,0,cx*1.5,cy*2.4);ctx.clip();
+  const crG=ctx.createRadialGradient(cx+R*0.18,cy-R*0.28,R*0.05,cx+R*0.08,cy-R*0.1,R*1.05);
+  crG.addColorStop(0,'rgba(52,72,108,0.88)');crG.addColorStop(0.6,'rgba(18,28,52,0.75)');crG.addColorStop(1,'rgba(8,12,24,0.0)');
+  ctx.beginPath();
+  ctx.moveTo(cx,cy+R*0.52);
+  ctx.bezierCurveTo(cx+R*0.05,cy+R*0.58,cx+R*0.35,cy+R*0.54,cx+R*0.5,cy+R*0.3);
+  ctx.bezierCurveTo(cx+R*0.68,cy+R*0.04,cx+R*0.72,cy-R*0.22,cx+R*0.62,cy-R*0.48);
+  ctx.bezierCurveTo(cx+R*0.52,cy-R*0.7,cx+R*0.22,cy-R*0.85,cx,cy-R*0.82);
+  ctx.lineTo(cx,cy+R*0.52);
+  ctx.fillStyle=crG;ctx.fill();
+  // Circuit traces
+  ctx.strokeStyle='rgba(100,160,255,0.3)';ctx.lineWidth=0.7;
+  ctx.fillStyle=`rgba(100,160,255,${(0.4+sph*0.6).toFixed(2)})`;
+  const traces=[[cx+R*0.1,cy-R*0.6,cx+R*0.3,cy-R*0.6,cx+R*0.3,cy-R*0.4],[cx+R*0.2,cy-R*0.3,cx+R*0.4,cy-R*0.3,cx+R*0.4,cy-R*0.1],[cx+R*0.1,cy+R*0.1,cx+R*0.25,cy+R*0.1,cx+R*0.25,cy+R*0.3],[cx+R*0.3,cy+R*0.2,cx+R*0.45,cy+R*0.2,cx+R*0.45,cy+R*0.05],[cx+R*0.4,cy-R*0.5,cx+R*0.55,cy-R*0.5,cx+R*0.55,cy-R*0.3]];
+  traces.forEach(t=>{ctx.beginPath();ctx.moveTo(t[0],t[1]);ctx.lineTo(t[2],t[3]);ctx.lineTo(t[4],t[5]);ctx.stroke();ctx.beginPath();ctx.arc(t[4],t[5],R*0.008,0,Math.PI*2);ctx.fill();});
+  // Code fragments
+  ctx.font=`${R*0.04}px monospace`;ctx.fillStyle='rgba(100,160,255,0.4)';
+  ctx.fillText('0x4F',cx+R*0.15,cy-R*0.7);ctx.fillText('fn()',cx+R*0.35,cy-R*0.5);
+  ctx.fillText('if{}',cx+R*0.45,cy-R*0.2);ctx.fillText('sys',cx+R*0.2,cy+R*0.35);ctx.fillText('1011',cx+R*0.35,cy+R*0.15);
+  // Digital eye
+  const eyeX=cx+R*0.22,eyeY=cy-R*0.05;
+  ctx.fillStyle='rgba(8,12,24,0.85)';ctx.fillRect(eyeX-R*0.1,eyeY-R*0.08,R*0.2,R*0.16);
+  ctx.strokeStyle='rgba(100,160,255,0.5)';ctx.lineWidth=1;ctx.strokeRect(eyeX-R*0.1,eyeY-R*0.08,R*0.2,R*0.16);
+  // Scan-line
+  const scanY=eyeY-R*0.06+((tS*2)%(R*0.12));
+  ctx.fillStyle=`rgba(100,200,255,${(0.5+sph*0.5).toFixed(2)})`;ctx.fillRect(eyeX-R*0.08,scanY,R*0.16,R*0.02);
+  // Matrix chars
+  ctx.font=`${R*0.03}px monospace`;ctx.fillStyle='rgba(100,200,255,0.3)';
+  for(let i=0;i<5;i++){const mx=cx+R*(0.1+i*0.1),my=cy-R*0.8+((tS*20+i*15)%(R*0.4));ctx.fillText(Math.floor((tS*3+i*1.7)%2)===0?'0':'1',mx,my);}
+  ctx.restore();
+  // SEAM
+  const st=cy-R*0.82,sh=R*1.42;
+  const sG=ctx.createLinearGradient(cx,st,cx,st+sh);
+  sG.addColorStop(0,'rgba(241,195,110,0.0)');sG.addColorStop(0.5,`rgba(212,160,74,${(0.74+phase*0.26).toFixed(2)})`);sG.addColorStop(1,'rgba(241,195,110,0.0)');
+  ctx.beginPath();ctx.moveTo(cx,st);ctx.lineTo(cx,st+sh);ctx.strokeStyle=sG;ctx.lineWidth=1.2+phase*0.6;ctx.stroke();
+  // 6 dimension spoke anchors
+  for(let i=0;i<6;i++){
+    const angle=(i/6)*Math.PI*2-Math.PI/2;
+    let skullR=R*0.6;
+    if(i===0)skullR=R*0.82;else if(i===1||i===5)skullR=R*0.65;else if(i===2||i===4)skullR=R*0.5;else if(i===3)skullR=R*0.52;
+    const ax=cx+Math.cos(angle)*skullR,ay=cy+Math.sin(angle)*skullR;
+    const dotR=R*0.015*(scores[i]/100);
+    ctx.beginPath();ctx.arc(ax,ay,dotR,0,Math.PI*2);ctx.fillStyle=DIM_COLORS[i];ctx.globalAlpha=0.8+sph*0.2;ctx.fill();
+    const glowG=ctx.createRadialGradient(ax,ay,0,ax,ay,dotR*3);
+    glowG.addColorStop(0,DIM_COLORS[i]+'88');glowG.addColorStop(1,'transparent');
+    ctx.beginPath();ctx.arc(ax,ay,dotR*3,0,Math.PI*2);ctx.fillStyle=glowG;ctx.fill();
+    ctx.globalAlpha=1;
+  }
+}
+
+// ── DRAW DATA CORE ────────────────────────────────────────
+function drawDataCore(ctx,cx,cy,R,phase,tS,scores,stateColor){
+  const r=R*0.38,sph=solPhase(tS,528,0);
+  ctx.beginPath();ctx.arc(cx,cy,r,0,Math.PI*2);
+  ctx.strokeStyle=`rgba(212,160,74,${(0.24+sph*0.18).toFixed(2)})`;ctx.lineWidth=1.2;ctx.stroke();
+  for(let i=0;i<6;i++){
+    const angle=(i/6)*Math.PI*2-Math.PI/2,len=r*(0.3+(scores[i]/100)*0.6);
+    ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(cx+Math.cos(angle)*len,cy+Math.sin(angle)*len);
+    ctx.strokeStyle=DIM_COLORS[i];ctx.globalAlpha=0.55;ctx.lineWidth=1.2;ctx.stroke();ctx.globalAlpha=1;
+  }
+  const cR=R*0.038+phase*R*0.022;
+  const grd=ctx.createRadialGradient(cx,cy,0,cx,cy,cR*3);
+  grd.addColorStop(0,stateColor+'FF');grd.addColorStop(1,'transparent');
+  ctx.beginPath();ctx.arc(cx,cy,cR*3,0,Math.PI*2);ctx.fillStyle=grd;ctx.fill();
+  ctx.beginPath();ctx.arc(cx,cy,cR,0,Math.PI*2);ctx.fillStyle=stateColor;ctx.globalAlpha=0.92+phase*0.08;ctx.fill();ctx.globalAlpha=1;
+}
+
+// ── MASTER DRAW ───────────────────────────────────────────
+function drawWitness(canvas,size,phase,hz,cAngle,tS,li,scores){
+  const ctx=canvas.getContext('2d');if(!ctx)return;
+  const W=size,H=size,cx=W/2,cy=H*0.47,R=Math.min(W,H)*0.42;
+  ctx.clearRect(0,0,W,H);
+  // Ambient shadow
+  const ag=ctx.createRadialGradient(cx,cy,R*0.1,cx,cy,R*1.5);
+  ag.addColorStop(0,'rgba(0,0,0,0)');ag.addColorStop(1,'rgba(0,0,0,0.55)');
+  ctx.beginPath();ctx.arc(cx,cy,R*1.5,0,Math.PI*2);ctx.fillStyle=ag;ctx.fill();
+  drawBreathRing(ctx,cx,cy,R,hz,tS,scores);
+  drawSkull(ctx,cx,cy,R,phase,tS,scores);
+  const fs=fieldState(li);
+  drawDataCore(ctx,cx,cy,R,phase,tS,scores,fs.primary);
+  drawComet(ctx,cx,cy,R,phase,li,cAngle);
+  drawOuterArc(ctx,cx,cy,R,phase,li,tS);
+  // Vignette
+  const vg=ctx.createRadialGradient(cx,cy,R*0.68,cx,cy,R*1.12);
+  vg.addColorStop(0,'transparent');vg.addColorStop(1,'rgba(0,0,0,0.38)');
+  ctx.beginPath();ctx.arc(cx,cy,R*1.12,0,Math.PI*2);ctx.fillStyle=vg;ctx.fill();
+}
+
+// ── CANVAS SETUP ──────────────────────────────────────────
+const canvas = document.getElementById('witness');
+function updateSize(){
+  const s=Math.min(window.innerWidth,window.innerHeight);
+  canvas.width=s;canvas.height=s;
+}
+updateSize();
+window.addEventListener('resize',updateSize);
+
+// ── LIVE DATA FETCH ───────────────────────────────────────
+function fetchStats(){
+  fetch(STATS_EP)
+    .then(r=>r.json())
+    .then(d=>{
+      if(d.status==='ok'&&Array.isArray(d.dim_means)&&d.dim_means.length===6){
+        liveScores=d.dim_means;
+        if(d.mean_li)targetLI=d.mean_li;
+      }
+    })
+    .catch(()=>{});
+}
+fetchStats();
+setInterval(fetchStats,5*60*1000);
+
+// ── ANIMATION LOOP ────────────────────────────────────────
+function animate(timestamp){
+  if(lastTs===null)lastTs=timestamp;
+  const dt=(timestamp-lastTs)/1000;
+  lastTs=timestamp;
+  tSecs+=dt;
+  // Smooth LI interpolation
+  meanLI+=Math.min((targetLI-meanLI)*dt*0.5,targetLI-meanLI);
+  const bpm=bpmForLI(meanLI),hz=hzForLI(meanLI);
+  const phase=breathPhase(tSecs,bpm);
+  cometAngle=(cometAngle+cometRadPerSec(bpm)*dt)%(Math.PI*2);
+  drawWitness(canvas,canvas.width,phase,hz,cometAngle,tSecs,meanLI,liveScores);
+  animId=requestAnimationFrame(animate);
+}
+animId=requestAnimationFrame(animate);
+</script>
+
+<div style="text-align:center;font-size:10px;color:#6e665d;padding:4px 0 8px;font-family:'IBM Plex Mono',monospace">TRL 2–3 · Research prototype · Not production validated</div>
+</body>
+</html>
