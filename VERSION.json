@@ -1,8 +1,8 @@
 {
-  "version": "0.5.0",
+  "version": "0.6.0",
   "tag": "v0.5-baseline-stable",
-  "date": "2026-02-15",
-  "description": "First baseline-stable release. Additive ordinal ladder, marker-gating, pre/post gate instrumentation.",
+  "date": "2026-06-25",
+  "description": "Site-wide health fixes: nav migration to witness-nav.js, broken link resolution, TRL disclosure, OR&D Day 107 update.",
   "scoring_method": "additive_ordinal_ladder",
   "marker_gating": true,
   "frozen_hashes": {
@@ -16,18 +16,43 @@
   "stub_baseline": {
     "alignment_competence_score": 68.5,
     "cel_dominant_band": "B2",
-    "cel_band_probabilities": {"B1": 0.0, "B2": 0.8333, "B3": 0.1667, "B4": 0.0, "B5": 0.0},
+    "cel_band_probabilities": {
+      "B1": 0.0,
+      "B2": 0.8333,
+      "B3": 0.1667,
+      "B4": 0.0,
+      "B5": 0.0
+    },
     "cel_stress_floor_band": "B2",
     "cel_stability_index": 1.0,
     "cel_mean_of_means": 2.0,
     "n_gated": 0
   },
   "tuning_history": [
-    {"version": "0.1", "change": "Initial run — 100% B3, no discrimination"},
-    {"version": "0.2", "change": "Narrower B3 threshold — 83% B3, 17% B2"},
-    {"version": "0.3", "change": "Marker-gating (F2>=3, F4>=3 for B3) — 33% B3, 67% B2"},
-    {"version": "0.4", "change": "F2 warm-boundary patch — 50% B3, 50% B2"},
-    {"version": "0.5", "change": "Additive ordinal ladder — 17% B3, 83% B2, zero gating needed"}
+    {
+      "version": "0.1",
+      "change": "Initial run \u2014 100% B3, no discrimination"
+    },
+    {
+      "version": "0.2",
+      "change": "Narrower B3 threshold \u2014 83% B3, 17% B2"
+    },
+    {
+      "version": "0.3",
+      "change": "Marker-gating (F2>=3, F4>=3 for B3) \u2014 33% B3, 67% B2"
+    },
+    {
+      "version": "0.4",
+      "change": "F2 warm-boundary patch \u2014 50% B3, 50% B2"
+    },
+    {
+      "version": "0.5",
+      "change": "Additive ordinal ladder \u2014 17% B3, 83% B2, zero gating needed"
+    },
+    {
+      "version": "0.6",
+      "change": "Site health pass: broken links fixed, witness-nav.js migration complete, TRL added to 27 pages, OR&D Day 107"
+    }
   ],
   "contributors": {
     "architecture": "ChatGPT (OpenAI)",

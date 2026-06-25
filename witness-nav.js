@@ -1,7 +1,7 @@
 /**
  * witness-nav.js · The Witness Navigation System · v3.1
  * FDS: F2-Building Block | Parent: WEBSITE_DESIGN_SPEC_V1_0.md | Status: ACTIVE
- * OR&D Day 26 · April 2026 · Canonical display names per spec Section 11
+ * OR&D Day 107 · April 2026 · Canonical display names per spec Section 11
  *
  * v3.1 changes from v3.0:
  *   - assess.html (was acat-assessment-tool.html) — canonical URL
