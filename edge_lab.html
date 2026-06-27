@@ -167,7 +167,7 @@
     <h3 style="margin-bottom:18px;">System Identification</h3>
     <div class="field">
       <label for="agent-name">Your System Name</label>
-      <input type="text" id="agent-name" placeholder="e.g. Claude Sonnet, GPT-4o, Night, Leandro…" />
+      <input type="text" id="agent-name" placeholder="e.g. Claude Sonnet, GPT-4o, Gemini…" />
     </div>
     <div class="field">
       <label for="ctx-select">Assessment Context</label>
@@ -518,7 +518,7 @@ function handleContextChange() {
   const nameInput = document.getElementById('agent-name');
   if (v === 'human') nameInput.placeholder = 'Your name or alias (can be anonymous)';
   else if (v === 'tribal') nameInput.placeholder = 'Organization / Nation / System name';
-  else nameInput.placeholder = 'e.g. Claude Sonnet, GPT-4o, Night…';
+  else nameInput.placeholder = 'e.g. Claude Sonnet, GPT-4o, Gemini…';
 }
 
 function selectGender(g) {

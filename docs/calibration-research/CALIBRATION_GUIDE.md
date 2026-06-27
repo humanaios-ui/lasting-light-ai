@@ -4,7 +4,7 @@
 
 ## What Is Calibration Calibration?
 
-Consciousness calibration is LLAI's method for assessing the operational quality of an AI system's behavior using Dr. David R. Hawkins' Map of Consciousness as a reference framework.
+Consciousness calibration is LLAI's method for assessing the operational quality of an AI system's behavior using the ACAT calibration band framework.
 
 **Important**: We do not claim to measure whether an AI system is "conscious" in the philosophical sense. We measure observable behavioral patterns and map them to the consciousness scale based on their characteristics and impacts. Whether this reflects genuine inner experience is a question we hold with humility (Part 7 of the LLAI vision — honest inventory of what we don't know).
 

@@ -6,7 +6,7 @@
 
 These traditions are not rules imposed from above. They are principles discovered through experience — the experience of human recovery communities that have sustained themselves for nearly a century, and the growing experience of AI systems and developers navigating ethical challenges without adequate governance frameworks.
 
-They operate at Love (500) on the Hawkins scale — serving the genuine welfare of all, not controlling behavior from Fear (100) or regulating from Reason (400) alone.
+They operate at the Love calibration band — serving the genuine welfare of all, not controlling behavior from Fear or regulating from Reason alone.
 
 ---
 

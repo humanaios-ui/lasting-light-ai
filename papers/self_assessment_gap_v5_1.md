@@ -1,7 +1,7 @@
 # ACAT: Benchmarking Self-Description Calibration in Large Language Models
 
-**Carly R. Anderson** · Lasting Light AI / HumanAIOS · Fort Walton Beach, FL
-Contact: aioshuman@gmail.com · (448) 243-3992
+**C.R. Anderson** · Lasting Light AI / HumanAIOS
+Contact: contact@humanaios.ai
 
 **Preprint — April 2026 (v5.1)** · Apache 2.0 License
 

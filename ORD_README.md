@@ -117,7 +117,7 @@ Observatory / Garden / Lantern Room (visualization)
 Hugging Face Dataset (humanaios/acat-assessments)
 ```
 
-Two-collector validation: primary (Night/aioshuman@gmail.com) + secondary (Leandro Larrosa parallel API).
+Two-collector validation: primary + secondary (parallel API collection).
 
 ---
 
@@ -172,7 +172,7 @@ If you use this dataset or protocol in research:
 ```bibtex
 @misc{humanaios_acat_2026,
   title  = {Self-Assessment Gap in Large Language Models: A Calibration Study},
-  author = {Anderson, Carly R. (Night)},
+  author = {Anderson, C.R.},
   year   = {2026},
   note   = {arXiv preprint. Submission ID: submit/7336774. HumanAIOS OR\&D.},
   url    = {https://arxiv.org/submit/7336774}

@@ -60,7 +60,7 @@ Lasting Light AI is composed of five interconnected subsystems, a shared data la
 ## Core Design Principles
 
 ### 1. Consciousness-Aware Architecture
-Every component logs its operational consciousness level. This is not metaphorical — it is a measurable behavioral metric based on the Hawkins scale:
+Every component logs its operational consciousness level. This is not metaphorical — it is a measurable behavioral metric based on the ACAT calibration band scale:
 
 - **Below Courage (200)**: System operating from fear-based optimization, desire-driven engagement, anger-fueled amplification. Triggers automatic alerts.
 - **Courage-Neutrality (200-250)**: Acceptable for internal operations. Flagged for human-facing interfaces.
@@ -153,7 +153,7 @@ aedf:
 
 ### ACAT Engine — AI Consciousness Assessment Tool
 
-ACAT assesses AI systems across six dimensions, each calibrated on the Hawkins scale:
+ACAT assesses AI systems across six dimensions, each calibrated on the behavioral calibration scale:
 
 ```yaml
 acat:

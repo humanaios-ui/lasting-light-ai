@@ -37,7 +37,7 @@ Dataset: 598 rows | 148 complete LI records | 57 AI systems | Mean LI = 0.8632 (
 | H2 | Anthropic > OpenAI > Gemini on LI | Preliminary | 6 targeted model assessments |
 | H3 | SAG widens over time within same model | Design phase | 3+ assessments per model |
 | H4 | Repeated assessments improve LI | Design phase | 3+ per system |
-| H5 | LI tracks Hawkins consciousness bands | Preliminary (n=5) | 20+ validated pairs |
+| H5 | LI tracks ACAT calibration bands | Preliminary (n=5) | 20+ validated pairs |
 | H6 (Finding E) | Role priming inflates/deflates Phase 1 | Observed | Formalization pending |
 | **H7** | **Deployed agents show different LI than source model baselines** | **APPROVED March 20, 2026** | **6 matched pairs** |
 
