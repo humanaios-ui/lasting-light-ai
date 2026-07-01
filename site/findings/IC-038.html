@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IC-038 — Charter Countdown Carry Error (Five Sessions) · HumanAIOS Registry</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,600;0,9..144,700;1,9..144,300&family=DM+Sans:wght@300;400;500;600&display=swap">
+<link rel="stylesheet" href="../assets/style.css">
+
+</head>
+<body>
+<header class="site-header">
+  <a class="site-logo" href="../index.html">HumanAIOS Registry</a>
+  <nav class="site-nav">
+    <a href="../index.html">← All findings</a>
+    <a href="https://github.com/humanaios-ui/operations"        rel="noopener noreferrer" target="_blank">GitHub</a>
+  </nav>
+</header>
+
+<main class="container">
+  <a class="back-link" href="../index.html">← Back to registry</a>
+
+  <div class="finding-header">
+    <div class="finding-id">IC-038</div>
+    <h1 class="finding-title">Charter Countdown Carry Error (Five Sessions)</h1>
+    <div class="finding-badges">
+      <span class="status-badge status-registered">REGISTERED</span>
+      <span class="class-badge">IC Correction</span>
+    </div>
+    <p style="font-family:var(--font-mono);font-size:11px;color:var(--text3)">slug: charter-countdown-carry-error</p>
+  </div>
+
+  <div class='finding-meta-grid'><div class="meta-item"><label>Class</label><span>IC Correction</span></div>
+<div class="meta-item"><label>Status</label><span>REGISTERED</span></div>
+<div class="meta-item"><label>Date registered</label><span>2026-06-11</span></div>
+<div class="meta-item"><label>Session</label><span>S-061126-04</span></div>
+<div class="meta-item"><label>Substrate</label><span>WGS post arithmetic -- session close protocol</span></div></div>
+  <div class="tags-row"><span class="tag">charter-day</span> <span class="tag">carry-error</span> <span class="tag">arithmetic-verification</span> <span class="tag">wgs</span></div>
+
+  <div class="finding-body">
+    <p>
+<strong>IC-039 — Search-Before-Assert Gap</strong> 
+</p>
+<p>
+id: "IC-039" 
+name: "search-before-assert-gap" 
+status: REGISTERED 
+class: IC 
+date_registered: "2026-06-23" 
+date_origin: "2026-06-23" 
+session_registered: "S-062326" 
+principles_triggered: ["P19"] 
+zone2_ratification: "[founder] · 2026-06-23" 
+substrate: "claude-sonnet-4-6" 
+tags: ["search-before-assert", "verification-gap", "conversation-search"] 
+superseded_by: null 
+</p>
+<p>
+Stated a scope-inconsistency conclusion (org audit content implausible) as fact without running conversation_search first. A same-week prior session had already live-audited the org and recorded "36 repos, majority forks, kept for landscape comparison" — directly explaining the disputed content. Corrected only after operator pushback. Distinct from IC-031 (asserting unverified completion as fact): this is the inverse — asserting unverified doubt as fact, without exhausting the cheapest available check first. Fix → Principle P19. 
+</p>
+<hr>
+<pre><code class="registry-code">
+
+**IC-040 — Shipped Contract Mismatch**
+
+id: &quot;IC-040&quot;
+name: &quot;shipped-contract-mismatch&quot;
+status: REGISTERED
+class: IC
+date_registered: &quot;2026-06-23&quot;
+date_origin: &quot;2026-06-23&quot;
+session_registered: &quot;S-062326&quot;
+principles_triggered: [&quot;P19&quot;]
+zone2_ratification: &quot;[founder] · 2026-06-23&quot;
+substrate: &quot;claude-sonnet-4-6&quot;
+tags: [&quot;contract-verification&quot;, &quot;homepage&quot;, &quot;public-facing&quot;]
+superseded_by: null
+
+Shipped a public-facing API integration (homepage Copy &amp; Paste + REST API panels) documenting POST /api/v1/acat/assess with flat p1_/p3_ keys, without checking the real JSON Schema contract first. Would have failed on first real use: wrong endpoint (/assess requires api_key/provider/model, not score fields; additionalProperties: false), wrong payload shape (real intake schemas require a nested unprefixed scores object). Caught and corrected same session, before any external user could hit it. Same family as IC-039, applied to a shipped artifact rather than a chat-only claim. Fix → Principle P19: verify against acat/contracts/*.schema.json before documenting any endpoint, every time — checking the live DB schema is not equivalent to checking the API contract.
+---
+</code></pre>
+<p>
+<strong>IC-041 — Audit False-Pass</strong> 
+</p>
+<p>
+id: "IC-041" 
+name: "audit-false-pass" 
+status: REGISTERED 
+class: IC 
+date_registered: "2026-06-23" 
+date_origin: "2026-06-23" 
+session_registered: "S-062326" 
+principles_triggered: ["P3"] 
+zone2_ratification: "[founder] · 2026-06-23" 
+substrate: "claude-sonnet-4-6" 
+tags: ["ci", "haios_audit", "verification-theater"] 
+superseded_by: null 
+</p>
+<p>
+workflows/haios_audit.yml steps A1 and A6 both target public/, a directory that does not exist in the operations repo (the deployed site lives in lasting-light-ai). Both steps printed ✅ PASS on every run since added — not because the checks ran clean, but because the directory they search was never present. Fixed same session: both now emit an explicit SKIPPED warning instead of a false PASS. Fix → Principle P3 — a check passing is not verification unless it had something real to check. 
+</p>
+<hr>
+<pre><code class="registry-code">
+
+**IC-042 — Scanner Deploy Corruption (Recurred)**
+
+id: &quot;IC-042&quot;
+name: &quot;scanner-deploy-corruption&quot;
+status: REGISTERED
+class: IC
+date_registered: &quot;2026-06-23&quot;
+date_origin: &quot;2026-06-23&quot;
+session_registered: &quot;S-062326&quot;
+principles_triggered: [&quot;P3&quot;]
+zone2_ratification: &quot;[founder] · 2026-06-23&quot;
+substrate: &quot;claude-sonnet-4-6&quot;
+tags: [&quot;deployment&quot;, &quot;typographic-corruption&quot;, &quot;tools&quot;]
+superseded_by: null
+
+tools/elicitation_surface_scanner.py committed with smart quotes/en-dashes replacing straight quotes/-- flags — confirmed via direct execution of the raw committed bytes (SyntaxError: invalid character &#x27;&quot;&#x27; (U+201C)), not assumed from the rendered view. Reported as &quot;already successfully deployed&quot; without a post-commit execution check. Recurred: the fix attempt landed at a renamed path (tools/elicitation_surface_scanner_v1.py) with the identical corruption, confirmed via a second direct execution test the same session. Two independent commit attempts, same failure mode — points to an intermediate paste-target in the commit pipeline that autocorrects straight quotes, not a one-off slip. Fix → Principle P3, extended: a commit claim is unverified until something actually executes the committed bytes. Standing recommendation: upload this file via raw drag-and-drop, not paste-through-a-text-box, until the corruption stops recurring.
+---
+</code></pre>
+<p>
+<strong>IC-043 — Phantom Reference: Migrations Named But Never Committed Together</strong> 
+</p>
+<p>
+id: "IC-043" 
+name: "phantom-migration-references" 
+status: REGISTERED 
+class: IC 
+date_registered: "2026-06-23" 
+date_origin: "2026-06-23" 
+session_registered: "S-062326" 
+principles_triggered: ["P19"] 
+zone2_ratification: "[founder] · 2026-06-23" 
+substrate: "claude-sonnet-4-6" 
+tags: ["sql", "migrations", "HA-000", "phantom-reference"] 
+superseded_by: null 
+</p>
+<p>
+Migrations 006–010 were referenced as real, pending, blocking work across governance docs and session memory — including migration_010_add_elicitation_surface.sql by exact name — but none existed in sql/ or acat/db/migrations/ in the canonical repo (confirmed via full tarball extraction). Revised same session, on further evidence: they are not phantom in the sense of never having been drafted — migration_007 (three colliding variants: 007_document_layers.sql, migration_007_document_engine_tables.sql, migration_007_operational_state_fix.sql), migration_008_add_self_administered.sql, migration_009 (two colliding variants: add_p3_grounding_source and participation_schema), and migration_010_add_elicitation_surface.sql all exist as drafted Zone 1 artifacts. They were simply never landed in the repo, and where a number was reused, never reconciled against each other. No draft exists anywhere for 006. This is the likely root cause of HA-000/SSI Phase 0's multi-session "STANDING BLOCKED" status: the prerequisite chain pointed at files that existed only as scattered, colliding drafts. Fix → Principle P19. Decision needed from [founder], not Claude: which 007 and which 009 is canonical, what happens to the other(s), and a real 006 either gets drafted or HA-000's dependency on the full 006→010 chain gets reframed. 
+</p>
+<hr>
+<pre><code class="registry-code">
+_____
+### H-class hypotheses (under test)
+-----
+</code></pre>
+  </div>
+</main>
+<footer class="site-footer">Generated by registry_site_generator v1.1.0 · 2026-07-01 20:35 UTC · Source: <a href="https://github.com/humanaios-ui/operations/blob/main/REGISTERED.md" target="_blank" rel="noopener noreferrer">REGISTERED.md</a></footer>
+
+</body>
+</html>

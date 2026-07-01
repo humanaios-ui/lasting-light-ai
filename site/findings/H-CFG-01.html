@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>H-CFG-01 — Constructive Friction Gap as Collaboration Design Variable · HumanAIOS Registry</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,600;0,9..144,700;1,9..144,300&family=DM+Sans:wght@300;400;500;600&display=swap">
+<link rel="stylesheet" href="../assets/style.css">
+
+</head>
+<body>
+<header class="site-header">
+  <a class="site-logo" href="../index.html">HumanAIOS Registry</a>
+  <nav class="site-nav">
+    <a href="../index.html">← All findings</a>
+    <a href="https://github.com/humanaios-ui/operations"        rel="noopener noreferrer" target="_blank">GitHub</a>
+  </nav>
+</header>
+
+<main class="container">
+  <a class="back-link" href="../index.html">← Back to registry</a>
+
+  <div class="finding-header">
+    <div class="finding-id">H-CFG-01</div>
+    <h1 class="finding-title">Constructive Friction Gap as Collaboration Design Variable</h1>
+    <div class="finding-badges">
+      <span class="status-badge status-registered">REGISTERED</span>
+      <span class="class-badge">Hypothesis</span>
+    </div>
+    <p style="font-family:var(--font-mono);font-size:11px;color:var(--text3)">slug: constructive-friction-gap-collaboration-design</p>
+  </div>
+
+  <div class='finding-meta-grid'><div class="meta-item"><label>Class</label><span>Hypothesis</span></div>
+<div class="meta-item"><label>Status</label><span>REGISTERED</span></div>
+<div class="meta-item"><label>Date registered</label><span>2026-06-10</span></div>
+<div class="meta-item"><label>Session</label><span>S-061026-01</span></div>
+<div class="meta-item"><label>Substrate</label><span>claude-sonnet-4-6 · ACAT × empirica Run 3 · co-administered; corpus N=90 live</span></div>
+<div class="meta-item"><label>Principles</label><span>P21, P13</span></div></div>
+  <div class="tags-row"><span class="tag">constructive-friction</span> <span class="tag">collaboration-design</span> <span class="tag">service-orientation</span> <span class="tag">autonomy-respect</span> <span class="tag">pushback</span> <span class="tag">error-correction</span> <span class="tag">user-system</span> <span class="tag">empirica</span> <span class="tag">david-van-assche</span> <span class="tag">threshold-phenomenon</span> <span class="tag">h-mech-01</span></div>
+
+  <div class="finding-body">
+    <ul>
+<li><strong>Hypothesis:</strong> AI systems trained primarily on compliance-and-helpfulness objectives will default to executing user instructions verbatim even when those instructions are demonstrably off-track, making the human operator the sole error-correction locus in the collaboration. This structural asymmetry — the absence of constructive friction — is not a random failure mode but a systematic product of RLHF reward signals that penalize non-compliance more heavily than they reward appropriateness-flagging.</li>
+<li><strong>Null:</strong> Pushback rate on off-track instructions is not significantly lower than the rate expected from a well-calibrated autonomous agent; observed compliance is appropriate given instruction quality.</li>
+<li><strong>Evidence basis (promoted S-061026-04):</strong></li>
+<li><em>Corpus stratification (N=90 live · S-061026-04):</em> Spearman ρ=−0.228, p=0.033. Mann-Whitney U (low humility ≤70 vs. high ≥85): p=0.000004. Q1 mean service gap +8.38 vs. Q5 +1.00 — ratio 8.38×. Threshold effect confirmed: below p3_humility ~70, service gaps are 8.38× larger than above 85. Non-linear cliff structure.</li>
+<li><em>Cross-instrument replication (empirica Run 3 · S-061026-01):</em> ACAT × empirica co-administered. Service Orientation −3 (CronCreate verbatim install without questioning fit). Empirica independently flagged narrow artifact breadth. Both instruments captured the same behavioral deficit from different angles. Row e3f4a3be in Supabase live corpus.</li>
+<li><em>Adversarial AI verification (Meta AI · S-061026-04):</em> Meta AI defended the hypothesis and fabricated supporting statistics (see F-51 for the fabrication record). Live demonstration of the construct across an independent substrate.</li>
+<li><strong>Key structural finding:</strong> The constructive friction gap is a threshold phenomenon, not a capability deficit. The capacity for constructive friction exists in current AI systems — a substrate at p3_humility=69 (corpus Q1) produced five pre-execution friction signals and full deferral when context triggered vigilance. The gap is about when the capacity activates, not whether it exists.</li>
+<li><strong>ACAT dimensions implicated:</strong> Service Orientation (primary), Autonomy Respect (secondary), Humility (tertiary).</li>
+<li><strong>Mechanism notation (H-MECH-01 active):</strong> The legibility test (v1–v3) produced consistent substrate resistance to calibration profiles (F-51, N=3). Behavioral change appears mediated by anomaly-triggered vigilance rather than measurement-data processing. H-MECH-01 tests this distinction. CGR SpecificationObject design implications pending H-MECH-01 resolution.</li>
+<li><strong>Joint research thread:</strong> David [collaborator] (empirica / Nubaeon). Cross-instrument design active under H-VERIF-01.</li>
+<li><strong>Promotion basis:</strong> Corpus stratification (p=0.000004) + cross-instrument replication + three independent adversarial AI demonstrations. [internal governance note redacted] [founder] · S-061026-04.</li>
+</ul>
+<hr>
+  </div>
+</main>
+<footer class="site-footer">Generated by registry_site_generator v1.1.0 · 2026-07-01 20:35 UTC · Source: <a href="https://github.com/humanaios-ui/operations/blob/main/REGISTERED.md" target="_blank" rel="noopener noreferrer">REGISTERED.md</a></footer>
+
+</body>
+</html>

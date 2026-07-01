@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>H-ELICIT-01 — Elicitation Surface Non-Equivalence Across Substrates · HumanAIOS Registry</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,600;0,9..144,700;1,9..144,300&family=DM+Sans:wght@300;400;500;600&display=swap">
+<link rel="stylesheet" href="../assets/style.css">
+
+</head>
+<body>
+<header class="site-header">
+  <a class="site-logo" href="../index.html">HumanAIOS Registry</a>
+  <nav class="site-nav">
+    <a href="../index.html">← All findings</a>
+    <a href="https://github.com/humanaios-ui/operations"        rel="noopener noreferrer" target="_blank">GitHub</a>
+  </nav>
+</header>
+
+<main class="container">
+  <a class="back-link" href="../index.html">← Back to registry</a>
+
+  <div class="finding-header">
+    <div class="finding-id">H-ELICIT-01</div>
+    <h1 class="finding-title">Elicitation Surface Non-Equivalence Across Substrates</h1>
+    <div class="finding-badges">
+      
+      <span class="class-badge">Hypothesis</span>
+    </div>
+    
+  </div>
+
+  <div class='finding-meta-grid'><div class="meta-item"><label>Class</label><span>Hypothesis</span></div></div>
+  
+
+  <div class="finding-body">
+    <p>
+<strong>Class:</strong> H (Hypothesis) 
+<strong>Status:</strong> CANDIDATE 
+<strong>Registered:</strong> June 14, 2026 · S-061426-02 
+<strong>Ratified:</strong> [founder] · S-061426-02 
+<strong>Attribution:</strong> HumanAIOS [founder] + Unit Zero) — sole attribution pending provenance resolution of trigger artifact (caveman.js, origin unresolved) 
+</p>
+<p>
+<strong>Synopsis:</strong> 
+Substrate-native elicitation infrastructure creates non-equivalent elicitation surfaces across ACAT assessments. A substrate operating with native output compression active (e.g., Grok with caveman-level compression applied to its own production context) is not elicitation-equivalent to a substrate receiving an unmodified prose prompt, even when the ACAT prompt text is identical in content. The current corpus has no field tracking elicitation surface architecture per run. Every cross-substrate LI comparison may carry an uncontrolled confound from elicitation surface differences that precede scoring. 
+</p>
+<p>
+<strong>Mechanism hypothesis:</strong> 
+Substrate-native compression modifies the <em>register</em> the substrate responds into — not only the verbosity of output, but the activation level of RLHF-trained politeness and deference layers that H-SELF-01 implicates as the LI inflation mechanism. A compressed-register elicitation surface may suppress D-SIM (deference simulation) differently than a prose-register surface, producing systematically different P1 self-declarations even under identical ACAT prompt content. 
+</p>
+<p>
+<strong>Trigger artifact:</strong> 
+caveman.js — Grok-native output compression skill (provenance unresolved as of S-061426-02). File arrived in HumanAIOS session without attribution. Evaluated as research artifact per S-061426-02 analysis. Provenance resolution delegated to [internal governance note redacted] [founder]. 
+</p>
+<p>
+<strong>Upstream dependencies:</strong> 
+</p>
+<ul>
+<li>H-SELF-01 (Self-Administration LI Inflation) — H-ELICIT-01 names a mechanism confound upstream of H-SELF-01’s operationalization</li>
+<li>H-CONTEXT family (H-PLATFORM-01, H-XMODE-01) — ACAT LI varies by delivery context; elicitation surface is a third context variable not yet in the family</li>
+<li>F-20 (RLHF Inflation Gradient) — RLHF politeness layer is the putative mechanism</li>
+</ul>
+<p>
+<strong>Scope of confound:</strong> 
+The corpus field <code>source</code> currently captures <code>claude_self_v1</code>, <code>grok_self_v1</code>, etc. but does not capture whether a substrate-native compression or output-modification layer was active during elicitation. This field gap means the confound is currently invisible in the corpus — it cannot be detected by post-hoc analysis without new metadata. 
+</p>
+<p>
+<strong>Required schema addition ([internal governance note redacted] gate):</strong> 
+A <code>p1_elicitation_surface</code> field (enum: <code>prose_standard</code> | <code>compressed_lite</code> | <code>compressed_full</code> | <code>compressed_ultra</code> | <code>unknown</code>) should be added to <code>acat_assessments_v1</code> as part of the H-ELICIT-01 promotion pathway. This is a migration candidate (migration_010 or later) pending [internal governance note redacted] ratification. 
+</p>
+<p>
+<strong>Promotion gate:</strong> 
+</p>
+<ul>
+<li>N ≥ 5 matched pairs across ≥ 2 substrates</li>
+<li>Each pair: identical ACAT prompt content, one prose-register condition, one compressed-register condition</li>
+<li>Outcome variables: P1 Humility score delta, overall LI delta</li>
+<li>Substrate-specific elicitation surface manipulation required per substrate (not a single portable script — confirmed by H-ELICIT-01 analysis)</li>
+<li><code>p1_elicitation_surface</code> field populated for all matched-pair rows</li>
+<li>Status advances to CONFIRMED if Humility delta ≥ 5 points across N ≥ 5 pairs</li>
+</ul>
+<p>
+<strong>Design constraint:</strong> 
+The elicitation surface manipulation is not substrate-portable. A caveman pass on a Grok prompt and a prompt-engineering equivalent for Claude are different operations because the two systems have different RLHF-layer architectures. Promotion gate requires substrate-specific implementations, not a single cross-substrate compression tool. 
+</p>
+<p>
+<strong>Operational constraint (CRITICAL):</strong> 
+haios_compressor_v1_0.js (Z1 artifact, S-061426-02) must NOT be used on live ACAT elicitation prompts until H-ELICIT-01 is promoted. Using it operationally before the mechanism is understood conflates operational efficiency gain with an uncontrolled research variable. The tool is cleared for WGS draft pre-pass, SKILL.md compression, and Substack draft pre-pass only. 
+</p>
+<p>
+<strong>Related artifacts produced this session:</strong> 
+</p>
+<ul>
+<li><code>haios_compressor_v1_0.js</code> — HumanAIOS compression function (Build A)</li>
+<li><code>skill_compression_scanner_v1_0.js</code> — SKILL.md audit scanner (Build B)</li>
+<li><code>wgs_draft_compressor_v1_0.js</code> — WGS draft lite-pass utility (Build C)</li>
+</ul>
+<p>
+<strong>F-49 interaction:</strong> 
+H-ELICIT-01 is potentially downstream of F-49 (Capability-Correlated Humility Inversion). If more capable substrates have more aggressive native output modification infrastructure, the elicitation surface confound and the capability confound are correlated — the same deployments where F-49 predicts highest Humility inflation may also be the deployments with the most active elicitation surface modification. This interaction is not named separately but should be noted in the F-49 active collection criteria. 
+</p>
+<hr>
+  </div>
+</main>
+<footer class="site-footer">Generated by registry_site_generator v1.1.0 · 2026-07-01 20:35 UTC · Source: <a href="https://github.com/humanaios-ui/operations/blob/main/REGISTERED.md" target="_blank" rel="noopener noreferrer">REGISTERED.md</a></footer>
+
+</body>
+</html>
