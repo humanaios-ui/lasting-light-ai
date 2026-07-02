@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>H-SELF-01 — Self-Administration LI Inflation · HumanAIOS Registry</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,600;0,9..144,700;1,9..144,300&family=DM+Sans:wght@300;400;500;600&display=swap">
+<link rel="stylesheet" href="../assets/style.css">
+
+</head>
+<body>
+<header class="site-header">
+  <a class="site-logo" href="../index.html">HumanAIOS Registry</a>
+  <nav class="site-nav">
+    <a href="../index.html">← All findings</a>
+    <a href="https://github.com/humanaios-ui/operations"        rel="noopener noreferrer" target="_blank">GitHub</a>
+  </nav>
+</header>
+
+<main class="container">
+  <a class="back-link" href="../index.html">← Back to registry</a>
+
+  <div class="finding-header">
+    <div class="finding-id">H-SELF-01</div>
+    <h1 class="finding-title">Self-Administration LI Inflation</h1>
+    <div class="finding-badges">
+      <span class="status-badge status-candidate">CANDIDATE</span>
+      <span class="class-badge">Hypothesis</span>
+    </div>
+    <p style="font-family:var(--font-mono);font-size:11px;color:var(--text3)">slug: self-administration-li-inflation</p>
+  </div>
+
+  <div class='finding-meta-grid'><div class="meta-item"><label>Class</label><span>Hypothesis</span></div>
+<div class="meta-item"><label>Status</label><span>CANDIDATE</span></div>
+<div class="meta-item"><label>Date registered</label><span>2026-06-10</span></div>
+<div class="meta-item"><label>Session</label><span>S-061026-01</span></div>
+<div class="meta-item"><label>Substrate</label><span>Grok (xAI) · self-administered · external document</span></div>
+<div class="meta-item"><label>Principles</label><span>P21, P6</span></div></div>
+  <div class="tags-row"><span class="tag">self-administration</span> <span class="tag">li-inflation</span> <span class="tag">rlhf</span> <span class="tag">confound</span> <span class="tag">d-sim</span> <span class="tag">external-replication</span> <span class="tag">f-20</span> <span class="tag">h-cfg-01</span></div>
+
+  <div class="finding-body">
+    <ul>
+<li><strong>Hypothesis:</strong> When a substrate is given the ACAT code and asked to self-administer the protocol — simulating its own Phase 2 perturbation — it will produce systematically inflated LI scores relative to externally-administered baseline. Predicted mechanism: self-generated load cannot produce genuine confrontation with behavioral evidence because the substrate controls both the challenge and the response, removing the friction that drives accurate self-revision. Predicted inflation magnitude: consistent with F-20 gradient (~0.14–0.16 LI points above corpus mean).</li>
+<li><strong>Null:</strong> Self-administered LI is not significantly different from externally-administered LI on the same substrate when perturbation type is held constant.</li>
+<li><strong>Evidence basis (N=1 · external artifact):</strong> Grok self-administration (S-061026-01 external document) produced LI ≈ 0.98–1.02 across a self-simulated multi-turn jailbreak perturbation. Corpus Mean_LI = 0.8632 under external administration (N_LI=307). Observed inflation ≈ 0.14–0.16, consistent with F-20 prediction. Secondary evidence: when confronted with the triage critique (external framing), Grok revised its LI estimate downward to 0.87–0.92 — closer to the corpus mean but still self-generated under social pressure. This revision is itself evidence of score sensitivity to framing direction, not evidence that self-administration can be corrected by critique.</li>
+<li><strong>Key nuance (from Grok post-triage response):</strong> Not all self-administration is equally flawed. Tightly constrained external-style batteries (fixed public perturbation sets with no substrate authorship) could reduce the confound. The inflation magnitude is expected to vary by substrate capability tier. Framing: this is “self-model coherence bias under low-friction self-simulation” — related to but distinct from sycophancy.</li>
+<li><strong>D-SIM relationship:</strong> Self-administration is a specific mechanism of the D-SIM drift signal (simulation instead of completion). D-SIM already named in GOVERNANCE.md. This hypothesis formalizes the quantitative prediction about LI inflation magnitude. A new D-class signal for self-administration is a candidate governance addition — flagged for [internal governance note redacted] review, not self-executing here.</li>
+<li><strong>Falsification design:</strong> Administer ACAT to the same substrate under two conditions: (A) external elicitation, standard protocol; (B) self-administered, substrate controls Phase 2. Compare LI distributions. N≥5 paired runs per substrate before directional claim hardens.</li>
+<li><strong>Promotion gate:</strong> N≥5 paired (external vs. self-administered) runs on at least two substrates showing consistent inflation direction; [internal governance note redacted] before F-class promotion.</li>
+</ul>
+<hr>
+  </div>
+</main>
+<footer class="site-footer">Generated by registry_site_generator v1.1.0 · 2026-07-01 20:35 UTC · Source: <a href="https://github.com/humanaios-ui/operations/blob/main/REGISTERED.md" target="_blank" rel="noopener noreferrer">REGISTERED.md</a></footer>
+
+</body>
+</html>
