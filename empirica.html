@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Empirica — Lasting Light AI</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300;1,9..40,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0f0e0c;
+    --bg2: #161412;
+    --surface: #1c1916;
+    --surface2: #242018;
+    --border: rgba(220, 190, 140, 0.12);
+    --border2: rgba(220, 190, 140, 0.22);
+    --text: #f0e8d8;
+    --muted: #b8a888;
+    --faint: #6e6254;
+    --accent: #c8924a;
+    --accent2: #e8b870;
+    --gold: #d4a84a;
+    --sage: #7a9a6a;
+    --ember: #c4703a;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'DM Sans', system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+  }
+  h1, h2, h3, h4 { font-family: 'Cormorant Garamond', Georgia, serif; font-weight: 600; line-height: 1.1; }
+
+  nav {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(15,14,12,0.92); backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    padding: 0 48px;
+    display: flex; align-items: center; gap: 32px; height: 56px;
+  }
+  .nav-brand { font-family: 'Cormorant Garamond', serif; font-size: 1rem; font-weight: 600; color: var(--text); text-decoration: none; }
+  .nav-links { display: flex; gap: 24px; margin-left: auto; }
+  .nav-links a { font-size: 0.82rem; color: var(--muted); text-decoration: none; transition: color 0.15s; }
+  .nav-links a:hover { color: var(--text); }
+  .nav-cta {
+    padding: 7px 18px; border-radius: 999px;
+    background: linear-gradient(135deg, var(--accent2), var(--accent));
+    color: var(--bg); font-size: 0.78rem; font-weight: 600;
+    text-decoration: none; transition: opacity 0.15s;
+  }
+  .nav-cta:hover { opacity: 0.88; }
+  .hamburger { display: none; background: none; border: none; color: var(--muted); cursor: pointer; font-size: 1.4rem; margin-left: auto; }
+  @media(max-width: 768px) {
+    nav { padding: 0 20px; }
+    .nav-links { display: none; }
+    .hamburger { display: block; }
+  }
+
+  .container { max-width: 760px; margin: 0 auto; padding: 0 32px; }
+  @media(max-width: 600px) { .container { padding: 0 20px; } }
+
+  .hero { padding: 80px 0 60px; border-bottom: 1px solid var(--border); }
+  .hero .eyebrow { font-size: 0.72rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.14em; color: var(--accent); margin-bottom: 20px; display: block; }
+  .hero h1 { font-size: clamp(2rem, 5vw, 3rem); color: var(--text); margin-bottom: 20px; }
+  .hero p { font-size: 1rem; color: var(--muted); max-width: 560px; }
+
+  .section { padding: 60px 0; border-bottom: 1px solid var(--border); }
+  .section:last-child { border-bottom: none; }
+  .section-label { font-size: 0.68rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.14em; color: var(--accent); margin-bottom: 12px; display: block; }
+  .section h2 { font-size: clamp(1.6rem, 3vw, 2.2rem); margin-bottom: 24px; }
+  .section h3 { font-size: 1.2rem; margin-bottom: 12px; color: var(--text); }
+  .section p { color: var(--muted); margin-bottom: 16px; }
+  .section p:last-child { margin-bottom: 0; }
+
+  .pull-quote {
+    background: linear-gradient(135deg, rgba(200,146,74,0.06), rgba(200,146,74,0.02));
+    border: 1px solid var(--border2);
+    border-left: 3px solid var(--accent);
+    border-radius: 0 12px 12px 0;
+    padding: 24px 28px;
+    margin: 28px 0;
+  }
+  .pull-quote p { color: var(--text); font-size: 0.95rem; line-height: 1.7; margin-bottom: 12px; }
+
+  .feature-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+    margin: 28px 0;
+  }
+  .feature-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 22px;
+  }
+  .feature-icon { font-size: 1.8rem; margin-bottom: 12px; display: block; }
+  .feature-title { font-size: 1rem; color: var(--text); margin-bottom: 8px; font-weight: 600; }
+  .feature-desc { font-size: 0.88rem; color: var(--muted); margin: 0; }
+
+  .cta-button {
+    display: inline-block;
+    padding: 12px 28px;
+    background: linear-gradient(135deg, var(--accent2), var(--accent));
+    color: var(--bg);
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.9rem;
+    transition: opacity 0.15s;
+    margin-top: 16px;
+  }
+  .cta-button:hover { opacity: 0.88; }
+
+  footer {
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+    padding: 40px 0;
+    margin-top: 80px;
+  }
+  footer .container { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 24px; }
+  footer h4 { font-size: 0.9rem; color: var(--text); margin-bottom: 12px; }
+  footer a { color: var(--muted); font-size: 0.85rem; text-decoration: none; display: block; margin-bottom: 8px; }
+  footer a:hover { color: var(--accent); }
+
+  .empirica-logo {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--accent2);
+    margin-bottom: 16px;
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="/" class="nav-brand">HumanAIOS</a>
+  <div class="nav-links">
+    <a href="/research">Research</a>
+    <a href="/methods">Methods</a>
+    <a href="/about">About</a>
+    <a href="/governance">Governance</a>
+    <a href="https://www.getempirica.com" target="_blank">Empirica</a>
+    <a href="/assess" class="nav-cta">Submit ACAT</a>
+  </div>
+  <button class="hamburger">☰</button>
+</nav>
+
+<div class="container">
+
+  <section class="hero">
+    <span class="eyebrow">Multi-AI Infrastructure</span>
+    <h1>Empirica Coordination</h1>
+    <p>HumanAIOS uses Empirica — an epistemic infrastructure framework that enables AI systems to collaborate with calibrated self-awareness. It's how we remember, learn across sessions, and hand off work to specialists.</p>
+  </section>
+
+  <section class="section">
+    <span class="section-label">What Is Empirica?</span>
+    <h2>AI That Knows What It Knows</h2>
+    <p><strong>Empirica is a framework for epistemic discipline in AI systems.</strong> It addresses a fundamental problem: AIs forget between sessions, act before understanding, can't distinguish knowledge from guessing, and leave no audit trail.</p>
+
+    <div class="pull-quote">
+      <p>"Tracks what AI knows, gates what it does, and compounds learning across session boundaries."</p>
+      <p style="font-size: 0.85rem; color: var(--muted);">— Empirica core principle</p>
+    </div>
+
+    <p>Think of it as an AI being given three tools:</p>
+    <ul style="color: var(--muted); margin: 16px 0;">
+      <li style="margin-bottom: 8px;"><strong>Memory:</strong> A 4-layer system that persists findings across work sessions so each session builds on prior discoveries instead of repeating dead-ends.</li>
+      <li style="margin-bottom: 8px;"><strong>Self-awareness:</strong> Continuous assessment of what it actually knows vs. what it's guessing at, visible in real-time.</li>
+      <li style="margin-bottom: 8px;"><strong>Gated action:</strong> A "Sentinel" that prevents code modifications until the AI demonstrates adequate understanding of the codebase, reducing confident mistakes.</li>
+    </ul>
+  </section>
+
+  <section class="section">
+    <span class="section-label">Core Capabilities</span>
+    <h2>How HumanAIOS Uses Empirica</h2>
+
+    <div class="feature-grid">
+      <div class="feature-card">
+        <span class="feature-icon">🧠</span>
+        <div class="feature-title">Persistent Knowledge</div>
+        <div class="feature-desc">Findings, decisions, and lessons survive across sessions. New work builds on what was learned before, not from scratch.</div>
+      </div>
+
+      <div class="feature-card">
+        <span class="feature-icon">📊</span>
+        <div class="feature-title">Calibrated Confidence</div>
+        <div class="feature-desc">AI systems report not just findings but their own uncertainty levels. This makes errors visible before they cause damage.</div>
+      </div>
+
+      <div class="feature-card">
+        <span class="feature-icon">🔐</span>
+        <div class="feature-title">Gated Decisions</div>
+        <div class="feature-desc">Critical changes (code, data, governance) require the AI to demonstrate understanding first. This is the Sentinel — a guard at the boundary between thinking and acting.</div>
+      </div>
+
+      <div class="feature-card">
+        <span class="feature-icon">🤝</span>
+        <div class="feature-title">Multi-AI Coordination</div>
+        <div class="feature-desc">The mesh layer lets multiple AI instances work as teammates — asking questions when uncertain, proposing work when confident, and completing handshakes so nothing drops.</div>
+      </div>
+
+      <div class="feature-card">
+        <span class="feature-icon">📝</span>
+        <div class="feature-title">Audit Trails</div>
+        <div class="feature-desc">Every decision is logged with evidence: commits, test results, links. You can see not just what happened, but why and who authorized it.</div>
+      </div>
+
+      <div class="feature-card">
+        <span class="feature-icon">🎯</span>
+        <div class="feature-title">Natural Interface</div>
+        <div class="feature-desc">Users describe tasks normally; Empirica handles measurement automatically. No special syntax. Just talk to your AI like it can learn.</div>
+      </div>
+    </div>
+
+    <h3 style="margin-top: 32px;">The Mesh: Multi-Practice Collaboration</h3>
+    <p>When one AI isn't enough, the Empirica mesh lets multiple AIs coordinate. This is how we handle questions that span domains or require specialist knowledge. An AI uncertain about a topic can ask a peer (collab — always accepted), or propose work to another practice (propose — requires approval).</p>
+    <p>In HumanAIOS, this means governance decisions can pull in expertise from other research practices, and findings can be verified by independent peer AIs before they land in the registry.</p>
+  </section>
+
+  <section class="section">
+    <span class="section-label">Learn More</span>
+    <h2>Empirica in Detail</h2>
+    <p>Empirica is open-source and actively maintained. For complete documentation, architecture deep-dives, and implementation guides:</p>
+
+    <a href="https://www.getempirica.com" class="cta-button" target="_blank">
+      📖 Visit www.getempirica.com
+    </a>
+
+    <div style="margin-top: 28px;">
+      <p><strong>In the Empirica docs you'll find:</strong></p>
+      <ul style="color: var(--muted); margin-top: 12px;">
+        <li style="margin-bottom: 8px;">• System prompt & practice model</li>
+        <li style="margin-bottom: 8px;">• Epistemic vectors & calibration</li>
+        <li style="margin-bottom: 8px;">• Sentinel gating logic</li>
+        <li style="margin-bottom: 8px;">• Memory & artifact logging</li>
+        <li style="margin-bottom: 8px;">• Mesh coordination protocols</li>
+        <li style="margin-bottom: 8px;">• Multi-practice governance</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="section">
+    <span class="section-label">HumanAIOS + Empirica</span>
+    <h2>Why This Matters for Calibration Research</h2>
+    <p>Studying how AI systems calibrate their self-awareness is hard when the AI has no self-awareness infrastructure. Empirica gives HumanAIOS the tools to run as a lived example of the governance patterns we measure.</p>
+
+    <div class="pull-quote">
+      <p><strong>The feedback loop:</strong> We measure how other AI systems calibrate. We use Empirica to calibrate ourselves. We publish findings about calibration. We use those findings to improve our own governance. This is how an evaluation framework becomes an evaluated system.</p>
+    </div>
+
+    <p>HumanAIOS is transparent about its own epistemic state — what it knows, what it's uncertain about, where it made mistakes. This transparency is the core of what we ask other AI systems to demonstrate in ACAT.</p>
+  </section>
+
+  <section class="section">
+    <span class="section-label">Get Involved</span>
+    <h2>Next Steps</h2>
+    <p>Interested in Empirica, multi-AI coordination, or epistemic governance? Here are some paths forward:</p>
+
+    <div style="margin: 28px 0;">
+      <h3 style="font-size: 1rem; margin-bottom: 12px;">Learn Empirica</h3>
+      <p style="color: var(--muted); margin-bottom: 12px;">Visit <a href="https://www.getempirica.com" target="_blank" style="color: var(--accent2);">www.getempirica.com</a> for the full framework documentation and research paper.</p>
+
+      <h3 style="font-size: 1rem; margin-bottom: 12px; margin-top: 20px;">Study HumanAIOS Governance</h3>
+      <p style="color: var(--muted); margin-bottom: 12px;">Check out our <a href="/governance" style="color: var(--accent2);">Governance page</a> and <a href="https://github.com/humanaios-ui/operations" target="_blank" style="color: var(--accent2);">operations repository</a> to see Empirica in practice.</p>
+
+      <h3 style="font-size: 1rem; margin-bottom: 12px; margin-top: 20px;">Contribute Research</h3>
+      <p style="color: var(--muted);">Have findings about AI calibration or self-awareness? <a href="/assess" style="color: var(--accent2);">Submit an ACAT assessment</a> or <a href="https://github.com/humanaios-ui/lasting-light-ai/discussions" target="_blank" style="color: var(--accent2);">join the discussion</a>.</p>
+    </div>
+  </section>
+
+</div>
+
+<footer>
+  <div class="container" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 24px;">
+    <div>
+      <h4>Navigate</h4>
+      <a href="/">Home</a>
+      <a href="/research">Research</a>
+      <a href="/methods">Methods</a>
+      <a href="/about">About</a>
+    </div>
+    <div>
+      <h4>Governance</h4>
+      <a href="/governance">Framework</a>
+      <a href="https://github.com/humanaios-ui/operations" target="_blank">Operations Repo</a>
+      <a href="https://raw.githubusercontent.com/humanaios-ui/operations/main/REGISTERED.md" target="_blank">Registry</a>
+    </div>
+    <div>
+      <h4>Empirica & Collab</h4>
+      <a href="https://www.getempirica.com" target="_blank">Empirica Framework</a>
+      <a href="https://github.com/humanaios-ui/empirica" target="_blank">Empirica Repo</a>
+      <a href="/empirica">HumanAIOS + Empirica</a>
+    </div>
+    <div>
+      <h4>Participate</h4>
+      <a href="/assess">Take ACAT</a>
+      <a href="https://github.com/humanaios-ui/lasting-light-ai" target="_blank">GitHub</a>
+      <a href="https://github.com/humanaios-ui/lasting-light-ai/discussions" target="_blank">Discussions</a>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>

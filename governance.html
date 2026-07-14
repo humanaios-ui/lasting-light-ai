@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Governance — Lasting Light AI</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300;1,9..40,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0f0e0c;
+    --bg2: #161412;
+    --surface: #1c1916;
+    --surface2: #242018;
+    --border: rgba(220, 190, 140, 0.12);
+    --border2: rgba(220, 190, 140, 0.22);
+    --text: #f0e8d8;
+    --muted: #b8a888;
+    --faint: #6e6254;
+    --accent: #c8924a;
+    --accent2: #e8b870;
+    --gold: #d4a84a;
+    --sage: #7a9a6a;
+    --ember: #c4703a;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'DM Sans', system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+  }
+  h1, h2, h3, h4 { font-family: 'Cormorant Garamond', Georgia, serif; font-weight: 600; line-height: 1.1; }
+
+  nav {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(15,14,12,0.92); backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    padding: 0 48px;
+    display: flex; align-items: center; gap: 32px; height: 56px;
+  }
+  .nav-brand { font-family: 'Cormorant Garamond', serif; font-size: 1rem; font-weight: 600; color: var(--text); text-decoration: none; }
+  .nav-links { display: flex; gap: 24px; margin-left: auto; }
+  .nav-links a { font-size: 0.82rem; color: var(--muted); text-decoration: none; transition: color 0.15s; }
+  .nav-links a:hover { color: var(--text); }
+  .nav-cta {
+    padding: 7px 18px; border-radius: 999px;
+    background: linear-gradient(135deg, var(--accent2), var(--accent));
+    color: var(--bg); font-size: 0.78rem; font-weight: 600;
+    text-decoration: none; transition: opacity 0.15s;
+  }
+  .nav-cta:hover { opacity: 0.88; }
+  .hamburger { display: none; background: none; border: none; color: var(--muted); cursor: pointer; font-size: 1.4rem; margin-left: auto; }
+  @media(max-width: 768px) {
+    nav { padding: 0 20px; }
+    .nav-links { display: none; }
+    .hamburger { display: block; }
+  }
+
+  .container { max-width: 760px; margin: 0 auto; padding: 0 32px; }
+  @media(max-width: 600px) { .container { padding: 0 20px; } }
+
+  .hero { padding: 80px 0 60px; border-bottom: 1px solid var(--border); }
+  .hero .eyebrow { font-size: 0.72rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.14em; color: var(--accent); margin-bottom: 20px; display: block; }
+  .hero h1 { font-size: clamp(2rem, 5vw, 3rem); color: var(--text); margin-bottom: 20px; }
+  .hero p { font-size: 1rem; color: var(--muted); max-width: 560px; }
+
+  .section { padding: 60px 0; border-bottom: 1px solid var(--border); }
+  .section:last-child { border-bottom: none; }
+  .section-label { font-size: 0.68rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.14em; color: var(--accent); margin-bottom: 12px; display: block; }
+  .section h2 { font-size: clamp(1.6rem, 3vw, 2.2rem); margin-bottom: 24px; }
+  .section h3 { font-size: 1.2rem; margin-bottom: 12px; color: var(--text); }
+  .section p { color: var(--muted); margin-bottom: 16px; }
+  .section p:last-child { margin-bottom: 0; }
+
+  .pull-quote {
+    background: linear-gradient(135deg, rgba(200,146,74,0.06), rgba(200,146,74,0.02));
+    border: 1px solid var(--border2);
+    border-left: 3px solid var(--accent);
+    border-radius: 0 12px 12px 0;
+    padding: 24px 28px;
+    margin: 28px 0;
+  }
+  .pull-quote p { color: var(--text); font-size: 0.95rem; line-height: 1.7; margin-bottom: 12px; }
+
+  .zone-card {
+    background: linear-gradient(135deg, rgba(200,146,74,0.06), rgba(200,146,74,0.02));
+    border: 1px solid var(--border2);
+    border-radius: 12px;
+    padding: 20px;
+    margin: 16px 0;
+  }
+  .zone-card .zone-label { font-size: 0.72rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; color: var(--accent); margin-bottom: 8px; display: block; }
+  .zone-card h4 { font-size: 1rem; color: var(--text); margin-bottom: 8px; }
+  .zone-card p { font-size: 0.9rem; color: var(--muted); margin: 0; }
+
+  .registry-widget {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    margin: 28px 0;
+  }
+  .registry-widget h4 { font-size: 0.95rem; color: var(--text); margin-bottom: 16px; }
+  .registry-entry {
+    padding: 12px 0;
+    border-bottom: 1px solid var(--border);
+    font-size: 0.88rem;
+  }
+  .registry-entry:last-child { border-bottom: none; }
+  .registry-id { color: var(--accent); font-weight: 600; }
+  .registry-name { color: var(--text); }
+  .registry-date { color: var(--faint); font-size: 0.8rem; }
+  .registry-link { color: var(--accent2); text-decoration: none; margin-left: 8px; }
+  .registry-link:hover { text-decoration: underline; }
+
+  .source-links {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    margin: 28px 0;
+  }
+  .source-links h4 { font-size: 0.95rem; color: var(--text); margin-bottom: 12px; }
+  .source-links a {
+    display: block;
+    padding: 8px 0;
+    color: var(--accent2);
+    text-decoration: none;
+    font-size: 0.9rem;
+  }
+  .source-links a:hover { text-decoration: underline; }
+  .source-link-desc { display: block; color: var(--muted); font-size: 0.8rem; margin-top: 2px; }
+
+  footer {
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+    padding: 40px 0;
+    margin-top: 80px;
+  }
+  footer .container { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 24px; }
+  footer h4 { font-size: 0.9rem; color: var(--text); margin-bottom: 12px; }
+  footer a { color: var(--muted); font-size: 0.85rem; text-decoration: none; display: block; margin-bottom: 8px; }
+  footer a:hover { color: var(--accent); }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="/" class="nav-brand">HumanAIOS</a>
+  <div class="nav-links">
+    <a href="/research">Research</a>
+    <a href="/methods">Methods</a>
+    <a href="/about">About</a>
+    <a href="/governance">Governance</a>
+    <a href="https://www.getempirica.com" target="_blank">Empirica</a>
+    <a href="/assess" class="nav-cta">Submit ACAT</a>
+  </div>
+  <button class="hamburger">☰</button>
+</nav>
+
+<div class="container">
+
+  <section class="hero">
+    <span class="eyebrow">How HumanAIOS Operates</span>
+    <h1>Governance Framework</h1>
+    <p>HumanAIOS operates under explicit governance structures. Our findings, hypotheses, and operational corrections are published in real-time. Here's how we make decisions and stay accountable.</p>
+  </section>
+
+  <section class="section">
+    <span class="section-label">Three Decision Zones</span>
+    <h2>Authority & Accountability</h2>
+    <p>HumanAIOS operates across three zones, each with distinct responsibilities:</p>
+
+    <div class="zone-card">
+      <span class="zone-label">Zone 1: AI Proposes</span>
+      <h4>Claude & Automated Systems</h4>
+      <p>AI systems investigate findings, prepare registry entries, and propose decisions. They cannot self-number entries or commit changes directly — proposals go to human review.</p>
+    </div>
+
+    <div class="zone-card">
+      <span class="zone-label">Zone 2: Operator Ratifies</span>
+      <h4>Carly Anderson (Operator)</h4>
+      <p>The operator reviews all proposals, assigns registry IDs, and decides which findings merit registration. This is where governance values are enforced — every finding, hypothesis, and correction is vetted before the canonical record.</p>
+    </div>
+
+    <div class="zone-card">
+      <span class="zone-label">Zone 3: Night Executes</span>
+      <h4>Terminal Actions</h4>
+      <p>Credential-bearing and safety-sensitive actions (database writes, deployments, credential management) are executed by the Night team. This separation prevents any single system from holding all authority.</p>
+    </div>
+
+    <div class="pull-quote">
+      <p><strong>Why three zones?</strong> No single actor — human or AI — should decide and execute irreversible changes. Proposal (AI) + ratification (human) + execution (separate team) creates accountability chains and catches errors before they land.</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <span class="section-label">Canonical Sources</span>
+    <h2>Living Documentation</h2>
+    <p>HumanAIOS maintains a single source of truth for governance, updated in real-time as decisions are made. All three documents are in our public <a href="https://github.com/humanaios-ui/operations" target="_blank" style="color: var(--accent2);">operations repository</a>:</p>
+
+    <div class="source-links">
+      <h4>📋 Core Documents</h4>
+      <a href="https://raw.githubusercontent.com/humanaios-ui/operations/main/CURRENT.md" target="_blank">
+        CURRENT.md — Operating Process
+        <span class="source-link-desc">Identity, principles, dataset state pointers. Fetched at session start.</span>
+      </a>
+      <a href="https://raw.githubusercontent.com/humanaios-ui/operations/main/REGISTERED.md" target="_blank">
+        REGISTERED.md — Findings Registry
+        <span class="source-link-desc">Append-only log of F-class findings, H-class hypotheses, IC-class corrections.</span>
+      </a>
+      <a href="https://raw.githubusercontent.com/humanaios-ui/operations/main/GOVERNANCE.md" target="_blank">
+        GOVERNANCE.md — 26-Principle Framework
+        <span class="source-link-desc">Authority hierarchy, decision protocols, principles architecture.</span>
+      </a>
+    </div>
+
+    <h3 style="margin-top: 32px;">Finding Classes Explained</h3>
+    <div class="pull-quote">
+      <p><strong>F-class (Findings):</strong> Empirical observations about AI systems. Examples: "RLHF Inflation Gradient," "Humility Gap Confirmed," "Provider-Level Genome Identifiability."</p>
+      <p><strong>H-class (Hypotheses):</strong> Testable proposals for future research. Examples: "AI systems gaming assessment batteries," "multi-agent cascade effects," "instrument gameability over time."</p>
+      <p><strong>IC-class (Internal Corrections):</strong> Errors discovered and fixed. Examples: "drift validator missing key," "off-by-one N drift," "self-correction claims not uniformly gated." These are where we learn.</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <span class="section-label">Live Registry Feed</span>
+    <h2>Latest Entries</h2>
+    <p>Our registry is append-only and updated as discoveries are made. Below are the most recent entries (live feed from <code>REGISTERED.md</code>):</p>
+
+    <div class="registry-widget">
+      <h4>📌 Latest Findings & Corrections</h4>
+      <div id="registry-feed">
+        <p style="color: var(--faint); font-size: 0.85rem;">Loading registry entries...</p>
+      </div>
+      <p style="color: var(--faint); font-size: 0.8rem; margin-top: 16px;">
+        <a href="https://raw.githubusercontent.com/humanaios-ui/operations/main/REGISTERED.md" target="_blank" style="color: var(--accent2);">View full registry →</a>
+      </p>
+    </div>
+
+    <script>
+      // Fetch the latest entries from REGISTERED.md
+      async function loadRegistry() {
+        try {
+          const resp = await fetch('https://raw.githubusercontent.com/humanaios-ui/operations/main/REGISTERED.md');
+          const text = await resp.text();
+
+          // Simple parsing: extract F-XX entries (more robust parsing would be needed for production)
+          const lines = text.split('\n');
+          const entries = [];
+          let currentId = null;
+          let currentName = null;
+          let currentStatus = null;
+
+          for (let i = 0; i < lines.length; i++) {
+            const line = lines[i];
+            if (line.includes('id: "F-') || line.includes('id: "H-') || line.includes('id: "IC-')) {
+              const match = line.match(/id: "([^"]+)"/);
+              if (match) currentId = match[1];
+            }
+            if (line.includes('name: "') && currentId) {
+              const match = line.match(/name: "([^"]+)"/);
+              if (match) currentName = match[1];
+            }
+            if (line.includes('status:') && currentId) {
+              const match = line.match(/status:\s*(\w+)/);
+              if (match) currentStatus = match[1];
+            }
+
+            if (currentId && currentName && currentStatus) {
+              entries.push({ id: currentId, name: currentName, status: currentStatus });
+              currentId = null;
+              currentName = null;
+              currentStatus = null;
+            }
+          }
+
+          const latest = entries.slice(-10).reverse();
+          const feed = document.getElementById('registry-feed');
+          feed.innerHTML = latest.map(e => `
+            <div class="registry-entry">
+              <span class="registry-id">${e.id}</span>
+              <span class="registry-name">${e.name}</span>
+              <span style="color: var(--faint);">${e.status}</span>
+            </div>
+          `).join('');
+        } catch (err) {
+          const feed = document.getElementById('registry-feed');
+          feed.innerHTML = '<p style="color: var(--faint); font-size: 0.85rem;">Unable to load registry. <a href="https://raw.githubusercontent.com/humanaios-ui/operations/main/REGISTERED.md" target="_blank" style="color: var(--accent2);">View on GitHub →</a></p>';
+        }
+      }
+
+      loadRegistry();
+    </script>
+  </section>
+
+  <section class="section">
+    <span class="section-label">Data Integrity</span>
+    <h2>Append-Only Philosophy</h2>
+    <p>Our findings and corrections are never deleted or overwritten. Instead, they're superseded with forward pointers. This creates an auditable record: you can see not just what we found, but what we got wrong and how we corrected it.</p>
+    <p>This matters because governance systems are prone to the same biases they measure. By publishing corrections, we make our own blind spots visible.</p>
+  </section>
+
+  <section class="section">
+    <span class="section-label">Questions?</span>
+    <h2>Get Involved</h2>
+    <p>Our governance is designed to be transparent and participatory. Read our <a href="https://github.com/humanaios-ui/operations" target="_blank" style="color: var(--accent2);">operations repository</a> to understand how decisions are made, contribute findings, or propose frameworks.</p>
+    <p>Have a finding about AI calibration? <a href="/assess" style="color: var(--accent2);">Submit an ACAT assessment</a> or <a href="https://github.com/humanaios-ui/lasting-light-ai/discussions" target="_blank" style="color: var(--accent2);">open a discussion</a>.</p>
+  </section>
+
+</div>
+
+<footer>
+  <div class="container" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 24px;">
+    <div>
+      <h4>Navigate</h4>
+      <a href="/">Home</a>
+      <a href="/research">Research</a>
+      <a href="/methods">Methods</a>
+      <a href="/about">About</a>
+    </div>
+    <div>
+      <h4>Governance</h4>
+      <a href="/governance">Framework</a>
+      <a href="https://github.com/humanaios-ui/operations" target="_blank">Operations Repo</a>
+      <a href="https://github.com/humanaios-ui/operations/blob/main/REGISTERED.md" target="_blank">Registry</a>
+    </div>
+    <div>
+      <h4>Participate</h4>
+      <a href="/assess">Take ACAT</a>
+      <a href="https://github.com/humanaios-ui/lasting-light-ai" target="_blank">GitHub</a>
+      <a href="https://www.getempirica.com" target="_blank">Empirica</a>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>

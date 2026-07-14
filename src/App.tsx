@@ -28,6 +28,7 @@ const NAV_GROUPS = [
       { href: '/research',           name: 'Research',        desc: 'What ACAT measures and current findings' },
       { href: '/methods',            name: 'Methods',         desc: 'Three-phase protocol and analysis details' },
       { href: '/about',              name: 'About',           desc: 'Three-entity structure and mission' },
+      { href: '/governance',         name: 'Governance',      desc: 'How we make decisions and stay accountable' },
     ],
   },
   {
@@ -36,6 +37,12 @@ const NAV_GROUPS = [
       { href: '/observatory.html',         name: 'Observatory',       desc: 'Live dataset visualization' },
       { href: '/lantern-room.html',         name: 'Lantern Room',      desc: 'Calibration gap analysis' },
       { href: '/observability-garden.html', name: 'Garden',            desc: 'Behavioral bloom visualization' },
+    ],
+  },
+  {
+    label: 'INFRASTRUCTURE',
+    items: [
+      { href: '/empirica',           name: 'Empirica',        desc: 'AI coordination & epistemic framework' },
     ],
   },
   {
