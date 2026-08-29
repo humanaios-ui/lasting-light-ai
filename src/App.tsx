@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   BrowserRouter,
   Routes,
@@ -19,6 +19,7 @@ import { SigilsSection } from './components/SigilsSection';
 import { SiteMap } from './components/SiteMap';
 import { Footer } from './components/Footer';
 import { AcatTool } from './components/AcatTool';
+import { MarkerToastContainer } from './components/MarkerToastContainer';
 
 // ── Nav link data — mirrors witness-nav.js NAV_GROUPS ──────────────────────
 const NAV_GROUPS = [
@@ -207,6 +208,7 @@ function AssessPage({ onMeanLIUpdate }: { onMeanLIUpdate: (li: number) => void }
 // ── Root app shell ──────────────────────────────────────────────────────────
 function AppShell() {
   const [meanLI, setMeanLI] = useState(0.8632);
+  const [authToken, setAuthToken] = useState<string | null>(null);
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -216,6 +218,14 @@ function AppShell() {
   const handleNavigate = (view: 'home' | 'acat') => {
     navigate(view === 'acat' ? '/assess' : '/');
   };
+
+  // Load auth token from localStorage for Track 2 marker streaming
+  useEffect(() => {
+    const token = localStorage.getItem('auth_token');
+    if (token) {
+      setAuthToken(token);
+    }
+  }, []);
 
   return (
     <div
@@ -235,6 +245,9 @@ function AppShell() {
       </main>
 
       <Footer />
+
+      {/* Track 2: Real-time marker notifications for cortex orchestration events */}
+      {authToken && <MarkerToastContainer token={authToken} />}
     </div>
   );
 }
