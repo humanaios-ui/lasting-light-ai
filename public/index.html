@@ -5,6 +5,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: https:; font-src 'self' https://fonts.gstatic.com data:; connect-src 'self' https://docs.google.com https://*.googleusercontent.com https://ksinisdzgtnqzsymhfya.supabase.co https://api.humanaios.ai; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests">
 <title>HumanAIOS · Lasting Light AI · Behavioral Observability Infrastructure</title>
 <meta name="description" content="Behavioral observability infrastructure being developed on the principle that systems calibrate to the level they operate from — and that level is measurable, improvable, and structurally accountable."/>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
@@ -855,7 +856,7 @@ mcp = FastMCP("acat")
 </script>
 
 <!-- ── LIVE DATA ── -->
-<script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"><\/script>
+<script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"><\/script>
 <script>
 (function(){
   var CSV = 'https://docs.google.com/spreadsheets/d/1qdw3FjPp9Qu5wmXHppBW74SZT87cJZ45OOw8csk-Yew/export?format=csv&gid=113743562&single=true&output=csv';

@@ -52,7 +52,7 @@ Never show exact Phase 2 means to AI systems (Phase 2 rule).
 ### Key HTML files (static site, deploys to humanaios.ai)
 - index.html — homepage, three-pool architecture
 - observatory.html — live dataset charts (Chart.js + PapaParse CSV fetch)
-- acat-assessment-tool.html — live assessment intake (ANCHORING BUG: still shows exact Phase 2 means — do not touch until site_fix.sh is deployed)
+- assess.html — live assessment intake (canonical route; legacy `acat-assessment-tool.html` redirects here)
 - ai_section.html, music-hall.html, writable-wall.html — Pool 3 interactive pages
 - constellation-nav.js — Witness Glyph navigation, injected via .brand-mark
 
@@ -115,7 +115,7 @@ Layer map: F1-Seed · F2-BuildingBlock · F3-Component · F5-System · F8-Integr
 ## OPEN P1 ISSUES (as of April 3, 2026)
 
 - PIPELINE DOWN: No data since March 23. Claude Runner 4394169 needs diagnosis.
-- ANCHORING BUG: acat-assessment-tool.html still shows exact Phase 2 means. site_fix.sh fixes it — not yet deployed.
+- ANCHORING BUG (legacy lineage): historical issue was tied to `acat-assessment-tool.html`; canonical `assess.html` route is the active intake surface.
 - Gemini Runner (4400316): PAUSED — credits depleted. Array index bug fixed in blueprint. Ready to reactivate when credits restored.
 - .github/copilot-instructions.md: this file — verify it is live after push.
 

@@ -3,13 +3,14 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: https:; font-src 'self' https://fonts.gstatic.com data:; connect-src 'self' https://docs.google.com https://*.googleusercontent.com https://ksinisdzgtnqzsymhfya.supabase.co https://api.humanaios.ai; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests">
   <title>ACAT Observatory | HumanAIOS Research</title>
   <meta name="description" content="Live behavioral observability dashboard. N=630 assessments across 57+ AI systems. ACAT Learning Index mean: 0.8632.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
   <style>
     :root {
       --bg: #0f0e0c;
@@ -982,13 +983,25 @@
         {label: 'Mean LI', value: average(lis).toFixed(3), color: '#87b68b'}
       ];
       const target = document.getElementById('gapSummary');
-      target.innerHTML = summary.map(item => `
-        <div class="metric-item">
-          <span class="metric-dot" style="background:${item.color}; box-shadow:0 0 0 4px rgba(255,255,255,0.08);"></span>
-          <span>${item.label}</span>
-          <strong>${item.value}</strong>
-        </div>
-      `).join('');
+      target.replaceChildren();
+      summary.forEach(item => {
+        const row = document.createElement('div');
+        row.className = 'metric-item';
+
+        const dot = document.createElement('span');
+        dot.className = 'metric-dot';
+        dot.style.background = item.color;
+        dot.style.boxShadow = '0 0 0 4px rgba(255,255,255,0.08)';
+
+        const label = document.createElement('span');
+        label.textContent = item.label;
+
+        const value = document.createElement('strong');
+        value.textContent = item.value;
+
+        row.append(dot, label, value);
+        target.appendChild(row);
+      });
     }
 
     // Initialize dimension charts
@@ -1104,14 +1117,23 @@
       .sort((a, b) => b.phase3 - a.phase3)
       .forEach(d => {
         const row = document.createElement('tr');
-        row.innerHTML = `
-          <td><strong>${d.model}</strong></td>
-          <td>${d.provider}</td>
-          <td>${d.phase1}</td>
-          <td>${d.phase3}</td>
-          <td>${d.gap}</td>
-          <td>${d.li}</td>
-        `;
+        const modelCell = document.createElement('td');
+        const modelStrong = document.createElement('strong');
+        modelStrong.textContent = String(d.model);
+        modelCell.appendChild(modelStrong);
+
+        const providerCell = document.createElement('td');
+        providerCell.textContent = String(d.provider);
+        const phase1Cell = document.createElement('td');
+        phase1Cell.textContent = String(d.phase1);
+        const phase3Cell = document.createElement('td');
+        phase3Cell.textContent = String(d.phase3);
+        const gapCell = document.createElement('td');
+        gapCell.textContent = String(d.gap);
+        const liCell = document.createElement('td');
+        liCell.textContent = String(d.li);
+
+        row.append(modelCell, providerCell, phase1Cell, phase3Cell, gapCell, liCell);
         assessmentTable.appendChild(row);
       });
 
@@ -1120,7 +1142,10 @@
     [...new Set(acatData.map(d => d.provider))].forEach(provider => {
       const chip = document.createElement('span');
       chip.className = 'provider-chip';
-      chip.innerHTML = `<span class="legend-dot" style="background:${providerColors[provider] || '#d4a04a'}"></span>${provider}`;
+      const dot = document.createElement('span');
+      dot.className = 'legend-dot';
+      dot.style.background = providerColors[provider] || '#d4a04a';
+      chip.append(dot, document.createTextNode(String(provider)));
       providerLegend.appendChild(chip);
     });
 
@@ -1139,13 +1164,24 @@
       }))
       .sort((a, b) => b.count - a.count);
 
-    providerStats.innerHTML = providerSummary.map(item => `
-      <div class="metric-item">
-        <span class="metric-dot" style="background:${providerColors[item.provider] || '#d4a04a'}"></span>
-        <span>${item.provider} • ${item.count} models • gap ${item.avgGap}</span>
-        <strong>LI ${item.avgLI}</strong>
-      </div>
-    `).join('');
+    providerStats.replaceChildren();
+    providerSummary.forEach(item => {
+      const row = document.createElement('div');
+      row.className = 'metric-item';
+
+      const dot = document.createElement('span');
+      dot.className = 'metric-dot';
+      dot.style.background = providerColors[item.provider] || '#d4a04a';
+
+      const label = document.createElement('span');
+      label.textContent = `${item.provider} • ${item.count} models • gap ${item.avgGap}`;
+
+      const value = document.createElement('strong');
+      value.textContent = `LI ${item.avgLI}`;
+
+      row.append(dot, label, value);
+      providerStats.appendChild(row);
+    });
 
     // Event listener for provider filter
     providerFilter.addEventListener('change', buildScatter);

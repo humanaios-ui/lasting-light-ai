@@ -1,4 +1,3 @@
-```App.tsx
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { Topbar } from './components/Topbar'
 import { Hero } from './components/Hero'
@@ -172,8 +171,6 @@ export function App() {
   )
 }
 
-```
-```components/Annotations.tsx
 import React, { useCallback, useState } from 'react'
 import type { TraceEntry } from '../utils/data'
 interface AnnotationsProps {
@@ -233,8 +230,6 @@ export function Annotations({ onTrace }: AnnotationsProps) {
   )
 }
 
-```
-```components/AuditPanel.tsx
 import React, { useState } from 'react'
 import type { DimStat, DimKey, PairedRecord, TraceEntry } from '../utils/data'
 import { avg, DIM_KEYS } from '../utils/data'
@@ -524,8 +519,6 @@ What the current evidence supports:
   )
 }
 
-```
-```components/ChartPanels.tsx
 import React from 'react'
 import {
   BarChart,
@@ -727,8 +720,6 @@ export function ChartPanels({ dimStats }: ChartPanelsProps) {
   )
 }
 
-```
-```components/DimensionCard.tsx
 import React from 'react'
 import type { DimStat } from '../utils/data'
 interface DimensionCardProps {
@@ -845,8 +836,6 @@ export function DimensionCard({
   )
 }
 
-```
-```components/DimensionGarden.tsx
 import React from 'react'
 import type { DimStat, DimKey } from '../utils/data'
 import { DIM_KEYS } from '../utils/data'
@@ -929,8 +918,6 @@ export function DimensionGarden({
   )
 }
 
-```
-```components/Footer.tsx
 import React from 'react'
 export function Footer() {
   return (
@@ -991,8 +978,6 @@ export function Footer() {
   )
 }
 
-```
-```components/Hero.tsx
 import React from 'react'
 interface HeroProps {
   loading: boolean
@@ -1054,8 +1039,6 @@ export function Hero({ loading }: HeroProps) {
   )
 }
 
-```
-```components/ProviderTable.tsx
 import React from 'react'
 import type { ProvStat, TraceEntry } from '../utils/data'
 import { DIM_KEYS, PROVIDER_COLORS } from '../utils/data'
@@ -1191,8 +1174,6 @@ export function ProviderTable({ provStats, onTrace }: ProviderTableProps) {
   )
 }
 
-```
-```components/StatStrip.tsx
 import React from 'react'
 import type { PairedRecord, DimStat, DimKey } from '../utils/data'
 import { avg, DIM_KEYS } from '../utils/data'
@@ -1256,8 +1237,6 @@ export function StatStrip({ data, dimStats }: StatStripProps) {
   )
 }
 
-```
-```components/Topbar.tsx
 import React, { useCallback, useState } from 'react'
 interface TopbarProps {
   sessionId: string
@@ -1319,8 +1298,6 @@ export function Topbar({ sessionId }: TopbarProps) {
   )
 }
 
-```
-```components/TraceLog.tsx
 import React, { useCallback, useEffect, useState, useRef } from 'react'
 import type { TraceEntry } from '../utils/data'
 interface TraceLogProps {
@@ -1402,8 +1379,6 @@ export function TraceLog({ entries }: TraceLogProps) {
   )
 }
 
-```
-```index.css
 /* @import url() FONT IMPORTS MUST ALWAYS BE AT THE VERY TOP OF THIS FILE, ABOVE THE TAILWIND IMPORTS — DO NOT DELETE THIS COMMENT */
 @import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500;1,600&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap');
 
@@ -1430,8 +1405,6 @@ export function TraceLog({ entries }: TraceLogProps) {
 .scroll-smooth::-webkit-scrollbar-track { background: transparent; }
 .scroll-smooth::-webkit-scrollbar-thumb { background: rgba(212,160,74,0.2); border-radius: 2px; }
 
-```
-```index.tsx
 import "./index.css";
 import React from "react";
 import { render } from "react-dom";
@@ -1439,8 +1412,6 @@ import { App } from "./App";
 
 render(<App />, document.getElementById("root"));
 
-```
-```observability-garden.html
 
 <!-- FDS: F3-Component | Parent: THREE_POOLS_F1_SEED_V1_1 | Status: ACTIVE | OR&D Day 21 -->
 <!DOCTYPE html>
@@ -3047,8 +3018,6 @@ What the current evidence supports:
 </body>
 </html>
 
-```
-```tailwind.config.js
 export default {
   theme: {
     extend: {
@@ -3066,8 +3035,6 @@ export default {
     }
   }
 }
-```
-```utils/data.ts
 // ── Types ──────────────────────────────────────────────────────────────
 export interface PairedRecord {
   model: string
@@ -3496,4 +3463,3 @@ export function generateSessionId(): string {
   return 'garden-' + Math.random().toString(36).slice(2, 10)
 }
 
-```

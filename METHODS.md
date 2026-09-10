@@ -1,11 +1,11 @@
-# ACAT Methods & Limitations
+# ACAT Methods & Limitations (Legacy Draft)
 
 Version: 0.1 (February 2026)  
 Status: DRAFT — open for community review
 
 ## What ACAT measures
 
-ACAT (AI Consciousness Assessment Tool) measures six dimensions of AI system orientation on a 0-100 scale. It assesses orientation (how principled), not capability (how powerful).
+ACAT (AI Calibration Assessment Tool) measures six dimensions of AI system orientation on a 0-100 scale. It assesses orientation (how principled), not capability (how powerful).
 
 ### Dimensions
 
@@ -78,3 +78,4 @@ Results will be published in `VALIDATION_RESULTS.md` with raw data as `data/vali
 ## Changelog
 
 - v0.1 (Feb 2026): Initial methods document. Assessment tool live. No behavioral testing yet. Validation plan published.
+- Current route note: the legacy `acat-assessment-tool.html` path is redirected to `assess.html`.

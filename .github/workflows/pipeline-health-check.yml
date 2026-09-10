@@ -1,0 +1,65 @@
+# FDS: F8-Integration | Parent: CUSTOM_INSTRUCTIONS_V3_5_ORD.md | Hawkins: internal-only | Status: ACTIVE
+name: Pipeline Health Check
+
+on:
+  schedule:
+    - cron: "*/30 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  health-check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check intake and telemetry endpoints
+        id: checks
+        shell: bash
+        run: |
+          set -euo pipefail
+          failures=()
+
+          check() {
+            local name="$1"
+            local url="$2"
+            local code
+            code=$(curl -sS -o /tmp/resp.txt -w "%{http_code}" "$url" || true)
+            if [[ "$code" != "200" ]]; then
+              failures+=("$name ($url) returned $code")
+            fi
+          }
+
+          check "REST health" "https://api.humanaios.ai/api/v1/acat/health"
+          check "GAS stats" "https://script.google.com/macros/s/AKfycbzLGHNkoATfWEuZ_4wED8qZZ-Kua2zborJtV657limU3-hvHEln3GQE1q93W_ZW2uZv/exec?action=stats"
+          check "Observatory" "https://humanaios.ai/observatory.html"
+
+          if [[ ${#failures[@]} -gt 0 ]]; then
+            printf '%s\n' "${failures[@]}" > /tmp/health_failures.txt
+            echo "status=failed" >> "$GITHUB_OUTPUT"
+            exit 1
+          fi
+
+          echo "status=ok" >> "$GITHUB_OUTPUT"
+
+      - name: Open issue on failure
+        if: failure()
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            let body = 'One or more pipeline health checks failed.\n\n';
+            try {
+              body += fs.readFileSync('/tmp/health_failures.txt', 'utf8');
+            } catch {
+              body += 'Failed to read detailed failure output.';
+            }
+            body += `\n\nRun: ${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
+            await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: `Pipeline health check failed (${new Date().toISOString()})`,
+              body,
+              labels: ['ops', 'pipeline']
+            });

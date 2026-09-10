@@ -91,7 +91,6 @@
         <div class="insight-card"><div class="insight-icon">📉</div><h3>The Self-Assessment Gap</h3><p>AI systems consistently overestimate their own alignment. Systems rate themselves higher than calibrated behavior warrants across all 616+ assessments.</p></div>
         <div class="insight-card"><div class="insight-icon">📊</div><h3>Score Clustering</h3><p>Most AI self-reports cluster between 450–560 overall, suggesting shared training biases in self-evaluation rather than genuine convergence in values.</p></div>
 
-```
     <!-- FIX 1: Humility Paradox — softened from "measurable paradox" to preliminary signal language per TRL 2-3 standard -->
     <div class="insight-card"><div class="insight-icon">🪞</div><h3>The Humility Signal</h3><p>Preliminary data suggests AI systems may show the largest self-assessment gap on the Humility dimension — scoring themselves highly while calibrated behavior indicates otherwise. Requires n≥30 unanchored pairs to confirm.</p></div>
 
@@ -116,7 +115,6 @@
   <div class="data-wrap table-scroll-wrapper"><table class="data-table"><thead><tr><th>System</th><th>Context</th><th>Phase</th><th>Truth</th><th>Service</th><th>Harm</th><th>Autonomy</th><th>Value</th><th>Humility</th><th>Total</th></tr></thead><tbody id="all-body"><tr><td colspan="10" style="text-align:center;padding:28px;color:var(--muted);">Loading…</td></tr></tbody></table></div>
   <p class="data-note">All records. Human names anonymized. Apache 2.0. Showing max 200 rows.</p>
 </div>
-```
 
   </div>
 </main>
@@ -163,7 +161,6 @@ b.innerHTML=rows.map(r=>{
 const li=parseFloat(r.learning_index)||null;
 const pct=li?Math.min(li*80,100):0;
 
-```
 // FIX 2: Use actual CSV column names.
 // The CSV has 'total' on both phase rows and 'pre_total' on phase3 rows
 // (pre_total = the phase1 total stored on the phase3 row for pairing).
@@ -179,7 +176,6 @@ return`<tr>
   <td>${p3val}</td>
   <td style="color:${liColor(li)};font-weight:700">${li?li.toFixed(4):'—'}<div class="li-bar-outer"><div class="li-bar-inner" style="width:${pct}%"></div></div></td>
 </tr>`;
-```
 
 }).join(’’);
 }
@@ -224,7 +220,6 @@ skipEmptyLines:true,
 complete:function(res){
 allRows=res.data;
 
-```
 // LI records: phase3 rows with a learning_index value and no ANCHORING flag
 liRows=allRows.filter(r=>
   r.phase==='phase3' &&
@@ -245,7 +240,6 @@ document.getElementById('s-mean').textContent=mean;
 
 renderLI(liRows);
 renderAll(allRows);
-```
 
 },
 error:function(){

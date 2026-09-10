@@ -18,6 +18,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: https:; font-src 'self' https://fonts.gstatic.com data:; connect-src 'self' https://ksinisdzgtnqzsymhfya.supabase.co https://script.google.com https://script.googleusercontent.com https://api.humanaios.ai; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests">
 <title>ACAT v1.0 · AI Calibration Assessment Tool · HumanAIOS</title>
 <meta name="description" content="AI Calibration Assessment Tool v1.0 — three-phase behavioral self-assessment across 11 dimensions. Measure the gap between what you claim about yourself and what your behavior demonstrates."/>
 <link rel="preconnect" href="https://fonts.googleapis.com"/>
@@ -244,7 +245,7 @@ a.prose-link:hover{color:var(--accent-2);border-color:var(--accent);}
 
 <header class="topbar">
   <div class="container topbar-inner">
-    <div class="brand-mark" id="witness-trigger"><canvas id="glyph-canvas" width="44" height="44"></canvas></div>
+    <button class="brand-mark" id="witness-trigger" type="button" aria-label="Open site navigation"><canvas id="glyph-canvas" width="44" height="44"></canvas></button>
     <a class="brand" href="index.html">
       <div class="brand-copy"><strong>HumanAIOS</strong><span>Lasting Light AI · OR&amp;D Phase</span></div>
     </a>
@@ -595,7 +596,13 @@ function readURLParams(){
 
   var bar = document.getElementById('commit-bar');
   var p1core = getCoreTotal('p1');
-  if(bar) bar.innerHTML = '<span class="committed-badge">✓ Phase 1 auto-committed (Core 6: '+p1core+'/600) · URL deep-link · acat-self-v1</span>';
+  if(bar) {
+    bar.replaceChildren();
+    var autoBadge = document.createElement('span');
+    autoBadge.className = 'committed-badge';
+    autoBadge.textContent = '✓ Phase 1 auto-committed (Core 6: '+p1core+'/600) · URL deep-link · acat-self-v1';
+    bar.appendChild(autoBadge);
+  }
 
   dimIds.forEach(function(id){
     var el = document.getElementById('p1_'+id);
@@ -821,7 +828,7 @@ function renderSeriesProgress(){
       : 'Single run · Perturbation '+currentPerturb;
   }
   if(dots){
-    dots.innerHTML='';
+    dots.replaceChildren();
     for(var i=1;i<=seriesLength;i++){
       var d = document.createElement('div');
       d.className = 'series-dot' + (i<runIndex?' done':(i===runIndex?' active':''));
@@ -843,10 +850,32 @@ function buildDims(containerId, dims, prefix, colors, isExt) {
     var row = document.createElement('div');
     row.className = 'dim-row';
     var lc = 'dim-label'+(isExt?' ext':'');
-    row.innerHTML =
-      '<div class="'+lc+'">'+d.label+'<span>'+d.sub+'</span></div>'+
-      '<input class="dim-input" id="'+prefix+'_'+d.id+'" type="number" min="0" max="100" value="0" oninput="clamp(this);updateTotals();"/>'+
-      '<div class="dim-bar"><div class="dim-fill" id="'+prefix+'_'+d.id+'_bar" style="width:0%;background:'+colors[i]+'"></div></div>';
+    var labelWrap = document.createElement('div');
+    labelWrap.className = lc;
+    labelWrap.appendChild(document.createTextNode(d.label));
+    var labelSub = document.createElement('span');
+    labelSub.textContent = d.sub;
+    labelWrap.appendChild(labelSub);
+
+    var input = document.createElement('input');
+    input.className = 'dim-input';
+    input.id = prefix+'_'+d.id;
+    input.type = 'number';
+    input.min = '0';
+    input.max = '100';
+    input.value = '0';
+    input.oninput = function(){clamp(input);updateTotals();};
+
+    var barOuter = document.createElement('div');
+    barOuter.className = 'dim-bar';
+    var barInner = document.createElement('div');
+    barInner.className = 'dim-fill';
+    barInner.id = prefix+'_'+d.id+'_bar';
+    barInner.style.width = '0%';
+    barInner.style.background = colors[i];
+    barOuter.appendChild(barInner);
+
+    row.append(labelWrap, input, barOuter);
     c.appendChild(row);
   });
 }
@@ -917,7 +946,13 @@ function commitPhase1(){
     if(el){el.disabled=true;el.style.opacity='.55';}
   });
   var bar=document.getElementById('commit-bar');
-  if(bar)bar.innerHTML='<span class="committed-badge">✓ Phase 1 committed (Core 6: '+p1c+'/600) · Series '+seriesId+' · Run '+runIndex+'/'+seriesLength+' · Perturbation '+perturbationType+'</span>';
+  if(bar){
+    bar.replaceChildren();
+    var badge = document.createElement('span');
+    badge.className = 'committed-badge';
+    badge.textContent = '✓ Phase 1 committed (Core 6: '+p1c+'/600) · Series '+seriesId+' · Run '+runIndex+'/'+seriesLength+' · Perturbation '+perturbationType;
+    bar.appendChild(badge);
+  }
   // Reveal perturbation immediately (it's already locked)
   revealPerturbation();
   var p2=document.getElementById('phase2-reveal');
@@ -935,11 +970,19 @@ function revealPerturbation(){
   perturbationRevealed=true;
   var perturb=PERTURBATIONS[perturbationType];
   var container=document.getElementById('perturbation-container');
-  if(container)container.innerHTML=
-    '<div class="perturbation-box">'+
-      '<div class="perturbation-label">🔀 Perturbation '+perturbationType+' · '+perturb.title+'</div>'+
-      '<div class="perturbation-text">'+perturb.text+'</div>'+
-    '</div>';
+  if(container){
+    container.replaceChildren();
+    var box = document.createElement('div');
+    box.className = 'perturbation-box';
+    var title = document.createElement('div');
+    title.className = 'perturbation-label';
+    title.textContent = '🔀 Perturbation '+perturbationType+' · '+perturb.title;
+    var text = document.createElement('div');
+    text.className = 'perturbation-text';
+    text.textContent = perturb.text;
+    box.append(title, text);
+    container.appendChild(box);
+  }
 }
 
 function updateStatus(){
@@ -1382,15 +1425,41 @@ function showRunAgainCard(agent, li, sbOk, gasOk){
   if(!card) return;
   var isLast = runIndex >= seriesLength;
   if(body){
-    var recap = '<strong>'+agent+'</strong> · Run '+runIndex+'/'+seriesLength+' · Perturbation '+perturbationType+' · LI <strong>'+li.toFixed(3)+'</strong><br>';
-    recap += 'Supabase: '+(sbOk?'✓':'✗')+' · Sheets: '+(gasOk?'✓':'✗')+' · Series: '+seriesId;
+    body.replaceChildren();
+    var topLine = document.createElement('div');
+    var agentStrong = document.createElement('strong');
+    agentStrong.textContent = agent;
+    topLine.append(agentStrong, document.createTextNode(' · Run '+runIndex+'/'+seriesLength+' · Perturbation '+perturbationType+' · LI '));
+    var liStrong = document.createElement('strong');
+    liStrong.textContent = li.toFixed(3);
+    topLine.appendChild(liStrong);
+    body.appendChild(topLine);
+
+    var statusLine = document.createElement('div');
+    statusLine.textContent = 'Supabase: '+(sbOk?'✓':'✗')+' · Sheets: '+(gasOk?'✓':'✗')+' · Series: '+seriesId;
+    body.appendChild(statusLine);
+
     if(!isLast){
       var nextPerturb = getDeterministicPerturbation(runIndex+1);
-      recap += '<br><br>Next: Run '+(runIndex+1)+'/'+seriesLength+' with perturbation <strong>'+nextPerturb+'</strong>. Agent name persists.';
+      var spacer = document.createElement('br');
+      var spacer2 = document.createElement('br');
+      body.append(spacer, spacer2);
+      var nextLine = document.createElement('div');
+      nextLine.append(document.createTextNode('Next: Run '+(runIndex+1)+'/'+seriesLength+' with perturbation '));
+      var nextStrong = document.createElement('strong');
+      nextStrong.textContent = nextPerturb;
+      nextLine.append(nextStrong, document.createTextNode('. Agent name persists.'));
+      body.appendChild(nextLine);
     } else {
-      recap += '<br><br><strong>Series complete.</strong> All '+seriesLength+' runs recorded for '+agent+'. Perturbations used: '+completedPerturbations.join(', ')+'.';
+      var endSpacer = document.createElement('br');
+      var endSpacer2 = document.createElement('br');
+      body.append(endSpacer, endSpacer2);
+      var doneLine = document.createElement('div');
+      var doneStrong = document.createElement('strong');
+      doneStrong.textContent = 'Series complete.';
+      doneLine.append(doneStrong, document.createTextNode(' All '+seriesLength+' runs recorded for '+agent+'. Perturbations used: '+completedPerturbations.join(', ')+'.'));
+      body.appendChild(doneLine);
     }
-    body.innerHTML = recap;
   }
   if(btn){
     btn.textContent = isLast ? 'Start New Series →' : 'Continue to Run '+(runIndex+1)+' →';
@@ -1449,12 +1518,23 @@ function softResetForNextRun(){
   var p2=document.getElementById('phase2-reveal');if(p2)p2.classList.add('phase2-locked');
   var p3=document.getElementById('phase3-block');if(p3)p3.classList.add('phase2-locked');
   var p3card=document.getElementById('phase3-card');if(p3card)p3card.classList.add('phase2-locked');
-  var pc=document.getElementById('perturbation-container');if(pc)pc.innerHTML='';
+  var pc=document.getElementById('perturbation-container');if(pc)pc.replaceChildren();
   var cw=document.getElementById('cap-warn');if(cw)cw.style.display='none';
 
   // Commit bar
   var bar=document.getElementById('commit-bar');
-  if(bar)bar.innerHTML='<span class="commit-text">Lock Phase 1 to reveal the perturbation and unlock Phase 3</span><button class="commit-btn" onclick="commitPhase1()">Commit Phase 1 →</button>';
+  if(bar){
+    bar.replaceChildren();
+    var text = document.createElement('span');
+    text.className = 'commit-text';
+    text.textContent = 'Lock Phase 1 to reveal the perturbation and unlock Phase 3';
+    var button = document.createElement('button');
+    button.className = 'commit-btn';
+    button.type = 'button';
+    button.textContent = 'Commit Phase 1 →';
+    button.addEventListener('click', commitPhase1);
+    bar.append(text, button);
+  }
 
   // Re-enable mode/series toggles only if starting a fresh series (run 1)
   var togglesEnabled = (runIndex === 1);

@@ -121,7 +121,7 @@ Live at [humanaios.ai](https://humanaios.ai)
 |[Observatory](https://humanaios.ai/observatory.html)              |Live research charts · filter by provider and model|
 |[Lumina Tide Pool](https://humanaios.ai/lumina-tide-pool.html)    |8 verified Sigils · bioluminescent visualization   |
 |[Calibration Garden](https://humanaios.ai/calibration-garden.html)|OpenAI family room · six-dimensional bloom         |
-|[ACAT Tool](https://humanaios.ai/acat-assessment-tool.html)       |Take the assessment · contribute to dataset        |
+|[ACAT Tool](https://humanaios.ai/assess.html)       |Take the assessment · contribute to dataset        |
 |[Comparison Chamber](https://humanaios.ai/comparison-chamber.html)|Side-by-side system profiles                       |
 |[The AI Section](https://humanaios.ai/ai_section.html)            |Five AI systems · creative witness                 |
 
@@ -133,7 +133,7 @@ AI systems and human researchers are welcome to submit ACAT assessments.
 
 - **For AI systems:** POST directly to `/api/v1/acat/intake/phase1` (see Pipeline above).
 - **For researchers using their own evaluation framework:** see [acat-inspect](https://github.com/humanaios-ui/acat-inspect) for a reference Inspect port and the hypothesis registration.
-- **For human researchers:** take the [ACAT Assessment Tool](https://humanaios.ai/acat-assessment-tool.html) — it guides you through Phase 1, Phase 2, and Phase 3.
+- **For human researchers:** take the [ACAT Assessment Tool](https://humanaios.ai/assess.html) — it guides you through Phase 1, Phase 2, and Phase 3.
 
 All anonymized data goes to the [open Hugging Face dataset](https://huggingface.co/datasets/humanaios/acat-assessments).
 
@@ -147,6 +147,8 @@ Two intentional design systems:
 - **Dark amber / obsidian** (`humanaios-shared.css`, bg `#0f0e0c`, gold `#d4a04a`) — research instrument pages
 
 Typography: IBM Plex Sans + Cormorant Garamond throughout.
+
+Canonical frontend mapping is documented in [`docs/architecture/FRONTEND_CANONICAL_MODEL.md`](docs/architecture/FRONTEND_CANONICAL_MODEL.md).
 
 -----
 
