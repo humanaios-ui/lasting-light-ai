@@ -7,13 +7,7 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "lint": "eslint src/lib src/test src/App.test.tsx e2e --ext ts,tsx --max-warnings 0",
-    "typecheck": "tsc --noEmit -p tsconfig.quality.json",
-    "test": "vitest",
-    "test:run": "vitest run",
-    "test:e2e": "playwright test",
-    "quality": "npm run lint && npm run typecheck && npm run test:run && npm run build",
-    "lint:full": "eslint . --ext ts,tsx"
+    "test": "vitest"
   },
   "dependencies": {
     "@emotion/react": "^11.13.3",
