@@ -1,0 +1,3 @@
+# Cloudflare Pages response headers — humanaios.ai
+/observatory.html
+  X-Frame-Options: DENY
