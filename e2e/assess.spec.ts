@@ -28,5 +28,12 @@ test('assessment happy-path submits to both channels', async ({ page }) => {
   }
 
   await page.click('#submit-btn');
-  await expect(page.locator('#submit-status')).toContainText('Submitted');
+
+  // The page treats `sbOk || gasOk` as success, so asserting only "Submitted"
+  // would still pass with one channel dead — and this test is named for both.
+  // Assert each channel's marker so a regression that drops one is caught.
+  const status = page.locator('#submit-status');
+  await expect(status).toContainText('Submitted');
+  await expect(status).toContainText('Supabase ✓');
+  await expect(status).toContainText('Sheets ✓');
 });
