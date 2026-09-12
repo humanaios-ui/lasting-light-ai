@@ -60,3 +60,7 @@ rentahuman-pull-bounties.sh*
 
 # TypeScript incremental build info (tsconfig.node.json is composite)
 *.tsbuildinfo
+
+# Playwright output — written by `npm run test:e2e` on every local run
+test-results/
+playwright-report/
