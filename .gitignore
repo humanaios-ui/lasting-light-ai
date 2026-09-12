@@ -57,3 +57,6 @@ bounties_*.json
 conversations_*.json
 rentahuman-pull-bounties.sh*
 1tree.txt
+
+# TypeScript incremental build info (tsconfig.node.json is composite)
+*.tsbuildinfo
