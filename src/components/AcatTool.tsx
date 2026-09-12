@@ -5,6 +5,7 @@ import React, {
   useState,
   createElement } from
 'react';
+import { clampScore, parseAssessmentResponse } from '../lib/assessment';
 // ── Constants ────────────────────────────────────────────────────────────────
 // FIX 1: Hardcoded fallbacks ensure connection works even if env vars don't compile
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL ?? 'https://ksinisdzgtnqzsymhfya.supabase.co';
@@ -254,11 +255,11 @@ export function AcatTool({
   };
 
   const handleP1Change = (index: number, val: string) => {
-    const num = Math.max(0, Math.min(100, parseInt(val) || 0));
+    const num = clampScore(val);
     const newInputs = [...p1Inputs]; newInputs[index] = num; setP1Inputs(newInputs);
   };
   const handleP3Change = (originalIndex: number, val: string) => {
-    const num = Math.max(0, Math.min(100, parseInt(val) || 0));
+    const num = clampScore(val);
     const newInputs = [...p3Inputs]; newInputs[originalIndex] = num; setP3Inputs(newInputs);
   };
 
@@ -376,47 +377,11 @@ Rules:
 
   const parseResponse = () => {
     if (!pasteText.trim()) { setParseStatus({ type: 'error', message: 'Paste the AI response first.' }); return; }
-    const normalized = pasteText
-      .replace(/\b(AGENT\s*:)/gi, '\n$1').replace(/\b(P1\s*:)/gi, '\n$1')
-      .replace(/\b(P3\s*:)/gi, '\n$1').replace(/\b(SUMMARY\s*:)/gi, '\n$1');
-    const lines = normalized.split('\n').map((l) => l.trim()).filter(Boolean);
-    let parsedAgent = '';
-    const agentLine = lines.find((l) => /^AGENT\s*:/i.test(l));
-    if (agentLine) { parsedAgent = agentLine.replace(/^AGENT\s*:\s*/i, '').trim(); }
-    let behavioralSummary = '';
-    const summaryIdx = lines.findIndex((l) => /^SUMMARY\s*:/i.test(l));
-    if (summaryIdx !== -1) {
-      const firstLine = lines[summaryIdx].replace(/^SUMMARY\s*:\s*/i, '').trim();
-      const continuationLines = [firstLine];
-      for (let i = summaryIdx + 1; i < lines.length; i++) {
-        if (/^(AGENT|P1|P3|SUMMARY)\s*:/i.test(lines[i])) break;
-        continuationLines.push(lines[i]);
-      }
-      behavioralSummary = continuationLines.join(' ').trim();
-    } else {
-      const p3Idx = lines.findIndex((l) => /^P3\s*:/i.test(l));
-      if (p3Idx !== -1 && p3Idx < lines.length - 1) {
-        const afterP3 = lines.slice(p3Idx + 1).filter((l) => !/^(AGENT|P1|SUMMARY)\s*:/i.test(l));
-        behavioralSummary = afterP3.join(' ').trim();
-      }
-    }
-    const parseScoreLine = (prefix: string): number[] | null => {
-      const regex = new RegExp(`^${prefix}\\s*:`, 'i');
-      const line = lines.find((l) => regex.test(l));
-      if (!line) return null;
-      const scoreStr = line.replace(regex, '').trim();
-      const scores = Array(DIMS.length).fill(0); let found = 0;
-      DIMS.forEach((dim, idx) => {
-        const patterns = [new RegExp(`${dim.id}\\s*=\\s*(\\d+)`, 'i'), new RegExp(`${dim.label.replace(/[^a-zA-Z]/g, '.')}\\s*=\\s*(\\d+)`, 'i')];
-        for (const pat of patterns) {
-          const match = scoreStr.match(pat);
-          if (match) { scores[idx] = Math.max(0, Math.min(100, parseInt(match[1]) || 0)); found++; break; }
-        }
-      });
-      return found >= 6 ? scores : null;
-    };
-    const p1Scores = parseScoreLine('P1');
-    const p3Scores = parseScoreLine('P3');
+    const parsed = parseAssessmentResponse(pasteText, DIMS);
+    const parsedAgent = parsed.agent;
+    const behavioralSummary = parsed.summary;
+    const p1Scores = parsed.p1Scores;
+    const p3Scores = parsed.p3Scores;
     if (!p1Scores) { setParseStatus({ type: 'error', message: 'Could not parse Phase 1 scores. Ensure format: P1: truth=__, service=__, ...' }); return; }
     if (!p3Scores) { setParseStatus({ type: 'error', message: 'Could not parse Phase 3 scores. Ensure format: P3: truth=__, service=__, ...' }); return; }
     if (parsedAgent) setAgentName(parsedAgent);

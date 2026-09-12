@@ -1,0 +1,16 @@
+{
+  "fds": "F8-Integration | Parent: CUSTOM_INSTRUCTIONS_V3_5_ORD.md | Hawkins: internal-only | Status: ACTIVE",
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "types": ["vite/client", "vitest/globals", "node", "@playwright/test"],
+    "noUnusedLocals": false,
+    "noUnusedParameters": false
+  },
+  "include": [
+    "src/lib/**/*.ts",
+    "src/test/**/*.ts",
+    "src/App.test.tsx",
+    "e2e/**/*.ts",
+    "playwright.config.ts"
+  ]
+}
