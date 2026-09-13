@@ -138,6 +138,11 @@ describe('AcatTool live stats', () => {
     await waitFor(() => expect(onMeanLIUpdate).toHaveBeenCalledWith(0.9123));
   });
 
+  // Both branches below wait on the Live Dataset banner, which renders only once
+  // liveStats is set — that is, only after the fetch continuation has run. An
+  // earlier version waited on the agent-name field, which is present from the
+  // first render, so the assertions ran before the promise settled and would
+  // have passed even if the branch under test did nothing at all.
   it('does not report a mean when the query comes back empty', async () => {
     const onMeanLIUpdate = vi.fn();
     stubStats([]);
@@ -146,7 +151,8 @@ describe('AcatTool live stats', () => {
 
     // The empty branch falls back to archived figures for display but must not
     // pass them upward as a live reading.
-    await waitFor(() => expect(screen.getByDisplayValue('Demo Agent')).toBeInTheDocument());
+    await screen.findByText('Live Dataset');
+    expect(screen.getByText('0.8632')).toBeInTheDocument();
     expect(onMeanLIUpdate).not.toHaveBeenCalled();
   });
 
@@ -156,7 +162,8 @@ describe('AcatTool live stats', () => {
 
     render(<AcatTool onMeanLIUpdate={onMeanLIUpdate} />);
 
-    await waitFor(() => expect(screen.getByDisplayValue('Demo Agent')).toBeInTheDocument());
+    await screen.findByText('Live Dataset');
+    expect(screen.getByText('0.8632')).toBeInTheDocument();
     expect(onMeanLIUpdate).not.toHaveBeenCalled();
   });
 });
