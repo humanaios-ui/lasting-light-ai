@@ -1,8 +1,15 @@
+---
+# FDS: Framework Deployment System | Per-repo audit workflow
+# Phase: 1 (Advisory)
+# Status: Deployed to all 31 HumanAIOS repositories
+---
+
 name: Framework Mapping Compliance Audit
 
 # Per-repo audit trigger for 31 HumanAIOS repositories
 # Deploy to each repo at: .github/workflows/framework-audit.yml
 # Purpose: Verify CLAUDE.md references FRAMEWORK_MAPPING.md and report compliance to operations
+# Phase 1: Advisory (warn but don't fail) | Phase 2+: Enforcement (fail on non-compliance)
 
 on:
   pull_request:
@@ -27,29 +34,41 @@ jobs:
         run: |
           echo "Auditing FRAMEWORK_MAPPING.md reference in CLAUDE.md..."
           REPO_NAME="${{ github.repository }}"
+          PHASE="1"  # Phase 1: advisory mode (non-blocking)
 
           # Check if CLAUDE.md exists
           if [ ! -f "CLAUDE.md" ]; then
             echo "status=missing-claude-md" >> $GITHUB_OUTPUT
-            echo "::error title=FRAMEWORK AUDIT::CLAUDE.md not found in repo"
-            exit 1
+            echo "⚠️  FRAMEWORK AUDIT WARNING — CLAUDE.md not found in repo"
+            # Phase 1: advisory (exit 0) | Phase 2+: enforcement (exit 1)
+            if [ "$PHASE" -ge 2 ]; then
+              exit 1
+            fi
+            exit 0
           fi
 
-          # Check if CLAUDE.md has Framework Reference section with FRAMEWORK_MAPPING.md link
-          if grep -q "^## Framework Reference" CLAUDE.md 2>/dev/null && \
-             grep -A 2 "^## Framework Reference" CLAUDE.md | grep -q "FRAMEWORK_MAPPING.md"; then
+          # Extract Framework Reference section (from heading to next ## or EOF)
+          # Then check if it contains literal "FRAMEWORK_MAPPING.md" reference
+          if sed -n '/^## Framework Reference/,/^##[^#]/p' CLAUDE.md 2>/dev/null | \
+             grep -q 'FRAMEWORK_MAPPING.md'; then
             echo "status=compliant" >> $GITHUB_OUTPUT
             echo "✅ FRAMEWORK AUDIT PASS — FRAMEWORK_MAPPING.md referenced in Framework Reference section"
+            exit 0
           else
             echo "status=non-compliant" >> $GITHUB_OUTPUT
-            echo "::error title=FRAMEWORK AUDIT::FRAMEWORK_MAPPING.md reference missing in CLAUDE.md Framework Reference section"
+            echo "⚠️  FRAMEWORK AUDIT WARNING — FRAMEWORK_MAPPING.md reference missing in CLAUDE.md Framework Reference section"
             echo ""
             echo "Phase 2 deadline: Add to CLAUDE.md:"
             echo "## Framework Reference"
             echo ""
             echo "See [FRAMEWORK_MAPPING.md](https://github.com/humanaios-ui/operations/blob/main/FRAMEWORK_MAPPING.md)"
             echo "for Z-role definitions and 5-concept alignment (Graph/Loop/Context/Harness/Prompt)."
-            exit 1
+            echo ""
+            # Phase 1: advisory (exit 0) | Phase 2+: enforcement (exit 1)
+            if [ "$PHASE" -ge 2 ]; then
+              exit 1
+            fi
+            exit 0
           fi
 
       - name: Report compliance to operations
@@ -61,12 +80,16 @@ jobs:
           echo "Commit: ${{ github.sha }}"
           echo "Timestamp: $(date -u +%Y-%m-%dT%H:%M:%SZ)"
           echo ""
-          echo "Configure this workflow as a required status check to block merges when non-compliant."
+          echo "Phase 1 (advisory): Compliance logged in this workflow run."
+          echo "Phase 2+ (enforcement): Will dispatch results to operations repo."
           echo ""
-          echo "Dispatching compliance result to operations repo..."
+          echo "Compliance result:"
+          echo "- Status: ${{ steps.audit.outputs.status }}"
+          echo "- Repo: ${{ github.repository }}"
+          echo "- Commit: ${{ github.sha }}"
 
       - name: Dispatch compliance event to operations
-        if: always()
+        if: always() && false  # Disabled in Phase 1; enable in Phase 2+ with proper auth
         uses: actions/github-script@v7
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
@@ -92,8 +115,8 @@ jobs:
               });
               console.log(`✅ Dispatched compliance result to operations repo: ${status}`);
             } catch (error) {
-              console.log(`⚠️  Unable to dispatch to operations repo (may require PAT token): ${error.message}`);
-              console.log('Compliance result logged in CI for manual aggregation.');
+              console.log(`⚠️  Dispatch to operations requires PAT token in Phase 2+: ${error.message}`);
+              console.log('Compliance result logged in CI workflow; will aggregate in Phase 2.');
             }
 
       - name: Audit summary
