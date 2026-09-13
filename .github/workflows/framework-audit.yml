@@ -1,0 +1,106 @@
+name: Framework Mapping Compliance Audit
+
+# Per-repo audit trigger for 31 HumanAIOS repositories
+# Deploy to each repo at: .github/workflows/framework-audit.yml
+# Purpose: Verify CLAUDE.md references FRAMEWORK_MAPPING.md and report compliance to operations
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+  schedule:
+    - cron: '0 10 * * *'
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+jobs:
+  framework-audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check FRAMEWORK_MAPPING.md reference
+        id: audit
+        run: |
+          echo "Auditing FRAMEWORK_MAPPING.md reference in CLAUDE.md..."
+          REPO_NAME="${{ github.repository }}"
+
+          # Check if CLAUDE.md exists
+          if [ ! -f "CLAUDE.md" ]; then
+            echo "status=missing-claude-md" >> $GITHUB_OUTPUT
+            echo "::error title=FRAMEWORK AUDIT::CLAUDE.md not found in repo"
+            exit 1
+          fi
+
+          # Check if CLAUDE.md has Framework Reference section with FRAMEWORK_MAPPING.md link
+          if grep -q "^## Framework Reference" CLAUDE.md 2>/dev/null && \
+             grep -A 2 "^## Framework Reference" CLAUDE.md | grep -q "FRAMEWORK_MAPPING.md"; then
+            echo "status=compliant" >> $GITHUB_OUTPUT
+            echo "✅ FRAMEWORK AUDIT PASS — FRAMEWORK_MAPPING.md referenced in Framework Reference section"
+          else
+            echo "status=non-compliant" >> $GITHUB_OUTPUT
+            echo "::error title=FRAMEWORK AUDIT::FRAMEWORK_MAPPING.md reference missing in CLAUDE.md Framework Reference section"
+            echo ""
+            echo "Phase 2 deadline: Add to CLAUDE.md:"
+            echo "## Framework Reference"
+            echo ""
+            echo "See [FRAMEWORK_MAPPING.md](https://github.com/humanaios-ui/operations/blob/main/FRAMEWORK_MAPPING.md)"
+            echo "for Z-role definitions and 5-concept alignment (Graph/Loop/Context/Harness/Prompt)."
+            exit 1
+          fi
+
+      - name: Report compliance to operations
+        if: always()
+        run: |
+          echo "Framework Compliance Report:"
+          echo "Repo: ${{ github.repository }}"
+          echo "Status: ${{ steps.audit.outputs.status }}"
+          echo "Commit: ${{ github.sha }}"
+          echo "Timestamp: $(date -u +%Y-%m-%dT%H:%M:%SZ)"
+          echo ""
+          echo "Configure this workflow as a required status check to block merges when non-compliant."
+          echo ""
+          echo "Dispatching compliance result to operations repo..."
+
+      - name: Dispatch compliance event to operations
+        if: always()
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const repo = context.repo.repo;
+            const owner = context.repo.owner;
+            const status = '${{ steps.audit.outputs.status }}';
+            const sha = context.sha;
+            const timestamp = new Date().toISOString();
+
+            try {
+              await github.rest.repos.createDispatchEvent({
+                owner: 'humanaios-ui',
+                repo: 'operations',
+                event_type: 'framework-audit-result',
+                client_payload: {
+                  source_repo: `${owner}/${repo}`,
+                  compliance_status: status,
+                  commit_sha: sha,
+                  audit_timestamp: timestamp,
+                  phase: 1
+                }
+              });
+              console.log(`✅ Dispatched compliance result to operations repo: ${status}`);
+            } catch (error) {
+              console.log(`⚠️  Unable to dispatch to operations repo (may require PAT token): ${error.message}`);
+              console.log('Compliance result logged in CI for manual aggregation.');
+            }
+
+      - name: Audit summary
+        if: always()
+        run: |
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
+          echo "Framework Compliance Audit Complete"
+          echo "Repo: ${{ github.repository }}"
+          echo "Status: ${{ steps.audit.outputs.status }}"
+          echo "━━━━━━━━━━━━━━━━━━━━━━━━━━━━"
