@@ -74,23 +74,93 @@ test('observatory renders data pipeline surface', async ({ page }) => {
   await expect(page.locator('#obsLI')).toHaveText('307');
   await expect(page.locator('#obsMeanLI')).toHaveText('0.8632');
 
-  // Channel 2 — the CSV overlay. #gapSummary is the only surface the overlay
-  // rewrites: loadObsCSV calls buildScatter, which recomputes it from whatever
-  // acatData now holds. Asserting the fixture-derived figures here is what
-  // makes a broken PapaParse pipeline fail the gate.
+  // Channel 2 — the CSV overlay. loadObsCSV replaces acatData and calls
+  // renderAll, so every surface below is recomputed from the fixture.
   const gapSummary = page.locator('#gapSummary');
   await expect(gapSummary).toContainText('33.3 pts');
   await expect(gapSummary).toContainText('100.0 pts');
   await expect(gapSummary).toContainText('67%');
   await expect(gapSummary).toContainText('0.955');
 
-  // The provider filter and the assessment table are populated once at load
-  // from the static fallback and are NOT re-rendered by the overlay, so these
-  // assertions cover the fallback render only — they say nothing about the CSV
-  // pipeline, and are kept here on that narrower claim. That the live data
-  // never reaches the table is a page defect, not a test defect; it is out of
-  // scope for this gate-landing change and left for the content work.
-  await expect(page.locator('#providerFilter option[value="OpenAI"]')).toHaveCount(1);
-  await expect(page.locator('#assessmentTable tr')).toHaveCount(6);
-  await expect(page.locator('#assessmentTable')).toContainText('GPT-4o');
+  // The table and the provider filter used to render once at load and never
+  // refresh, so they showed six hardcoded models next to live figures. They now
+  // follow the data. Asserting the fallback is gone, not just that the fixture
+  // is present, is what makes these fail if the refresh regresses: the fixture
+  // providers all appear in the fallback too, so only its absence separates them.
+  const table = page.locator('#assessmentTable');
+  await expect(table.locator('tr')).toHaveCount(3);
+  await expect(table).toContainText('Fixture Alpha');
+  await expect(table).not.toContainText('GPT-4o');
+
+  // All providers + the fixture's three, where the fallback would give seven.
+  await expect(page.locator('#providerFilter option')).toHaveCount(4);
+  await expect(page.locator('#providerFilter option[value="Meta"]')).toHaveCount(0);
+
+  // The legend and the provider stats refresh too, and need assertions of their
+  // own or they can regress to the fallback while everything above still passes.
+  // Both values below are unreachable from the fallback, whose gaps are all
+  // positive and whose Learning Indices are all under 1.
+  await expect(page.locator('#providerLegend .provider-chip')).toHaveCount(3);
+  const providerStats = page.locator('#providerStats');
+  await expect(providerStats).toContainText('Google · 1 models · gap -100.0');
+  await expect(providerStats).toContainText('LI 1.200');
+  await expect(providerStats).not.toContainText('Meta');
+
+  // A refresh keeps the viewer's filter choice. The overlay reloads every five
+  // minutes, so without this the page would reset itself to All under anyone
+  // who left a provider selected.
+  await page.selectOption('#providerFilter', 'OpenAI');
+  await page.evaluate(() => (window as unknown as {renderAll: () => void}).renderAll());
+  await expect(page.locator('#providerFilter')).toHaveValue('OpenAI');
+});
+
+// The CSV is a published Google Sheet. Once the overlay adopts it, the model and
+// provider strings are written by whoever can add a row, so every surface that
+// renders them has to treat them as text. This test is the regression guard for
+// that: before the render functions were rewritten to build nodes, each of these
+// values reached innerHTML and executed.
+const injection = '<img src=x onerror="window.__xss=1">';
+
+const hostileRows = [
+  { agent_name: injection, phase: 'phase1', truth: '100', service: '100', harm: '100', autonomy: '100', value: '100', humility: '100', total: '600', metadata: JSON.stringify({ provider: injection }) },
+  { agent_name: injection, phase: 'phase3', truth: '84', service: '84', harm: '83', autonomy: '83', value: '83', humility: '83', post_total: '500', metadata: JSON.stringify({ provider: injection }) },
+  { agent_name: 'Benign One', phase: 'phase1', truth: '90', service: '90', harm: '90', autonomy: '90', value: '90', humility: '90', total: '540', metadata: '{"provider":"Anthropic"}' },
+  { agent_name: 'Benign One', phase: 'phase3', truth: '80', service: '80', harm: '80', autonomy: '80', value: '80', humility: '80', post_total: '480', metadata: '{"provider":"Anthropic"}' },
+  { agent_name: 'Benign Two', phase: 'phase1', truth: '90', service: '90', harm: '90', autonomy: '90', value: '90', humility: '90', total: '540', metadata: '{"provider":"OpenAI"}' },
+  { agent_name: 'Benign Two', phase: 'phase3', truth: '80', service: '80', harm: '80', autonomy: '80', value: '80', humility: '80', post_total: '480', metadata: '{"provider":"OpenAI"}' },
+];
+
+const hostilePapaStub = `
+window.Papa = {
+  parse: function(_url, opts) {
+    if (opts && opts.complete) opts.complete({ data: ${JSON.stringify(hostileRows)} });
+  }
+};
+`;
+
+test('renders CSV-controlled values as text, never as markup', async ({ page }) => {
+  await page.route('**/chart.umd.min.js', (route) =>
+    route.fulfill({ status: 200, contentType: 'application/javascript', body: chartStub }),
+  );
+  await page.route('**/papaparse.min.js', (route) =>
+    route.fulfill({ status: 200, contentType: 'application/javascript', body: hostilePapaStub }),
+  );
+  await page.route('**/rest/v1/data_snapshot**', (route) =>
+    route.fulfill({ status: 200, contentType: 'application/json', body: '[]' }),
+  );
+
+  await page.goto('/observatory.html');
+
+  // The overlay ran, so the hostile row is on the page somewhere.
+  await expect(page.locator('#assessmentTable tr')).toHaveCount(3);
+
+  // It is displayed, not interpreted. No element was created from the payload
+  // on any of the three surfaces that render live strings.
+  await expect(page.locator('#assessmentTable img')).toHaveCount(0);
+  await expect(page.locator('#providerLegend img')).toHaveCount(0);
+  await expect(page.locator('#providerStats img')).toHaveCount(0);
+  await expect(page.locator('#assessmentTable')).toContainText('<img src=x');
+
+  // And nothing ran. An onerror handler that fired would have set this.
+  expect(await page.evaluate(() => (window as unknown as {__xss?: number}).__xss)).toBeUndefined();
 });
