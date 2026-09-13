@@ -73,7 +73,7 @@ export function SiteMap() {
           </p>
 
           <div className="border-l border-rim pl-8 py-4 space-y-6">
-            {mapItems.map((item, i) =>
+            {mapItems.map((item) =>
             <div key={item.title} className="relative py-2">
                 <div className="absolute -left-8 top-6 w-5 h-px bg-rim" />
                 <div

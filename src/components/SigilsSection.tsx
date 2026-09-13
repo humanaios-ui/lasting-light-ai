@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { SigilGlow } from './SigilGlow';
 // Constants from WitnessCanvas for signature computation
 const SOLFEGGIO = [55, 174, 285, 396, 417, 528, 594, 639, 741, 963];

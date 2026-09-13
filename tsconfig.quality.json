@@ -7,9 +7,8 @@
     "noUnusedParameters": false
   },
   "include": [
-    "src/lib/**/*.ts",
-    "src/test/**/*.ts",
-    "src/App.test.tsx",
+    "src/**/*.ts",
+    "src/**/*.tsx",
     "e2e/**/*.ts",
     "playwright.config.ts"
   ]

@@ -16,8 +16,8 @@ export function WitnessCanvas() {
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
-    let liveScores = [77.5, 79.1, 77.8, 78.3, 76.2, 75.0];
-    let targetLI = 0.8632;
+    const liveScores = [77.5, 79.1, 77.8, 78.3, 76.2, 75.0];
+    const targetLI = 0.8632;
     let meanLI = 0.8632;
     let tSecs = 0;
     let lastTs: number | null = null;
@@ -150,7 +150,7 @@ export function WitnessCanvas() {
         ctx.lineCap = 'round';
         ctx.stroke();
       }
-      ;[[arcStart], [arcEnd]].forEach((pair) => {
+      [[arcStart], [arcEnd]].forEach((pair) => {
         const angle = pair[0],
           pt = {
             x: cx + Math.cos(angle) * arcR,
