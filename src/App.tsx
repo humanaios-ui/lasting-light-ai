@@ -57,7 +57,6 @@ const NAV_GROUPS = [
 // ── Top navigation bar ──────────────────────────────────────────────────────
 function TopNav({ meanLI }: { meanLI: number }) {
   const location = useLocation();
-  const [menuOpen, setMenuOpen] = useState(false);
 
   return (
     <header

@@ -70,7 +70,8 @@ export function TideCanvas() {
       ctx!.beginPath();
       for (let x = 0; x <= W; x += 4) {
         const y = wl(x, t);
-        x === 0 ? ctx!.moveTo(x, y) : ctx!.lineTo(x, y);
+        if (x === 0) ctx!.moveTo(x, y);
+        else ctx!.lineTo(x, y);
       }
       ctx!.strokeStyle = 'rgba(37,99,168,.36)';
       ctx!.lineWidth = 1.1;
@@ -80,7 +81,8 @@ export function TideCanvas() {
       ctx!.beginPath();
       for (let x = 0; x <= W; x += 4) {
         const y = wl(x, t) - 1.8;
-        x === 0 ? ctx!.moveTo(x, y) : ctx!.lineTo(x, y);
+        if (x === 0) ctx!.moveTo(x, y);
+        else ctx!.lineTo(x, y);
       }
       ctx!.strokeStyle = `rgba(212,160,74,${sh})`;
       ctx!.lineWidth = 0.65;

@@ -1,13 +1,5 @@
 import React, { useEffect, useRef } from 'react';
-const SOLFEGGIO = [55, 174, 285, 396, 417, 528, 594, 639, 741, 963];
 const RESP_RATES = [28, 22, 17, 13, 10, 8, 7, 6, 5, 4];
-const DIM_COLORS = [
-'#88a7d8',
-'#87b68b',
-'#d97d70',
-'#b48fd8',
-'#d4c47a',
-'#7ab8b0'];
 
 export function MiniWitnessCanvas() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -19,9 +11,7 @@ export function MiniWitnessCanvas() {
     const SIZE = 128; // Render at 2x for crispness
     canvas.width = SIZE;
     canvas.height = SIZE;
-    let liveScores = [77.5, 79.1, 77.8, 78.3, 76.2, 75.0];
-    let targetLI = 0.8632;
-    let meanLI = 0.8632;
+    const meanLI = 0.8632;
     let tSecs = 0;
     let lastTs: number | null = null;
     let cometAngle = -Math.PI / 2;
@@ -31,9 +21,6 @@ export function MiniWitnessCanvas() {
     }
     function bpmForLI(li: number) {
       return RESP_RATES[bandIdx(li)];
-    }
-    function hzForLI(li: number) {
-      return SOLFEGGIO[bandIdx(li)];
     }
     function fieldState(li: number) {
       if (li < 0.8)
@@ -315,8 +302,7 @@ export function MiniWitnessCanvas() {
       const dt = (timestamp - lastTs) / 1000;
       lastTs = timestamp;
       tSecs += dt;
-      const bpm = bpmForLI(meanLI),
-        hz = hzForLI(meanLI);
+      const bpm = bpmForLI(meanLI);
       const phase = breathPhase(tSecs, bpm);
       cometAngle =
       (cometAngle + Math.PI * 2 / (60 / bpm) * dt) % (Math.PI * 2);
