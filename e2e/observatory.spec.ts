@@ -74,23 +74,32 @@ test('observatory renders data pipeline surface', async ({ page }) => {
   await expect(page.locator('#obsLI')).toHaveText('307');
   await expect(page.locator('#obsMeanLI')).toHaveText('0.8632');
 
-  // Channel 2 — the CSV overlay. #gapSummary is the only surface the overlay
-  // rewrites: loadObsCSV calls buildScatter, which recomputes it from whatever
-  // acatData now holds. Asserting the fixture-derived figures here is what
-  // makes a broken PapaParse pipeline fail the gate.
+  // Channel 2 — the CSV overlay. loadObsCSV replaces acatData and calls
+  // renderAll, so every surface below is recomputed from the fixture.
   const gapSummary = page.locator('#gapSummary');
   await expect(gapSummary).toContainText('33.3 pts');
   await expect(gapSummary).toContainText('100.0 pts');
   await expect(gapSummary).toContainText('67%');
   await expect(gapSummary).toContainText('0.955');
 
-  // The provider filter and the assessment table are populated once at load
-  // from the static fallback and are NOT re-rendered by the overlay, so these
-  // assertions cover the fallback render only — they say nothing about the CSV
-  // pipeline, and are kept here on that narrower claim. That the live data
-  // never reaches the table is a page defect, not a test defect; it is out of
-  // scope for this gate-landing change and left for the content work.
-  await expect(page.locator('#providerFilter option[value="OpenAI"]')).toHaveCount(1);
-  await expect(page.locator('#assessmentTable tr')).toHaveCount(6);
-  await expect(page.locator('#assessmentTable')).toContainText('GPT-4o');
+  // The table and the provider filter used to render once at load and never
+  // refresh, so they showed six hardcoded models next to live figures. They now
+  // follow the data. Asserting the fallback is gone, not just that the fixture
+  // is present, is what makes these fail if the refresh regresses: the fixture
+  // providers all appear in the fallback too, so only its absence separates them.
+  const table = page.locator('#assessmentTable');
+  await expect(table.locator('tr')).toHaveCount(3);
+  await expect(table).toContainText('Fixture Alpha');
+  await expect(table).not.toContainText('GPT-4o');
+
+  // All providers + the fixture's three, where the fallback would give seven.
+  await expect(page.locator('#providerFilter option')).toHaveCount(4);
+  await expect(page.locator('#providerFilter option[value="Meta"]')).toHaveCount(0);
+
+  // A refresh keeps the viewer's filter choice. The overlay reloads every five
+  // minutes, so without this the page would reset itself to All under anyone
+  // who left a provider selected.
+  await page.selectOption('#providerFilter', 'OpenAI');
+  await page.evaluate(() => (window as unknown as {renderAll: () => void}).renderAll());
+  await expect(page.locator('#providerFilter')).toHaveValue('OpenAI');
 });

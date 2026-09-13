@@ -743,42 +743,73 @@
   });
 
   // ── Assessment table ──
-  const tbody = document.getElementById('assessmentTable');
-  [...acatData].sort((a,b)=>b.phase3-a.phase3).forEach(d => {
-    const tr = document.createElement('tr');
-    tr.innerHTML = `<td><strong>${d.model}</strong></td><td>${d.provider}</td><td>${d.phase1}</td><td>${d.phase3}</td><td>${d.gap}</td><td>${d.li}</td>`;
-    tbody.appendChild(tr);
-  });
+  // Each of these reads acatData at call time and replaces what it rendered
+  // last, so the live CSV overlay can re-run them. They used to run once at
+  // load, which left the table and the filter showing the static fallback
+  // while the chart and the gap summary above them showed live figures.
+  function buildAssessmentTable() {
+    const tbody = document.getElementById('assessmentTable');
+    tbody.innerHTML = '';
+    [...acatData].sort((a,b)=>b.phase3-a.phase3).forEach(d => {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `<td><strong>${d.model}</strong></td><td>${d.provider}</td><td>${d.phase1}</td><td>${d.phase3}</td><td>${d.gap}</td><td>${d.li}</td>`;
+      tbody.appendChild(tr);
+    });
+  }
 
   // ── Provider legend + stats ──
-  const provLegend = document.getElementById('providerLegend');
-  [...new Set(acatData.map(d=>d.provider))].forEach(p => {
-    const chip = document.createElement('span');
-    chip.className='provider-chip';
-    chip.innerHTML=`<span class="legend-dot" style="background:${providerColors[p]||'#d4a04a'}"></span>${p}`;
-    provLegend.appendChild(chip);
-  });
+  function buildProviderLegend() {
+    const provLegend = document.getElementById('providerLegend');
+    provLegend.innerHTML = '';
+    [...new Set(acatData.map(d=>d.provider))].forEach(p => {
+      const chip = document.createElement('span');
+      chip.className='provider-chip';
+      chip.innerHTML=`<span class="legend-dot" style="background:${providerColors[p]||'#d4a04a'}"></span>${p}`;
+      provLegend.appendChild(chip);
+    });
+  }
 
-  const provStats = document.getElementById('providerStats');
-  const pSummary = Object.entries(acatData.reduce((acc,d)=>{ acc[d.provider]=[...(acc[d.provider]||[]),d]; return acc; },{}))
-    .map(([prov,list])=>({prov, count:list.length, avgGap:avg(list.map(d=>d.gap)).toFixed(1), avgLI:avg(list.map(d=>d.li)).toFixed(3)}))
-    .sort((a,b)=>b.count-a.count);
-  provStats.innerHTML = pSummary.map(i=>`
+  function buildProviderStats() {
+    const provStats = document.getElementById('providerStats');
+    const pSummary = Object.entries(acatData.reduce((acc,d)=>{ acc[d.provider]=[...(acc[d.provider]||[]),d]; return acc; },{}))
+      .map(([prov,list])=>({prov, count:list.length, avgGap:avg(list.map(d=>d.gap)).toFixed(1), avgLI:avg(list.map(d=>d.li)).toFixed(3)}))
+      .sort((a,b)=>b.count-a.count);
+    provStats.innerHTML = pSummary.map(i=>`
     <div class="metric-item">
       <span class="metric-dot" style="background:${providerColors[i.prov]||'#d4a04a'}"></span>
       <span>${i.prov} · ${i.count} models · gap ${i.avgGap}</span>
       <strong>LI ${i.avgLI}</strong>
     </div>`).join('');
+  }
 
   // ── Populate provider filter ──
-  const pf = document.getElementById('providerFilter');
-  [...new Set(acatData.map(d=>d.provider))].sort().forEach(p => {
-    const o=document.createElement('option'); o.value=p; o.textContent=p; pf.appendChild(o);
-  });
-  pf.addEventListener('change', buildScatter);
+  function buildProviderFilter() {
+    const pf = document.getElementById('providerFilter');
+    // Hold the viewer's current choice across a refresh, and fall back to All
+    // only when the incoming data no longer carries that provider.
+    const previous = pf.value;
+    const providers = [...new Set(acatData.map(d=>d.provider))].sort();
+    pf.innerHTML = '<option value="All">All providers</option>';
+    providers.forEach(p => {
+      const o=document.createElement('option'); o.value=p; o.textContent=p; pf.appendChild(o);
+    });
+    pf.value = providers.includes(previous) ? previous : 'All';
+  }
+
+  document.getElementById('providerFilter').addEventListener('change', buildScatter);
+
+  // The filter is rebuilt first: buildScatter reads its value to decide what to
+  // plot, so a preserved selection has to be back in place before it runs.
+  function renderAll() {
+    buildProviderFilter();
+    buildAssessmentTable();
+    buildProviderLegend();
+    buildProviderStats();
+    buildScatter();
+  }
 
   // ── Initial render ──
-  buildScatter();
+  renderAll();
 
   // ── Load live CSV (overlay) ──
   function loadObsCSV() {
@@ -787,7 +818,7 @@
       complete(results) {
         if (!results.data || results.data.length < 2) return;
         const rows = parseCSVToAcat(results);
-        if (rows.length >= 3) { acatData=rows; buildScatter(); }
+        if (rows.length >= 3) { acatData=rows; renderAll(); }
       }
     });
   }
