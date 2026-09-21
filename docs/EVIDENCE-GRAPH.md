@@ -75,7 +75,7 @@ ALIGNS_WITH     (action → principle)
   "timestamp": "2026-09-21T14:32:00Z",
   "actor": {
     "type": "HUMAN | AGENT | SYSTEM",
-    "id": "human:carly.r.anderson",
+    "id": "human:researcher-001",
     "attribution": "signed | attributed | inferred"
   },
   "content": {

@@ -565,7 +565,7 @@
         <div class="faq-item">
           <div class="faq-q" onclick="toggleFaq(0)">What is witness-nav.js?</div>
           <div class="faq-a" id="faq-0">
-            witness-nav.js (v3.1) is the live navigation and behavioral sonification system for the Witness. It renders a real-time animated glyph encoding system calibration state, confidence levels, and constitutional alignment. It's not a prototype—it's the actual system agent running on the site.
+            witness-nav.js (v3.1) is the live navigation and behavioral sonification system for the Witness. It renders a real-time animated glyph encoding system calibration state, confidence levels, and constitutional alignment. The script is production-level code; this documentation page (navigator-sigil.html v0.1) is a prototype explanation of how to read the glyph.
           </div>
         </div>
         <div class="faq-item">
@@ -614,7 +614,7 @@
     };
 
     let currentState = 'aligned';
-    let evidenceCounter = 1;
+    let evidenceCounter = 2;
 
     function setState(newState) {
       currentState = newState;
@@ -684,11 +684,21 @@
     function addEvidenceEntry(id, description) {
       const entry = document.createElement('div');
       entry.className = 'evidence-item active';
-      entry.innerHTML = `
-        <span class="evidence-id">${id}</span>
-        <div>${description}</div>
-        <div class="evidence-timestamp">${new Date().toISOString()}</div>
-      `;
+
+      const idSpan = document.createElement('span');
+      idSpan.className = 'evidence-id';
+      idSpan.textContent = id;
+      entry.appendChild(idSpan);
+
+      const descDiv = document.createElement('div');
+      descDiv.textContent = description;
+      entry.appendChild(descDiv);
+
+      const timestampDiv = document.createElement('div');
+      timestampDiv.className = 'evidence-timestamp';
+      timestampDiv.textContent = new Date().toISOString();
+      entry.appendChild(timestampDiv);
+
       document.getElementById('evidence-log').insertBefore(entry, document.getElementById('evidence-log').firstChild);
       document.getElementById('evidence-count').textContent = parseInt(document.getElementById('evidence-count').textContent) + 1;
     }

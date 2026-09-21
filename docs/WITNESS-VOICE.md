@@ -348,9 +348,11 @@ Voice signals can be individually revoked:
     "epistemic_sonification": false,
     "gaze_tracking": false
   },
-  "multimodal_preference": "TEXT_ONLY" | "TEXT_VOICE" | "ALL_CHANNELS"
+  "multimodal_preference": "TEXT_VOICE"
 }
 ```
+
+Allowed values for `multimodal_preference`: `"TEXT_ONLY"`, `"TEXT_VOICE"`, `"ALL_CHANNELS"`
 
 ---
 

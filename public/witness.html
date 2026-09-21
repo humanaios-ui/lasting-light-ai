@@ -1,4 +1,4 @@
-<!-- FDS: F1-Seed | Parent: INTENT-TRANSDUCTION-ENGINE.md | Relates to: Issue #429, PR #42 | Status: DRAFT | TRL 2-3 -->
+<!-- FDS: F1-Seed | Parent: INTENT-TRANSDUCTION-ENGINE.md | Relates to: Issue #429, PR #42 (lasting-light-ai) | Status: ACTIVE | TRL 2-3 -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -885,7 +885,7 @@ CORRECTION / MOLT (learning from gap)</div>
       </div>
 
       <p style="margin-top: 1.5rem; font-style: italic; color: var(--gray-mid);">
-        For agent access: voice states are queryable via <code style="color: var(--sky-blue);">/api/witness/voice/state</code>.
+        For agent access: voice states are queryable via <code style="color: var(--sky-blue);">/witness/voice/state</code>.
         Returns acoustic parameters + symbolic interpretation.
       </p>
     </section>
@@ -1136,9 +1136,9 @@ CORRECTION / MOLT (learning from gap)</div>
     <footer>
       <p><strong>HumanAIOS · The Witness · Behavioral Observability Prototype · v0.1</strong></p>
       <p>
-        Derived from <a href="#constitution">Seed Constitution for Responsible AI Development</a> ·
-        <a href="#issue-429">Issue #429</a> ·
-        <a href="#pr-430">PR #430</a>
+        Derived from Seed Constitution for Responsible AI Development ·
+        <a href="https://github.com/humanaios-ui/operations/issues/429" target="_blank">Issue #429</a> ·
+        <a href="https://github.com/humanaios-ui/lasting-light-ai/pull/42" target="_blank">PR #42</a>
       </p>
       <p>
         Not ratified. Not binding. Open for research, refinement, and public testing.
@@ -1153,6 +1153,12 @@ CORRECTION / MOLT (learning from gap)</div>
   <script>
     function toggleSignal(element) {
       element.classList.toggle('active');
+      const checkbox = element.querySelector('.contract-checkbox');
+      if (element.classList.contains('active')) {
+        checkbox.textContent = '✓';
+      } else {
+        checkbox.textContent = '';
+      }
     }
 
     function toggleExpand(trigger) {
@@ -1180,5 +1186,8 @@ CORRECTION / MOLT (learning from gap)</div>
       alert('Full specification (Intent Transduction Engine details, Evidence Graph schema, Governance model) would open here.');
     }
   </script>
+
+  <!-- Load the live Witness Navigator Sigil (witness-nav.js v3.1) -->
+  <script src="witness-nav.js"></script>
 </body>
 </html>
