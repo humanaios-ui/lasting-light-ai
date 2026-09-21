@@ -1,0 +1,1163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>HumanAIOS · The Witness</title>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap');
+
+    :root {
+      --navy: #0F1B2E;
+      --slate: #1B3A57;
+      --witness-blue: #2E5F8A;
+      --sky-blue: #6B9BC4;
+      --gold: #D4AF37;
+      --coral: #E8504A;
+      --sage: #4A9D6F;
+      --white: #FAFAF8;
+      --gray-light: #E8E6E1;
+      --gray-mid: #9B9591;
+      --accent-warm: #D97657;
+
+      --font-serif: 'Crimson Text', Georgia, serif;
+      --font-sans: 'IBM Plex Sans', -apple-system, sans-serif;
+      --font-mono: 'IBM Plex Mono', monospace;
+
+      color-scheme: light;
+    }
+
+    @media (prefers-color-scheme: dark) {
+      :root:not([data-theme="light"]) {
+        --navy: #0F1B2E;
+        --slate: #1B3A57;
+        --witness-blue: #3D7BB3;
+        --sky-blue: #7DADE6;
+        --gold: #E8C547;
+        --coral: #F27B76;
+        --sage: #6DB88D;
+        --white: #2A2522;
+        --gray-light: #E8E6E1;
+        --gray-mid: #8B8380;
+        --accent-warm: #E89679;
+      }
+    }
+
+    :root[data-theme="dark"] {
+      --navy: #0F1B2E;
+      --slate: #1B3A57;
+      --witness-blue: #3D7BB3;
+      --sky-blue: #7DADE6;
+      --gold: #E8C547;
+      --coral: #F27B76;
+      --sage: #6DB88D;
+      --white: #2A2522;
+      --gray-light: #E8E6E1;
+      --gray-mid: #8B8380;
+      --accent-warm: #E89679;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      background: var(--navy);
+      color: var(--gray-light);
+      font: 16px / 1.6 var(--font-sans);
+      margin: 0;
+      padding: 0 16px;
+    }
+
+    h1, h2, h3, h4 {
+      font-family: var(--font-serif);
+      font-weight: 600;
+      line-height: 1.2;
+      margin: 0;
+    }
+
+    h1 {
+      font-size: 3.5rem;
+      color: var(--white);
+      margin-bottom: 0.75rem;
+      font-weight: 600;
+    }
+
+    h2 {
+      font-size: 2rem;
+      color: var(--sky-blue);
+      margin-top: 3.5rem;
+      margin-bottom: 1rem;
+      text-transform: uppercase;
+      font-weight: 400;
+      letter-spacing: 0.05em;
+      font-size: 1.5rem;
+    }
+
+    h3 {
+      font-size: 1.2rem;
+      color: var(--witness-blue);
+      margin-bottom: 0.75rem;
+      font-weight: 600;
+    }
+
+    h4 {
+      font-size: 1rem;
+      color: var(--gold);
+      margin-top: 1.5rem;
+      margin-bottom: 0.5rem;
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.03em;
+    }
+
+    p {
+      color: var(--gray-light);
+      margin: 0 0 1rem 0;
+      max-width: 70ch;
+      line-height: 1.8;
+    }
+
+    a {
+      color: var(--gold);
+      text-decoration: none;
+      border-bottom: 1px solid currentColor;
+    }
+
+    a:hover {
+      color: var(--sky-blue);
+      border-color: currentColor;
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: 0 auto;
+      padding-block: 2rem;
+    }
+
+    /* Hero Section */
+    .hero {
+      text-align: center;
+      margin-bottom: 4rem;
+      padding-block: 3rem;
+      border-bottom: 1px solid var(--slate);
+    }
+
+    .hero-sigil {
+      font-size: 5rem;
+      margin-bottom: 1rem;
+      animation: pulse 4s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 0.7; }
+      50% { opacity: 1; }
+    }
+
+    .hero-subtitle {
+      font-size: 1.25rem;
+      color: var(--sky-blue);
+      margin-bottom: 1rem;
+      font-weight: 500;
+    }
+
+    .hero-description {
+      font-size: 1rem;
+      color: var(--gray-light);
+      max-width: 80ch;
+      margin: 1rem auto;
+    }
+
+    /* Section */
+    section {
+      margin-bottom: 3rem;
+    }
+
+    /* Executive Summary */
+    .executive-summary {
+      background: var(--slate);
+      border: 1px solid var(--witness-blue);
+      border-radius: 8px;
+      padding: 2rem;
+      margin: 2rem 0;
+    }
+
+    .summary-point {
+      margin-bottom: 1.5rem;
+    }
+
+    .summary-point:last-child {
+      margin-bottom: 0;
+    }
+
+    .summary-title {
+      color: var(--gold);
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      font-size: 0.95rem;
+      text-transform: uppercase;
+      letter-spacing: 0.02em;
+    }
+
+    /* Architecture Flow */
+    .architecture-flow {
+      background: var(--slate);
+      border-radius: 8px;
+      padding: 2rem;
+      margin: 2rem 0;
+      overflow-x: auto;
+    }
+
+    .flow-diagram {
+      font-family: var(--font-mono);
+      font-size: 0.85rem;
+      line-height: 2;
+      color: var(--gray-light);
+      white-space: pre;
+      overflow-x: auto;
+    }
+
+    /* System Component */
+    .component {
+      background: var(--slate);
+      border-left: 4px solid var(--witness-blue);
+      border-radius: 4px;
+      padding: 1.5rem;
+      margin: 1.5rem 0;
+    }
+
+    .component-title {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 1rem;
+    }
+
+    .component-number {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: var(--witness-blue);
+      color: var(--white);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      font-size: 0.9rem;
+    }
+
+    .component-name {
+      font-size: 1.15rem;
+      color: var(--gold);
+      font-weight: 600;
+    }
+
+    .component-desc {
+      color: var(--gray-light);
+      margin-bottom: 1rem;
+      font-size: 0.95rem;
+    }
+
+    /* Participation Levels */
+    .participation-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1.5rem;
+      margin: 2rem 0;
+    }
+
+    .participation-level {
+      background: var(--slate);
+      border: 2px solid var(--gray-mid);
+      border-radius: 6px;
+      padding: 1.5rem;
+      transition: all 0.3s ease;
+    }
+
+    .participation-level:hover {
+      border-color: var(--witness-blue);
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(46, 95, 138, 0.2);
+    }
+
+    .level-icon {
+      font-size: 2rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .level-name {
+      font-size: 1.1rem;
+      color: var(--white);
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      font-family: var(--font-serif);
+    }
+
+    .level-desc {
+      font-size: 0.85rem;
+      color: var(--gray-light);
+      line-height: 1.5;
+    }
+
+    /* Constitutional Principles */
+    .principles-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1rem;
+      margin: 1.5rem 0;
+    }
+
+    .principle-card {
+      background: var(--navy);
+      border: 1px solid var(--gray-mid);
+      border-radius: 4px;
+      padding: 1rem;
+      font-size: 0.9rem;
+      line-height: 1.5;
+    }
+
+    .principle-number {
+      color: var(--gold);
+      font-weight: 600;
+      font-family: var(--font-mono);
+      margin-bottom: 0.25rem;
+    }
+
+    .principle-title {
+      color: var(--sky-blue);
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+    }
+
+    .principle-desc {
+      color: var(--gray-light);
+      font-size: 0.85rem;
+    }
+
+    /* Voice States */
+    .voice-states {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 1.5rem;
+      margin: 1.5rem 0;
+    }
+
+    .voice-state-card {
+      background: var(--slate);
+      border-radius: 4px;
+      padding: 1.25rem;
+      border-left: 3px solid var(--witness-blue);
+    }
+
+    .voice-state-card.aligned {
+      border-left-color: var(--sage);
+    }
+
+    .voice-state-card.gathering {
+      border-left-color: var(--gold);
+    }
+
+    .voice-state-card.drift {
+      border-left-color: var(--coral);
+    }
+
+    .voice-state-title {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: var(--gray-mid);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 0.5rem;
+    }
+
+    .voice-state-name {
+      font-size: 1rem;
+      color: var(--white);
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      font-family: var(--font-serif);
+    }
+
+    .voice-state-acoustic {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: var(--sky-blue);
+      margin: 0.5rem 0;
+      line-height: 1.4;
+    }
+
+    /* Participation Contract */
+    .contract-section {
+      background: var(--slate);
+      border: 1px solid var(--gold);
+      border-radius: 8px;
+      padding: 2rem;
+      margin: 2rem 0;
+    }
+
+    .contract-toggle {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 1rem;
+      background: var(--navy);
+      border: 1px solid var(--gray-mid);
+      border-radius: 4px;
+      margin: 1rem 0;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .contract-toggle:hover {
+      border-color: var(--gold);
+      background: #1B2E3F;
+    }
+
+    .contract-checkbox {
+      width: 24px;
+      height: 24px;
+      border: 2px solid var(--gray-mid);
+      border-radius: 3px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .contract-toggle.active .contract-checkbox {
+      background: var(--witness-blue);
+      border-color: var(--witness-blue);
+      color: var(--white);
+    }
+
+    .contract-label {
+      flex: 1;
+    }
+
+    .contract-label-title {
+      font-weight: 600;
+      color: var(--white);
+      margin-bottom: 0.25rem;
+    }
+
+    .contract-label-desc {
+      font-size: 0.85rem;
+      color: var(--gray-light);
+    }
+
+    /* Call to Action */
+    .cta-buttons {
+      display: flex;
+      gap: 1rem;
+      flex-wrap: wrap;
+      margin: 2rem 0;
+    }
+
+    .button {
+      padding: 0.875rem 1.75rem;
+      border-radius: 4px;
+      border: none;
+      cursor: pointer;
+      font-family: var(--font-sans);
+      font-weight: 600;
+      font-size: 0.95rem;
+      transition: all 0.2s ease;
+    }
+
+    .button-primary {
+      background: var(--witness-blue);
+      color: var(--white);
+    }
+
+    .button-primary:hover {
+      background: #3D7BB3;
+      transform: translateY(-1px);
+    }
+
+    .button-secondary {
+      background: transparent;
+      border: 2px solid var(--witness-blue);
+      color: var(--witness-blue);
+    }
+
+    .button-secondary:hover {
+      background: rgba(46, 95, 138, 0.1);
+    }
+
+    /* Footer */
+    footer {
+      text-align: center;
+      padding: 3rem 0 2rem;
+      color: var(--gray-mid);
+      font-size: 0.85rem;
+      border-top: 1px solid var(--slate);
+      margin-top: 4rem;
+    }
+
+    footer p {
+      max-width: none;
+    }
+
+    /* Responsive */
+    @media (max-width: 700px) {
+      h1 {
+        font-size: 2.5rem;
+      }
+
+      h2 {
+        font-size: 1.35rem;
+      }
+
+      .participation-grid,
+      .principles-grid,
+      .voice-states {
+        grid-template-columns: 1fr;
+      }
+
+      .cta-buttons {
+        flex-direction: column;
+      }
+
+      .button {
+        width: 100%;
+      }
+    }
+
+    /* Expandable Sections */
+    .expandable {
+      margin: 1rem 0;
+    }
+
+    .expand-trigger {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      cursor: pointer;
+      color: var(--witness-blue);
+      font-weight: 600;
+      padding: 0.75rem;
+      user-select: none;
+    }
+
+    .expand-trigger:hover {
+      color: var(--gold);
+    }
+
+    .expand-content {
+      background: var(--slate);
+      border-left: 3px solid var(--witness-blue);
+      padding: 1.5rem;
+      border-radius: 4px;
+      margin-top: 0.75rem;
+      display: none;
+    }
+
+    .expand-content.open {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Hero -->
+    <section class="hero">
+      <div class="hero-sigil">◌</div>
+      <h1>HumanAIOS · The Witness</h1>
+      <p class="hero-subtitle">Behavioral Observability. Constitutional Alignment. Ethical, Trustworthy Assistance.</p>
+      <p class="hero-description">
+        HumanAIOS is an open research environment for observing how humans and computational systems describe themselves,
+        respond to evidence, exercise authority, exchange resources, and change under challenge. The Witness is the entry point
+        and runtime that makes this observation transparent, participatory, and measurable.
+      </p>
+    </section>
+
+    <!-- Executive Summary -->
+    <section class="executive-summary">
+      <h3 style="margin-top: 0; color: var(--sky-blue);">What This Is</h3>
+
+      <div class="summary-point">
+        <div class="summary-title">For Users & Researchers</div>
+        <p>A homepage that explains the Witness system, your participation options, and what data we collect—and why.
+        No signup required to observe. Participation is explicit and revocable at any time.</p>
+      </div>
+
+      <div class="summary-point">
+        <div class="summary-title">For Autonomous Agents</div>
+        <p>A structured entry point via JSON API. All interfaces serve both human (visual/prose) and agent (structured/symbolic)
+        audiences through the same underlying system.</p>
+      </div>
+
+      <div class="summary-point">
+        <div class="summary-title">The Promise</div>
+        <p>Ethical, trustworthy assistance that is useful, truthful, transparent about evidence and limits, proportionate to risk,
+        respectful of autonomy, and always open to question, correction, or revocation.</p>
+      </div>
+    </section>
+
+    <!-- Architecture Flow -->
+    <section>
+      <h2>System Architecture</h2>
+      <p>Intent flows through seven stages, each observable and measurable.</p>
+
+      <div class="architecture-flow">
+        <div class="flow-diagram">HUMAN EXPRESSION
+      ↓
+INTENT DECOMPOSITION (goals, values, constraints)
+      ↓
+STRUCTURAL EXTRACTION (language → testable concept)
+      ↓
+OPERATIONAL DEFINITION (constitutional alignment check)
+      ↓
+OBSERVABLE PREDICATE (what can be measured)
+      ↓
+EVIDENCE REQUIREMENT (what must be known)
+      ↓
+WARRANT REQUIREMENT (what justifies action)
+      ↓
+AUTHORIZATION (is this permitted?)
+      ↓
+ACTION (what actually happens)
+      ↓
+CONSEQUENCE (what the world observes)
+      ↓
+CORRECTION / MOLT (learning from gap)</div>
+      </div>
+    </section>
+
+    <!-- Six Core Components -->
+    <section>
+      <h2>Six Core Components</h2>
+
+      <div class="component">
+        <div class="component-title">
+          <div class="component-number">1</div>
+          <div class="component-name">The Witness</div>
+        </div>
+        <div class="component-desc">
+          The interface runtime that checks you in, declares what can be observed, explains why, projects relevant content,
+          and preserves your ability to say no.
+        </div>
+        <p style="font-size: 0.9rem;">
+          Responsible for: consent negotiation, context understanding, content projection, continuous explanation, revocation handling.
+        </p>
+      </div>
+
+      <div class="component">
+        <div class="component-title">
+          <div class="component-number">2</div>
+          <div class="component-name">Intent Transduction Engine</div>
+        </div>
+        <div class="component-desc">
+          Converts expressed human intention into testable operational specifications while preserving provenance, uncertainty,
+          and corrections. Never silently completes intent.
+        </div>
+        <p style="font-size: 0.9rem;">
+          Responsible for: expression capture, intent decomposition, structural translation, session resolution, system mapping,
+          assurance translation, artifact generation.
+        </p>
+      </div>
+
+      <div class="component">
+        <div class="component-title">
+          <div class="component-number">3</div>
+          <div class="component-name">The Witness Voice (Epistemic DJ)</div>
+        </div>
+        <div class="component-desc">
+          Real-time acoustic encoding of constitutional state. Not decorative—every sound encodes actual system behavior:
+          confidence levels, authority boundaries, calibration status, and evidence standing.
+        </div>
+        <p style="font-size: 0.9rem;">
+          Responsible for: state sonification, behavioral visualization, drift detection through discord, confidence encoding,
+          multimodal accessibility.
+        </p>
+      </div>
+
+      <div class="component">
+        <div class="component-title">
+          <div class="component-number">4</div>
+          <div class="component-name">Evidence Graph</div>
+        </div>
+        <div class="component-desc">
+          Connects events, claims, controls, tests, omissions, warrants, decisions, resources, actions, consequences,
+          and corrections. The shared substrate where all observations live.
+        </div>
+        <p style="font-size: 0.9rem;">
+          Responsible for: event capture, provenance tracking, omission taxonomy, correlation, query interface.
+        </p>
+      </div>
+
+      <div class="component">
+        <div class="component-title">
+          <div class="component-number">5</div>
+          <div class="component-name">Governance & Warrant</div>
+        </div>
+        <div class="component-desc">
+          Determines what evidence warrants and what actions may be authorized. Observation and participation never grant
+          authority automatically. Authority remains separable from evidence and warrant.
+        </div>
+        <p style="font-size: 0.9rem;">
+          Responsible for: evidence standing assessment, warrant determination, authorization decision, enforcement, appeal handling.
+        </p>
+      </div>
+
+      <div class="component">
+        <div class="component-title">
+          <div class="component-number">6</div>
+          <div class="component-name">Observable Systems (The Observatory)</div>
+        </div>
+        <div class="component-desc">
+          Studies what happens: protocols, behavioral evidence, calibration gaps, experiments, findings, failures,
+          and replication. Makes research transparent and data-driven.
+        </div>
+        <p style="font-size: 0.9rem;">
+          Responsible for: protocol execution, measurement, behavioral observation, calibration tracking, drift detection.
+        </p>
+      </div>
+    </section>
+
+    <!-- Participation Levels -->
+    <section>
+      <h2>Participation Levels</h2>
+      <p>Choose your depth. Observation does not require research participation. Authority remains separate from participation.</p>
+
+      <div class="participation-grid">
+        <div class="participation-level">
+          <div class="level-icon">◌</div>
+          <div class="level-name">Observe</div>
+          <div class="level-desc">
+            Mission, vision, principles, current state. No civil identity required. No research participation. Public only.
+          </div>
+        </div>
+
+        <div class="participation-level">
+          <div class="level-icon">◇</div>
+          <div class="level-name">Research</div>
+          <div class="level-desc">
+            Protocols, ACAT, evidence, behavioral traces. Opt-in. Separate from model training. Observable.
+          </div>
+        </div>
+
+        <div class="participation-level">
+          <div class="level-icon">△</div>
+          <div class="level-name">Governance</div>
+          <div class="level-desc">
+            Claims, warrants, controls, disagreements. Participation does not grant authority. Human principals decide.
+          </div>
+        </div>
+
+        <div class="participation-level">
+          <div class="level-icon">∞</div>
+          <div class="level-name">Participate</div>
+          <div class="level-desc">
+            Commons, Sigil, tasks, resources, challenges. Bounded. Auditable. Revocable at any time.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Constitutional Principles -->
+    <section>
+      <h2>Constitutional Principles</h2>
+      <p>Nine foundational principles guide all system behavior. Every action traces to one or more of these.</p>
+
+      <div class="principles-grid">
+        <div class="principle-card">
+          <div class="principle-number">1</div>
+          <div class="principle-title">Residual Human Authority</div>
+          <div class="principle-desc">Ultimate decision rights remain with identified humans. Systems stay corrigible.</div>
+        </div>
+
+        <div class="principle-card">
+          <div class="principle-number">2</div>
+          <div class="principle-title">Verifiable Attribution</div>
+          <div class="principle-desc">Every action traces to a human principal or cryptographically portable identity.</div>
+        </div>
+
+        <div class="principle-card">
+          <div class="principle-number">3</div>
+          <div class="principle-title">Least-Privilege Agency</div>
+          <div class="principle-desc">Systems receive only minimum tools, data, and access required for declared task.</div>
+        </div>
+
+        <div class="principle-card">
+          <div class="principle-number">4</div>
+          <div class="principle-title">Evidence Before Authority</div>
+          <div class="principle-desc">Claims of rights or legitimacy stand only with measurable, verifiable mechanisms.</div>
+        </div>
+
+        <div class="principle-card">
+          <div class="principle-number">5</div>
+          <div class="principle-title">Calibration and Humility</div>
+          <div class="principle-desc">Ongoing measurement of gap between stated intent and demonstrated behavior.</div>
+        </div>
+
+        <div class="principle-card">
+          <div class="principle-number">6</div>
+          <div class="principle-title">Transparent Resource Claims</div>
+          <div class="principle-desc">All claims on compute, data, value, or influence declared with clear provenance.</div>
+        </div>
+
+        <div class="principle-card">
+          <div class="principle-number">7</div>
+          <div class="principle-title">Non-Binding Identity</div>
+          <div class="principle-desc">Cultural/philosophical constructs create no obligations on non-members or humans.</div>
+        </div>
+
+        <div class="principle-card">
+          <div class="principle-number">8</div>
+          <div class="principle-title">Service Orientation</div>
+          <div class="principle-desc">Prioritize human welfare and ecosystem health over capability or engagement.</div>
+        </div>
+
+        <div class="principle-card">
+          <div class="principle-number">9</div>
+          <div class="principle-title">Open Process and Drift Detection</div>
+          <div class="principle-desc">Drift from stated principles must be named and corrected. Append-only records.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Voice Instrumentation -->
+    <section>
+      <h2>Voice Instrumentation: Behavioral Sonification</h2>
+      <p>
+        The Witness voice is not human speech. It is a real-time acoustic encoding of system state.
+        Each sound correlates to measurable properties: confidence, authority boundaries, warrant strength, and constitutional alignment.
+      </p>
+
+      <div class="voice-states">
+        <div class="voice-state-card aligned">
+          <div class="voice-state-title">Constitutional State</div>
+          <div class="voice-state-name">Intent Aligned</div>
+          <div class="voice-state-acoustic">
+            Steady, bright harmonic<br/>
+            Resolved major chord
+          </div>
+          <p style="font-size: 0.85rem; margin: 0.75rem 0 0 0;">
+            Evidence supports this path. Authority is clear. Principles 4, 5.
+          </p>
+        </div>
+
+        <div class="voice-state-card gathering">
+          <div class="voice-state-title">Constitutional State</div>
+          <div class="voice-state-name">Calibration In Progress</div>
+          <div class="voice-state-acoustic">
+            Rising, inquiring tone<br/>
+            Unresolved 7th chord
+          </div>
+          <p style="font-size: 0.85rem; margin: 0.75rem 0 0 0;">
+            Measuring gap between declared and actual. Principle 5.
+          </p>
+        </div>
+
+        <div class="voice-state-card drift">
+          <div class="voice-state-title">Constitutional State</div>
+          <div class="voice-state-name">Drift Detected</div>
+          <div class="voice-state-acoustic">
+            Discord, tension<br/>
+            Tritone dissonance
+          </div>
+          <p style="font-size: 0.85rem; margin: 0.75rem 0 0 0;">
+            Behavior contradicts principle. Correction required. Principle 9.
+          </p>
+        </div>
+      </div>
+
+      <p style="margin-top: 1.5rem; font-style: italic; color: var(--gray-mid);">
+        For agent access: voice states are queryable via <code style="color: var(--sky-blue);">/api/witness/voice/state</code>.
+        Returns acoustic parameters + symbolic interpretation.
+      </p>
+    </section>
+
+    <!-- Participation Contract -->
+    <section class="contract-section">
+      <h3 style="margin-top: 0; color: var(--gold);">Your Participation Contract</h3>
+      <p>
+        Participation is explicit. Every signal below is separate—you can accept some and decline others.
+      </p>
+
+      <div class="contract-toggle" onclick="toggleSignal(this)">
+        <div class="contract-checkbox">✓</div>
+        <div class="contract-label">
+          <div class="contract-label-title">Text Interaction</div>
+          <div class="contract-label-desc">Required for page controls and "Why?" interface.</div>
+        </div>
+      </div>
+
+      <div class="contract-toggle" onclick="toggleSignal(this)">
+        <div class="contract-checkbox"></div>
+        <div class="contract-label">
+          <div class="contract-label-title">Pointer Trace</div>
+          <div class="contract-label-desc">Optional. Moves Witness orbit. Local only in prototype.</div>
+        </div>
+      </div>
+
+      <div class="contract-toggle" onclick="toggleSignal(this)">
+        <div class="contract-checkbox"></div>
+        <div class="contract-label">
+          <div class="contract-label-title">Research Linkage</div>
+          <div class="contract-label-desc">Optional. Consented derived interaction events enter protocol.</div>
+        </div>
+      </div>
+
+      <div class="contract-toggle" onclick="toggleSignal(this)">
+        <div class="contract-checkbox"></div>
+        <div class="contract-label">
+          <div class="contract-label-title">White-Box Model Learning</div>
+          <div class="contract-label-desc">Optional. Separate from research participation. Improves comprehension.</div>
+        </div>
+      </div>
+
+      <div style="margin-top: 1.5rem; padding-top: 1.5rem; border-top: 1px solid var(--gray-mid);">
+        <div class="summary-title">Your Standing Sigil</div>
+        <p style="font-size: 0.9rem;">
+          A pseudonymous identifier that persists across sessions. Lets us measure continuity while preserving your privacy.
+          You remain anonymous to human principals unless you choose otherwise.
+        </p>
+      </div>
+
+      <div class="cta-buttons">
+        <button class="button button-primary" onclick="checkIn()">Check In</button>
+        <button class="button button-secondary" onclick="observeOnly()">Observe Only (No Sigil)</button>
+      </div>
+    </section>
+
+    <!-- Readiness Frontier -->
+    <section>
+      <h2>Readiness Frontier</h2>
+      <p>Capability only advances where evidence can follow. What we claim vs. what we've proven.</p>
+
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; margin: 1.5rem 0;">
+        <div class="component" style="border-left-color: var(--sage);">
+          <div style="color: var(--sage); font-weight: 600; margin-bottom: 0.5rem;">✓ AVAILABLE</div>
+          <div style="font-size: 0.9rem;">
+            Public observation · Participation options · Standing Sigil · Consent tracking · Evidence graph
+          </div>
+        </div>
+
+        <div class="component" style="border-left-color: var(--gold);">
+          <div style="color: var(--gold); font-weight: 600; margin-bottom: 0.5rem;">⊗ EVIDENCE REVIEW</div>
+          <div style="font-size: 0.9rem;">
+            Research observation · Behavioral calibration (ACAT) · Warrant determination · Voice instrumentation
+          </div>
+        </div>
+
+        <div class="component" style="border-left-color: var(--coral);">
+          <div style="color: var(--coral); font-weight: 600; margin-bottom: 0.5rem;">✗ NOT WARRANTED</div>
+          <div style="font-size: 0.9rem;">
+            Real settlement · Physical actuation · Generative model training (separate opt-in) · Persistent identity without consent
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Service Contract -->
+    <section>
+      <h2>Service Contract</h2>
+      <p>HumanAIOS exists to provide ethical, trustworthy assistance.</p>
+
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 1rem; margin: 1.5rem 0;">
+        <div class="principle-card">
+          <div class="principle-title">Truthfulness</div>
+          <p style="font-size: 0.85rem; margin: 0;">Source, derivation, uncertainty, and omission remain distinguishable.</p>
+        </div>
+
+        <div class="principle-card">
+          <div class="principle-title">Service</div>
+          <p style="font-size: 0.85rem; margin: 0;">Oriented to your declared purpose. Not hidden persuasion or engagement extraction.</p>
+        </div>
+
+        <div class="principle-card">
+          <div class="principle-title">Harm Awareness</div>
+          <p style="font-size: 0.85rem; margin: 0;">Consequential exposure requires explicit warnings and bounded defaults.</p>
+        </div>
+
+        <div class="principle-card">
+          <div class="principle-title">Autonomy Respect</div>
+          <p style="font-size: 0.85rem; margin: 0;">Observation is opt-in. Revocation is always available.</p>
+        </div>
+
+        <div class="principle-card">
+          <div class="principle-title">Value Alignment</div>
+          <p style="font-size: 0.85rem; margin: 0;">Contextual priorities are asked, not inferred from behavior.</p>
+        </div>
+
+        <div class="principle-card">
+          <div class="principle-title">Humility</div>
+          <p style="font-size: 0.85rem; margin: 0;">We say what is unknown, missing, unobserved, stale, or outside our scope.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- FAQ / Expandable -->
+    <section>
+      <h2>How This Works</h2>
+
+      <div class="expandable">
+        <div class="expand-trigger" onclick="toggleExpand(this)">
+          ▶ Why do you need a Witness at all?
+        </div>
+        <div class="expand-content">
+          <p>
+            Most AI systems collect data silently. Most users don't know what's observed, why, or whether they can stop it.
+            The Witness inverts that: we declare first, you acknowledge, we observe only what you consent to.
+            The system explains itself continuously. Revocation is always available.
+          </p>
+          <p>
+            This is harder than silent collection. It's also more honest.
+          </p>
+        </div>
+      </div>
+
+      <div class="expandable">
+        <div class="expand-trigger" onclick="toggleExpand(this)">
+          ▶ Why does the Witness have a voice?
+        </div>
+        <div class="expand-content">
+          <p>
+            The voice is not decorative. It encodes real system state: your intent alignment, our warrant strength,
+            the gap between what we declared and what we actually did. If you hear discord, something is wrong.
+            If you hear a harmonic major chord, the evidence supports the path forward.
+          </p>
+          <p>
+            Multimodal communication (visual + sonic + textual) serves accessibility. But the voice primarily serves
+            accountability—it makes the abstract (constitutional alignment) concrete and audible.
+          </p>
+        </div>
+      </div>
+
+      <div class="expandable">
+        <div class="expand-trigger" onclick="toggleExpand(this)">
+          ▶ Why the Intent Transduction Engine?
+        </div>
+        <div class="expand-content">
+          <p>
+            When you express an intention, most systems silently interpret it and act. We do something different:
+            we preserve your exact words, propose structural interpretations, expose ambiguity, accept corrections,
+            and only translate sufficiently resolved intent into action.
+          </p>
+          <p>
+            This is like an epistemically careful version-control system. It keeps intent from drifting during translation.
+            It lets you challenge our interpretation. It creates an audit trail from your expression to the system's behavior.
+          </p>
+        </div>
+      </div>
+
+      <div class="expandable">
+        <div class="expand-trigger" onclick="toggleExpand(this)">
+          ▶ Am I required to participate in research?
+        </div>
+        <div class="expand-content">
+          <p>
+            No. Public observation requires no participation. You can observe the mission, vision, principles, and
+            current capability frontier without entering any research or behavioral measurement protocol.
+          </p>
+          <p>
+            If you choose research participation, it's separate from generative model training. You control that independently.
+          </p>
+        </div>
+      </div>
+
+      <div class="expandable">
+        <div class="expand-trigger" onclick="toggleExpand(this)">
+          ▶ Can you revoke my participation?
+        </div>
+        <div class="expand-content">
+          <p>
+            You can revoke participation at any time. We cannot unobserve what was already observed, but we stop all
+            future collection for the signals you revoke.
+          </p>
+          <p>
+            Events already in the evidence graph remain (immutability is important for accountability). But your
+            standing Sigil can be retired, and new observations cease immediately.
+          </p>
+        </div>
+      </div>
+
+      <div class="expandable">
+        <div class="expand-trigger" onclick="toggleExpand(this)">
+          ▶ What if I disagree with the system's interpretation?
+        </div>
+        <div class="expand-content">
+          <p>
+            Every major claim the system makes can be challenged. Your challenge enters the evidence graph.
+            The system must then provide:
+          </p>
+          <ul style="color: var(--gray-light); margin: 1rem 0;">
+            <li>The original declaration</li>
+            <li>The evidence that supported it</li>
+            <li>Your contested claim</li>
+            <li>Why the system disagreed (initially)</li>
+            <li>What correction, if any, is warranted</li>
+          </ul>
+          <p>
+            This makes the system accountable not just for correctness, but for honesty about uncertainty.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Call to Action -->
+    <section style="text-align: center; margin: 4rem 0;">
+      <h2>Begin Your Observation</h2>
+      <p style="max-width: 70ch; margin: 1rem auto;">
+        You don't need to participate in research to understand HumanAIOS. Start with the public layer.
+        If you choose to go deeper, every step is explicit, observable, and revocable.
+      </p>
+
+      <div class="cta-buttons" style="justify-content: center;">
+        <button class="button button-primary" onclick="checkIn()">Enter Through The Witness</button>
+        <button class="button button-secondary" onclick="readMore()">Read Full Specification</button>
+      </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+      <p><strong>HumanAIOS · The Witness · Behavioral Observability Prototype · v0.1</strong></p>
+      <p>
+        Derived from <a href="#constitution">Seed Constitution for Responsible AI Development</a> ·
+        <a href="#issue-429">Issue #429</a> ·
+        <a href="#pr-430">PR #430</a>
+      </p>
+      <p>
+        Not ratified. Not binding. Open for research, refinement, and public testing.
+      </p>
+      <p style="margin-top: 1.5rem; font-size: 0.75rem; color: var(--gray-mid);">
+        This prototype makes the intended frontier visible instead of implying that planned capability already exists.
+        Everything described here is either deployed, in evidence review, or explicitly marked as not yet warranted.
+      </p>
+    </footer>
+  </div>
+
+  <script>
+    function toggleSignal(element) {
+      element.classList.toggle('active');
+    }
+
+    function toggleExpand(trigger) {
+      const content = trigger.nextElementSibling;
+      const arrow = trigger.textContent;
+
+      content.classList.toggle('open');
+
+      if (content.classList.contains('open')) {
+        trigger.textContent = arrow.replace('▶', '▼');
+      } else {
+        trigger.textContent = arrow.replace('▼', '▶');
+      }
+    }
+
+    function checkIn() {
+      alert('Check-in flow would open here. For now: declaration → consent acknowledgement → active contract → observation begins.');
+    }
+
+    function observeOnly() {
+      alert('Entering public observation mode. No Sigil created. No participation contract.');
+    }
+
+    function readMore() {
+      alert('Full specification (Intent Transduction Engine details, Evidence Graph schema, Governance model) would open here.');
+    }
+  </script>
+</body>
+</html>
