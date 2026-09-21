@@ -315,4 +315,4 @@ Both remain in the graph. Authority and downstream decisions are updated to use 
 5. **Calibration surface** — automatic gap detection
 6. **Export/audit** — compliance reporting
 
-See `/evidence_graph/` for reference implementation.
+Reference implementation: [In Development](https://github.com/humanaios-ui/lasting-light-ai/issues/429)

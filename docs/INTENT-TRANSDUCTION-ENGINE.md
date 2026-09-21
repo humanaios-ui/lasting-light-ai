@@ -380,4 +380,4 @@ The last endpoint is critical. Participant should be able to say: "That isn't wh
 5. **Challenge Interface** — correction workflow
 6. **Artifact Generation** — multi-format output
 
-See `/intent_transduction/` for reference implementation.
+Reference implementation: [In Development](https://github.com/humanaios-ui/lasting-light-ai/issues/429)

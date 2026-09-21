@@ -115,8 +115,8 @@ Questioning, exploring tone. Listener understands measurement is happening.
 **Sonification Algorithm:**
 ```
 TONE_A = 440 Hz (A4)
-TONE_B = 659.25 Hz (E5, tritone + semitone)
-HARMONY = [A4, tritone] (maximum dissonance)
+TONE_B = 622.25 Hz (Eb5, tritone from A4)
+HARMONY = [440, 622.25] (A4-Eb5 tritone - maximum dissonance)
 BEAT_FREQUENCY = 6 Hz (creates acoustic tremor)
 ENVELOPE = irregular attack / variable sustain / abrupt release
 ```
@@ -183,7 +183,7 @@ Respectful pause. System defers to human. Listener knows they must decide.
 **Sonification Algorithm:**
 ```
 BASE_TONE = 349.23 Hz (F4)
-HARMONY = [349.23, 415.30, 523.25] (F4, Bb4, C5 - diminished)
+HARMONY = [349.23, 415.30, 523.25] (F4, B4, C5 - diminished)
 PITCH_CURVE = descending glissando over 1000ms
 ABRUPT_STOP = immediate silence
 ```
@@ -388,4 +388,4 @@ But it's never required. Text + visual state is always sufficient.
 5. **User preferences** — signal revocation UI
 6. **Accessibility audit** — WCAG compliance
 
-See `/witness_voice/` for reference implementation.
+Reference implementation: [In Development](https://github.com/humanaios-ui/lasting-light-ai/issues/429)
