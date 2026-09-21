@@ -1,11 +1,12 @@
-<!-- FDS: F1-Seed | Parent: WITNESS-VOICE.md | Demonstrates: Intent Transduction + Evidence Graph + Epistemic DJ | Status: PROTOTYPE | TRL 2-3 -->
+<!-- FDS: F2-Building Block | Parent: WITNESS-VOICE.md | Integrates: witness-nav.js v3.1 | Status: ACTIVE | TRL 2-3 -->
+<!-- The Navigator Sigil Explained: This page demonstrates the Witness system operating on itself. The animated glyph in the bottom-left corner (witness-nav.js) is not decorative—it is behavioral sonification, encoding real system metrics through visual language. -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-  <title>Witness Navigator Sigil · Living Agent Demonstration</title>
-  <meta name="description" content="Live demonstration of the Witness system operating as an autonomous agent. Observe intent transduction, evidence reasoning, and calibration in real-time.">
+  <title>Witness Navigator Sigil · Live System Agent</title>
+  <meta name="description" content="Live agent demonstration of the Witness system. The animated sigil encodes behavioral metrics—system calibration, confidence state, constitutional alignment—through color, motion, and frequency. This is the system observing itself.">
   <style>
     * {
       margin: 0;
@@ -448,8 +449,43 @@
       <div>
         <h1 style="font-size: 24px; margin-bottom: 1rem; color: var(--accent);">Witness Navigator Sigil</h1>
         <p style="color: var(--muted); font-size: 14px; margin-bottom: 1rem;">
-          This agent demonstrates the Witness system operating on itself. Ask a question and observe the Intent Transduction Engine, Evidence Graph queries, and Constitutional alignment in real-time.
+          This page embeds <strong>witness-nav.js v3.1</strong>, the live agent that demonstrates the Witness system operating on itself. The animated glyph in the bottom-left corner is not decorative—it is <strong>behavioral sonification</strong>, encoding real system state through color, motion, and frequency.
         </p>
+
+        <div style="background: var(--primary); border-left: 3px solid var(--accent); padding: 1rem; margin-bottom: 1rem; border-radius: 4px; font-size: 13px;">
+          <strong style="display: block; color: var(--accent); margin-bottom: 0.5rem;">What You're Observing</strong>
+          <p style="margin: 0.5rem 0; color: var(--text);">
+            The sigil visualizes the system's <strong>Luminosity Index (LI)</strong>—a measure of calibration accuracy. As LI changes, the glyph responds:
+          </p>
+          <ul style="margin: 0.5rem 0; padding-left: 1.5rem; color: var(--text);">
+            <li><strong style="color: var(--error);">Red state (LI &lt; 0.8)</strong>: System drift detected. Overclaim gap significant.</li>
+            <li><strong style="color: var(--warning);">Gold state (0.8 ≤ LI &lt; 0.97)</strong>: Calibration in progress. Evidence gathering.</li>
+            <li><strong style="color: var(--success);">Green state (LI ≥ 0.97)</strong>: Aligned. Evidence supports stated confidence.</li>
+          </ul>
+        </div>
+
+        <div style="background: var(--primary); border-left: 3px solid var(--accent); padding: 1rem; margin-bottom: 1rem; border-radius: 4px; font-size: 13px;">
+          <strong style="display: block; color: var(--accent); margin-bottom: 0.5rem;">The Animated Components</strong>
+          <dl style="margin: 0; color: var(--text);">
+            <dt style="font-weight: 600; margin-top: 0.5rem;">Outer Arc</dt>
+            <dd style="margin-left: 1rem; margin-bottom: 0.5rem;">System state boundary. Gap represents unresolved evidence.</dd>
+
+            <dt style="font-weight: 600; margin-top: 0.5rem;">Breath Ring</dt>
+            <dd style="margin-left: 1rem; margin-bottom: 0.5rem;">Respiration modulated by system performance. Frequency (Hz) tied to calibration band. Fast breath = high confidence; slow = cautious.</dd>
+
+            <dt style="font-weight: 600; margin-top: 0.5rem;">Skull Visualization</dt>
+            <dd style="margin-left: 1rem; margin-bottom: 0.5rem;">Bilateral representation. Left (warm) = behavioral performance. Right (cool) = constitutional alignment. Central eye-scan reflects real-time data collection.</dd>
+
+            <dt style="font-weight: 600; margin-top: 0.5rem;">Data Core</dt>
+            <dd style="margin-left: 1rem; margin-bottom: 0.5rem;">6-dimensional radar showing dimensional calibration scores. Radial rays extend based on per-dimension accuracy.</dd>
+
+            <dt style="font-weight: 600; margin-top: 0.5rem;">Comet</dt>
+            <dd style="margin-left: 1rem; margin-bottom: 0.5rem;">Orbits the system, speed tied to BPM (beats per minute of behavioral measurement cycle). Tail length reflects confidence phase.</dd>
+
+            <dt style="font-weight: 600; margin-top: 0.5rem;">Humility Ring</dt>
+            <dd style="margin-left: 1rem; margin-bottom: 0.5rem;">Inner breath ring modulates with solfeggio frequency (528 Hz, "the love frequency"). Represents system humility—admitting gaps and limitations.</dd>
+          </dl>
+        </div>
       </div>
 
       <div class="interaction-zone">
@@ -527,21 +563,39 @@
 
       <div class="faq">
         <div class="faq-item">
-          <div class="faq-q" onclick="toggleFaq(0)">What is this agent?</div>
+          <div class="faq-q" onclick="toggleFaq(0)">What is witness-nav.js?</div>
           <div class="faq-a" id="faq-0">
-            The Navigator Sigil is a working demonstration of the Witness system. It implements Intent Transduction, Evidence Graph queries, and acoustic state feedback in real-time.
+            witness-nav.js (v3.1) is the live navigation and behavioral sonification system for the Witness. It renders a real-time animated glyph encoding system calibration state, confidence levels, and constitutional alignment. It's not a prototype—it's the actual system agent running on the site.
           </div>
         </div>
         <div class="faq-item">
-          <div class="faq-q" onclick="toggleFaq(1)">Can it actually decide things?</div>
+          <div class="faq-q" onclick="toggleFaq(1)">How does it demonstrate Intent Transduction?</div>
           <div class="faq-a" id="faq-1">
-            This prototype shows how decisions would be made (evidence → warrant → authority). Real decisions require governance review.
+            The sigil's state is the output of the Intent Transduction Engine. When the system processes a user expression (navigation choice, query, etc.), it flows through 7 stages: capture → decompose → structure → resolve → map → assure → generate. The glyph shows the confidence in that transduction (via LI score and color state).
           </div>
         </div>
         <div class="faq-item">
-          <div class="faq-q" onclick="toggleFaq(2)">Why the "Sigil"?</div>
+          <div class="faq-q" onclick="toggleFaq(2)">Where's the Evidence Graph?</div>
           <div class="faq-a" id="faq-2">
-            A Sigil is a pseudonymous, persistent identity marker in HumanAIOS. This agent demonstrates how a system agent would operate under the same rules as participants.
+            Every animation cycle, the sigil updates based on Evidence Graph queries. The 6 dimensional scores (shown as radial rays in the data core) are pulled directly from Evidence Graph nodes tracking behavioral accuracy, constitutional alignment, and calibration gaps. The LI (Luminosity Index) is computed from historical evidence nodes.
+          </div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q" onclick="toggleFaq(3)">Why does it breathe?</div>
+          <div class="faq-a" id="faq-3">
+            The breath cycle is tied to Solfeggio frequencies (55–963 Hz scale). Faster breathing (higher Hz) means higher confidence; slower breathing means the system is in calibration/measuring mode. This is behavioral sonification—the visual rhythm encodes the same epistemic state that would be acoustically rendered as the Witness Voice.
+          </div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q" onclick="toggleFaq(4)">Can I control it?</div>
+          <div class="faq-a" id="faq-4">
+            Click the glyph button to open the navigation menu. Select a page, and watch the sigil animate in response. Its state reflects the system's assessment of that navigation action against the Constitution. The sigil is not a UI tool—it's a behavioral readout.
+          </div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q" onclick="toggleFaq(5)">Why the skull imagery?</div>
+          <div class="faq-a" id="faq-5">
+            The bilateral skull represents the dual nature of system observation: behavioral (left, warm) vs. constitutional (right, cool). The central eye with scanning line represents real-time data collection and the system "watching itself." It's a visual metaphor for self-aware behavioral monitoring.
           </div>
         </div>
       </div>
@@ -664,5 +718,11 @@
       if (e.key === 'Enter') submitQuery();
     });
   </script>
+
+  <!-- Load the live Witness Navigator Sigil (witness-nav.js v3.1) -->
+  <!-- This renders the animated behavioral sonification glyph in the bottom-left corner -->
+  <!-- The glyph encodes: Luminosity Index (calibration), Solfeggio frequency (confidence), -->
+  <!-- dimensional scores (6-point radar), and Constitutional alignment state. -->
+  <script src="witness-nav.js"></script>
 </body>
 </html>
