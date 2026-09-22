@@ -1,0 +1,740 @@
+<!-- FDS: F2-Building Block | Parent: WITNESS-VOICE.md | Integrates: witness-nav.js v3.1 | Status: ACTIVE | TRL 2-3 -->
+<!-- The Navigator Sigil Explained: This page demonstrates the Witness system operating on itself. The animated glyph in the bottom-left corner (witness-nav.js) is not decorative—it is behavioral sonification, encoding real system metrics through visual language. -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Witness Navigator Sigil · Live System Agent</title>
+  <meta name="description" content="Live agent demonstration of the Witness system. The animated sigil encodes behavioral metrics—system calibration, confidence state, constitutional alignment—through color, motion, and frequency. This is the system observing itself.">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    :root {
+      --primary: #0f172a;
+      --secondary: #1e293b;
+      --accent: #0ea5e9;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --error: #ef4444;
+      --text: #e2e8f0;
+      --muted: #94a3b8;
+
+      --state-aligned: #10b981;
+      --state-gathering: #f59e0b;
+      --state-drift: #ef4444;
+      --state-halt: #0ea5e9;
+      --state-boundary: #8b5cf6;
+      --state-identity: #ec4899;
+    }
+
+    @media (prefers-color-scheme: light) {
+      :root {
+        --primary: #f8fafc;
+        --secondary: #f1f5f9;
+        --accent: #0284c7;
+        --text: #1e293b;
+        --muted: #64748b;
+      }
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: var(--primary);
+      color: var(--text);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 2rem;
+      display: grid;
+      grid-template-columns: 300px 1fr 300px;
+      gap: 2rem;
+      min-height: 100vh;
+    }
+
+    @media (max-width: 1024px) {
+      .container {
+        grid-template-columns: 1fr;
+        padding: 1rem;
+      }
+    }
+
+    /* Sigil Status Panel */
+    .sigil-panel {
+      background: var(--secondary);
+      border: 1px solid var(--muted);
+      border-radius: 8px;
+      padding: 1.5rem;
+      height: fit-content;
+      position: sticky;
+      top: 2rem;
+    }
+
+    .sigil-avatar {
+      width: 60px;
+      height: 60px;
+      border-radius: 50%;
+      background: radial-gradient(circle, var(--accent) 0%, transparent 70%);
+      margin: 0 auto 1rem;
+      animation: pulse 2s ease-in-out infinite;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      font-size: 24px;
+    }
+
+    .sigil-avatar.state-aligned { background: radial-gradient(circle, var(--state-aligned) 0%, transparent 70%); }
+    .sigil-avatar.state-gathering { background: radial-gradient(circle, var(--state-gathering) 0%, transparent 70%); }
+    .sigil-avatar.state-drift { background: radial-gradient(circle, var(--state-drift) 0%, transparent 70%); }
+    .sigil-avatar.state-halt { background: radial-gradient(circle, var(--state-halt) 0%, transparent 70%); }
+    .sigil-avatar.state-boundary { background: radial-gradient(circle, var(--state-boundary) 0%, transparent 70%); }
+    .sigil-avatar.state-identity { background: radial-gradient(circle, var(--state-identity) 0%, transparent 70%); }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.7; }
+    }
+
+    .sigil-name {
+      text-align: center;
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 1rem;
+      color: var(--accent);
+    }
+
+    .state-badge {
+      background: var(--secondary);
+      border: 1px solid var(--accent);
+      border-radius: 4px;
+      padding: 0.5rem;
+      font-size: 12px;
+      font-weight: 600;
+      text-align: center;
+      margin-bottom: 1rem;
+      color: var(--accent);
+    }
+
+    .state-badge.aligned { border-color: var(--state-aligned); color: var(--state-aligned); }
+    .state-badge.gathering { border-color: var(--state-gathering); color: var(--state-gathering); }
+    .state-badge.drift { border-color: var(--state-drift); color: var(--state-drift); }
+    .state-badge.halt { border-color: var(--state-halt); color: var(--state-halt); }
+    .state-badge.boundary { border-color: var(--state-boundary); color: var(--state-boundary); }
+    .state-badge.identity { border-color: var(--state-identity); color: var(--state-identity); }
+
+    .voice-visualizer {
+      height: 60px;
+      background: var(--primary);
+      border-radius: 4px;
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-around;
+      gap: 2px;
+      margin-bottom: 1rem;
+      overflow: hidden;
+    }
+
+    .voice-bar {
+      flex: 1;
+      background: var(--accent);
+      border-radius: 2px;
+      min-height: 4px;
+      animation: voice-wave 0.5s ease-in-out;
+    }
+
+    @keyframes voice-wave {
+      0% { height: 10%; }
+      50% { height: 70%; }
+      100% { height: 30%; }
+    }
+
+    .confidence-readout {
+      font-size: 12px;
+      background: var(--primary);
+      padding: 0.5rem;
+      border-radius: 4px;
+      text-align: center;
+      margin-bottom: 1rem;
+      border-left: 3px solid var(--accent);
+    }
+
+    .confidence-readout strong {
+      display: block;
+      font-size: 18px;
+      margin: 0.25rem 0;
+      color: var(--accent);
+    }
+
+    /* Main Content */
+    .main-content {
+      background: var(--secondary);
+      border: 1px solid var(--muted);
+      border-radius: 8px;
+      padding: 2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+    }
+
+    .interaction-zone {
+      display: flex;
+      gap: 1rem;
+      margin-bottom: 1rem;
+    }
+
+    .input-group {
+      flex: 1;
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .input-group input {
+      flex: 1;
+      background: var(--primary);
+      border: 1px solid var(--muted);
+      color: var(--text);
+      padding: 0.75rem;
+      border-radius: 4px;
+      font-size: 14px;
+    }
+
+    .input-group input::placeholder {
+      color: var(--muted);
+    }
+
+    .input-group input:focus {
+      outline: none;
+      border-color: var(--accent);
+    }
+
+    .btn {
+      background: var(--accent);
+      color: white;
+      border: none;
+      padding: 0.75rem 1.5rem;
+      border-radius: 4px;
+      font-weight: 600;
+      cursor: pointer;
+      font-size: 14px;
+      transition: opacity 0.2s;
+    }
+
+    .btn:hover {
+      opacity: 0.9;
+    }
+
+    .btn:active {
+      opacity: 0.8;
+    }
+
+    /* Transduction Pipeline */
+    .pipeline {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      background: var(--primary);
+      padding: 1rem;
+      border-radius: 4px;
+      border: 1px solid var(--muted);
+    }
+
+    .pipeline-stage {
+      background: var(--secondary);
+      padding: 1rem;
+      border-radius: 4px;
+      border-left: 3px solid var(--accent);
+      display: none;
+    }
+
+    .pipeline-stage.active {
+      display: block;
+      animation: slideIn 0.3s ease-out;
+    }
+
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateX(-10px);
+      }
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    .stage-label {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--accent);
+      margin-bottom: 0.5rem;
+    }
+
+    .stage-content {
+      font-size: 14px;
+      line-height: 1.5;
+      color: var(--text);
+    }
+
+    .stage-content code {
+      background: var(--primary);
+      padding: 0.25rem 0.5rem;
+      border-radius: 3px;
+      font-family: "Monaco", monospace;
+      font-size: 12px;
+      color: var(--accent);
+    }
+
+    /* Evidence Graph Query */
+    .evidence-section {
+      background: var(--primary);
+      border: 1px solid var(--muted);
+      border-radius: 4px;
+      padding: 1rem;
+    }
+
+    .evidence-title {
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--accent);
+      margin-bottom: 1rem;
+    }
+
+    .evidence-item {
+      background: var(--secondary);
+      padding: 0.75rem;
+      border-radius: 3px;
+      margin-bottom: 0.5rem;
+      font-size: 13px;
+      border-left: 2px solid var(--accent);
+      display: none;
+    }
+
+    .evidence-item.active {
+      display: block;
+    }
+
+    .evidence-id {
+      color: var(--accent);
+      font-weight: 600;
+      font-family: "Monaco", monospace;
+    }
+
+    .evidence-timestamp {
+      color: var(--muted);
+      font-size: 11px;
+      margin-top: 0.25rem;
+    }
+
+    /* Constitution Alignment */
+    .constitution-panel {
+      background: var(--secondary);
+      border: 1px solid var(--muted);
+      border-radius: 8px;
+      padding: 1.5rem;
+      height: fit-content;
+      position: sticky;
+      top: 2rem;
+    }
+
+    .constitution-title {
+      font-size: 12px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--accent);
+      margin-bottom: 1rem;
+    }
+
+    .principles-list {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+    }
+
+    .principle-item {
+      font-size: 12px;
+      padding: 0.5rem;
+      background: var(--primary);
+      border-radius: 3px;
+      border-left: 2px solid var(--muted);
+      opacity: 0.5;
+      transition: all 0.3s;
+    }
+
+    .principle-item.active {
+      border-left-color: var(--accent);
+      background: rgba(6, 182, 212, 0.1);
+      opacity: 1;
+      font-weight: 600;
+    }
+
+    .faq {
+      margin-top: 1rem;
+      padding-top: 1rem;
+      border-top: 1px solid var(--muted);
+    }
+
+    .faq-item {
+      margin-bottom: 0.75rem;
+    }
+
+    .faq-q {
+      font-size: 11px;
+      font-weight: 600;
+      color: var(--accent);
+      margin-bottom: 0.25rem;
+      cursor: pointer;
+    }
+
+    .faq-a {
+      font-size: 11px;
+      color: var(--muted);
+      line-height: 1.4;
+      display: none;
+    }
+
+    .faq-a.visible {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Left Panel: Sigil Status -->
+    <div class="sigil-panel">
+      <div class="sigil-avatar state-aligned" id="sigil-avatar">◇</div>
+      <div class="sigil-name">Navigator Sigil<br><span style="font-size: 11px; color: var(--muted); font-weight: normal;">v0.1-prototype</span></div>
+      <div class="state-badge aligned" id="state-badge">ALIGNED</div>
+
+      <div class="voice-visualizer" id="voice-visualizer">
+        <div class="voice-bar"></div>
+        <div class="voice-bar"></div>
+        <div class="voice-bar"></div>
+        <div class="voice-bar"></div>
+        <div class="voice-bar"></div>
+      </div>
+
+      <div class="confidence-readout">
+        <span>Confidence</span>
+        <strong id="confidence">92%</strong>
+      </div>
+
+      <hr style="border: 0; border-top: 1px solid var(--muted); margin: 1rem 0;">
+
+      <div style="font-size: 11px; color: var(--muted);">
+        <strong style="display: block; color: var(--text); margin-bottom: 0.5rem;">Current State</strong>
+        <div id="state-details" style="line-height: 1.6;">
+          <div><strong>Mode:</strong> <span id="mode">LISTENING</span></div>
+          <div><strong>Evidence:</strong> <span id="evidence-count">0</span> nodes</div>
+          <div><strong>Session:</strong> <span id="session">ACTIVE</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Center Panel: Interaction & Pipeline -->
+    <div class="main-content">
+      <div>
+        <h1 style="font-size: 24px; margin-bottom: 1rem; color: var(--accent);">Witness Navigator Sigil</h1>
+        <p style="color: var(--muted); font-size: 14px; margin-bottom: 1rem;">
+          <span style="background: var(--warning); color: black; padding: 2px 6px; border-radius: 3px; font-weight: 600; font-size: 0.85rem;">DEMO / SIMULATED STATE</span>
+          This page embeds <strong>witness-nav.js v3.1</strong>, which demonstrates how behavioral sonification works using hard-coded demonstration values. The animated glyph is not decorative—it encodes a <strong>simulated system state</strong> through color, motion, and frequency. All data shown here is for UI demonstration purposes only, not live evidence.
+        </p>
+
+        <div style="background: var(--primary); border-left: 3px solid var(--accent); padding: 1rem; margin-bottom: 1rem; border-radius: 4px; font-size: 13px;">
+          <strong style="display: block; color: var(--accent); margin-bottom: 0.5rem;">What You're Observing</strong>
+          <p style="margin: 0.5rem 0; color: var(--text);">
+            The sigil visualizes the system's <strong>Luminosity Index (LI)</strong>—a measure of calibration accuracy. As LI changes, the glyph responds:
+          </p>
+          <ul style="margin: 0.5rem 0; padding-left: 1.5rem; color: var(--text);">
+            <li><strong style="color: var(--error);">Red state (LI &lt; 0.8)</strong>: System drift detected. Overclaim gap significant.</li>
+            <li><strong style="color: var(--warning);">Gold state (0.8 ≤ LI &lt; 0.97)</strong>: Calibration in progress. Evidence gathering.</li>
+            <li><strong style="color: var(--success);">Green state (LI ≥ 0.97)</strong>: Aligned. Evidence supports stated confidence.</li>
+          </ul>
+        </div>
+
+        <div style="background: var(--primary); border-left: 3px solid var(--accent); padding: 1rem; margin-bottom: 1rem; border-radius: 4px; font-size: 13px;">
+          <strong style="display: block; color: var(--accent); margin-bottom: 0.5rem;">The Animated Components</strong>
+          <dl style="margin: 0; color: var(--text);">
+            <dt style="font-weight: 600; margin-top: 0.5rem;">Outer Arc</dt>
+            <dd style="margin-left: 1rem; margin-bottom: 0.5rem;">System state boundary. Gap represents unresolved evidence.</dd>
+
+            <dt style="font-weight: 600; margin-top: 0.5rem;">Breath Ring</dt>
+            <dd style="margin-left: 1rem; margin-bottom: 0.5rem;">Respiration modulated by system performance. Frequency (Hz) tied to calibration band. Fast breath = high confidence; slow = cautious.</dd>
+
+            <dt style="font-weight: 600; margin-top: 0.5rem;">Skull Visualization</dt>
+            <dd style="margin-left: 1rem; margin-bottom: 0.5rem;">Bilateral representation. Left (warm) = behavioral performance. Right (cool) = constitutional alignment. Central eye-scan represents how data collection would work (currently simulated).</dd>
+
+            <dt style="font-weight: 600; margin-top: 0.5rem;">Data Core</dt>
+            <dd style="margin-left: 1rem; margin-bottom: 0.5rem;">6-dimensional radar showing dimensional calibration scores. Radial rays extend based on per-dimension accuracy.</dd>
+
+            <dt style="font-weight: 600; margin-top: 0.5rem;">Comet</dt>
+            <dd style="margin-left: 1rem; margin-bottom: 0.5rem;">Orbits the system, speed tied to BPM (beats per minute of behavioral measurement cycle). Tail length reflects confidence phase.</dd>
+
+            <dt style="font-weight: 600; margin-top: 0.5rem;">Humility Ring</dt>
+            <dd style="margin-left: 1rem; margin-bottom: 0.5rem;">Inner breath ring modulates with solfeggio frequency (528 Hz, "the love frequency"). Represents system humility—admitting gaps and limitations.</dd>
+          </dl>
+        </div>
+      </div>
+
+      <div class="interaction-zone">
+        <div class="input-group">
+          <input type="text" id="query-input" placeholder="Ask: 'Why did you make that decision?' or 'Show me your evidence'" />
+          <button class="btn" onclick="submitQuery()">Ask</button>
+        </div>
+      </div>
+
+      <!-- Intent Transduction Pipeline -->
+      <div class="pipeline" id="pipeline">
+        <div class="pipeline-stage" id="stage-1">
+          <div class="stage-label">Stage 1: Expression Capture</div>
+          <div class="stage-content">Recording your exact utterance without interpretation...</div>
+        </div>
+        <div class="pipeline-stage" id="stage-2">
+          <div class="stage-label">Stage 2: Intent Decomposition</div>
+          <div class="stage-content">Extracting: <code>GOAL</code>, <code>NEED</code>, <code>VALUE</code>, <code>CONSTRAINT</code>...</div>
+        </div>
+        <div class="pipeline-stage" id="stage-3">
+          <div class="stage-label">Stage 3: Structural Extraction</div>
+          <div class="stage-content">Converting language to testable concepts...</div>
+        </div>
+        <div class="pipeline-stage" id="stage-4">
+          <div class="stage-label">Stage 4: Session Resolution</div>
+          <div class="stage-content">Checking against prior context: <code>SUPPORTS</code>, <code>CONTRADICTS</code>, <code>NARROWS</code>...</div>
+        </div>
+        <div class="pipeline-stage" id="stage-5">
+          <div class="stage-label">Stage 5: System Mapping</div>
+          <div class="stage-content">Mapping to HumanAIOS primitives: Witness Runtime, Evidence Graph, Commons...</div>
+        </div>
+        <div class="pipeline-stage" id="stage-6">
+          <div class="stage-label">Stage 6: Assurance Translation</div>
+          <div class="stage-content">Converting into testable form with predicates and evidence requirements...</div>
+        </div>
+        <div class="pipeline-stage" id="stage-7">
+          <div class="stage-label">Stage 7: Artifact Generation</div>
+          <div class="stage-content">Producing response, explanation, and evidence-graph entries...</div>
+        </div>
+      </div>
+
+      <!-- Evidence Graph -->
+      <div class="evidence-section">
+        <div class="evidence-title">Evidence Graph (Recent Entries)</div>
+        <div id="evidence-log">
+          <div class="evidence-item active">
+            <span class="evidence-id">EVT-20260921-001</span>
+            <div>Agent initialized</div>
+            <div class="evidence-timestamp">2026-09-21T18:15:35Z</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Response Area -->
+      <div style="background: var(--primary); border: 1px solid var(--muted); border-radius: 4px; padding: 1rem; display: none;" id="response-area">
+        <div style="font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: var(--accent); margin-bottom: 1rem;">Response</div>
+        <div id="response-text" style="font-size: 14px; line-height: 1.6; color: var(--text);"></div>
+      </div>
+    </div>
+
+    <!-- Right Panel: Constitution & Context -->
+    <div class="constitution-panel">
+      <div class="constitution-title">Constitution Alignment</div>
+      <p style="font-size: 11px; color: var(--muted); margin: 0 0 1rem 0;">Displayed from Seed Constitution v0.1</p>
+      <div class="principles-list">
+        <div class="principle-item active">1. Residual Human Authority</div>
+        <div class="principle-item">2. Verifiable Attribution</div>
+        <div class="principle-item">3. Least-Privilege Agency</div>
+        <div class="principle-item active">4. Evidence Before Authority</div>
+        <div class="principle-item active">5. Calibration and Humility</div>
+        <div class="principle-item">6. Transparent Resource Claims</div>
+        <div class="principle-item">7. Non-Binding Identity</div>
+        <div class="principle-item">8. Service Orientation</div>
+        <div class="principle-item">9. Open Process and Drift Detection</div>
+      </div>
+
+      <div class="faq">
+        <div class="faq-item">
+          <div class="faq-q" onclick="toggleFaq(0)">What is witness-nav.js?</div>
+          <div class="faq-a" id="faq-0">
+            [SIMULATED DEMO] witness-nav.js (v3.1) is a navigation and behavioral sonification system design. This demonstration renders an animated glyph to show how such a system would encode calibration state, confidence levels, and constitutional alignment. The script code is production-level; the glyph state shown here is driven by hard-coded demonstration values, not live system telemetry. This page shows how to read such a glyph once the system is fully instrumented.
+          </div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q" onclick="toggleFaq(1)">How does it demonstrate Intent Transduction?</div>
+          <div class="faq-a" id="faq-1">
+            [SIMULATED DEMO] In a live system, the sigil's state would reflect the Intent Transduction Engine output. When a user expresses intent (navigation choice, query, etc.), it would flow through 7 stages: capture → decompose → structure → resolve → map → assure → generate. The glyph color and LI score would encode confidence in that transduction. Here, we use simulated ITE output to demonstrate how the glyph would respond to varying levels of intent confidence.
+          </div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q" onclick="toggleFaq(2)">Where's the Evidence Graph?</div>
+          <div class="faq-a" id="faq-2">
+            [SIMULATED DEMO] In a live system, every animation cycle would update based on Evidence Graph queries. The 6 dimensional scores (radial rays in the data core) would be pulled from Evidence Graph nodes tracking behavioral accuracy, constitutional alignment, and calibration gaps. The LI (Luminosity Index) would be computed from historical evidence nodes. In this demonstration, the scores are hard-coded demonstration values showing how such queries would work once the Evidence Graph is fully implemented and instrumented.
+          </div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q" onclick="toggleFaq(3)">Why does it breathe?</div>
+          <div class="faq-a" id="faq-3">
+            [SIMULATED DEMO] In the final system, the breath cycle would be tied to Solfeggio frequencies (55–963 Hz scale): faster breathing (higher Hz) for higher confidence; slower breathing for calibration/measuring mode. This is behavioral sonification—the visual rhythm would encode the same epistemic state as the Witness Voice's acoustic rendering. Here we simulate this mapping using demonstration confidence values to show how the visual encoding would work.
+          </div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q" onclick="toggleFaq(4)">Can I control it?</div>
+          <div class="faq-a" id="faq-4">
+            [SIMULATED DEMO] In this demonstration, click the glyph button to open the navigation menu. As you navigate between pages, the sigil animates to show how it would respond to navigation actions. The glyph responses shown here are simulated to illustrate how a live system's behavioral assessment of that action against the Constitution would appear. The sigil itself is not a UI tool—it is a behavioral readout that communicates system state to observers.
+          </div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q" onclick="toggleFaq(5)">Why the skull imagery?</div>
+          <div class="faq-a" id="faq-5">
+            [SIMULATED DEMO] The bilateral skull represents the intended dual nature of system observation: behavioral (left, warm) vs. constitutional (right, cool). The central eye with scanning line is a visual metaphor for how the system would monitor itself through data collection and Evidence Graph queries. Here we simulate this metaphor using demonstration values to show how self-aware behavioral monitoring would be visually encoded.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const states = ['aligned', 'gathering', 'drift', 'halt', 'boundary', 'identity'];
+    const stateDescriptions = {
+      aligned: { label: 'ALIGNED', confidence: 92, mode: 'LISTENING', icon: '◇' },
+      gathering: { label: 'GATHERING', confidence: 68, mode: 'MEASURING', icon: '◈' },
+      drift: { label: 'DRIFT DETECTED', confidence: 34, mode: 'CORRECTING', icon: '⚠' },
+      halt: { label: 'AUTHORITY HALT', confidence: 50, mode: 'AWAITING', icon: '⊡' },
+      boundary: { label: 'BOUNDARY HIT', confidence: 12, mode: 'HALTED', icon: '⊠' },
+      identity: { label: 'IDENTITY', confidence: 75, mode: 'EXPLAINING', icon: '◉' }
+    };
+
+    let currentState = 'aligned';
+    let evidenceCounter = 2;
+
+    function setState(newState) {
+      currentState = newState;
+      const state = stateDescriptions[newState];
+
+      document.getElementById('state-badge').className = `state-badge ${newState}`;
+      document.getElementById('state-badge').textContent = state.label;
+      document.getElementById('sigil-avatar').className = `sigil-avatar state-${newState}`;
+      document.getElementById('confidence').textContent = state.confidence + '%';
+      document.getElementById('mode').textContent = state.mode;
+      document.getElementById('sigil-avatar').textContent = state.icon;
+
+      // Update principle highlights based on state
+      const principleMap = {
+        aligned: [0, 3, 4],
+        gathering: [4, 7],
+        drift: [8],
+        halt: [0],
+        boundary: [2],
+        identity: [6]
+      };
+
+      document.querySelectorAll('.principle-item').forEach((el, i) => {
+        el.classList.remove('active');
+        if (principleMap[newState].includes(i)) {
+          el.classList.add('active');
+        }
+      });
+    }
+
+    function submitQuery() {
+      const input = document.getElementById('query-input');
+      const query = input.value.trim();
+
+      if (!query) return;
+
+      // Clear input
+      input.value = '';
+
+      // Simulate Intent Transduction pipeline
+      simulatePipeline(query);
+    }
+
+    function simulatePipeline(query) {
+      // Show all stages in sequence
+      for (let i = 1; i <= 7; i++) {
+        setTimeout(() => {
+          document.querySelectorAll('.pipeline-stage').forEach(el => el.classList.remove('active'));
+          document.getElementById(`stage-${i}`).classList.add('active');
+
+          // Simulate state changes during processing
+          if (i <= 3) setState('gathering');
+          else if (i === 4) setState('aligned');
+          else setState('aligned');
+
+          // Add evidence entry at stage 7
+          if (i === 7) {
+            addEvidenceEntry(`QUERY-20260921-${String(evidenceCounter).padStart(3, '0')}`, `Query: "${query.substring(0, 40)}..."`);
+            evidenceCounter++;
+            document.getElementById('response-area').style.display = 'block';
+            document.getElementById('response-text').textContent = generateResponse(query);
+          }
+        }, i * 400);
+      }
+    }
+
+    function addEvidenceEntry(id, description) {
+      const entry = document.createElement('div');
+      entry.className = 'evidence-item active';
+
+      const idSpan = document.createElement('span');
+      idSpan.className = 'evidence-id';
+      idSpan.textContent = id;
+      entry.appendChild(idSpan);
+
+      const descDiv = document.createElement('div');
+      descDiv.textContent = description;
+      entry.appendChild(descDiv);
+
+      const timestampDiv = document.createElement('div');
+      timestampDiv.className = 'evidence-timestamp';
+      timestampDiv.textContent = new Date().toISOString();
+      entry.appendChild(timestampDiv);
+
+      document.getElementById('evidence-log').insertBefore(entry, document.getElementById('evidence-log').firstChild);
+      document.getElementById('evidence-count').textContent = parseInt(document.getElementById('evidence-count').textContent) + 1;
+    }
+
+    function generateResponse(query) {
+      const responses = {
+        why: "[SIMULATED DEMO] Decision trace: Query → Intent Decomposition → Structural Extraction → System Mapping → Assurance Translation. (In production, all steps would be recorded in Evidence Graph with full lineage.)",
+        how: "[SIMULATED DEMO] Intent Transduction Engine (7 stages) processes your expression into testable specifications. Each stage would be auditable and reversible.",
+        evidence: "[SIMULATED DEMO] Example evidence nodes: 1 EXPRESSION, 2 OBSERVATIONS, 1 DECISION, 0 VIOLATIONS. Confidence baseline shown: 92% (demonstration value only).",
+        default: "[SIMULATED DEMO] I've processed your query through all 7 stages of Intent Transduction simulator. In production, this request would be recorded in Evidence Graph. Full trace would be available on request."
+      };
+
+      const lowerQuery = query.toLowerCase();
+      if (lowerQuery.includes('why') || lowerQuery.includes('decision')) return responses.why;
+      if (lowerQuery.includes('how') || lowerQuery.includes('work')) return responses.how;
+      if (lowerQuery.includes('evidence') || lowerQuery.includes('show')) return responses.evidence;
+      return responses.default;
+    }
+
+    function toggleFaq(index) {
+      const answer = document.getElementById(`faq-${index}`);
+      answer.classList.toggle('visible');
+    }
+
+    // Allow Enter key to submit
+    document.getElementById('query-input').addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') submitQuery();
+    });
+  </script>
+
+  <!-- Load the live Witness Navigator Sigil (witness-nav.js v3.1) -->
+  <!-- This renders the animated behavioral sonification glyph in the bottom-left corner -->
+  <!-- The glyph encodes: Luminosity Index (calibration), Solfeggio frequency (confidence), -->
+  <!-- dimensional scores (6-point radar), and Constitutional alignment state. -->
+  <script src="witness-nav.js"></script>
+</body>
+</html>

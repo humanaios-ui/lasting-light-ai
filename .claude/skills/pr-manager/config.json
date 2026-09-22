@@ -1,0 +1,127 @@
+{
+  "name": "pr-manager",
+  "version": "1.0.0",
+  "description": "PR Manager Agent — Governance-aware PR tracking and progression",
+  "enabled": true,
+  "commands": {
+    "status": {
+      "description": "Real-time dashboard of all open PRs",
+      "usage": "/pr-manager status",
+      "zones": ["Z1", "Z2", "Z3"]
+    },
+    "blockers": {
+      "description": "Show only PRs with active blockers, ranked by severity",
+      "usage": "/pr-manager blockers",
+      "zones": ["Z1", "Z2", "Z3"]
+    },
+    "action-plan": {
+      "description": "Detailed next-steps plan for a specific PR",
+      "usage": "/pr-manager action-plan <PR#>",
+      "zones": ["Z1", "Z2", "Z3"],
+      "requires_arg": "PR number"
+    },
+    "zone": {
+      "description": "Filter PRs by governance zone",
+      "usage": "/pr-manager zone <Z1|Z2|Z3>",
+      "zones": ["Z1", "Z2", "Z3"],
+      "requires_arg": "Zone"
+    },
+    "batch-assign": {
+      "description": "Generate instructions for batch operations",
+      "usage": "/pr-manager batch-assign <ZONE> <ACTION>",
+      "zones": ["Z1", "Z2"],
+      "requires_args": ["Zone", "Action (review|merge|fix)"]
+    }
+  },
+  "configuration": {
+    "github": {
+      "owner": "humanaios-ui",
+      "repo": "lasting-light-ai",
+      "base_branch": "main"
+    },
+    "governance": {
+      "z1_canonical_email": "claude@anthropic.com",
+      "z2_canonical_email": "carly.r.anderson@gmail.com",
+      "z2_business_email": "aioshuman@gmail.com",
+      "z2_decision_window_hours": 48,
+      "z2_urgent_window_hours": 24
+    },
+    "pr_manager": {
+      "enabled": true,
+      "watch_zones": ["Z1", "Z2", "Z3"],
+      "blockers_threshold": "MAJOR",
+      "auto_dashboard": true,
+      "receipt_reconciliation": true,
+      "smag_confidence_floor": 0.50,
+      "show_merge_conflict_as_critical": true,
+      "batch_size_limit": 10,
+      "dashboard_refresh_interval_seconds": 300
+    },
+    "molt": {
+      "tier_0_max_time_hours": 4,
+      "tier_1_max_time_hours": 24,
+      "tier_2_max_time_hours": 72,
+      "anti_cascade_k": 3,
+      "revert_freeze_threshold": 2
+    },
+    "blockers": {
+      "ci_red_severity": "CRITICAL",
+      "ci_flake_severity": "MINOR",
+      "merge_conflict_severity": "CRITICAL",
+      "review_pending_severity": "MAJOR",
+      "review_comment_severity": "MAJOR",
+      "receipt_gap_severity": "CRITICAL",
+      "z2_await_hash_severity": "MAJOR",
+      "z3_await_deploy_severity": "MINOR"
+    },
+    "time_estimates": {
+      "ci_red_fix_minutes": 90,
+      "ci_flake_rerun_minutes": 30,
+      "merge_conflict_resolve_minutes": 30,
+      "review_pending_hours": 24,
+      "review_comment_address_minutes": 60,
+      "receipt_gap_hours": 48,
+      "z2_ratification_hours": 24
+    }
+  },
+  "integrations": {
+    "github_mcp": {
+      "enabled": true,
+      "tools": [
+        "mcp__github__list_pull_requests",
+        "mcp__github__pull_request_read",
+        "mcp__github__get_check_run",
+        "mcp__github__pull_request_review_write"
+      ]
+    },
+    "registered_md": {
+      "enabled": true,
+      "live_fetch": true,
+      "pin_sha": true
+    },
+    "priority_queue": {
+      "enabled": true,
+      "read_only": true
+    },
+    "zone_registry": {
+      "enabled": true,
+      "read_only": true
+    }
+  },
+  "output_formats": {
+    "dashboard": "ascii_boxes",
+    "blockers": "ranked_list",
+    "action_plan": "detailed_text",
+    "batch_assign": "checklist_with_estimates"
+  },
+  "permissions": {
+    "read_pr_metadata": true,
+    "read_github_api": true,
+    "read_registered_md": true,
+    "read_priority_queue": true,
+    "read_zone_registry": true,
+    "write_pr_comments": false,
+    "execute_merge": false,
+    "execute_deploy": false
+  }
+}
