@@ -45,6 +45,17 @@ PROTOCOL
   ├─ RESEARCH_PROTOCOL (measurement method)
   ├─ CALIBRATION_PROTOCOL (behavioral alignment check)
   └─ ACAT_PROTOCOL (behavioral assessment)
+
+INTENT
+  ├─ DECLARED_INTENT (human-stated goal, value, constraint, prohibition)
+  └─ INFERRED_INTENT (system interpretation from behavior or context)
+
+OMISSION
+  ├─ DENIED (participant revoked consent/observation)
+  ├─ LOST (collection failure, system outage)
+  ├─ FILTERED (data removed by privacy/anonymization process)
+  ├─ UNOBSERVABLE (system cannot measure this predicate)
+  └─ UNKNOWN (not explained; may be investigative finding)
 ```
 
 ### Edge Types
@@ -54,6 +65,8 @@ CAUSED_BY       (consequence ← action)
 INFORMED_BY     (decision ← evidence)
 WARRANTS        (warrant → authorization)
 CONTRADICTS     (claim ↔ claim)
+CONTESTED       (claim challenged by alternative evidence)
+EVIDENCED_BY    (claim supported by evidence events)
 RESOLVES        (correction → prior error)
 TRACES_TO       (implementation → intent)
 MEASURES        (observation → predicate)
@@ -303,6 +316,27 @@ CORRECTION-456 (new): "System operates within bounds ON RESEARCH TRACK only"
 ```
 
 Both remain in the graph. Authority and downstream decisions are updated to use CORRECTION-456.
+
+---
+
+## Cryptographic Auditability
+
+The specification claims the Evidence Graph is "cryptographically auditable" to ensure:
+- **Integrity**: Node and edge contents cannot be modified after creation
+- **Lineage**: Full derivation path from raw observation to final decision is verifiable
+- **Immutability Proof**: Append-only constraint is enforced and verifiable
+
+**Proposed Mechanism (TODO - In Development):**
+- Each node carries a content hash (SHA-256 of the node's canonical JSON representation)
+- Each edge includes the hash of its source and target nodes to form a directed acyclic graph (DAG)
+- Periodic "merkle snapshots" create a cumulative hash of all nodes as of a timestamp
+- Challenge queries can verify a claim's entire evidence chain by recomputing hashes
+- The constitution version/hash is embedded in every node's metadata for version tracking
+
+**Integrity Requirements:**
+- Node creation is signed by the actor (HUMAN.PGP_KEY, AGENT.SIGNING_KEY, SYSTEM.KEY)
+- Graph database enforces append-only constraint at storage layer
+- Any attempt to modify historical nodes is cryptographically detectable
 
 ---
 

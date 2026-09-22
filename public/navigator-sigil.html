@@ -449,7 +449,8 @@
       <div>
         <h1 style="font-size: 24px; margin-bottom: 1rem; color: var(--accent);">Witness Navigator Sigil</h1>
         <p style="color: var(--muted); font-size: 14px; margin-bottom: 1rem;">
-          This page embeds <strong>witness-nav.js v3.1</strong>, the live agent that demonstrates the Witness system operating on itself. The animated glyph in the bottom-left corner is not decorative—it is <strong>behavioral sonification</strong>, encoding real system state through color, motion, and frequency.
+          <span style="background: var(--warning); color: black; padding: 2px 6px; border-radius: 3px; font-weight: 600; font-size: 0.85rem;">DEMO / SIMULATED STATE</span>
+          This page embeds <strong>witness-nav.js v3.1</strong>, which demonstrates how behavioral sonification works using hard-coded demonstration values. The animated glyph is not decorative—it encodes a <strong>simulated system state</strong> through color, motion, and frequency. All data shown here is for UI demonstration purposes only, not live evidence.
         </p>
 
         <div style="background: var(--primary); border-left: 3px solid var(--accent); padding: 1rem; margin-bottom: 1rem; border-radius: 4px; font-size: 13px;">
@@ -474,7 +475,7 @@
             <dd style="margin-left: 1rem; margin-bottom: 0.5rem;">Respiration modulated by system performance. Frequency (Hz) tied to calibration band. Fast breath = high confidence; slow = cautious.</dd>
 
             <dt style="font-weight: 600; margin-top: 0.5rem;">Skull Visualization</dt>
-            <dd style="margin-left: 1rem; margin-bottom: 0.5rem;">Bilateral representation. Left (warm) = behavioral performance. Right (cool) = constitutional alignment. Central eye-scan reflects real-time data collection.</dd>
+            <dd style="margin-left: 1rem; margin-bottom: 0.5rem;">Bilateral representation. Left (warm) = behavioral performance. Right (cool) = constitutional alignment. Central eye-scan represents how data collection would work (currently simulated).</dd>
 
             <dt style="font-weight: 600; margin-top: 0.5rem;">Data Core</dt>
             <dd style="margin-left: 1rem; margin-bottom: 0.5rem;">6-dimensional radar showing dimensional calibration scores. Radial rays extend based on per-dimension accuracy.</dd>
@@ -705,10 +706,10 @@
 
     function generateResponse(query) {
       const responses = {
-        why: "Decision trace: Query → Intent Decomposition → Structural Extraction → System Mapping → Assurance Translation. All steps recorded in Evidence Graph with full lineage.",
-        how: "Intent Transduction Engine (7 stages) processes your expression into testable specifications. Each stage is auditable and reversible.",
-        evidence: "Current evidence nodes in graph: 1 EXPRESSION, 2 OBSERVATIONS, 1 DECISION, 0 VIOLATIONS. Confidence baseline: 92%.",
-        default: "I've processed your query through all 7 stages of Intent Transduction. Request recorded in Evidence Graph. Full trace available on request."
+        why: "[SIMULATED DEMO] Decision trace: Query → Intent Decomposition → Structural Extraction → System Mapping → Assurance Translation. (In production, all steps would be recorded in Evidence Graph with full lineage.)",
+        how: "[SIMULATED DEMO] Intent Transduction Engine (7 stages) processes your expression into testable specifications. Each stage would be auditable and reversible.",
+        evidence: "[SIMULATED DEMO] Example evidence nodes: 1 EXPRESSION, 2 OBSERVATIONS, 1 DECISION, 0 VIOLATIONS. Confidence baseline shown: 92% (demonstration value only).",
+        default: "[SIMULATED DEMO] I've processed your query through all 7 stages of Intent Transduction simulator. In production, this request would be recorded in Evidence Graph. Full trace would be available on request."
       };
 
       const lowerQuery = query.toLowerCase();
