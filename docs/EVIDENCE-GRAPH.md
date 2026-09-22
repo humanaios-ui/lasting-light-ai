@@ -8,7 +8,7 @@
 
 The Evidence Graph is the shared substrate connecting all system behavior. It records events, claims, controls, tests, omissions, warrants, decisions, resources, actions, consequences, and corrections.
 
-It is append-only, cryptographically auditable, and queryable by all authorized parties (humans and agents).
+The intended Evidence Graph is designed to be append-only, cryptographically auditable, and queryable by all authorized parties (humans and agents).
 
 ## Core Structure
 
