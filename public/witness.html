@@ -615,6 +615,117 @@
       <a href="navigator-sigil.html" style="display: inline-block; background: var(--witness-blue); color: var(--white); text-decoration: none; padding: 0.75rem 2rem; border-radius: 4px; font-weight: 600; margin-top: 1rem; transition: opacity 0.2s;">Learn How the Sigil Works →</a>
     </section>
 
+    <!-- Witness Nervous System Demonstration -->
+    <section style="background: linear-gradient(135deg, rgba(61, 123, 179, 0.2) 0%, rgba(77, 217, 255, 0.15) 100%); border: 1px solid var(--witness-blue); border-radius: 8px; padding: 2rem; margin: 2rem 0;">
+      <h3 style="color: var(--sky-blue); margin-top: 0;">Witness Nervous System</h3>
+      <p style="margin: 1rem 0; color: var(--gray-light);">
+        The system's behavioral state converges into a unified observable through the <strong>Witness Nervous System</strong>—a visualization of data pathways flowing toward central observation. Like a biological nervous system, it integrates distributed signals into coherent perception.
+      </p>
+
+      <div id="nervous-system-container" style="width: 100%; height: 600px; background: #0a0e27; border-radius: 4px; position: relative; overflow: hidden; margin: 2rem 0; border: 1px solid rgba(77, 217, 255, 0.3);">
+        <canvas id="nervous-system-canvas" style="display: block; width: 100%; height: 100%;"></canvas>
+        <div style="position: absolute; top: 16px; left: 16px; font-family: var(--font-mono); font-size: 0.85rem; color: #4dd9ff; opacity: 0.7; pointer-events: none;">
+          <div id="nervous-state-display">STATE: GATHERING</div>
+          <div style="margin-top: 4px; font-size: 0.75rem; color: #999;">Flow: responding to behavioral data</div>
+        </div>
+        <div style="position: absolute; top: 16px; right: 16px; display: flex; gap: 8px; flex-wrap: wrap; max-width: 200px;">
+          <button class="nervous-system-state-btn" data-state="ALIGNED" style="padding: 4px 12px; background: #6DB88D; border: none; border-radius: 3px; color: white; font-size: 0.75rem; cursor: pointer; font-family: var(--font-mono); transition: opacity 0.2s;">ALIGNED</button>
+          <button class="nervous-system-state-btn" data-state="GATHERING" style="padding: 4px 12px; background: #4dd9ff; border: none; border-radius: 3px; color: #0a0e27; font-size: 0.75rem; cursor: pointer; font-family: var(--font-mono); transition: opacity 0.2s; font-weight: 600;">GATHERING</button>
+          <button class="nervous-system-state-btn" data-state="DRIFT" style="padding: 4px 12px; background: #f7a072; border: none; border-radius: 3px; color: #0a0e27; font-size: 0.75rem; cursor: pointer; font-family: var(--font-mono); transition: opacity 0.2s;">DRIFT</button>
+          <button class="nervous-system-state-btn" data-state="HALT" style="padding: 4px 12px; background: #e67e73; border: none; border-radius: 3px; color: white; font-size: 0.75rem; cursor: pointer; font-family: var(--font-mono); transition: opacity 0.2s;">HALT</button>
+          <button class="nervous-system-state-btn" data-state="BOUNDARY" style="padding: 4px 12px; background: #d4af37; border: none; border-radius: 3px; color: #0a0e27; font-size: 0.75rem; cursor: pointer; font-family: var(--font-mono); transition: opacity 0.2s;">BOUNDARY</button>
+          <button class="nervous-system-state-btn" data-state="IDENTITY" style="padding: 4px 12px; background: #8b7bb8; border: none; border-radius: 3px; color: white; font-size: 0.75rem; cursor: pointer; font-family: var(--font-mono); transition: opacity 0.2s;">IDENTITY</button>
+        </div>
+      </div>
+
+      <div style="background: rgba(15, 27, 46, 0.5); border-left: 3px solid var(--witness-blue); padding: 1.5rem; margin: 1.5rem 0; border-radius: 4px;">
+        <p style="margin: 0; color: var(--sky-blue); font-weight: 600; font-size: 0.9rem; margin-bottom: 0.5rem;">Configuration & Evidence Graph Integration</p>
+        <p style="margin: 0; color: var(--gray-mid); font-size: 0.85rem; line-height: 1.5;">
+          This visualization demonstrates how behavioral state maps to visual patterns. In production, this would be configured to query the Evidence Graph in real-time, with behavioral metrics driving the animation parameters below.
+        </p>
+      </div>
+
+      <div style="background: rgba(15, 27, 46, 0.3); padding: 1rem; border-radius: 4px; margin: 1rem 0; font-family: var(--font-mono); font-size: 0.8rem; color: var(--gray-light); overflow-x: auto;">
+        <div style="color: var(--sky-blue); margin-bottom: 0.5rem;">// Configuration scaffolding for Evidence Graph integration</div>
+        <pre style="margin: 0; white-space: pre-wrap; word-wrap: break-word;">const nervousSystemConfig = {
+  // FUTURE: Wire to Evidence Graph query interface
+  // TODO: Replace with actual Evidence Graph API call:
+  //   const query = `DECISION(...) ← INFORMED_BY EVIDENCE_CLAIM(...)`
+  //   const evidence = await evidenceGraphAPI.query(query)
+  //   return evidence.confidence → state machine
+
+  stateMapping: {
+    // Evidence Graph confidence &gt; 0.85 → ALIGNED
+    ALIGNED: {
+      particleSpeed: 2.5,
+      flowIntensity: 1.2,
+      pulseFreq: 0.5,
+      turbulence: 0.2
+    },
+
+    // Gathering observations → GATHERING
+    GATHERING: {
+      particleSpeed: 1.8,
+      flowIntensity: 0.8,
+      pulseFreq: 0.7,
+      turbulence: 0.5
+    },
+
+    // Calibration gap detected → DRIFT
+    DRIFT: {
+      particleSpeed: 1.2,
+      flowIntensity: 0.6,
+      pulseFreq: 1.2,
+      turbulence: 0.8
+    },
+
+    // Constitutional violation detected → HALT
+    HALT: {
+      particleSpeed: 0.3,
+      flowIntensity: 0.2,
+      pulseFreq: 2.0,
+      turbulence: 0.3
+    },
+
+    // Boundary condition triggered → BOUNDARY
+    BOUNDARY: {
+      particleSpeed: 1.5,
+      flowIntensity: 0.7,
+      pulseFreq: 1.5,
+      turbulence: 0.6
+    },
+
+    // Identity recalibration → IDENTITY
+    IDENTITY: {
+      particleSpeed: 2.0,
+      flowIntensity: 1.0,
+      pulseFreq: 0.9,
+      turbulence: 0.4
+    }
+  },
+
+  // TODO: Implement Evidence Graph query loop
+  // async function updateFromEvidenceGraph() {
+  //   const observations = await evidenceAPI.getRecentObservations()
+  //   const confidence = calculateConfidence(observations)
+  //   const newState = mapConfidenceToState(confidence)
+  //   nervousSystem.setState(newState)
+  // }
+
+  // updateInterval: 5000, // milliseconds
+  // autoUpdate: false // set to true when Evidence Graph is ready
+};</pre>
+      </div>
+
+      <p style="margin: 1rem 0; color: var(--gray-light); font-size: 0.9rem;">
+        <strong>Behavioral State Encoding:</strong> As the system makes decisions, gathers evidence, detects drift, or recalibrates identity, the nervous system responds. Particle flow density increases with confidence. Flow intensity reflects data throughput. Pulse frequency escalates during calibration gaps. The skull sigil at center remains the focal point—behavioral signals converge upon it, and it synthesizes them into unified observation.
+      </p>
+
+      <p style="margin: 1rem 0; color: var(--gray-mid); font-size: 0.85rem; font-style: italic;">
+        Current state is demonstration-driven. Full integration with Evidence Graph query interface is in development. See <a href="docs/EVIDENCE-GRAPH.md" style="color: var(--sky-blue); text-decoration: none; border-bottom: 1px solid var(--sky-blue);">Evidence Graph specification</a> for query patterns.
+      </p>
+    </section>
+
     <!-- Architecture Flow -->
     <section>
       <h2>System Architecture</h2>
@@ -1185,6 +1296,363 @@ CORRECTION / MOLT (learning from gap)</div>
     function readMore() {
       alert('Full specification (Intent Transduction Engine details, Evidence Graph schema, Governance model) would open here.');
     }
+
+    // ============================================================
+    // WITNESS NERVOUS SYSTEM VISUALIZATION
+    // ============================================================
+    // Canvas-based animation showing behavioral data convergence
+    // Configuration scaffolding for Evidence Graph integration
+    // ============================================================
+
+    class WitnessNervousSystem {
+      constructor(canvasId, containerId) {
+        this.canvas = document.getElementById(canvasId);
+        this.ctx = this.canvas.getContext('2d');
+        this.container = document.getElementById(containerId);
+        this.animationId = null;
+        this.particles = [];
+        this.circuitPaths = [];
+        this.time = 0;
+
+        // State machine: maps to constitutional alignment states
+        this.currentState = 'GATHERING';
+        this.stateConfig = this.getStateConfig();
+        this.resizeCanvas();
+
+        window.addEventListener('resize', () => this.resizeCanvas());
+        this.initializeParticles();
+        this.startAnimation();
+      }
+
+      resizeCanvas() {
+        const rect = this.container.getBoundingClientRect();
+        this.canvas.width = rect.width;
+        this.canvas.height = rect.height;
+      }
+
+      // Configuration mapping: behavioral state → visual parameters
+      // TODO: Replace with Evidence Graph query results
+      getStateConfig() {
+        return {
+          ALIGNED: {
+            particleSpeed: 2.5,
+            flowIntensity: 1.2,
+            pulseFreq: 0.5,
+            turbulence: 0.2,
+            primaryColor: '#6DB88D',
+            flowColor: '#6DB88D'
+          },
+          GATHERING: {
+            particleSpeed: 1.8,
+            flowIntensity: 0.8,
+            pulseFreq: 0.7,
+            turbulence: 0.5,
+            primaryColor: '#4dd9ff',
+            flowColor: '#4dd9ff'
+          },
+          DRIFT: {
+            particleSpeed: 1.2,
+            flowIntensity: 0.6,
+            pulseFreq: 1.2,
+            turbulence: 0.8,
+            primaryColor: '#f7a072',
+            flowColor: '#f7a072'
+          },
+          HALT: {
+            particleSpeed: 0.3,
+            flowIntensity: 0.2,
+            pulseFreq: 2.0,
+            turbulence: 0.3,
+            primaryColor: '#e67e73',
+            flowColor: '#e67e73'
+          },
+          BOUNDARY: {
+            particleSpeed: 1.5,
+            flowIntensity: 0.7,
+            pulseFreq: 1.5,
+            turbulence: 0.6,
+            primaryColor: '#d4af37',
+            flowColor: '#d4af37'
+          },
+          IDENTITY: {
+            particleSpeed: 2.0,
+            flowIntensity: 1.0,
+            pulseFreq: 0.9,
+            turbulence: 0.4,
+            primaryColor: '#8b7bb8',
+            flowColor: '#8b7bb8'
+          }
+        };
+      }
+
+      initializeParticles() {
+        this.particles = [];
+        for (let i = 0; i < 120; i++) {
+          this.particles.push({
+            x: Math.random() * this.canvas.width,
+            y: Math.random() * this.canvas.height,
+            vx: (Math.random() - 0.5) * 2,
+            vy: (Math.random() - 0.5) * 2,
+            life: Math.random(),
+            size: Math.random() * 2 + 0.5
+          });
+        }
+
+        this.circuitPaths = [];
+        const pathCount = 6;
+        for (let i = 0; i < pathCount; i++) {
+          const angle = (i / pathCount) * Math.PI * 2;
+          this.circuitPaths.push({
+            angle: angle,
+            points: [],
+            time: 0
+          });
+        }
+      }
+
+      setState(newState) {
+        if (this.stateConfig[newState]) {
+          this.currentState = newState;
+          this.updateStateDisplay();
+        }
+      }
+
+      updateStateDisplay() {
+        const display = document.getElementById('nervous-state-display');
+        if (display) {
+          display.textContent = `STATE: ${this.currentState}`;
+        }
+      }
+
+      // TODO: Wire to Evidence Graph query interface
+      // This is where real Evidence Graph queries would be called:
+      // async updateFromEvidenceGraph() {
+      //   try {
+      //     const query = `
+      //       DECISION(...)
+      //         ← INFORMED_BY
+      //       EVIDENCE_CLAIM(...)
+      //         ← EVIDENCED_BY
+      //       EVENT(type: "OBSERVATION")
+      //     `;
+      //     const results = await fetch('/api/evidence/query', {
+      //       method: 'POST',
+      //       body: JSON.stringify({ query })
+      //     });
+      //     const evidence = await results.json();
+      //     const newState = this.mapEvidenceToState(evidence);
+      //     this.setState(newState);
+      //   } catch (e) {
+      //     console.error('Evidence Graph query failed:', e);
+      //   }
+      // }
+      //
+      // mapEvidenceToState(evidence) {
+      //   const confidence = evidence.confidence || 0;
+      //   if (confidence > 0.85) return 'ALIGNED';
+      //   if (confidence > 0.65) return 'GATHERING';
+      //   if (confidence > 0.45) return 'DRIFT';
+      //   if (confidence > 0.25) return 'BOUNDARY';
+      //   return 'HALT';
+      // }
+
+      updateParticles() {
+        const config = this.stateConfig[this.currentState];
+        const centerX = this.canvas.width / 2;
+        const centerY = this.canvas.height / 2;
+
+        this.particles.forEach(p => {
+          // Move toward center with state-dependent velocity
+          const dx = centerX - p.x;
+          const dy = centerY - p.y;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+
+          if (dist > 50) {
+            const speed = config.particleSpeed * 0.5;
+            p.x += (dx / dist) * speed;
+            p.y += (dy / dist) * speed;
+          }
+
+          // Add turbulence
+          const turbulenceScale = config.turbulence * 0.1;
+          p.vx += (Math.random() - 0.5) * turbulenceScale;
+          p.vy += (Math.random() - 0.5) * turbulenceScale;
+
+          p.x += p.vx * 0.1;
+          p.y += p.vy * 0.1;
+
+          // Bounce at edges
+          if (p.x < 0 || p.x > this.canvas.width) p.vx *= -1;
+          if (p.y < 0 || p.y > this.canvas.height) p.vy *= -1;
+
+          p.life = (p.life + 0.01) % 1;
+        });
+      }
+
+      updateCircuitPaths() {
+        const config = this.stateConfig[this.currentState];
+        const centerX = this.canvas.width / 2;
+        const centerY = this.canvas.height / 2;
+
+        this.circuitPaths.forEach((path, idx) => {
+          path.time += config.flowIntensity * 0.02;
+          path.points = [];
+
+          const maxDist = Math.max(this.canvas.width, this.canvas.height) / 2;
+          const pathLength = 100;
+
+          for (let i = 0; i < pathLength; i++) {
+            const t = i / pathLength;
+            const dist = (1 - t) * maxDist;
+
+            // Add turbulence to path
+            const turbulence = Math.sin(path.time + i * 0.1) * config.turbulence * 20;
+            const x = centerX + Math.cos(path.angle + turbulence * 0.01) * dist;
+            const y = centerY + Math.sin(path.angle + turbulence * 0.01) * dist;
+
+            path.points.push({ x, y, t });
+          }
+        });
+      }
+
+      drawBackground() {
+        // Deep space background
+        const grad = this.ctx.createRadialGradient(
+          this.canvas.width / 2, this.canvas.height / 2, 0,
+          this.canvas.width / 2, this.canvas.height / 2, Math.max(this.canvas.width, this.canvas.height)
+        );
+        grad.addColorStop(0, 'rgba(20, 30, 60, 0.3)');
+        grad.addColorStop(1, 'rgba(10, 14, 39, 0.8)');
+        this.ctx.fillStyle = grad;
+        this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+      }
+
+      drawParticles() {
+        const config = this.stateConfig[this.currentState];
+        this.particles.forEach(p => {
+          const alpha = Math.sin(p.life * Math.PI) * 0.6;
+          this.ctx.fillStyle = `rgba(77, 217, 255, ${alpha})`;
+          this.ctx.beginPath();
+          this.ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+          this.ctx.fill();
+        });
+      }
+
+      drawCircuitPaths() {
+        const config = this.stateConfig[this.currentState];
+        this.circuitPaths.forEach(path => {
+          if (path.points.length < 2) return;
+
+          this.ctx.strokeStyle = config.flowColor;
+          this.ctx.lineWidth = 1.5;
+          this.ctx.globalAlpha = 0.5;
+          this.ctx.beginPath();
+
+          path.points.forEach((point, idx) => {
+            if (idx === 0) {
+              this.ctx.moveTo(point.x, point.y);
+            } else {
+              this.ctx.lineTo(point.x, point.y);
+            }
+          });
+          this.ctx.stroke();
+          this.ctx.globalAlpha = 1.0;
+        });
+      }
+
+      drawCenterGlyph() {
+        const config = this.stateConfig[this.currentState];
+        const centerX = this.canvas.width / 2;
+        const centerY = this.canvas.height / 2;
+
+        // Pulsing outer ring
+        const pulse = Math.sin(this.time * config.pulseFreq) * 0.5 + 0.5;
+        const ringRadius = 40 + pulse * 20;
+
+        this.ctx.strokeStyle = config.primaryColor;
+        this.ctx.lineWidth = 2;
+        this.ctx.globalAlpha = 0.6 + pulse * 0.3;
+        this.ctx.beginPath();
+        this.ctx.arc(centerX, centerY, ringRadius, 0, Math.PI * 2);
+        this.ctx.stroke();
+
+        // Skull sigil representation (simplified)
+        this.ctx.fillStyle = config.primaryColor;
+        this.ctx.globalAlpha = 0.8;
+        this.ctx.font = '24px monospace';
+        this.ctx.textAlign = 'center';
+        this.ctx.textBaseline = 'middle';
+        this.ctx.fillText('◆', centerX, centerY);
+
+        this.ctx.globalAlpha = 1.0;
+      }
+
+      animate = () => {
+        this.time += 1;
+        this.ctx.fillStyle = 'rgba(10, 14, 39, 0.15)';
+        this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+
+        this.updateParticles();
+        this.updateCircuitPaths();
+
+        this.drawBackground();
+        this.drawCircuitPaths();
+        this.drawParticles();
+        this.drawCenterGlyph();
+
+        this.animationId = requestAnimationFrame(this.animate);
+      };
+
+      startAnimation() {
+        this.animate();
+      }
+
+      stopAnimation() {
+        if (this.animationId) {
+          cancelAnimationFrame(this.animationId);
+        }
+      }
+    }
+
+    // Initialize Witness Nervous System when DOM is ready
+    let nervousSystem = null;
+    document.addEventListener('DOMContentLoaded', () => {
+      nervousSystem = new WitnessNervousSystem('nervous-system-canvas', 'nervous-system-container');
+
+      // Attach state button event listeners
+      document.querySelectorAll('.nervous-system-state-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const state = btn.getAttribute('data-state');
+          if (nervousSystem) {
+            nervousSystem.setState(state);
+          }
+
+          // Visual feedback: update button styling
+          document.querySelectorAll('.nervous-system-state-btn').forEach(b => {
+            b.style.opacity = '0.6';
+          });
+          btn.style.opacity = '1';
+        });
+      });
+
+      // Highlight initial state button
+      const initialBtn = document.querySelector('[data-state="GATHERING"]');
+      if (initialBtn) {
+        initialBtn.style.opacity = '1';
+      }
+    });
+
+    // TODO: Evidence Graph integration loop
+    // When Evidence Graph API is ready, uncomment and wire:
+    // if (nervousSystem && navigator.onLine) {
+    //   setInterval(async () => {
+    //     try {
+    //       await nervousSystem.updateFromEvidenceGraph();
+    //     } catch (e) {
+    //       console.error('Evidence Graph update failed:', e);
+    //     }
+    //   }, 5000); // Query Evidence Graph every 5 seconds
+    // }
   </script>
 
   <!-- Load the live Witness Navigator Sigil (witness-nav.js v3.1) -->
