@@ -34,9 +34,9 @@ export async function fetchLiveStats(): Promise<LiveStats | null> {
     if (Array.isArray(data) && data.length > 0) {
       const row = data[0];
       return {
-        n_total: row.n_total ?? 630,
-        n_phase1: row.n_phase1 ?? 517,
-        n_li: row.n_li ?? 308,
+        n_total: row.n_total ?? 629,
+        n_phase1: row.n_phase1 ?? 516,
+        n_li: row.n_li ?? 307,
         mean_li: row.mean_li ?? 0.8632,
         self_assessment_gap: row.self_assessment_gap ?? 37.16,
         overall_ans: row.overall_ans ?? 79.8,
