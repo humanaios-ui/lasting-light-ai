@@ -18,6 +18,14 @@ interface RegimeAProps {
   problemId?: string;
 }
 
+interface RegimeADraft {
+  synthesis: string;
+  confidence: number;
+  evidenceRefs: string;
+  recommendation: string;
+  agreeToPublish: boolean;
+}
+
 export function RegimeA({ problemId = 'problem-01-coherence' }: RegimeAProps) {
   const navigate = useNavigate();
   const pseudonym = usePseudonym();
@@ -29,11 +37,11 @@ export function RegimeA({ problemId = 'problem-01-coherence' }: RegimeAProps) {
 
   // Form state - initialize from localStorage if available
   const draftKey = `regime-a-draft-${problemId}`;
-  const getDraft = () => {
+  const getDraft = (): RegimeADraft | null => {
     const savedDraft = localStorage.getItem(draftKey);
     if (savedDraft) {
       try {
-        const draft = JSON.parse(savedDraft);
+        const draft: Partial<RegimeADraft> = JSON.parse(savedDraft);
         return {
           synthesis: draft.synthesis || '',
           confidence: draft.confidence || 5,
