@@ -4,9 +4,9 @@ import { fetchLiveStats, type LiveStats } from '../lib/supabase';
 
 // Fallback data (archived from previous phase)
 const fallbackData: LiveStats = {
-  n_total: 630,
-  n_phase1: 517,
-  n_li: 308,
+  n_total: 629,
+  n_phase1: 516,
+  n_li: 307,
   mean_li: 0.8632,
   self_assessment_gap: 37.16,
   overall_ans: 79.8,
