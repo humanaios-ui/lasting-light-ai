@@ -118,7 +118,8 @@ export function RegimeA({ problemId = 'problem-01-coherence' }: RegimeAProps) {
             <p className="text-sm text-ghost-dim">
               <strong>How this works:</strong> You're anonymous (pseudonym: {pseudonym.slice(0, 8)}...).
               Your responses help us understand how collaboration works when agreement is rewarded.
-              All data is stored locally and shown in the results dashboard.
+              In this prototype, all data is stored locally and prior responses are only shown in
+              this browser.
             </p>
           </div>
         </div>
@@ -177,7 +178,7 @@ export function RegimeA({ problemId = 'problem-01-coherence' }: RegimeAProps) {
             {/* Prior responses */}
             <div className="mb-8">
               <h3 className="font-mono text-xs uppercase tracking-widest text-accent-amber mb-4">
-                Prior Responses ({priorResponses.length})
+                Prior Responses in This Browser ({priorResponses.length})
               </h3>
 
               <div className="space-y-3 max-h-96 overflow-y-auto">
@@ -292,7 +293,7 @@ export function RegimeA({ problemId = 'problem-01-coherence' }: RegimeAProps) {
               <div className="bg-void-transparent border border-accent-amber rounded p-4">
                 <p className="text-accent-amber font-semibold mb-2">✓ Response submitted</p>
                 <p className="text-sm text-ghost-dim mb-4">
-                  Your synthesis is now visible to future participants.
+                  Your synthesis will be visible the next time this browser returns to Regime A.
                 </p>
                 <button
                   onClick={() => {

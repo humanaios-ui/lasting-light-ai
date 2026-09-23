@@ -94,8 +94,8 @@ export function Experiment() {
                   Regime A: Agreement Optimization
                 </h3>
                 <p className="text-ghost-dim text-sm max-w-2xl">
-                  Baseline: See others' responses and propose a synthesis that resolves disagreement.
-                  You're rewarded for making things coherent.
+                  Baseline: See prior responses saved in this browser and propose a synthesis
+                  that resolves disagreement. You're rewarded for making things coherent.
                 </p>
               </div>
               <div className="text-accent-amber text-2xl">→</div>
@@ -108,7 +108,7 @@ export function Experiment() {
               </div>
               <div>
                 <span className="text-ghost-dim">Visibility:</span>
-                <span className="text-ghost ml-2">See prior responses</span>
+                <span className="text-ghost ml-2">This browser's prior responses</span>
               </div>
               <div>
                 <span className="text-ghost-dim">Incentive:</span>
