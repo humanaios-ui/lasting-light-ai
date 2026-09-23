@@ -71,7 +71,7 @@ export function Experiment() {
               <code className="font-mono text-accent-amber">{pseudonym.slice(0, 12)}...</code>
               <br />
               <span className="text-ghost-dim text-xs">
-                This ID is stored in your browser. You can opt into identity at any time.
+                Identity opt-in is not currently available in this prototype.
               </span>
             </p>
           </div>
