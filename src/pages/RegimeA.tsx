@@ -41,7 +41,7 @@ export function RegimeA({ problemId = 'problem-01-coherence' }: RegimeAProps) {
           recommendation: draft.recommendation || '',
           agreeToPublish: draft.agreeToPublish !== false,
         };
-      } catch (e) {
+      } catch {
         return null;
       }
     }

@@ -19,7 +19,6 @@ const fallbackData: LiveStats = {
 export function LiveDataSection() {
   const [stats, setStats] = useState<LiveStats>(fallbackData);
   const [isLive, setIsLive] = useState(false);
-  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const loadStats = async () => {
@@ -28,7 +27,6 @@ export function LiveDataSection() {
         setStats(liveStats);
         setIsLive(true);
       }
-      setLoading(false);
     };
     loadStats();
   }, []);
