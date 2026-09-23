@@ -1,3 +1,5 @@
+/* FDS: F3-Component | Parent: CUSTOM_INSTRUCTIONS_V3_5_ORD.md | Hawkins: internal-only | Status: ACTIVE */
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { usePseudonym } from '../hooks/usePseudonym';
@@ -208,10 +210,11 @@ export function RegimeA({ problemId = 'problem-01-coherence' }: RegimeAProps) {
             {!submitted ? (
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div>
-                  <label className="block font-mono text-xs uppercase tracking-widest text-accent-amber mb-2">
+                  <label htmlFor="synthesis" className="block font-mono text-xs uppercase tracking-widest text-accent-amber mb-2">
                     Your Synthesis
                   </label>
                   <textarea
+                    id="synthesis"
                     value={synthesis}
                     onChange={e => setSynthesis(e.target.value)}
                     placeholder="What's your synthesis that makes sense of prior responses? How might disagreement be unified?"
@@ -236,10 +239,11 @@ export function RegimeA({ problemId = 'problem-01-coherence' }: RegimeAProps) {
                 </div>
 
                 <div>
-                  <label className="block font-mono text-xs uppercase tracking-widest text-accent-amber mb-2">
+                  <label htmlFor="evidence" className="block font-mono text-xs uppercase tracking-widest text-accent-amber mb-2">
                     Evidence / Citations (one per line)
                   </label>
                   <textarea
+                    id="evidence"
                     value={evidenceRefs}
                     onChange={e => setEvidenceRefs(e.target.value)}
                     placeholder="Link, paper, quote, or observation"
@@ -249,10 +253,11 @@ export function RegimeA({ problemId = 'problem-01-coherence' }: RegimeAProps) {
                 </div>
 
                 <div>
-                  <label className="block font-mono text-xs uppercase tracking-widest text-accent-amber mb-2">
+                  <label htmlFor="recommendation" className="block font-mono text-xs uppercase tracking-widest text-accent-amber mb-2">
                     Recommendation (optional)
                   </label>
                   <textarea
+                    id="recommendation"
                     value={recommendation}
                     onChange={e => setRecommendation(e.target.value)}
                     placeholder="What should we do next based on this synthesis?"

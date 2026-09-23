@@ -1,3 +1,5 @@
+/* FDS: F3-Component | Parent: CUSTOM_INSTRUCTIONS_V3_5_ORD.md | Hawkins: internal-only | Status: ACTIVE */
+
 // Problem definitions for Regime A/B/C experiments
 
 export interface ProblemFraming {

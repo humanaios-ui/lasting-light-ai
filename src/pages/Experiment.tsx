@@ -1,3 +1,5 @@
+/* FDS: F3-Component | Parent: CUSTOM_INSTRUCTIONS_V3_5_ORD.md | Hawkins: internal-only | Status: ACTIVE */
+
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { usePseudonym } from '../hooks/usePseudonym';
@@ -116,9 +118,8 @@ export function Experiment() {
           </button>
 
           {/* Regime B */}
-          <button
-            onClick={() => navigate('/regime-b')}
-            className="w-full text-left p-8 bg-void-transparent border-2 border-accent-amber-dim hover:border-accent-amber rounded-lg transition group opacity-60 cursor-not-allowed"
+          <div
+            className="w-full text-left p-8 bg-void-transparent border-2 border-accent-amber-dim rounded-lg group opacity-60 cursor-not-allowed"
           >
             <div className="flex items-start justify-between mb-4">
               <div>
@@ -151,12 +152,11 @@ export function Experiment() {
             <div className="mt-4 px-3 py-2 bg-accent-amber-dim rounded text-xs text-ghost-dim font-mono">
               Coming soon
             </div>
-          </button>
+          </div>
 
           {/* Regime C */}
-          <button
-            onClick={() => navigate('/regime-c')}
-            className="w-full text-left p-8 bg-void-transparent border-2 border-accent-amber-dim hover:border-accent-amber rounded-lg transition group opacity-60 cursor-not-allowed"
+          <div
+            className="w-full text-left p-8 bg-void-transparent border-2 border-accent-amber-dim rounded-lg group opacity-60 cursor-not-allowed"
           >
             <div className="flex items-start justify-between mb-4">
               <div>
