@@ -100,8 +100,11 @@ function TopNav({ meanLI }: { meanLI: number }) {
           {NAV_GROUPS.map(group =>
             group.items.map(item => {
               const isInternal = item.href.startsWith('/assess') || item.href.startsWith('/experiment');
+              const activePaths = item.href === '/experiment'
+                ? ['/experiment', '/regime-a']
+                : [item.href];
               const active = isInternal
-                ? location.pathname === '/assess' || location.pathname === '/experiment' || location.pathname === '/regime-a'
+                ? activePaths.includes(location.pathname)
                 : false;
 
               const baseStyle: React.CSSProperties = {

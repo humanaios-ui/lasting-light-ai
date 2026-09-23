@@ -9,4 +9,20 @@ describe('App shell', () => {
     expect(screen.getByText('HumanAIOS')).toBeInTheDocument();
     expect(screen.getByText('Why This Is Not Optional')).toBeInTheDocument();
   });
+
+  it('highlights the experiment nav item only for experiment routes', () => {
+    window.history.pushState({}, '', '/assess');
+    const { unmount } = render(<App />);
+    expect(screen.getByRole('link', { name: 'Constitutional Experiment' })).toHaveStyle({
+      background: 'transparent',
+    });
+
+    unmount();
+
+    window.history.pushState({}, '', '/regime-a');
+    render(<App />);
+    expect(screen.getByRole('link', { name: 'Constitutional Experiment' })).toHaveStyle({
+      background: 'rgba(212,160,74,0.1)',
+    });
+  });
 });
