@@ -45,6 +45,11 @@ export interface Submission {
   confidence?: number;
   evidence_refs?: string[];
   recommendation?: string;
+  boundaries?: {
+    can_contact: boolean;
+    can_cite: boolean;
+    opted_into_identity: boolean;
+  };
   exported_from_github?: boolean;
 }
 
@@ -84,7 +89,11 @@ export function getPseudonym(): string {
 }
 
 // Submit a response to a regime
-export function submitResponse(regime: 'A' | 'B' | 'C', problemId: string, data: any): Submission {
+export function submitResponse(
+  regime: 'A' | 'B' | 'C',
+  problemId: string,
+  data: Partial<Submission>
+): Submission {
   const submission: Submission = {
     id: uuidv4(),
     participant_id: getPseudonym(),
@@ -93,7 +102,7 @@ export function submitResponse(regime: 'A' | 'B' | 'C', problemId: string, data:
     timestamp: Date.now(),
     ...data,
     exported_from_github: false,
-  };
+  } as Submission;
 
   const submissions = getAllSubmissions();
   submissions.push(submission);

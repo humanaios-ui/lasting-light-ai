@@ -34,10 +34,12 @@ export function RegimeA({ problemId = 'problem-01-coherence' }: RegimeAProps) {
 
   useEffect(() => {
     const loaded = getProblem(problemId);
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setProblem(loaded);
     if (loaded) {
       // Load prior responses for this problem
       const responses = getRegimeAResponses(problemId);
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setPriorResponses(responses);
     }
   }, [problemId]);

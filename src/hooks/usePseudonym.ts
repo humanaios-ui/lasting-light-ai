@@ -1,12 +1,8 @@
-import { useState, useEffect } from 'react';
-import { getPseudonym } from '../lib/storage';
+import { useState } from 'react';
+import { getPseudonym as generatePseudonym } from '../lib/storage';
 
-export function usePseudonym(): string | null {
-  const [pseudonym, setPseudonym] = useState<string | null>(null);
-
-  useEffect(() => {
-    setPseudonym(getPseudonym());
-  }, []);
+export function usePseudonym(): string {
+  const [pseudonym] = useState<string>(() => generatePseudonym());
 
   return pseudonym;
 }
