@@ -76,8 +76,8 @@ export function RegimeA({ problemId = 'problem-01-coherence' }: RegimeAProps) {
       recommendation,
       agreeToPublish,
     };
-    localStorage.setItem(draftKey, JSON.stringify(draft));
-  }, [synthesis, confidence, evidenceRefs, recommendation, agreeToPublish, draftKey]);
+    if (!submitted) localStorage.setItem(draftKey, JSON.stringify(draft));
+  }, [synthesis, confidence, evidenceRefs, recommendation, agreeToPublish, draftKey, submitted]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
