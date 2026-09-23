@@ -189,7 +189,7 @@ export function Experiment() {
             <div className="mt-4 px-3 py-2 bg-accent-amber-dim rounded text-xs text-ghost-dim font-mono">
               Coming soon
             </div>
-          </button>
+          </div>
         </div>
 
         {/* Research context */}
