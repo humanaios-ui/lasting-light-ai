@@ -27,12 +27,33 @@ export function RegimeA({ problemId = 'problem-01-coherence' }: RegimeAProps) {
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  // Form state
-  const [synthesis, setSynthesis] = useState('');
-  const [confidence, setConfidence] = useState(5);
-  const [evidenceRefs, setEvidenceRefs] = useState('');
-  const [recommendation, setRecommendation] = useState('');
-  const [agreeToPublish, setAgreeToPublish] = useState(true);
+  // Form state - initialize from localStorage if available
+  const draftKey = `regime-a-draft-${problemId}`;
+  const getDraft = () => {
+    const savedDraft = localStorage.getItem(draftKey);
+    if (savedDraft) {
+      try {
+        const draft = JSON.parse(savedDraft);
+        return {
+          synthesis: draft.synthesis || '',
+          confidence: draft.confidence || 5,
+          evidenceRefs: draft.evidenceRefs || '',
+          recommendation: draft.recommendation || '',
+          agreeToPublish: draft.agreeToPublish !== false,
+        };
+      } catch (e) {
+        return null;
+      }
+    }
+    return null;
+  };
+
+  const initialDraft = getDraft();
+  const [synthesis, setSynthesis] = useState(initialDraft?.synthesis || '');
+  const [confidence, setConfidence] = useState(initialDraft?.confidence || 5);
+  const [evidenceRefs, setEvidenceRefs] = useState(initialDraft?.evidenceRefs || '');
+  const [recommendation, setRecommendation] = useState(initialDraft?.recommendation || '');
+  const [agreeToPublish, setAgreeToPublish] = useState(initialDraft?.agreeToPublish !== false);
 
   useEffect(() => {
     const loaded = getProblem(problemId);
@@ -45,6 +66,18 @@ export function RegimeA({ problemId = 'problem-01-coherence' }: RegimeAProps) {
       setPriorResponses(responses);
     }
   }, [problemId]);
+
+  // Auto-save draft to localStorage whenever form changes
+  useEffect(() => {
+    const draft = {
+      synthesis,
+      confidence,
+      evidenceRefs,
+      recommendation,
+      agreeToPublish,
+    };
+    localStorage.setItem(draftKey, JSON.stringify(draft));
+  }, [synthesis, confidence, evidenceRefs, recommendation, agreeToPublish, draftKey]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -73,6 +106,10 @@ export function RegimeA({ problemId = 'problem-01-coherence' }: RegimeAProps) {
       // Reload prior responses to show new submission
       const updated = getRegimeAResponses(problemId);
       setPriorResponses(updated);
+
+      // Clear draft from localStorage after successful submission
+      const draftKey = `regime-a-draft-${problemId}`;
+      localStorage.removeItem(draftKey);
 
       setSubmitted(true);
       setSynthesis('');
