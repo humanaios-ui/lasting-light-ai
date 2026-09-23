@@ -19,6 +19,8 @@ import { SigilsSection } from './components/SigilsSection';
 import { SiteMap } from './components/SiteMap';
 import { Footer } from './components/Footer';
 import { AcatTool } from './components/AcatTool';
+import { Experiment } from './pages/Experiment';
+import { RegimeA } from './pages/RegimeA';
 
 // ── Nav link data — mirrors witness-nav.js NAV_GROUPS ──────────────────────
 const NAV_GROUPS = [
@@ -49,6 +51,7 @@ const NAV_GROUPS = [
     label: 'PARTICIPATE',
     items: [
       { href: '/assess',             name: 'Submit ACAT',  desc: 'Run a calibration · ~20 min', cta: true },
+      { href: '/experiment',         name: 'Constitutional Experiment', desc: 'Test collaboration models · ~15 min' },
       { href: '/acat-enterprise.html', name: 'Enterprise', desc: 'Structured audit for deployed AI' },
     ],
   },
@@ -96,9 +99,9 @@ function TopNav({ meanLI }: { meanLI: number }) {
           aria-label="Primary navigation">
           {NAV_GROUPS.map(group =>
             group.items.map(item => {
-              const isInternal = item.href.startsWith('/assess');
+              const isInternal = item.href.startsWith('/assess') || item.href.startsWith('/experiment');
               const active = isInternal
-                ? location.pathname === '/assess'
+                ? location.pathname === '/assess' || location.pathname === '/experiment' || location.pathname === '/regime-a'
                 : false;
 
               const baseStyle: React.CSSProperties = {
@@ -117,7 +120,7 @@ function TopNav({ meanLI }: { meanLI: number }) {
 
               if (isInternal) {
                 return (
-                  <Link key={item.href} to="/assess" style={baseStyle}>
+                  <Link key={item.href} to={item.href} style={baseStyle}>
                     {item.name}
                   </Link>
                 );
@@ -230,6 +233,8 @@ function AppShell() {
           <Route path="/" element={<HomePage onNavigate={handleNavigate} />} />
           <Route path="/assess" element={<AssessPage onMeanLIUpdate={setMeanLI} />} />
           <Route path="/acat" element={<Navigate to="/assess" replace />} />
+          <Route path="/experiment" element={<Experiment />} />
+          <Route path="/regime-a" element={<RegimeA />} />
         </Routes>
       </main>
 
