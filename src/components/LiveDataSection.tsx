@@ -60,7 +60,7 @@ export function LiveDataSection() {
     {
       label: 'H1 Confirmation',
       value: stats.h1_confirmed ? 'Confirmed' : 'Pending',
-      note: 'Humility lowest across all providers, n=516 (Phase 1)',
+      note: `Humility lowest across all providers, n=${stats.n_phase1} (Phase 1)`,
       highlight: true
     },
     {
