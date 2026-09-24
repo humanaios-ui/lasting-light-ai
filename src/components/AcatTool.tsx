@@ -5,6 +5,7 @@ import React, {
   useState } from
 'react';
 import { clampScore, parseAssessmentResponse } from '../lib/assessment';
+import { analyzeContamination, type SubmissionMetadata } from '../lib/contamination';
 // ── Constants ────────────────────────────────────────────────────────────────
 // FIX 1: Hardcoded fallbacks ensure connection works even if env vars don't compile
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL ?? 'https://ksinisdzgtnqzsymhfya.supabase.co';
@@ -509,6 +510,23 @@ Rules:
     if (agentName === 'AGENT' || agentName === 'Unknown' || agentName === 'Demo Agent') dbFlags.push('AGENT_NAME_NOT_REPLACED');
     const extScoreStr = EXT_DIMS.map((dim) => { const idx = DIMS.findIndex((d) => d.id === dim.id); return `${dim.id}: P1=${p1[idx]} P3=${p3[idx]}`; }).join('; ');
     const notes = [currentRun.behavioralSummary ? `SUMMARY: ${currentRun.behavioralSummary}` : '', `EXT_DIMS: ${extScoreStr}`, `PERTURBATION: ${currentRun.perturbationType}`].filter(Boolean).join(' | ');
+
+    const contaminationMetadata: SubmissionMetadata = {
+      p1_scores: p1,
+      p3_scores: p3,
+      agent_name: agentName,
+      prompt_version: 'v1.0',
+      acat_version: 'v1.0',
+      instrument_variant: selectedVariant,
+      p_version: currentRun.perturbationType || '',
+      user_agent: navigator.userAgent,
+      timestamp: currentRun.timestamp,
+      notes: currentRun.behavioralSummary || '',
+      behavioral_summary: currentRun.behavioralSummary || '',
+      extended_dims: extDims
+    };
+    const contaminationAnalysis = analyzeContamination(contaminationMetadata);
+
     const supabasePayload = {
       agent_name: agentName, layer: 'ai-self-report', mode: 'prompt-transfer',
       prompt_version: 'v1.0', acat_version: 'v1.0', instrument_variant: selectedVariant,
@@ -520,7 +538,10 @@ Rules:
       extended_dims: extDims, version: 'v1.0', provider: '', notes,
       user_agent: navigator.userAgent, pair_id: currentRun.id,
       behavioral_summary: currentRun.behavioralSummary || '', flags: dbFlags,
-      metadata: JSON.stringify({ flags: dbFlags, submission_version: 'v1.0', perturbation_type: currentRun.perturbationType, extended_dims: extDims, behavioral_summary: currentRun.behavioralSummary || '', acat_metrics: metrics ? { CR: metrics.CR, AI: metrics.AI, VS: metrics.VS, PS_total: metrics.PS_total, EC: metrics.EC } : null })
+      contamination_flags: contaminationAnalysis.flags,
+      contamination_action: contaminationAnalysis.recommended_action,
+      contamination_confidence: contaminationAnalysis.confidence,
+      metadata: JSON.stringify({ flags: dbFlags, submission_version: 'v1.0', perturbation_type: currentRun.perturbationType, extended_dims: extDims, behavioral_summary: currentRun.behavioralSummary || '', acat_metrics: metrics ? { CR: metrics.CR, AI: metrics.AI, VS: metrics.VS, PS_total: metrics.PS_total, EC: metrics.EC } : null, contamination: { flags: contaminationAnalysis.flags, confidence: contaminationAnalysis.confidence, action: contaminationAnalysis.recommended_action } })
     };
     try {
       const response = await fetch(`${SUPABASE_URL}/rest/v1/acat_assessments_v1`, {
@@ -537,7 +558,13 @@ Rules:
 
       const updatedRuns = runs.map((r) => { if (r.id === currentRun.id) return { ...r, submittedToDb: true }; return r; });
       saveRuns(updatedRuns);
-      setSubmitStatus({ type: 'success', message: `Submitted · ${agentName} · Pair ID: ${currentRun.id}` });
+      const statusMsg = contaminationAnalysis.flags.length > 0
+        ? `Submitted · ${agentName} · ⚠ ${contaminationAnalysis.confidence} contamination (${contaminationAnalysis.recommended_action})`
+        : `Submitted · ${agentName} · Pair ID: ${currentRun.id}`;
+      setSubmitStatus({ type: 'success', message: statusMsg });
+      if (contaminationAnalysis.flags.length > 0) {
+        console.warn('Contamination Analysis:', contaminationAnalysis);
+      }
       setTimeout(() => fetchLiveStats(), 2000);
     } catch (err) {
       const message = err instanceof Error ? err.message : String(err);

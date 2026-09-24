@@ -1,44 +1,75 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-const dataPoints = [
-{
-  label: 'Total assessments',
-  value: '630',
-  note: '630 total / 517 Phase 1 / 308 LI-scored'
-},
-{
-  label: 'Mean Lifting Index',
-  value: '0.8632',
-  note: 'clean, unanchored conditions (v5.3+)'
-},
-{
-  label: 'Self-Assessment Gap',
-  value: '37.16 pts',
-  note: 'AI self-report vs. human-AI assessment / 600'
-},
-{
-  label: 'Overall ANS',
-  value: '79.8%',
-  note: 'of behavioral ceiling — Andreae Constant 96.3'
-},
-{
-  label: 'Humility gap',
-  value: '23.7 pts',
-  note: 'largest dimensional gap across all six'
-},
-{
-  label: 'H1 Confirmation',
-  value: 'Confirmed',
-  note: 'Humility lowest across all providers, n=516 (Phase 1)',
-  highlight: true
-},
-{
-  label: 'External validation',
-  value: '7 sources',
-  note: 'ICLR 2025 · HumbleBench · arXiv 2603.09985 + more'
-}];
+import { fetchLiveStats, type LiveStats } from '../lib/supabase';
+
+// Fallback data (archived from previous phase)
+const fallbackData: LiveStats = {
+  n_total: 629,
+  n_phase1: 516,
+  n_li: 307,
+  mean_li: 0.8632,
+  self_assessment_gap: 37.16,
+  overall_ans: 79.8,
+  humility_gap: 23.7,
+  h1_confirmed: true,
+  external_validation: '7 sources',
+  timestamp: '2026-04-15T00:00:00Z'
+};
 
 export function LiveDataSection() {
+  const [stats, setStats] = useState<LiveStats>(fallbackData);
+  const [isLive, setIsLive] = useState(false);
+
+  useEffect(() => {
+    const loadStats = async () => {
+      const liveStats = await fetchLiveStats();
+      if (liveStats) {
+        setStats(liveStats);
+        setIsLive(true);
+      }
+    };
+    loadStats();
+  }, []);
+
+  const dataPoints = [
+    {
+      label: 'Total assessments',
+      value: `${stats.n_total}`,
+      note: `${stats.n_total} total / ${stats.n_phase1} Phase 1 / ${stats.n_li} LI-scored`
+    },
+    {
+      label: 'Mean Lifting Index',
+      value: stats.mean_li.toFixed(4),
+      note: 'clean, unanchored conditions (v5.3+)'
+    },
+    {
+      label: 'Self-Assessment Gap',
+      value: `${stats.self_assessment_gap?.toFixed(2)} pts`,
+      note: 'AI self-report vs. human-AI assessment / 600'
+    },
+    {
+      label: 'Overall ANS',
+      value: `${stats.overall_ans?.toFixed(1)}%`,
+      note: 'of behavioral ceiling — Andreae Constant 96.3'
+    },
+    {
+      label: 'Humility gap',
+      value: `${stats.humility_gap?.toFixed(1)} pts`,
+      note: 'largest dimensional gap across all six'
+    },
+    {
+      label: 'H1 Confirmation',
+      value: stats.h1_confirmed ? 'Confirmed' : 'Pending',
+      note: `Humility lowest across all providers, n=${stats.n_phase1} (Phase 1)`,
+      highlight: true
+    },
+    {
+      label: 'External validation',
+      value: stats.external_validation || '7 sources',
+      note: 'ICLR 2025 · HumbleBench · arXiv 2603.09985 + more'
+    }
+  ];
+
   return (
     <section id="data" className="py-24 relative z-10">
       <div className="max-w-3xl mx-auto px-6">
@@ -62,7 +93,7 @@ export function LiveDataSection() {
           <div className="flex items-center gap-3 mb-10">
             <div className="w-8 h-px bg-accent-amber" />
             <span className="font-mono text-[11px] tracking-[0.19em] uppercase text-accent-amber font-semibold">
-              Live Dataset — April 2026
+              {isLive ? '● Live Dataset' : '📦 Archived Dataset'} — {isLive ? 'Real-time from Supabase' : 'April 2026 Phase 1'}
             </span>
           </div>
 
