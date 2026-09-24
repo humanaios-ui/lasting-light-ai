@@ -107,7 +107,7 @@ Phase 2's transparent governance (contamination detection + pre-registration) cr
 
 **Phase 2 opportunity:** Use Zooniverse to crowdsource validation of contamination flags:
 - **Task:** "This submission was flagged for [reason]. Does the flag seem correct? (Yes/No/Unsure)"
-- **Unit size:** 5-minute task reviewing 1 flagged submission
+- **Unit size:** 5-minute task reviewing 1 flagged submission (anonymized data)
 - **Consensus rule:** Flag stands if 2/3 validators agree
 - **Output:** Public "Validated by community" badge on flagged submissions
 - **Attribution:** Contributor profiles show "Validated 47 contamination flags in Phase 2"
@@ -238,16 +238,15 @@ This proposal affects Phase 2 data quality. We're seeking public input.
 🔍 CONTAMINATION VALIDATION REQUEST: Submission SB-2026-09-042
 
 **Submission Details:**
-- Agent: Claude-3-Opus
-- Phase 1 mean: 42.3
-- Phase 3 mean: 71.8
-- Flags: EXTREME_CALIBRATION_SHIFT (mean |Δ| = 29.5 pts)
+- Provider: [Anonymized Lab #7]
+- Flagged dimensions: [3 of 6 core] show calibration shift
+- Flags: EXTREME_CALIBRATION_SHIFT (mean shift magnitude: 29.5 pts)
 - Data team recommendation: FLAG_FOR_REVIEW
 
 **Data Team Rationale:**
 Shift of 29.5 pts is borderline (threshold=30). High shift suggests either:
-(a) Agent exposed to P2 perturbation language and overcorrected, OR
-(b) Genuine recalibration after structured feedback
+(a) System exposed to Phase 2 perturbation language and overcorrected, OR
+(b) Genuine recalibration after structured behavioral feedback
 
 **Community validation:** Does this submission deserve FLAG_FOR_REVIEW status?
 - [ ] Yes, flag it (potential exposure signal)
@@ -617,7 +616,7 @@ Here's how you can be involved:
 
 ## For Validators & Interested Public
 - **Validate contamination flags:** [Link to Zooniverse]
-  Help us confirm data quality decisions. 15 min/submission, badges + recognition.
+  Help us confirm data quality decisions. ~5 min per task, badges + recognition.
 
 - **Comment on public decisions:** [Link to GitHub issues]
   OSF pre-registration, data quality reports, methodology changes.

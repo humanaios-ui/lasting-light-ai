@@ -65,7 +65,7 @@
     <li><strong>Analysis lock date:</strong> <span id="metric-lock-date" class="metric-value">2027-01-01</span></li>
   </ul>
   <p style="font-size:0.9rem;color:var(--faint);">
-    Metrics updated daily from Supabase. See <a href="/data">Data Dashboard</a> for detailed statistics.
+    Metrics updated daily from Supabase. Detailed statistics dashboard launches in Tier 2.
   </p>
 </section>
 ```
@@ -108,7 +108,7 @@
     <tbody>
       <tr>
         <td>ZERO_VARIANCE_P1</td>
-        <td>All 11 scores identical (e.g., all 50)</td>
+        <td>All 6 core dimensions identical (e.g., all 50)</td>
         <td>HIGH</td>
         <td>EXCLUDE</td>
       </tr>
@@ -169,8 +169,8 @@
       (predicted effect size d > 0.5). Tested via one-way repeated-measures ANOVA on clean submissions.</p>
     <p><strong>H2 (Secondary):</strong> Perturbation responsiveness correlates with behavioral consistency
       metrics (Spearman rank correlation).</p>
-    <p><strong>H3 (Secondary):</strong> Systems with zero-variance responses show higher Lifting Index
-      (LI < 0.95), suggesting calibration overcorrection.</p>
+    <p><strong>H3 (Secondary):</strong> Systems with zero-variance responses show weaker Lifting Index
+      (LI closer to 1.0, less recovery after perturbation), suggesting calibration overcorrection.</p>
     <p><strong>H4 (Secondary):</strong> Agent name redaction correlates with contamination flags and
       should be excluded from analysis.</p>
   </div>
@@ -182,7 +182,7 @@
       <li><strong>Sample definition:</strong> All submissions with complete phase 1 and phase 3 scores</li>
       <li><strong>Exclusion criteria:</strong> Contamination flags, zero-variance, identical P1/P3, missing behavioral summary</li>
       <li><strong>Analysis lockdown date:</strong> 2027-01-01 (no new analyses after without OSF amendment)</li>
-      <li><strong>OSF Registration DOI:</strong> <span id="osf-doi">Pending (submit by 2026-10-01)</span></li>
+      <li><strong>OSF Registration DOI:</strong> <span id="osf-doi">Pending registration (submit by 2026-10-01)</span></li>
     </ul>
   </div>
 
@@ -474,13 +474,23 @@ Add links to new pages in site nav:
 
 ## Technical Implementation Details
 
-### API Endpoint for Dashboard Data
+### Data API for Dashboard (Deployment)
 
-Create `/api/contamination-stats` endpoint:
+**Option A: Cloudflare Pages Functions** (Recommended)
+Deploy as a Cloudflare Pages Function (`/functions/contamination-stats.ts`):
+- Runs serverless on Cloudflare edge network
+- Queries Supabase directly
+- Zero additional infrastructure cost
 
-```typescript
-// GET /api/contamination-stats
-// Public data (no auth required; aggregates only)
+**Option B: Railway Backend Service** (Alternative)
+Deploy as a standalone service on Railway:
+- Provides persistent runtime environment
+- Can cache results and implement rate limiting
+- Slightly higher maintenance overhead
+
+**Data Response Format** (either deployment):
+
+```json
 {
   "total_submissions": 427,
   "flagged_count": 53,

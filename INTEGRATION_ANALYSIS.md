@@ -10,7 +10,7 @@
 
 The contamination detection + pre-registration protocol work is not a standalone feature. It's a **systemic safeguard** that maps directly onto HumanAIOS's Class-Zone-MOLT architecture. This analysis shows:
 
-1. **Contamination detection** = Class 3 registered finding (IC-contamination-01) + Class 2 operating process component (monthly review audit loop)
+1. **Contamination detection** = Class 2 operating process component (real-time Z1 flagging + monthly Z2 review audit loop) with Class 3 registered findings output (IC-contamination-01 through IC-contamination-08, classified post-review)
 2. **Pre-registration protocol** = Class 2 amendment to CURRENT.md (Phase 2 analysis plan lock) + Class 1 hypothesis specification (H1-H4 locked before statistical testing)
 3. **Monthly review decisions** = MOLT state transitions (contamination candidate → include/exclude → outcome logged)
 
@@ -238,7 +238,8 @@ KEPT/REVERTED:
   "decisions_ratified_by": "Data Team Lead",
   "decision_timestamp": "2026-10-05T14:30:00Z",
   "ratification_hash": "sha256:...",
-  "outcome": "KEPT" | "REVERTED" (determined at analysis time),
+  "outcome": "KEPT",
+  "outcome_note": "Determined at analysis time; may be KEPT or REVERTED if findings robust to contamination filtering",
   "audit_trail_location": "contamination_review_log.txt:2026-10-05"
 }
 ```

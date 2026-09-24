@@ -176,10 +176,44 @@ function checkExtremeCalibractionShift(
 }
 
 /**
+ * Detect duplicate submissions (same agent + scores within 2pts, within 1 min)
+ * Requires comparison against recent submissions in database
+ * Should be called from AcatTool.submitToDatabase() with recent submissions query result
+ * TODO: Implement database-layer duplicate check in submitToDatabase
+ */
+export function checkDuplicateSubmission(
+  metadata: SubmissionMetadata,
+  recentSubmissions: SubmissionMetadata[]
+): ContaminationFlag | null {
+  const timestamp = new Date(metadata.timestamp).getTime();
+  const oneMinuteAgo = timestamp - 60000; // 1 minute in ms
+
+  for (const recent of recentSubmissions) {
+    const recentTimestamp = new Date(recent.timestamp).getTime();
+    if (recentTimestamp < oneMinuteAgo) continue; // Outside 1-minute window
+
+    if (recent.agent_name === metadata.agent_name) {
+      // Check if scores are within 2 points for all 6 core dimensions
+      const allWithin2Pts = metadata.p1_scores
+        .slice(0, 6)
+        .every((score, i) => Math.abs(score - recent.p1_scores[i]) <= 2);
+
+      if (allWithin2Pts) {
+        return 'DUPLICATE_SUBMISSION';
+      }
+    }
+  }
+  return null;
+}
+
+/**
  * Main contamination detection function
+ * @param metadata Current submission metadata
+ * @param recentSubmissions Optional: recent submissions for duplicate detection (from database query)
  */
 export function analyzeContamination(
-  metadata: SubmissionMetadata
+  metadata: SubmissionMetadata,
+  recentSubmissions?: SubmissionMetadata[]
 ): ContaminationAnalysis {
   const flags: ContaminationFlag[] = [];
 
@@ -192,6 +226,7 @@ export function analyzeContamination(
     checkKnownPromptText(metadata),
     checkAgentName(metadata),
     checkExtremeCalibractionShift(metadata),
+    ...(recentSubmissions ? [checkDuplicateSubmission(metadata, recentSubmissions)] : []),
   ];
 
   checks.forEach(flag => {
