@@ -242,6 +242,55 @@
       </p>
     </div>
 
+    <!-- OSF OAuth Status -->
+    <div id="osf-status" style="display: none; background: linear-gradient(135deg, rgba(122,154,106,0.06), rgba(122,154,106,0.02)); border: 1px solid rgba(122,154,106,0.3); border-radius: 12px; padding: 20px; margin: 28px 0;">
+      <h4 style="color: var(--sage); margin-bottom: 12px;">✅ OSF Authorization Complete</h4>
+      <p id="osf-message" style="color: var(--muted); font-size: 0.9rem;"></p>
+    </div>
+
+    <script>
+      // Handle OSF OAuth callback
+      async function handleOSFCallback() {
+        const params = new URLSearchParams(window.location.search);
+        const code = params.get('code');
+        const error = params.get('error');
+
+        if (error) {
+          console.error('OSF OAuth error:', error);
+          return;
+        }
+
+        if (!code) return;
+
+        try {
+          // Call osf-oauth-callback function with code as query parameter
+          const callbackUrl = `https://ksinisdzgtnqzsymhfya.supabase.co/functions/v1/osf-oauth-callback?code=${encodeURIComponent(code)}`;
+
+          const response = await fetch(callbackUrl, {
+            method: 'GET'
+          });
+
+          if (response.ok) {
+            // Show success message
+            const statusEl = document.getElementById('osf-status');
+            const messageEl = document.getElementById('osf-message');
+            statusEl.style.display = 'block';
+            messageEl.textContent = 'Your HumanAIOS account is now connected to OSF. You can submit the Phase 2 pre-registration protocol.';
+
+            // Clean up URL
+            window.history.replaceState({}, document.title, '/governance');
+          } else {
+            console.error('OSF callback failed:', response.status);
+          }
+        } catch (err) {
+          console.error('OSF callback error:', err);
+        }
+      }
+
+      // Check for OSF callback on page load
+      handleOSFCallback();
+    </script>
+
     <script>
       // Fetch the latest entries from REGISTERED.md
       async function loadRegistry() {
