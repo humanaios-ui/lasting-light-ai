@@ -8,10 +8,12 @@ const corsHeaders = {
 };
 
 serve(async (req) => {
+  // Handle CORS preflight
   if (req.method === "OPTIONS") {
     return new Response("ok", { headers: corsHeaders });
   }
 
+  // Allow unauthenticated requests for OAuth callback
   try {
     const url = new URL(req.url);
     const code = url.searchParams.get("code");
