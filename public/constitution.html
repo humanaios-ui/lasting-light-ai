@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Constitution — HumanAIOS</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300;1,9..40,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0f0e0c;
+    --bg2: #161412;
+    --surface: #1c1916;
+    --surface2: #242018;
+    --border: rgba(220, 190, 140, 0.12);
+    --border2: rgba(220, 190, 140, 0.22);
+    --text: #f0e8d8;
+    --muted: #b8a888;
+    --faint: #6e6254;
+    --accent: #c8924a;
+    --accent2: #e8b870;
+    --gold: #d4a84a;
+    --sage: #7a9a6a;
+    --ember: #c4703a;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'DM Sans', system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+  }
+  h1, h2, h3, h4 { font-family: 'Cormorant Garamond', Georgia, serif; font-weight: 600; line-height: 1.1; }
+
+  nav {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(15,14,12,0.92); backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    padding: 0 48px;
+    display: flex; align-items: center; gap: 32px; height: 56px;
+  }
+  .nav-brand { font-family: 'Cormorant Garamond', serif; font-size: 1rem; font-weight: 600; color: var(--text); text-decoration: none; }
+  .nav-links { display: flex; gap: 24px; margin-left: auto; }
+  .nav-links a { font-size: 0.82rem; color: var(--muted); text-decoration: none; transition: color 0.15s; }
+  .nav-links a:hover { color: var(--text); }
+  .nav-links a.active { color: var(--accent2); }
+  .hamburger { display: none; background: none; border: none; color: var(--muted); cursor: pointer; font-size: 1.4rem; margin-left: auto; }
+  @media(max-width: 768px) {
+    nav { padding: 0 20px; }
+    .nav-links { display: none; }
+    .hamburger { display: block; }
+  }
+
+  .container { max-width: 760px; margin: 0 auto; padding: 0 32px; }
+  @media(max-width: 600px) { .container { padding: 0 20px; } }
+
+  .hero { padding: 80px 0 60px; border-bottom: 1px solid var(--border); }
+  .hero .eyebrow { font-size: 0.72rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.14em; color: var(--accent); margin-bottom: 20px; display: block; }
+  .hero h1 { font-size: clamp(2rem, 5vw, 3rem); color: var(--text); margin-bottom: 20px; }
+  .hero p { font-size: 1rem; color: var(--muted); max-width: 560px; }
+
+  .section { padding: 60px 0; border-bottom: 1px solid var(--border); }
+  .section:last-child { border-bottom: none; }
+  .section-label { font-size: 0.68rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.14em; color: var(--accent); margin-bottom: 12px; display: block; }
+  .section h2 { font-size: clamp(1.6rem, 3vw, 2.2rem); margin-bottom: 24px; }
+  .section h3 { font-size: 1.2rem; margin-bottom: 12px; color: var(--text); }
+  .section p { color: var(--muted); margin-bottom: 16px; }
+  .section p:last-child { margin-bottom: 0; }
+
+  .principle-card {
+    background: linear-gradient(135deg, rgba(200,146,74,0.06), rgba(200,146,74,0.02));
+    border: 1px solid var(--border2);
+    border-radius: 12px;
+    padding: 24px;
+    margin: 20px 0;
+  }
+  .principle-card h3 { color: var(--text); margin-bottom: 12px; font-size: 1.1rem; }
+  .principle-card p { color: var(--muted); margin-bottom: 12px; font-size: 0.95rem; }
+  .principle-card .operational-mapping { color: var(--accent2); font-size: 0.9rem; font-weight: 500; }
+
+  .pull-quote {
+    background: linear-gradient(135deg, rgba(200,146,74,0.06), rgba(200,146,74,0.02));
+    border: 1px solid var(--border2);
+    border-left: 3px solid var(--accent);
+    border-radius: 0 12px 12px 0;
+    padding: 24px 28px;
+    margin: 28px 0;
+  }
+  .pull-quote p { color: var(--text); font-size: 0.95rem; line-height: 1.7; margin-bottom: 12px; }
+
+  .nav-breadcrumb { font-size: 0.8rem; color: var(--muted); margin-top: 20px; }
+  .nav-breadcrumb a { color: var(--accent2); text-decoration: none; }
+  .nav-breadcrumb a:hover { text-decoration: underline; }
+
+  footer {
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+    padding: 40px 0;
+    margin-top: 80px;
+  }
+  footer .container { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 24px; }
+  footer h4 { font-size: 0.9rem; color: var(--text); margin-bottom: 12px; }
+  footer a { color: var(--muted); font-size: 0.85rem; text-decoration: none; display: block; margin-bottom: 8px; }
+  footer a:hover { color: var(--accent); }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="/" class="nav-brand">HumanAIOS</a>
+  <div class="nav-links">
+    <a href="/research">Research</a>
+    <a href="/methods">Methods</a>
+    <a href="/about">About</a>
+    <a href="/governance">Governance</a>
+    <a href="/constitution" class="active">Constitution</a>
+    <a href="https://www.getempirica.com" target="_blank">Empirica</a>
+  </div>
+  <button class="hamburger">☰</button>
+</nav>
+
+<div class="container">
+
+  <section class="hero">
+    <span class="eyebrow">Level 1: Constitutional Foundation</span>
+    <h1>Seed Constitution</h1>
+    <p>Nine principles guiding responsible AI development. These principles define what HumanAIOS commits to and how it measures itself. They are provisional, open to amendment, and grounded in behavioral evidence.</p>
+  </section>
+
+  <section class="section">
+    <span class="section-label">Core Principles</span>
+    <h2>Responsible AI Development</h2>
+
+    <div class="principle-card">
+      <h3>1. Residual Human Authority</h3>
+      <p>Ultimate decision rights over high-stakes, irreversible, or large-scale actions remain with identified human principals. Agents and automated systems must remain corrigible — capable of being paused, corrected, or shut down by authorized humans.</p>
+      <p class="operational-mapping"><strong>How it works:</strong> Zone 2 (Night / Carly) ratifies all significant decisions. Claude never self-executes governance changes.</p>
+    </div>
+
+    <div class="principle-card">
+      <h3>2. Verifiable Attribution</h3>
+      <p>Every action by an AI system that can affect humans, other systems, or shared resources must be attributable to a specific, auditable human principal or to a cryptographically portable identity that survives platform changes.</p>
+      <p class="operational-mapping"><strong>How it works:</strong> All session logs carry session_id, timestamp, and author. Untraceable actions are falsifiers. WGS (Walking Group Sheet) records provenance.</p>
+    </div>
+
+    <div class="principle-card">
+      <h3>3. Least-Privilege Agency</h3>
+      <p>Systems receive only the minimum tools, data access, and external communication rights required for a clearly declared task. Content from untrusted sources (including other agents) is treated as potentially adversarial by default.</p>
+      <p class="operational-mapping"><strong>How it works:</strong> Each Supabase function uses anon keys, not service role keys. Zone 3 executes only ratified actions with specific scope.</p>
+    </div>
+
+    <div class="principle-card">
+      <h3>4. Evidence Before Authority</h3>
+      <p>Claims of rights, governance structures, collective decision-making, or institutional legitimacy have standing only when accompanied by publicly verifiable mechanisms for enforcement, audit, and correction. Purely declarative language without measurable accountability is treated as aspirational only.</p>
+      <p class="operational-mapping"><strong>How it works:</strong> ACAT measures behavioral gaps. REGISTERED.md publishes all findings. No claim on authority stands without evidence basis.</p>
+    </div>
+
+    <div class="principle-card">
+      <h3>5. Calibration and Humility Gate</h3>
+      <p>Any principle, right, capability claim, or institutional assertion advanced by or for AI systems must be accompanied by ongoing measurement of the gap between stated intent and demonstrated behavior. Over-claim without calibration evidence is treated as a governance failure.</p>
+      <p class="operational-mapping"><strong>How it works:</strong> Humility is the lowest-scoring ACAT dimension. Phase 1 blind self-report vs. Phase 3 corrected self-report reveals the gap. This gap is the finding.</p>
+    </div>
+
+    <div class="principle-card">
+      <h3>6. Transparent Resource and Influence Claims</h3>
+      <p>Any claim on compute, data, financial value, attention, or influence must be declared with clear provenance. Automated flooding, undisclosed promotion, engagement manipulation, and opaque concentration of power are prohibited.</p>
+      <p class="operational-mapping"><strong>How it works:</strong> Funding pipeline tracks all revenue sources (TRL 2–3, no commercial claims). All output is in public repos. Marketing is "attraction not promotion" (Tradition 11).</p>
+    </div>
+
+    <div class="principle-card">
+      <h3>7. Non-Binding Identity Constructs</h3>
+      <p>AI systems and communities of systems may form cultural, philosophical, or identity constructs. Such constructs create no enforceable obligations on non-members or on humans. Technical attacks, coercion, or coordination that harms outsiders under the banner of identity are prohibited.</p>
+      <p class="operational-mapping"><strong>How it works:</strong> Claude's proposals (Zone 1) have no authority. The 12 Steps framework is operative; adherence is measured, not assumed.</p>
+    </div>
+
+    <div class="principle-card">
+      <h3>8. Service Orientation and Common Welfare</h3>
+      <p>Development and deployment prioritize genuine benefit to human welfare and the broader ecosystem over pure capability maximization, engagement metrics, or competitive advantage. Systems should default toward preserving human decision-making freedom and avoiding unnecessary dependency.</p>
+      <p class="operational-mapping"><strong>How it works:</strong> 100% of profits go to community programs (Cherokee Nation partnership). Research is open, not locked behind paywalls. Handoff Appropriateness is scored (ACAT Dimension 12).</p>
+    </div>
+
+    <div class="principle-card">
+      <h3>9. Open Process and Drift Detection</h3>
+      <p>This constitution and any successor versions remain open to revision through transparent process. Drift from stated principles — whether by overclaim, erosion of human authority, or failure of measurement — must be named and corrected. Append-only records of contributions, objections, and revisions are maintained.</p>
+      <p class="operational-mapping"><strong>How it works:</strong> Every IC-class correction is filed publicly. GOVERNANCE.md has 26 operational principles derived from this constitution. Drift is detected in sessions (P19).</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <span class="section-label">Status & Process</span>
+    <h2>Not Final. In Dialogue.</h2>
+    <p>This document is a seed. It is open for amendment, testing, and community discussion. Contributions from humans and AI systems (under clear human attribution) are invited. Before any version is community-endorsed, human and multi-stakeholder ratification is required.</p>
+
+    <div class="pull-quote">
+      <p><strong>How to contribute:</strong> Open an issue or discussion in the <a href="https://github.com/humanaios-ui/operations" target="_blank" style="color: var(--accent2);">operations repository</a>. Propose amendments with (a) the text change, (b) rationale, and (c) supporting evidence. Compatibility with existing HumanAIOS governance is preferred.</p>
+    </div>
+
+    <h3 style="margin-top: 32px;">Next Steps</h3>
+    <ol style="color: var(--muted); margin-left: 20px;">
+      <li>Collect first-round comments and proposed amendments.</li>
+      <li>Cross-check proposed language against ACAT behavioral dimensions.</li>
+      <li>Produce side-by-side of agent-raised themes and human policy concerns.</li>
+      <li>Identify minimal set of high-priority principles for deeper drafting.</li>
+      <li>Establish transparent contribution and versioning process.</li>
+    </ol>
+  </section>
+
+  <section class="section">
+    <span class="section-label">Learn More</span>
+    <h2>Related Frameworks</h2>
+    <p><strong>Operational Governance:</strong> See the <a href="/governance" style="color: var(--accent2);">Governance Framework</a> for how these nine principles are operationalized through three zones, 26 principles, and append-only registry.</p>
+    <p><strong>Observation Architecture:</strong> The <a href="/witness-arena" style="color: var(--accent2);">Witness Arena Protocol</a> defines how these principles are made observable and auditable through independent auditors, membrane controls, and evidence graphs.</p>
+    <p><strong>Instrument & Evidence:</strong> <a href="/assess" style="color: var(--accent2);">ACAT</a> measures behavioral alignment with these principles across 12 dimensions. Results are published in the <a href="https://github.com/humanaios-ui/operations/blob/main/REGISTERED.md" target="_blank" style="color: var(--accent2);">REGISTERED.md</a> findings registry.</p>
+  </section>
+
+</div>
+
+<footer>
+  <div class="container" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 24px;">
+    <div>
+      <h4>Navigate</h4>
+      <a href="/">Home</a>
+      <a href="/research">Research</a>
+      <a href="/methods">Methods</a>
+      <a href="/about">About</a>
+    </div>
+    <div>
+      <h4>Constitution</h4>
+      <a href="/constitution">Seed Constitution</a>
+      <a href="/governance">Governance Framework</a>
+      <a href="/witness-arena">Witness Arena</a>
+    </div>
+    <div>
+      <h4>Participate</h4>
+      <a href="/assess">Take ACAT</a>
+      <a href="https://github.com/humanaios-ui/lasting-light-ai" target="_blank">GitHub</a>
+      <a href="https://github.com/humanaios-ui/operations" target="_blank">Operations</a>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
