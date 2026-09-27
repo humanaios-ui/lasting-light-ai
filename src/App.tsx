@@ -24,6 +24,7 @@ import { RegimeA } from './pages/RegimeA';
 import { ResearchVelocity } from './pages/ResearchVelocity';
 import { TopicDetail } from './pages/TopicDetail';
 import { ArenaPrototype } from './pages/ArenaPrototype';
+import { SystemFindingsBaseline } from './pages/SystemFindingsBaseline';
 
 // ── Nav link data — mirrors witness-nav.js NAV_GROUPS ──────────────────────
 const NAV_GROUPS = [
@@ -244,6 +245,7 @@ function AppShell() {
           <Route path="/research-velocity" element={<ResearchVelocity />} />
           <Route path="/topics/:topicId" element={<TopicDetail />} />
           <Route path="/arena" element={<ArenaPrototype />} />
+          <Route path="/system-findings" element={<SystemFindingsBaseline />} />
         </Routes>
       </main>
 
