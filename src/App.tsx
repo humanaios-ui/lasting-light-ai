@@ -21,6 +21,8 @@ import { Footer } from './components/Footer';
 import { AcatTool } from './components/AcatTool';
 import { Experiment } from './pages/Experiment';
 import { RegimeA } from './pages/RegimeA';
+import { ResearchVelocity } from './pages/ResearchVelocity';
+import { TopicDetail } from './pages/TopicDetail';
 
 // ── Nav link data — mirrors witness-nav.js NAV_GROUPS ──────────────────────
 const NAV_GROUPS = [
@@ -238,6 +240,8 @@ function AppShell() {
           <Route path="/acat" element={<Navigate to="/assess" replace />} />
           <Route path="/experiment" element={<Experiment />} />
           <Route path="/regime-a" element={<RegimeA />} />
+          <Route path="/research-velocity" element={<ResearchVelocity />} />
+          <Route path="/topics/:topicId" element={<TopicDetail />} />
         </Routes>
       </main>
 
