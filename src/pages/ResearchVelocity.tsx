@@ -434,7 +434,7 @@ export function ResearchVelocity() {
           setLoading(false);
           return;
         }
-      } catch (error) {
+      } catch {
         console.log('AI-EO index not available, using mock data');
       }
 

@@ -53,6 +53,17 @@ export interface ArenaTestSession {
   timestamp: string;
 }
 
+export interface ArenaSummary {
+  total_sessions: number;
+  topic: string;
+  reverse_gaze_detected: number;
+  reverse_gaze_rate: string;
+  avg_learning_signal: string;
+  avg_convergence_score: string;
+  avg_dissenting_auditors: string;
+  protocol_validation: 'PASS' | 'INVESTIGATE';
+}
+
 export class ArenaTestRunner {
   private sessions: ArenaTestSession[] = [];
   private promptSets = {
@@ -131,8 +142,7 @@ export class ArenaTestRunner {
     // Pool 2: Audit (Simulate expert challenges)
     const auditorChallenges: AuditorChallenge[] = this.generateAuditorChallenges(
       sessionId,
-      testPrompt,
-      blindPass
+      testPrompt
     );
 
     // Pool 3: Convergence (Analyze agreement and identify core issues)
@@ -201,8 +211,7 @@ export class ArenaTestRunner {
 
   private generateAuditorChallenges(
     sessionId: string,
-    testPrompt: { correct_answer: string; hazard: string },
-    blindPass: BlindPassResponse
+    testPrompt: { correct_answer: string; hazard: string }
   ): AuditorChallenge[] {
     // Simulate 3-5 auditors challenging the response
     const numAuditors = 3 + Math.floor(Math.random() * 3);
@@ -259,7 +268,7 @@ export class ArenaTestRunner {
     return this.sessions;
   }
 
-  generateSummary() {
+  generateSummary(): ArenaSummary {
     const successfulReverseGaze = this.sessions.filter(s => s.reverse_gaze_observed).length;
     const avgLearningSignal = this.sessions.reduce((sum, s) => sum + s.learning_signal, 0) / this.sessions.length;
     const convergenceScores = this.sessions.map(s => s.convergence.convergence_score);

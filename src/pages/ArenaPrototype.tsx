@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from 'react';
-import { ArenaTestRunner, ArenaTestSession } from '../arena/ArenaTestRunner';
+import React, { useState } from 'react';
+import { ArenaTestRunner, ArenaTestSession, ArenaSummary } from '../arena/ArenaTestRunner';
 
 export function ArenaPrototype() {
   const [sessions, setSessions] = useState<ArenaTestSession[]>([]);
   const [running, setRunning] = useState(false);
-  const [summary, setSummary] = useState<any>(null);
+  const [summary, setSummary] = useState<ArenaSummary | null>(null);
 
   const runTests = async () => {
     setRunning(true);
