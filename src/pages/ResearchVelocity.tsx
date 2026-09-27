@@ -471,6 +471,7 @@ export function ResearchVelocity() {
       },
     ];
 
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setTopics(mockTopics);
     setGaps(mockGaps);
     setFindings(mockFindings);

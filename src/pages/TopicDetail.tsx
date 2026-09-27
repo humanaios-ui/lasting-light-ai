@@ -94,6 +94,7 @@ export function TopicDetail() {
         },
       ];
 
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setTopic(mockTopic);
       setRelatedEntities(mockRelated);
     }
@@ -283,7 +284,7 @@ export function TopicDetail() {
                   borderRadius: 6,
                   background: 'rgba(255,255,255,0.05)',
                 }}>
-                  <div style{{ fontSize: '1.5rem', marginBottom: 6 }}>
+                  <div style={{ fontSize: '1.5rem', marginBottom: 6 }}>
                     {sentiment === 'concerned' ? '😟' : sentiment === 'constructive' ? '🤝' : '🤔'}
                   </div>
                   <div style={{
