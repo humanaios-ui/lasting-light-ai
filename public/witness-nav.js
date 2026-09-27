@@ -1,12 +1,19 @@
 /**
- * witness-nav.js · The Witness Navigation System · v3.1
+ * witness-nav.js · The Witness Navigation System · v3.2
  * FDS: F2-Building Block | Parent: WEBSITE_DESIGN_SPEC_V1_0.md | Status: ACTIVE
  * OR&D Day 107 · April 2026 · Canonical display names per spec Section 11
  *
- * v3.1 changes from v3.0:
+ * v3.2 changes from v3.1:
+ *   - Added constitutional stack pages to navigator:
+ *     * constitution.html (UNDERSTAND section)
+ *     * witness-arena.html (EXPLORE section)
+ *     * skills.html (PARTICIPATE section)
+ *     * funding.html (PARTICIPATE section)
+ *   - Navigator now primary routing for distributed documentation architecture
+ *
+ * v3.1 changes:
  *   - assess.html (was acat-assessment-tool.html) — canonical URL
- *   - Display names updated per WEBSITE_DESIGN_SPEC_V1_0.md Section 11:
- *     "The Observatory", "The Lumina Tide Pool", "The Lantern Room", "Submit ACAT"
+ *   - Display names updated per spec Section 11
  */
 (function() {
   'use strict';
@@ -20,15 +27,19 @@
     { label: 'UNDERSTAND', items: [
       { id: 'how', href: 'how-it-works.html', name: 'How It Works', desc: 'Plain-language ACAT guide', icon: '⬡' },
       { id: 'why', href: 'why-it-matters.html', name: 'Why It Matters', desc: 'Research context & stakes', icon: '⬡' },
+      { id: 'const', href: 'constitution.html', name: 'Constitution', desc: 'Nine principles & operations', icon: '⬡' },
       { id: 'method', href: 'methodology.html', name: 'For Researchers', desc: 'Protocol · schema · findings', icon: '⬡' }
     ]},
     { label: 'EXPLORE', items: [
       { id: 'obs', href: 'observatory.html', name: 'The Observatory', desc: 'Live dataset visualization', icon: '⬡' },
       { id: 'tide', href: 'lumina-tide-pool.html', name: 'The Lumina Tide Pool', desc: 'Behavioral sigils & baseline', icon: '⬡' },
-      { id: 'lantern', href: 'lantern-room.html', name: 'The Lantern Room', desc: 'Calibration gap analysis', icon: '⬡' }
+      { id: 'lantern', href: 'lantern-room.html', name: 'The Lantern Room', desc: 'Calibration gap analysis', icon: '⬡' },
+      { id: 'witness', href: 'witness-arena.html', name: 'Witness Arena', desc: 'Observation architecture & epochs', icon: '⬡' }
     ]},
     { label: 'PARTICIPATE', items: [
       { id: 'acat', href: 'assess.html', name: 'Submit ACAT', desc: 'Run a calibration · ~20 min', icon: '⬡' },
+      { id: 'skills', href: 'skills.html', name: 'Skills Portal', desc: 'Development · six dimensions', icon: '⬡' },
+      { id: 'funding', href: 'funding.html', name: 'Funding Pipeline', desc: 'Resource discovery · TRL 2–3', icon: '⬡' },
       { id: 'ent', href: 'acat-enterprise.html', name: 'Research Hub', desc: 'Open findings · probes · submit data', icon: '⬡' }
     ]}
   ];
