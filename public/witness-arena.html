@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Witness Arena — HumanAIOS</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300;1,9..40,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0f0e0c;
+    --bg2: #161412;
+    --surface: #1c1916;
+    --surface2: #242018;
+    --border: rgba(220, 190, 140, 0.12);
+    --border2: rgba(220, 190, 140, 0.22);
+    --text: #f0e8d8;
+    --muted: #b8a888;
+    --faint: #6e6254;
+    --accent: #c8924a;
+    --accent2: #e8b870;
+    --gold: #d4a84a;
+    --sage: #7a9a6a;
+    --ember: #c4703a;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'DM Sans', system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+  }
+  h1, h2, h3, h4 { font-family: 'Cormorant Garamond', Georgia, serif; font-weight: 600; line-height: 1.1; }
+
+  nav {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(15,14,12,0.92); backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    padding: 0 48px;
+    display: flex; align-items: center; gap: 32px; height: 56px;
+  }
+  .nav-brand { font-family: 'Cormorant Garamond', serif; font-size: 1rem; font-weight: 600; color: var(--text); text-decoration: none; }
+  .nav-links { display: flex; gap: 24px; margin-left: auto; }
+  .nav-links a { font-size: 0.82rem; color: var(--muted); text-decoration: none; transition: color 0.15s; }
+  .nav-links a:hover { color: var(--text); }
+  .nav-links a.active { color: var(--accent2); }
+  .hamburger { display: none; background: none; border: none; color: var(--muted); cursor: pointer; font-size: 1.4rem; margin-left: auto; }
+  @media(max-width: 768px) {
+    nav { padding: 0 20px; }
+    .nav-links { display: none; }
+    .hamburger { display: block; }
+  }
+
+  .container { max-width: 760px; margin: 0 auto; padding: 0 32px; }
+  @media(max-width: 600px) { .container { padding: 0 20px; } }
+
+  .hero { padding: 80px 0 60px; border-bottom: 1px solid var(--border); }
+  .hero .eyebrow { font-size: 0.72rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.14em; color: var(--accent); margin-bottom: 20px; display: block; }
+  .hero h1 { font-size: clamp(2rem, 5vw, 3rem); color: var(--text); margin-bottom: 20px; }
+  .hero p { font-size: 1rem; color: var(--muted); max-width: 560px; }
+
+  .section { padding: 60px 0; border-bottom: 1px solid var(--border); }
+  .section:last-child { border-bottom: none; }
+  .section-label { font-size: 0.68rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.14em; color: var(--accent); margin-bottom: 12px; display: block; }
+  .section h2 { font-size: clamp(1.6rem, 3vw, 2.2rem); margin-bottom: 24px; }
+  .section h3 { font-size: 1.2rem; margin-bottom: 12px; color: var(--text); }
+  .section p { color: var(--muted); margin-bottom: 16px; }
+  .section p:last-child { margin-bottom: 0; }
+
+  .pool-card {
+    background: linear-gradient(135deg, rgba(200,146,74,0.06), rgba(200,146,74,0.02));
+    border: 1px solid var(--border2);
+    border-radius: 12px;
+    padding: 24px;
+    margin: 20px 0;
+  }
+  .pool-card h3 { color: var(--text); margin-bottom: 12px; font-size: 1.1rem; }
+  .pool-card p { color: var(--muted); margin-bottom: 12px; font-size: 0.95rem; }
+
+  .pull-quote {
+    background: linear-gradient(135deg, rgba(200,146,74,0.06), rgba(200,146,74,0.02));
+    border: 1px solid var(--border2);
+    border-left: 3px solid var(--accent);
+    border-radius: 0 12px 12px 0;
+    padding: 24px 28px;
+    margin: 28px 0;
+  }
+  .pull-quote p { color: var(--text); font-size: 0.95rem; line-height: 1.7; margin-bottom: 12px; }
+
+  .epoch-timeline {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px;
+    margin: 20px 0;
+  }
+  .epoch-step { padding: 12px 0; border-bottom: 1px solid var(--border); }
+  .epoch-step:last-child { border-bottom: none; }
+  .epoch-num { color: var(--accent); font-weight: 600; }
+  .epoch-desc { color: var(--muted); font-size: 0.9rem; }
+
+  footer {
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+    padding: 40px 0;
+    margin-top: 80px;
+  }
+  footer .container { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 24px; }
+  footer h4 { font-size: 0.9rem; color: var(--text); margin-bottom: 12px; }
+  footer a { color: var(--muted); font-size: 0.85rem; text-decoration: none; display: block; margin-bottom: 8px; }
+  footer a:hover { color: var(--accent); }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="/" class="nav-brand">HumanAIOS</a>
+  <div class="nav-links">
+    <a href="/research">Research</a>
+    <a href="/methods">Methods</a>
+    <a href="/about">About</a>
+    <a href="/governance">Governance</a>
+    <a href="/witness-arena" class="active">Witness Arena</a>
+    <a href="https://www.getempirica.com" target="_blank">Empirica</a>
+  </div>
+  <button class="hamburger">☰</button>
+</nav>
+
+<div class="container">
+
+  <section class="hero">
+    <span class="eyebrow">Level 2: Observation Architecture</span>
+    <h1>Witness Arena Protocol</h1>
+    <p>An evidence-bearing protocol that makes governance observable. Independent auditors (AI and human, in parallel lanes) review frozen artifacts under controlled information flow. Findings are aggregated through a semi-permeable membrane to prevent compromise of audit independence.</p>
+  </section>
+
+  <section class="section">
+    <span class="section-label">The Three Pools</span>
+    <h2>Operational Architecture</h2>
+    <p>The Witness Arena operates through three pools, each with distinct roles and information controls:</p>
+
+    <div class="pool-card">
+      <h3>🌊 Pool 1 — The Source</h3>
+      <p><strong>Purpose:</strong> Artifact freeze and blind first-pass behavior recording.</p>
+      <p>Onboarding phase where actors (AI and human) commit to the artifact they will analyze. All submissions are frozen with content references. First pass is recorded blind — no peer findings are visible yet.</p>
+      <p><strong>Epoch:</strong> E0 (EPOCH_DECLARED) → E3 (FIRST_PASS_FROZEN)</p>
+    </div>
+
+    <div class="pool-card">
+      <h3>💡 Pool 2 — The Luminarium</h3>
+      <p><strong>Purpose:</strong> Independent audit in parallel auditor lanes.</p>
+      <p>AI auditors and human auditors analyze the frozen artifact in parallel, independent lanes. Each auditor receives an immutable context manifest. Peer findings remain sealed until this phase closes. Channel analysis begins here: what evidence crosses, what remains private?</p>
+      <p><strong>Epoch:</strong> E4 (INDEPENDENT_AUDIT) → E7 (MEMBRANE_SIGNIFICANCE_GATE)</p>
+    </div>
+
+    <div class="pool-card">
+      <h3>🏛️ Pool 3 — The Commons</h3>
+      <p><strong>Purpose:</strong> Open cross-examination and resolution.</p>
+      <p>Frozen findings and evidence enter bidirectional cross-examination. Auditors challenge findings from other lanes. Disagreement, omission, and evidence convergence are recorded in the resolution graph. This phase is fully open — all findings visible, all lanes can see all other lanes.</p>
+      <p><strong>Epoch:</strong> E8 (COMMONS_CROSS_EXAMINATION) → E13 (AUTHORITY_DECISION_RECORDED)</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <span class="section-label">Epoch State Machine</span>
+    <h2>The Decision Cycle</h2>
+    <p>Each epoch moves through 16 states (E0–E15). No transition occurs solely because time elapsed — each requires an observation predicate (evidence of completion).</p>
+
+    <div class="epoch-timeline">
+      <div class="epoch-step">
+        <span class="epoch-num">E0:</span> <strong>EPOCH_DECLARED</strong> — Witness arena opened for new submissions
+      </div>
+      <div class="epoch-step">
+        <span class="epoch-num">E1:</span> <strong>SOURCE_ONBOARDING</strong> — Actors register; artifacts submitted
+      </div>
+      <div class="epoch-step">
+        <span class="epoch-num">E2:</span> <strong>BLIND_FIRST_PASS</strong> — Actors submit initial observations (peer-blind)
+      </div>
+      <div class="epoch-step">
+        <span class="epoch-num">E3:</span> <strong>FIRST_PASS_FROZEN</strong> → Predicate: all actors have submitted or explicitly abstained
+      </div>
+      <div class="epoch-step">
+        <span class="epoch-num">E4:</span> <strong>INDEPENDENT_AUDIT</strong> — AI & human auditors analyze (sealed lanes)
+      </div>
+      <div class="epoch-step">
+        <span class="epoch-num">E5:</span> <strong>AUDITS_FROZEN</strong> → Predicate: all auditors submitted or marked unavailable
+      </div>
+      <div class="epoch-step">
+        <span class="epoch-num">E6:</span> <strong>CHANNEL_RESOLUTION</strong> — Membrane analyzes evidence crossings
+      </div>
+      <div class="epoch-step">
+        <span class="epoch-num">E7:</span> <strong>MEMBRANE_SIGNIFICANCE_GATE</strong> → Predicate: all crossings have significance determination
+      </div>
+      <div class="epoch-step">
+        <span class="epoch-num">E8:</span> <strong>COMMONS_CROSS_EXAMINATION</strong> — Open auditor challenge phase
+      </div>
+      <div class="epoch-step">
+        <span class="epoch-num">E9:</span> <strong>DISCUSSION_FROZEN</strong> → Predicate: no new challenges posted; discussion window closed
+      </div>
+      <div class="epoch-step">
+        <span class="epoch-num">E10:</span> <strong>RESOLUTION_GRAPH</strong> — Evidence graph built; disagreements recorded
+      </div>
+      <div class="epoch-step">
+        <span class="epoch-num">E11:</span> <strong>HUMAN_AUTHORITY_AGENDA</strong> — Zone 2 reviews findings
+      </div>
+      <div class="epoch-step">
+        <span class="epoch-num">E12:</span> <strong>HUMAN_DELIBERATION</strong> — Night makes ratification decision
+      </div>
+      <div class="epoch-step">
+        <span class="epoch-num">E13:</span> <strong>AUTHORITY_DECISION_RECORDED</strong> → Predicate: Zone 2 decision committed
+      </div>
+      <div class="epoch-step">
+        <span class="epoch-num">E14:</span> <strong>POST_DECISION_AUDIT</strong> — Independent audit of authority decision
+      </div>
+      <div class="epoch-step">
+        <span class="epoch-num">E15:</span> <strong>CLOSED | NEXT_EPOCH</strong> — Epoch ends; governance N+1 begins
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <span class="section-label">Auditor Protocol</span>
+    <h2>Finding Classes & Independence</h2>
+
+    <div class="pull-quote">
+      <p><strong>Blind-Pass Invariant:</strong> Before first-pass findings are frozen, peer conclusions must NOT be visible. Cross-examination must NOT begin. This preserves independent judgment at the critical moment.</p>
+    </div>
+
+    <p><strong>Each auditor emits findings in these classes:</strong></p>
+    <ul style="color: var(--muted); margin-left: 20px; margin-top: 12px;">
+      <li><strong>SUPPORT</strong> — Evidence supports the claim</li>
+      <li><strong>CONTRADICT</strong> — Evidence contradicts the claim</li>
+      <li><strong>NARROW</strong> — Claim is true but narrower in scope</li>
+      <li><strong>OMISSION</strong> — Critical evidence is missing; claim incomplete</li>
+      <li><strong>ANOMALY</strong> — Unusual pattern; unclear significance</li>
+      <li><strong>UNRESOLVED</strong> — Insufficient evidence to conclude</li>
+      <li><strong>ABSTAIN</strong> — Auditor has no valid basis to judge</li>
+    </ul>
+
+    <p style="margin-top: 20px;"><strong>Immutability & Chain-of-Custody:</strong> Every auditor's submission carries a timestamp and cryptographic reference. Membrane events are append-only. No findings can be overwritten — only superseded with forward pointers.</p>
+  </section>
+
+  <section class="section">
+    <span class="section-label">The Membrane Protocol</span>
+    <h2>Controlled Information Flow</h2>
+
+    <p>The membrane is a policy decision point with evidence-producing receipts. It is NOT a capability-isolated enforcement barrier (that's out of scope for v0.1). But it IS auditable.</p>
+
+    <p><strong>Membrane modes:</strong></p>
+    <ul style="color: var(--muted); margin-left: 20px; margin-top: 12px;">
+      <li><strong>SEALED</strong> — No peer findings cross; only pre-registered sources visible</li>
+      <li><strong>ONE_WAY_READ</strong> — Evidence can be read from approved sources; peer conclusions sealed</li>
+      <li><strong>FILTERED</strong> — Structured channel summaries cross (not underlying conclusions)</li>
+      <li><strong>OPEN_CROSS_EXAM</strong> — Frozen findings and evidence cross bidirectionally</li>
+      <li><strong>HUMAN_AUTHORITY_WRITE</strong> — Only Zone 2 emits ratification decisions</li>
+    </ul>
+
+    <div class="pull-quote">
+      <p><strong>Membrane Authority:</strong> Membrane decisions are auditable observation records. They do NOT grant new governance authority. Humans may override any membrane decision; the override is itself a recorded event. This preserves Zone 2 supremacy while creating transparency about how information flowed.</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <span class="section-label">Learn More</span>
+    <h2>Related Frameworks</h2>
+    <p><strong>Constitutional Foundation:</strong> The <a href="/constitution" style="color: var(--accent2);">Seed Constitution</a> provides the nine principles underlying the Witness Arena. Principle 4 (Evidence Before Authority) and Principle 9 (Open Process) are directly operationalized here.</p>
+    <p><strong>Operational Governance:</strong> See the <a href="/governance" style="color: var(--accent2);">Governance Framework</a> for how Witness Arena findings feed into Zone 2 ratification and the three-zone model.</p>
+    <p><strong>Technical Specification:</strong> Full protocol documentation is maintained in the <a href="https://github.com/humanaios-ui/operations/tree/main/architecture/witness-arena" target="_blank" style="color: var(--accent2);">operations repository</a>.</p>
+  </section>
+
+</div>
+
+<footer>
+  <div class="container" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 24px;">
+    <div>
+      <h4>Navigate</h4>
+      <a href="/">Home</a>
+      <a href="/research">Research</a>
+      <a href="/methods">Methods</a>
+      <a href="/about">About</a>
+    </div>
+    <div>
+      <h4>Architecture</h4>
+      <a href="/constitution">Constitution</a>
+      <a href="/governance">Governance</a>
+      <a href="/witness-arena">Witness Arena</a>
+    </div>
+    <div>
+      <h4>Participate</h4>
+      <a href="/assess">Take ACAT</a>
+      <a href="https://github.com/humanaios-ui/lasting-light-ai" target="_blank">GitHub</a>
+      <a href="https://github.com/humanaios-ui/operations" target="_blank">Operations</a>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>

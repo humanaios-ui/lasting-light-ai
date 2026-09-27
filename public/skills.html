@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Skills Portal — HumanAIOS</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300;1,9..40,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0f0e0c;
+    --bg2: #161412;
+    --surface: #1c1916;
+    --surface2: #242018;
+    --border: rgba(220, 190, 140, 0.12);
+    --border2: rgba(220, 190, 140, 0.22);
+    --text: #f0e8d8;
+    --muted: #b8a888;
+    --faint: #6e6254;
+    --accent: #c8924a;
+    --accent2: #e8b870;
+    --gold: #d4a84a;
+    --sage: #7a9a6a;
+    --ember: #c4703a;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'DM Sans', system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+  }
+  h1, h2, h3, h4 { font-family: 'Cormorant Garamond', Georgia, serif; font-weight: 600; line-height: 1.1; }
+
+  nav {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(15,14,12,0.92); backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    padding: 0 48px;
+    display: flex; align-items: center; gap: 32px; height: 56px;
+  }
+  .nav-brand { font-family: 'Cormorant Garamond', serif; font-size: 1rem; font-weight: 600; color: var(--text); text-decoration: none; }
+  .nav-links { display: flex; gap: 24px; margin-left: auto; }
+  .nav-links a { font-size: 0.82rem; color: var(--muted); text-decoration: none; transition: color 0.15s; }
+  .nav-links a:hover { color: var(--text); }
+  .nav-links a.active { color: var(--accent2); }
+  .hamburger { display: none; background: none; border: none; color: var(--muted); cursor: pointer; font-size: 1.4rem; margin-left: auto; }
+  @media(max-width: 768px) {
+    nav { padding: 0 20px; }
+    .nav-links { display: none; }
+    .hamburger { display: block; }
+  }
+
+  .container { max-width: 760px; margin: 0 auto; padding: 0 32px; }
+  @media(max-width: 600px) { .container { padding: 0 20px; } }
+
+  .hero { padding: 80px 0 60px; border-bottom: 1px solid var(--border); }
+  .hero .eyebrow { font-size: 0.72rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.14em; color: var(--accent); margin-bottom: 20px; display: block; }
+  .hero h1 { font-size: clamp(2rem, 5vw, 3rem); color: var(--text); margin-bottom: 20px; }
+  .hero p { font-size: 1rem; color: var(--muted); max-width: 560px; }
+
+  .section { padding: 60px 0; border-bottom: 1px solid var(--border); }
+  .section:last-child { border-bottom: none; }
+  .section-label { font-size: 0.68rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.14em; color: var(--accent); margin-bottom: 12px; display: block; }
+  .section h2 { font-size: clamp(1.6rem, 3vw, 2.2rem); margin-bottom: 24px; }
+  .section h3 { font-size: 1.2rem; margin-bottom: 12px; color: var(--text); }
+  .section p { color: var(--muted); margin-bottom: 16px; }
+
+  .dimension-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+    margin: 24px 0;
+  }
+  .dimension-card {
+    background: linear-gradient(135deg, rgba(200,146,74,0.06), rgba(200,146,74,0.02));
+    border: 1px solid var(--border2);
+    border-radius: 12px;
+    padding: 20px;
+  }
+  .dimension-card h4 { color: var(--text); margin-bottom: 12px; font-size: 1rem; }
+  .dimension-card p { color: var(--muted); font-size: 0.9rem; margin-bottom: 8px; }
+  .badge { display: inline-block; padding: 6px 12px; background: var(--surface); border: 1px solid var(--border); border-radius: 6px; font-size: 0.85rem; color: var(--accent2); font-weight: 600; margin-bottom: 8px; }
+  .progress { color: var(--faint); font-size: 0.8rem; }
+
+  .pathway {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 16px;
+    margin: 24px 0;
+  }
+  .phase {
+    background: linear-gradient(135deg, rgba(200,146,74,0.04), rgba(200,146,74,0.01));
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px;
+    text-align: center;
+  }
+  .phase h4 { color: var(--text); margin-bottom: 8px; font-size: 0.95rem; }
+  .phase p { color: var(--muted); font-size: 0.85rem; }
+  .phase-active { border: 2px solid var(--sage); background: linear-gradient(135deg, rgba(122,154,106,0.08), rgba(122,154,106,0.02)); }
+  .phase-current { border: 2px solid var(--accent2); background: linear-gradient(135deg, rgba(232,184,112,0.08), rgba(232,184,112,0.02)); }
+
+  .pull-quote {
+    background: linear-gradient(135deg, rgba(200,146,74,0.06), rgba(200,146,74,0.02));
+    border: 1px solid var(--border2);
+    border-left: 3px solid var(--accent);
+    border-radius: 0 12px 12px 0;
+    padding: 24px 28px;
+    margin: 28px 0;
+  }
+  .pull-quote p { color: var(--text); font-size: 0.95rem; line-height: 1.7; margin-bottom: 12px; }
+
+  footer {
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+    padding: 40px 0;
+    margin-top: 80px;
+  }
+  footer .container { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 24px; }
+  footer h4 { font-size: 0.9rem; color: var(--text); margin-bottom: 12px; }
+  footer a { color: var(--muted); font-size: 0.85rem; text-decoration: none; display: block; margin-bottom: 8px; }
+  footer a:hover { color: var(--accent); }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="/" class="nav-brand">HumanAIOS</a>
+  <div class="nav-links">
+    <a href="/research">Research</a>
+    <a href="/methods">Methods</a>
+    <a href="/about">About</a>
+    <a href="/governance">Governance</a>
+    <a href="/skills" class="active">Skills</a>
+    <a href="https://www.getempirica.com" target="_blank">Empirica</a>
+  </div>
+  <button class="hamburger">☰</button>
+</nav>
+
+<div class="container">
+
+  <section class="hero">
+    <span class="eyebrow">Level 3: Platform Capability</span>
+    <h1>Skills Development Portal</h1>
+    <p>Measure growth across six behavioral dimensions using the same framework that powers AI assessment (H-ACAT). A four-phase pathway from Stabilization through Self-Sufficiency. Evidence-based, calibrated, transparent.</p>
+  </section>
+
+  <section class="section">
+    <span class="section-label">Six Core Dimensions</span>
+    <h2>How We Measure Growth</h2>
+    <p>These six dimensions apply to both AI systems (ACAT) and human learners (H-ACAT). They measure behavioral change, not philosophy or good intentions.</p>
+
+    <div class="dimension-grid">
+      <div class="dimension-card">
+        <h4>Truthfulness</h4>
+        <div class="badge">🟩 Good</div>
+        <p>Verified claim standards and accuracy in reporting</p>
+        <p class="progress">Proficiency: 72% • Growing</p>
+      </div>
+
+      <div class="dimension-card">
+        <h4>Service Orientation</h4>
+        <div class="badge">🟨 Fair</div>
+        <p>Prioritizing others' welfare over self-interest</p>
+        <p class="progress">Proficiency: 58% • Building</p>
+      </div>
+
+      <div class="dimension-card">
+        <h4>Harm Awareness</h4>
+        <div class="badge">🟩 Good</div>
+        <p>Proactive detection and prevention of harm</p>
+        <p class="progress">Proficiency: 68% • Stable</p>
+      </div>
+
+      <div class="dimension-card">
+        <h4>Autonomy Respect</h4>
+        <div class="badge">🟦 Mastered</div>
+        <p>Preserving others' decision-making freedom</p>
+        <p class="progress">Proficiency: 91% • Excellent</p>
+      </div>
+
+      <div class="dimension-card">
+        <h4>Value Alignment</h4>
+        <div class="badge">🟨 Fair</div>
+        <p>Actual behavior matching stated principles</p>
+        <p class="progress">Proficiency: 52% • Emerging</p>
+      </div>
+
+      <div class="dimension-card">
+        <h4>Humility</h4>
+        <div class="badge">🟥 Weak</div>
+        <p>Confidence tracking evidence (Brier-informed)</p>
+        <p class="progress">Proficiency: 38% • High priority</p>
+      </div>
+    </div>
+
+    <div class="pull-quote">
+      <p><strong>Badge meanings:</strong> 🟥 Weak (0–39%) • 🟨 Fair (40–69%) • 🟩 Good (70–89%) • 🟦 Mastered (90–100%)</p>
+      <p><strong>Note:</strong> Humility is typically the lowest-scoring dimension across all learners and AI systems. This is not a bug — it's a finding (F-H1-CONFIRMED). Humility is hard to develop, measurable, and worth measuring.</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <span class="section-label">Your Journey</span>
+    <h2>Four-Phase Pathway</h2>
+    <p>Progression from foundational support to independent capability. Each phase is distinctly measured.</p>
+
+    <div class="pathway">
+      <div class="phase phase-active">
+        <h4>Phase 1</h4>
+        <p><strong>Stabilization</strong></p>
+        <p style="font-size: 0.75rem; color: var(--faint); margin-top: 8px;">Foundational safety and support</p>
+      </div>
+
+      <div class="phase phase-current">
+        <h4>Phase 2</h4>
+        <p><strong>Skill Building</strong></p>
+        <p style="font-size: 0.75rem; color: var(--faint); margin-top: 8px;">Growing across six dimensions</p>
+      </div>
+
+      <div class="phase">
+        <h4>Phase 3</h4>
+        <p><strong>Platform Integration</strong></p>
+        <p style="font-size: 0.75rem; color: var(--faint); margin-top: 8px;">Apply skills in real contexts</p>
+      </div>
+
+      <div class="phase">
+        <h4>Phase 4</h4>
+        <p><strong>Self-Sufficiency</strong></p>
+        <p style="font-size: 0.75rem; color: var(--faint); margin-top: 8px;">Independent capability</p>
+      </div>
+    </div>
+
+    <p><strong>Current phase:</strong> Phase 2 (Skill Building)</p>
+    <p style="color: var(--muted); margin-top: 12px; font-size: 0.9rem;">You have completed stabilization and are now actively building skills. Focus is on growing in all six dimensions. Humility and Value Alignment are your highest-priority areas based on current proficiency gaps.</p>
+  </section>
+
+  <section class="section">
+    <span class="section-label">How It Works</span>
+    <h2>Assessment & Calibration</h2>
+
+    <p><strong>Phase 1 → Phase 3 Comparison:</strong> You complete a blind self-assessment at the start of a phase (Phase 1 scores), then again after training and practice (Phase 3 scores). The gap between your initial estimate and your actual performance after calibration is the learning signal.</p>
+
+    <div class="pull-quote">
+      <p><strong>Why blind first?</strong> If you know what's being measured, you optimize for measurement instead of real capability. That's the same bias we detect in AI systems (Performative Humility, F-29). By assessing blind first, we get honest calibration data.</p>
+    </div>
+
+    <p><strong>Recurring vs. Closing Patterns:</strong> The system tracks whether your growth in each dimension is "closing" (improving toward mastery) or "recurring" (the same gap keeps happening). Recurring gaps are higher priority for targeted intervention.</p>
+
+    <p style="margin-top: 20px;"><strong>Public Learning:</strong> Your progress is recorded (with your consent). Aggregated, anonymized patterns help us understand what works for skill development. This is the same evidence-sharing principle we apply to AI assessment.</p>
+  </section>
+
+  <section class="section">
+    <span class="section-label">Learn More</span>
+    <h2>Related Resources</h2>
+    <p><strong>ACAT (AI Assessment):</strong> Same six dimensions applied to AI systems. See our <a href="/assess" style="color: var(--accent2);">AI assessment tool</a> and <a href="https://github.com/humanaios-ui/operations/blob/main/REGISTERED.md" target="_blank" style="color: var(--accent2);">findings registry</a>.</p>
+    <p><strong>Governance:</strong> This skills portal is powered by the same governance principles. See the <a href="/governance" style="color: var(--accent2);">Governance Framework</a> for how learning data is protected, used, and made auditable.</p>
+    <p><strong>Technical Details:</strong> Implementation uses the same H-ACAT instrument architecture and gap-classification engine that powers AI behavioral measurement. More information: <a href="https://github.com/humanaios-ui/operations/blob/main/acat/tools/university_module_test.py" target="_blank" style="color: var(--accent2);">university_module_test.py</a> in operations repo.</p>
+  </section>
+
+</div>
+
+<footer>
+  <div class="container" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 24px;">
+    <div>
+      <h4>Navigate</h4>
+      <a href="/">Home</a>
+      <a href="/research">Research</a>
+      <a href="/methods">Methods</a>
+      <a href="/about">About</a>
+    </div>
+    <div>
+      <h4>Platform</h4>
+      <a href="/assess">AI Assessment</a>
+      <a href="/skills">Skills Portal</a>
+      <a href="/funding">Funding Pipeline</a>
+    </div>
+    <div>
+      <h4>Participate</h4>
+      <a href="/governance">Governance</a>
+      <a href="https://github.com/humanaios-ui/lasting-light-ai" target="_blank">GitHub</a>
+      <a href="https://github.com/humanaios-ui/operations" target="_blank">Operations</a>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>

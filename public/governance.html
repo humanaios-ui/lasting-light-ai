@@ -228,18 +228,88 @@
   </section>
 
   <section class="section">
-    <span class="section-label">Live Registry Feed</span>
-    <h2>Latest Entries</h2>
-    <p>Our registry is append-only and updated as discoveries are made. Below are the most recent entries (live feed from <code>REGISTERED.md</code>):</p>
+    <span class="section-label">Live Intelligence</span>
+    <h2>Governance in Motion</h2>
 
-    <div class="registry-widget">
-      <h4>📌 Latest Findings & Corrections</h4>
-      <div id="registry-feed">
-        <p style="color: var(--faint); font-size: 0.85rem;">Loading registry entries...</p>
+    <!-- Tabs: Registry | Witness Arena | Ratifications -->
+    <div style="display: flex; gap: 12px; margin: 24px 0; border-bottom: 1px solid var(--border); overflow-x: auto;">
+      <button class="tab-button active" data-tab="registry" style="padding: 12px 20px; background: none; border: none; border-bottom: 2px solid var(--accent2); color: var(--text); cursor: pointer; font-size: 0.9rem; font-weight: 500;">📌 Registry Feed</button>
+      <button class="tab-button" data-tab="witness" style="padding: 12px 20px; background: none; border: none; border-bottom: 2px solid transparent; color: var(--muted); cursor: pointer; font-size: 0.9rem; font-weight: 500;">🔍 Witness Arena</button>
+      <button class="tab-button" data-tab="ratification" style="padding: 12px 20px; background: none; border: none; border-bottom: 2px solid transparent; color: var(--muted); cursor: pointer; font-size: 0.9rem; font-weight: 500;">✅ Ratifications</button>
+    </div>
+
+    <!-- Tab 1: Registry Feed -->
+    <div id="registry-tab" class="tab-content">
+      <p>Our registry is append-only and updated as discoveries are made. Below are the most recent entries (live feed from <code>REGISTERED.md</code>):</p>
+      <div class="registry-widget">
+        <h4>📌 Latest Findings & Corrections</h4>
+        <div id="registry-feed">
+          <p style="color: var(--faint); font-size: 0.85rem;">Loading registry entries...</p>
+        </div>
+        <p style="color: var(--faint); font-size: 0.8rem; margin-top: 16px;">
+          <a href="https://raw.githubusercontent.com/humanaios-ui/operations/main/REGISTERED.md" target="_blank" style="color: var(--accent2);">View full registry →</a>
+        </p>
       </div>
-      <p style="color: var(--faint); font-size: 0.8rem; margin-top: 16px;">
-        <a href="https://raw.githubusercontent.com/humanaios-ui/operations/main/REGISTERED.md" target="_blank" style="color: var(--accent2);">View full registry →</a>
-      </p>
+    </div>
+
+    <!-- Tab 2: Witness Arena State -->
+    <div id="witness-tab" class="tab-content" style="display: none;">
+      <p>Live observation architecture — the Witness Arena protocol operationalizes independent audit and evidence collection across three pools.</p>
+      <div class="registry-widget">
+        <h4>🔍 Current Epoch State</h4>
+        <div id="witness-state" style="font-size: 0.9rem; color: var(--muted);">
+          <div style="padding: 12px 0;">
+            <strong style="color: var(--text);">Epoch Machine:</strong>
+            <div id="epoch-display" style="margin-top: 8px; padding: 12px; background: rgba(200,146,74,0.04); border-radius: 6px; font-family: monospace; color: var(--accent2);">
+              E0: EPOCH_DECLARED
+            </div>
+          </div>
+          <div style="padding: 12px 0; border-top: 1px solid var(--border);">
+            <strong style="color: var(--text);">Active Auditors:</strong>
+            <div style="margin-top: 8px;">
+              <div style="padding: 8px 0;"><span style="color: var(--accent);">AI Lane:</span> Observing (Claude)</div>
+              <div style="padding: 8px 0;"><span style="color: var(--gold);">Human Lane:</span> Observing (Independent reviewers)</div>
+            </div>
+          </div>
+          <div style="padding: 12px 0; border-top: 1px solid var(--border);">
+            <strong style="color: var(--text);">Three Pools:</strong>
+            <div style="margin-top: 8px;">
+              <div style="padding: 8px 0;">🌊 <strong>Pool 1 — The Source:</strong> Artifact freeze + blind first pass</div>
+              <div style="padding: 8px 0;">💡 <strong>Pool 2 — The Luminarium:</strong> Independent audit + channel analysis</div>
+              <div style="padding: 8px 0;">🏛️ <strong>Pool 3 — The Commons:</strong> Cross-examination + resolution</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="pull-quote" style="margin-top: 20px;">
+        <p><strong>What is the Witness Arena?</strong> An evidence-bearing protocol that makes governance observable. Auditors (AI and human) review frozen artifacts in parallel, independent lanes. Their findings are aggregated through a semi-permeable membrane to prevent peer-conclusion visibility until cross-examination. The result is a resolution graph showing where evidence converges, diverges, or is omitted.</p>
+        <p><a href="/witness-arena" style="color: var(--accent2);">View full Witness Arena interface →</a></p>
+      </div>
+    </div>
+
+    <!-- Tab 3: Ratifications -->
+    <div id="ratification-tab" class="tab-content" style="display: none;">
+      <p>Zone 2 (Night) ratifies findings, amendments, and governance decisions. Below are recent ratifications and pending queue.</p>
+      <div class="registry-widget">
+        <h4>✅ Recent Ratification Outcomes</h4>
+        <div id="ratification-feed" style="font-size: 0.9rem;">
+          <div class="registry-entry" style="padding: 12px 0; border-bottom: 1px solid var(--border);">
+            <span class="registry-id" style="color: var(--accent); font-weight: 600;">Q-GOVDRIFT-01</span>
+            <span class="registry-name" style="color: var(--text);"> — Governance drift correction</span>
+            <span style="color: var(--sage); margin-left: 8px;">RATIFIED</span>
+            <div style="color: var(--faint); font-size: 0.8rem; margin-top: 4px;">Sept 21, 2026 · Zone 2 decision</div>
+          </div>
+          <div class="registry-entry" style="padding: 12px 0;">
+            <span class="registry-id" style="color: var(--accent); font-weight: 600;">F-INTENT-PARSE-MUTATION</span>
+            <span class="registry-name" style="color: var(--text);"> — Intent drift in interpretation</span>
+            <span style="color: var(--sage); margin-left: 8px;">CANDIDATE</span>
+            <div style="color: var(--faint); font-size: 0.8rem; margin-top: 4px;">Pending Z2 review</div>
+          </div>
+        </div>
+        <p style="color: var(--faint); font-size: 0.8rem; margin-top: 16px;">
+          <a href="https://github.com/humanaios-ui/operations/pulls" target="_blank" style="color: var(--accent2);">View all open PRs and pending ratifications →</a>
+        </p>
+      </div>
     </div>
 
     <!-- OSF OAuth Status -->
@@ -344,6 +414,31 @@
       }
 
       loadRegistry();
+
+      // Tab switching
+      document.querySelectorAll('.tab-button').forEach(button => {
+        button.addEventListener('click', function() {
+          const tabName = this.getAttribute('data-tab');
+
+          // Hide all tabs
+          document.querySelectorAll('.tab-content').forEach(tab => {
+            tab.style.display = 'none';
+          });
+
+          // Deactivate all buttons
+          document.querySelectorAll('.tab-button').forEach(btn => {
+            btn.style.borderBottomColor = 'transparent';
+            btn.style.color = 'var(--muted)';
+          });
+
+          // Show selected tab
+          document.getElementById(tabName + '-tab').style.display = 'block';
+
+          // Activate button
+          this.style.borderBottomColor = 'var(--accent2)';
+          this.style.color = 'var(--text)';
+        });
+      });
     </script>
   </section>
 

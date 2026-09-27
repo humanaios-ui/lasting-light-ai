@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Funding Pipeline — HumanAIOS</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300;1,9..40,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0f0e0c;
+    --bg2: #161412;
+    --surface: #1c1916;
+    --surface2: #242018;
+    --border: rgba(220, 190, 140, 0.12);
+    --border2: rgba(220, 190, 140, 0.22);
+    --text: #f0e8d8;
+    --muted: #b8a888;
+    --faint: #6e6254;
+    --accent: #c8924a;
+    --accent2: #e8b870;
+    --gold: #d4a84a;
+    --sage: #7a9a6a;
+    --ember: #c4703a;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'DM Sans', system-ui, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+  }
+  h1, h2, h3, h4 { font-family: 'Cormorant Garamond', Georgia, serif; font-weight: 600; line-height: 1.1; }
+
+  nav {
+    position: sticky; top: 0; z-index: 100;
+    background: rgba(15,14,12,0.92); backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    padding: 0 48px;
+    display: flex; align-items: center; gap: 32px; height: 56px;
+  }
+  .nav-brand { font-family: 'Cormorant Garamond', serif; font-size: 1rem; font-weight: 600; color: var(--text); text-decoration: none; }
+  .nav-links { display: flex; gap: 24px; margin-left: auto; }
+  .nav-links a { font-size: 0.82rem; color: var(--muted); text-decoration: none; transition: color 0.15s; }
+  .nav-links a:hover { color: var(--text); }
+  .nav-links a.active { color: var(--accent2); }
+  .hamburger { display: none; background: none; border: none; color: var(--muted); cursor: pointer; font-size: 1.4rem; margin-left: auto; }
+  @media(max-width: 768px) {
+    nav { padding: 0 20px; }
+    .nav-links { display: none; }
+    .hamburger { display: block; }
+  }
+
+  .container { max-width: 760px; margin: 0 auto; padding: 0 32px; }
+  @media(max-width: 600px) { .container { padding: 0 20px; } }
+
+  .hero { padding: 80px 0 60px; border-bottom: 1px solid var(--border); }
+  .hero .eyebrow { font-size: 0.72rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.14em; color: var(--accent); margin-bottom: 20px; display: block; }
+  .hero h1 { font-size: clamp(2rem, 5vw, 3rem); color: var(--text); margin-bottom: 20px; }
+  .hero p { font-size: 1rem; color: var(--muted); max-width: 560px; }
+
+  .section { padding: 60px 0; border-bottom: 1px solid var(--border); }
+  .section:last-child { border-bottom: none; }
+  .section-label { font-size: 0.68rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.14em; color: var(--accent); margin-bottom: 12px; display: block; }
+  .section h2 { font-size: clamp(1.6rem, 3vw, 2.2rem); margin-bottom: 24px; }
+  .section h3 { font-size: 1.2rem; margin-bottom: 12px; color: var(--text); }
+  .section p { color: var(--muted); margin-bottom: 16px; }
+
+  .feature-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+    margin: 24px 0;
+  }
+  .feature-card {
+    background: linear-gradient(135deg, rgba(200,146,74,0.06), rgba(200,146,74,0.02));
+    border: 1px solid var(--border2);
+    border-radius: 12px;
+    padding: 20px;
+  }
+  .feature-card h4 { color: var(--text); margin-bottom: 12px; font-size: 1rem; }
+  .feature-card p { color: var(--muted); font-size: 0.9rem; }
+
+  .code-block {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 16px;
+    margin: 16px 0;
+    overflow-x: auto;
+    font-family: 'Courier New', monospace;
+    font-size: 0.85rem;
+    color: var(--accent2);
+    line-height: 1.5;
+  }
+
+  .pull-quote {
+    background: linear-gradient(135deg, rgba(200,146,74,0.06), rgba(200,146,74,0.02));
+    border: 1px solid var(--border2);
+    border-left: 3px solid var(--accent);
+    border-radius: 0 12px 12px 0;
+    padding: 24px 28px;
+    margin: 28px 0;
+  }
+  .pull-quote p { color: var(--text); font-size: 0.95rem; line-height: 1.7; margin-bottom: 12px; }
+
+  .source-links {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    margin: 28px 0;
+  }
+  .source-links h4 { font-size: 0.95rem; color: var(--text); margin-bottom: 12px; }
+  .source-links a {
+    display: block;
+    padding: 8px 0;
+    color: var(--accent2);
+    text-decoration: none;
+    font-size: 0.9rem;
+  }
+  .source-links a:hover { text-decoration: underline; }
+  .source-link-desc { display: block; color: var(--muted); font-size: 0.8rem; margin-top: 2px; }
+
+  footer {
+    background: var(--surface);
+    border-top: 1px solid var(--border);
+    padding: 40px 0;
+    margin-top: 80px;
+  }
+  footer .container { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 24px; }
+  footer h4 { font-size: 0.9rem; color: var(--text); margin-bottom: 12px; }
+  footer a { color: var(--muted); font-size: 0.85rem; text-decoration: none; display: block; margin-bottom: 8px; }
+  footer a:hover { color: var(--accent); }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="/" class="nav-brand">HumanAIOS</a>
+  <div class="nav-links">
+    <a href="/research">Research</a>
+    <a href="/methods">Methods</a>
+    <a href="/about">About</a>
+    <a href="/governance">Governance</a>
+    <a href="/funding" class="active">Funding</a>
+    <a href="https://www.getempirica.com" target="_blank">Empirica</a>
+  </div>
+  <button class="hamburger">☰</button>
+</nav>
+
+<div class="container">
+
+  <section class="hero">
+    <span class="eyebrow">Level 3: Platform Capability</span>
+    <h1>Funding Pipeline</h1>
+    <p>Machine-readable, auto-refreshed resource discovery for solo research founders building open behavioral observability infrastructure at TRL 2–3. Cherokee Nation partnership. AI safety and indigenous economic development focused.</p>
+  </section>
+
+  <section class="section">
+    <span class="section-label">What It Does</span>
+    <h2>Smart Resource Discovery</h2>
+
+    <div class="feature-grid">
+      <div class="feature-card">
+        <h4>🔄 Auto-Refreshed</h4>
+        <p>Weekly crawl of funding sources. Deadlines, status, and eligibility tracked continuously.</p>
+      </div>
+
+      <div class="feature-card">
+        <h4>🎯 Prioritized</h4>
+        <p>Native-eligible + AI-safety = highest priority intersection. TRL 2–3 research stage aligned.</p>
+      </div>
+
+      <div class="feature-card">
+        <h4>🔗 Linked</h4>
+        <p>Direct URLs to applications. No paywall. No signup required to explore.</p>
+      </div>
+
+      <div class="feature-card">
+        <h4>📊 Structured Data</h4>
+        <p>JSON output for scripting, filtering, and integration with your own tools.</p>
+      </div>
+    </div>
+
+    <div class="pull-quote">
+      <p><strong>For solo founders:</strong> This is built specifically for the solitary research phase. You're not running a startup yet. You're running an experiment. Funding categories: compute credits, research grants, community programs, capacity building, and revenue sources (freelance work, consulting) that fund the experiment.</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <span class="section-label">How to Use</span>
+    <h2>Three Entry Points</h2>
+
+    <h3>1. Markdown Dashboard (Human-Readable)</h3>
+    <p>Browse <a href="https://raw.githubusercontent.com/humanaios-ui/operations/main/humanaios-funding-pipeline/reports/OPPORTUNITIES.md" target="_blank" style="color: var(--accent2);">OPPORTUNITIES.md</a> in the operations repo. Sortable table, updated weekly. Copy-paste URLs directly.</p>
+
+    <h3>2. JSON API (For Scripts)</h3>
+    <p>Machine-readable version for automation. Query by category, deadline, eligibility, TRL stage:</p>
+    <div class="code-block">
+# All native-eligible + AI-safety sources<br/>
+curl "https://raw.githubusercontent.com/humanaios-ui/operations/main/humanaios-funding-pipeline/data/sources.json" | jq '.[] | select(.native_eligible==true and .ai_safety_relevant==true)'<br/>
+<br/>
+# Deadlines in 45 days<br/>
+curl "https://raw.githubusercontent.com/humanaios-ui/operations/main/humanaios-funding-pipeline/data/sources.json" | jq '.[] | select(.deadline | ltrimstr("2026-") | tonumber &lt; 320)'
+    </div>
+
+    <h3>3. CLI (For Developers)</h3>
+    <p>Clone the operations repo, install the package, and use the CLI:</p>
+    <div class="code-block">
+cd operations/humanaios-funding-pipeline<br/>
+pip install -r requirements.txt<br/>
+python -m src.humanaios_funding.cli --native --ai-safety --deadline-soon 45<br/>
+    </div>
+
+    <p><a href="https://github.com/humanaios-ui/operations/tree/main/humanaios-funding-pipeline" target="_blank" style="color: var(--accent2);">Full CLI documentation →</a></p>
+  </section>
+
+  <section class="section">
+    <span class="section-label">Categories</span>
+    <h2>What Gets Tracked</h2>
+
+    <p><strong>Research & Development:</strong> NSF grants, AI safety grants, academic fellowship programs, foundation research awards.</p>
+
+    <p><strong>Compute Credits:</strong> AWS, Google Cloud, Azure, Anthropic credits, HuggingFace compute — for experiments that need infrastructure.</p>
+
+    <p><strong>Community Programs:</strong> Cherokee Nation economic development, indigenous STEM programs, community research initiatives, impact-first funding.</p>
+
+    <p><strong>Revenue Sources:</strong> Freelance work, consulting, technical writing, speaking — ways to fund the research phase with your own labor.</p>
+
+    <p><strong>Capacity Building:</strong> Training programs, accelerators, incubators that fund development of research infrastructure.</p>
+
+    <div class="pull-quote">
+      <p><strong>Data source:</strong> Grants.gov, SAM.gov, foundation sites, university partnerships, corporate research programs, and community resources. Updated weekly. Public + authenticated sources supported.</p>
+    </div>
+  </section>
+
+  <section class="section">
+    <span class="section-label">Live Sources</span>
+    <h2>Access the Data</h2>
+
+    <div class="source-links">
+      <h4>📊 Live Dashboard</h4>
+      <a href="https://github.com/humanaios-ui/operations/blob/main/humanaios-funding-pipeline/reports/index.html" target="_blank">
+        Funding Dashboard (HTML, interactive)
+        <span class="source-link-desc">Dark-themed filterable interface. Open in browser or clone + open locally.</span>
+      </a>
+    </div>
+
+    <div class="source-links">
+      <h4>📋 Markdown Version</h4>
+      <a href="https://raw.githubusercontent.com/humanaios-ui/operations/main/humanaios-funding-pipeline/reports/OPPORTUNITIES.md" target="_blank">
+        OPPORTUNITIES.md (Sortable Table)
+        <span class="source-link-desc">GitHub-readable markdown. Copy URLs directly. Filter manually or via command line.</span>
+      </a>
+    </div>
+
+    <div class="source-links">
+      <h4>🔗 Raw JSON</h4>
+      <a href="https://raw.githubusercontent.com/humanaios-ui/operations/main/humanaios-funding-pipeline/data/sources.json" target="_blank">
+        sources.json (Machine-Readable)
+        <span class="source-link-desc">Query with jq, curl, or load into your app. Schema documented in repo.</span>
+      </a>
+    </div>
+
+    <div class="source-links">
+      <h4>⚡ Command Line</h4>
+      <a href="https://github.com/humanaios-ui/operations/tree/main/humanaios-funding-pipeline" target="_blank">
+        Repository + CLI Installation
+        <span class="source-link-desc">Full docs, CLI flags, GitHub Actions workflows. Weekly auto-refresh.</span>
+      </a>
+    </div>
+  </section>
+
+  <section class="section">
+    <span class="section-label">Philosophy</span>
+    <h2>Why This Exists</h2>
+
+    <p>Solo research founders spend enormous time prospecting for funding. Spreadsheets get stale. Deadlines are missed. The good opportunities (compute credits, small fellowships, community programs) are scattered across platforms you don't frequent.</p>
+
+    <p>This pipeline aggregates the sources that fit TRL 2–3 research in AI behavioral safety, prioritizes native-eligible and indigenous-owned opportunities, and keeps them current. It's automated so the founder can focus on the research, not the funding spreadsheet.</p>
+
+    <p><strong>100% of profits go to community programs.</strong> If HumanAIOS receives revenue, it goes to Cherokee Nation economic development and community AI safety initiatives. This is not decoration — it's in the <a href="/constitution" style="color: var(--accent2);">constitutional framework</a>.</p>
+  </section>
+
+  <section class="section">
+    <span class="section-label">Learn More</span>
+    <h2>Related Resources</h2>
+    <p><strong>Operations Repository:</strong> Complete source, CLI, GitHub Actions workflows, contribution guidelines: <a href="https://github.com/humanaios-ui/operations/tree/main/humanaios-funding-pipeline" target="_blank" style="color: var(--accent2);">humanaios-funding-pipeline</a></p>
+    <p><strong>SEED Document:</strong> Legal entity, partnership details, mission: <a href="https://github.com/humanaios-ui/operations/blob/main/SEED.md" target="_blank" style="color: var(--accent2);">SEED.md</a></p>
+    <p><strong>Constitution:</strong> 100% revenue commitment and principles: <a href="/constitution" style="color: var(--accent2);">Seed Constitution</a></p>
+  </section>
+
+</div>
+
+<footer>
+  <div class="container" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 24px;">
+    <div>
+      <h4>Navigate</h4>
+      <a href="/">Home</a>
+      <a href="/research">Research</a>
+      <a href="/methods">Methods</a>
+      <a href="/about">About</a>
+    </div>
+    <div>
+      <h4>Resources</h4>
+      <a href="/assess">AI Assessment</a>
+      <a href="/skills">Skills Portal</a>
+      <a href="/funding">Funding Pipeline</a>
+    </div>
+    <div>
+      <h4>Participate</h4>
+      <a href="/governance">Governance</a>
+      <a href="https://github.com/humanaios-ui/lasting-light-ai" target="_blank">GitHub</a>
+      <a href="https://github.com/humanaios-ui/operations" target="_blank">Operations</a>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
