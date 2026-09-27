@@ -287,6 +287,27 @@ python -m src.humanaios_funding.cli --native --ai-safety --deadline-soon 45<br/>
   </section>
 
   <section class="section">
+    <span class="section-label">Real-World Application</span>
+    <h2>How Resource Transparency Addresses Database Privacy Concerns</h2>
+    <p>The funding pipeline exemplifies the constitutional principle of Transparent Resource Claims. This directly addresses real global concerns about data governance and privacy:</p>
+
+    <div class="pull-quote">
+      <p><strong>The Privacy Crisis:</strong> Organizations request vast data access for research, often claiming they "need the full dataset." In practice, they use a tiny fraction. Privacy failures stem from overly broad resource claims.</p>
+    </div>
+
+    <p><strong>How this pipeline demonstrates the principle:</strong></p>
+    <ul style="color: var(--muted); margin-left: 20px; margin-top: 12px;">
+      <li><strong>Explicit Resource Declaration:</strong> Every funding opportunity is listed with exact resource requirements (grant amount, compute hours, data access scope). No hidden dependencies.</li>
+      <li><strong>Least-Privilege Matching:</strong> The pipeline helps researchers find funding that matches their actual needs, not excessive resources they don't require. Smaller grants are prioritized when they suffice.</li>
+      <li><strong>Transparency Audit Trail:</strong> All funding sources are maintained in public repositories (OPPORTUNITIES.md, sources.json). Anyone can verify what resources are being claimed and why.</li>
+      <li><strong>Community Alignment:</strong> 100% revenue transparency means stakeholders can see exactly how resources are being used. This is the inverse of hidden data usage.</li>
+      <li><strong>Governance Ritual Enforcement:</strong> Before any research project receives resources, the governance framework ensures resource claims are auditable and ratified by humans.</li>
+    </ul>
+
+    <p style="margin-top: 20px; color: var(--faint); font-size: 0.9rem;"><strong>Current implementation:</strong> Pipeline provides transparent resource visibility for research discovery. <strong>Research gap:</strong> Runtime enforcement of resource claims at database-query time remains unaddressed—a critical gap for production systems handling sensitive data.</p>
+  </section>
+
+  <section class="section">
     <span class="section-label">Learn More</span>
     <h2>Related Resources</h2>
     <p><strong>Operations Repository:</strong> Complete source, CLI, GitHub Actions workflows, contribution guidelines: <a href="https://github.com/humanaios-ui/operations/tree/main/humanaios-funding-pipeline" target="_blank" style="color: var(--accent2);">humanaios-funding-pipeline</a></p>

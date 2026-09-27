@@ -264,6 +264,39 @@
   </section>
 
   <section class="section">
+    <span class="section-label">Real-World Application</span>
+    <h2>Addressing Global Crisis Topics Through Blind-Pass Verification</h2>
+    <p>The Witness Arena's architecture is specifically designed to solve real governance problems emerging in high-volume global discussion. Here's how the protocol addresses concrete threats:</p>
+
+    <div class="pool-card">
+      <h3 style="color: var(--accent2);">Crisis: AI Jailbreaks & Prompt Injection Attacks</h3>
+      <p><strong>The problem:</strong> Adversarial actors attempt to bypass safety constraints through manipulation. Traditional single-layer review can be compromised if the reviewer is influenced by authority claims.</p>
+      <p><strong>How Witness Arena addresses it:</strong></p>
+      <ul style="color: var(--muted); margin-left: 20px; margin-top: 12px;">
+        <li><strong>Blind-Pass Invariant (E2 → E3):</strong> Auditors evaluate a potential jailbreak attempt independently, without seeing peer conclusions. An individual attacker cannot capture the entire review chain.</li>
+        <li><strong>Parallel Auditor Lanes:</strong> AI auditors and human auditors analyze the same evidence separately. A compromise in one lane is exposed by disagreement in the other.</li>
+        <li><strong>Evidence Before Authority (E8 → E13):</strong> Resolution occurs through evidence convergence, not authority hierarchy. A plausible but false jailbreak attempt will fail this test.</li>
+        <li><strong>Immutable Decision Record (E13–E15):</strong> The final ratification and audit trail are append-only; no retroactive tampering is possible.</li>
+      </ul>
+      <p style="margin-top: 16px; color: var(--faint); font-size: 0.9rem;"><strong>Outcome:</strong> Even a sophisticated jailbreak cannot bypass the full governance cycle. It must survive independent analysis from multiple perspectives.</p>
+    </div>
+
+    <div class="pool-card">
+      <h3 style="color: var(--accent2);">Crisis: Hallucinations & Confidence-Accuracy Mismatch</h3>
+      <p><strong>The problem:</strong> A model generates a plausible but false claim with high confidence. How can independent reviewers detect this without domain expertise?</p>
+      <p><strong>How Witness Arena addresses it:</strong></p>
+      <ul style="color: var(--muted); margin-left: 20px; margin-top: 12px;">
+        <li><strong>Finding Classes (CONTRADICT, NARROW, OMISSION, ANOMALY):</strong> Auditors can mark claims as contradicted by evidence, narrower in scope, or suspicious patterns without requiring perfect domain knowledge.</li>
+        <li><strong>Human-AI Cross-Examination (E8–E10):</strong> Human auditors can challenge AI auditor findings. If an AI auditor missed a hallucination, the human lane can expose it.</li>
+        <li><strong>Evidence Convergence Graph (E10):</strong> The resolution graph shows where auditors disagreed. Hallucinations often show as "contradicted by fact-checking" or "omission of available evidence."</li>
+        <li><strong>Recurring Pattern Detection:</strong> The governance audit ritual tracks which agents repeatedly hallucinate; this data is explicit and actionable.</li>
+      </ul>
+      <p style="margin-top: 16px; color: var(--faint); font-size: 0.9rem;"><strong>Outcome:</strong> Hallucinations are systematically exposed through evidence-based review, not authority assertion.</p>
+    </div>
+
+  </section>
+
+  <section class="section">
     <span class="section-label">Learn More</span>
     <h2>Related Frameworks</h2>
     <p><strong>Constitutional Foundation:</strong> The <a href="/constitution" style="color: var(--accent2);">Seed Constitution</a> provides the nine principles underlying the Witness Arena. Principle 4 (Evidence Before Authority) and Principle 9 (Open Process) are directly operationalized here.</p>
