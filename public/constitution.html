@@ -209,6 +209,78 @@
   </section>
 
   <section class="section">
+    <span class="section-label">Real-World Application</span>
+    <h2>How These Principles Address Global Crisis Topics</h2>
+    <p>The constitutional framework is tested against real, high-volume concerns in global technology discourse. These mappings show how HumanAIOS principles operationalize into concrete mitigation of actual problems.</p>
+
+    <div class="crisis-response">
+      <h3 style="margin-top: 32px; color: var(--accent2);">AI Jailbreaks & Prompt Injection Attacks</h3>
+      <p><strong>Why it matters:</strong> Adversarial attacks attempt to bypass model safety constraints and authorization boundaries.</p>
+      <div class="principle-card">
+        <h4 style="font-size: 0.95rem; color: var(--accent2);">Constitutional Foundation</h4>
+        <ul style="color: var(--muted); margin-left: 20px; margin-top: 12px;">
+          <li><strong>Principle 3 (Least-Privilege Agency):</strong> Each agent operates with minimum required access; jailbreaks exploit authorization boundary failures</li>
+          <li><strong>Principle 4 (Evidence Before Authority):</strong> Jailbreaks succeed when authority claims aren't grounded in evidence; they exploit trust assumptions</li>
+          <li><strong>Principle 7 (Transparent Resource Claims):</strong> Jailbreaks hide their true intentions; transparent resource declaration prevents covert agency</li>
+        </ul>
+      </div>
+      <div class="principle-card">
+        <h4 style="font-size: 0.95rem; color: var(--accent2);">System Response</h4>
+        <ul style="color: var(--muted); margin-left: 20px; margin-top: 12px;">
+          <li><strong>Witness Arena Blind-Pass Invariant:</strong> Prevents peer-review capture by requiring reviewers to evaluate evidence independently</li>
+          <li><strong>Zone 2 Authority Wall:</strong> Human ratification required before any potentially harmful action; no AI escalation possible</li>
+          <li><strong>Evidence Promotion Queue (EPQ):</strong> All claims must pass A1-A9 auditor verification gates</li>
+        </ul>
+      </div>
+      <p style="margin-top: 16px; color: var(--faint); font-size: 0.9rem;"><strong>Current mitigation:</strong> Detection via evidence review + independent audit trails. <strong>Research gap:</strong> Real-time jailbreak prediction remains unaddressed.</p>
+    </div>
+
+    <div class="crisis-response">
+      <h3 style="margin-top: 32px; color: var(--accent2);">LLM Hallucinations & Truthfulness Calibration</h3>
+      <p><strong>Why it matters:</strong> Models generate plausible but false information with high confidence; confidence poorly calibrated to accuracy.</p>
+      <div class="principle-card">
+        <h4 style="font-size: 0.95rem; color: var(--accent2);">Constitutional Foundation</h4>
+        <ul style="color: var(--muted); margin-left: 20px; margin-top: 12px;">
+          <li><strong>Principle 1 (Humility):</strong> Hallucinations stem from overconfidence; humility means acknowledging knowledge gaps</li>
+          <li><strong>Principle 2 (Service Orientation):</strong> False information harms users; service requires prioritizing accuracy over plausibility</li>
+          <li><strong>Principle 6 (Harm Awareness):</strong> Hallucinations cause downstream harm; awareness prevents escalation</li>
+        </ul>
+      </div>
+      <div class="principle-card">
+        <h4 style="font-size: 0.95rem; color: var(--accent2);">System Response</h4>
+        <ul style="color: var(--muted); margin-left: 20px; margin-top: 12px;">
+          <li><strong>ACAT Calibration Dimension (Truthfulness: 72% Good):</strong> Continuous assessment of confidence calibration</li>
+          <li><strong>Phase 1 Blind vs Phase 3 Corrected Self-Report:</strong> Learning signal reveals systematic blind spots and recurring errors</li>
+          <li><strong>Governance Audit Ritual:</strong> Systematic tracking of false claims for targeted improvement</li>
+        </ul>
+      </div>
+      <p style="margin-top: 16px; color: var(--faint); font-size: 0.9rem;"><strong>Current mitigation:</strong> Pattern detection + targeted training. <strong>Research gap:</strong> Mechanistic understanding of confidence-accuracy divergence needed for root-cause fixes.</p>
+    </div>
+
+    <div class="crisis-response">
+      <h3 style="margin-top: 32px; color: var(--accent2);">Database Privacy & Data Governance</h3>
+      <p><strong>Why it matters:</strong> Privacy failures occur when agency has overly broad data access; least-privilege prevents unnecessary exposure.</p>
+      <div class="principle-card">
+        <h4 style="font-size: 0.95rem; color: var(--accent2);">Constitutional Foundation</h4>
+        <ul style="color: var(--muted); margin-left: 20px; margin-top: 12px;">
+          <li><strong>Principle 3 (Least-Privilege Agency):</strong> HumanAIOS agents have explicit resource declarations; access is only what the task requires</li>
+          <li><strong>Principle 5 (Transparency Before Obfuscation):</strong> Privacy-by-obscurity fails; transparency about data usage is more robust</li>
+          <li><strong>Principle 7 (Transparent Resource Claims):</strong> Data is a resource; explicit declaration of dependencies is auditable</li>
+        </ul>
+      </div>
+      <div class="principle-card">
+        <h4 style="font-size: 0.95rem; color: var(--accent2);">System Response</h4>
+        <ul style="color: var(--muted); margin-left: 20px; margin-top: 12px;">
+          <li><strong>Governance Audit Ritual:</strong> Regular audits detect permission creep and unauthorized usage patterns</li>
+          <li><strong>Resource Agency Declaration:</strong> Each operation explicitly states what data it needs before Zone 2 ratification</li>
+          <li><strong>Zone 1 Inspection & Transparency:</strong> Privacy auditors review all resource claims with full visibility</li>
+        </ul>
+      </div>
+      <p style="margin-top: 16px; color: var(--faint); font-size: 0.9rem;"><strong>Current mitigation:</strong> Pre-execution validation + audit trails + human inspection. <strong>Research gap:</strong> Runtime policy enforcement at database query level remains unaddressed.</p>
+    </div>
+  </section>
+
+  <section class="section">
     <span class="section-label">Learn More</span>
     <h2>Related Frameworks</h2>
     <p><strong>Operational Governance:</strong> See the <a href="/governance" style="color: var(--accent2);">Governance Framework</a> for how these nine principles are operationalized through three zones, 26 principles, and append-only registry.</p>

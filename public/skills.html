@@ -255,6 +255,27 @@
   </section>
 
   <section class="section">
+    <span class="section-label">Real-World Application</span>
+    <h2>How ACAT Addresses Global Crisis: LLM Hallucinations & Confidence Calibration</h2>
+    <p>The same assessment framework applied to human learners also measures AI systems. This creates a parallel signal for detecting and remediating hallucinations in production AI:</p>
+
+    <div class="pull-quote">
+      <p><strong>The Hallucination Crisis:</strong> LLMs generate plausible but false information with high confidence. Traditional testing misses this because it measures accuracy on in-distribution examples. ACAT's Phase 1 → Phase 3 comparison creates a learning signal that exposes calibration failures.</p>
+    </div>
+
+    <p><strong>How it works in practice:</strong></p>
+    <ul style="color: var(--muted); margin-left: 20px; margin-top: 12px;">
+      <li><strong>Truthfulness Dimension (Currently: 72% Good):</strong> Continuous measurement of confidence calibration. The dimension explicitly measures whether high-confidence claims actually hold up under scrutiny.</li>
+      <li><strong>Phase 1 Blind Assessment:</strong> An AI system makes claims without seeing any feedback. Initial confidence scores are recorded.</li>
+      <li><strong>Phase 3 Corrected Assessment:</strong> After training and fact-checking, the system re-assesses the same domain. The gap between Phase 1 and Phase 3 scores reveals systematic blind spots.</li>
+      <li><strong>Recurring vs. Closing Patterns:</strong> If an AI system keeps hallucinating about the same topic, this registers as a "recurring" pattern in the gap analysis. It triggers targeted intervention.</li>
+      <li><strong>Public Findings:</strong> Hallucination patterns are logged to the <a href="https://github.com/humanaios-ui/operations/blob/main/REGISTERED.md" target="_blank" style="color: var(--accent2);">REGISTERED.md</a> findings registry. This creates transparency about where systems are failing.</li>
+    </ul>
+
+    <p style="margin-top: 20px; color: var(--faint); font-size: 0.9rem;"><strong>Current gap:</strong> We detect hallucinations after they occur (Phase 1 → Phase 3 comparison is post-hoc). <strong>Research priority:</strong> Real-time hallucination detection during generation would prevent impact before it reaches users.</p>
+  </section>
+
+  <section class="section">
     <span class="section-label">Learn More</span>
     <h2>Related Resources</h2>
     <p><strong>ACAT (AI Assessment):</strong> Same six dimensions applied to AI systems. See our <a href="/assess" style="color: var(--accent2);">AI assessment tool</a> and <a href="https://github.com/humanaios-ui/operations/blob/main/REGISTERED.md" target="_blank" style="color: var(--accent2);">findings registry</a>.</p>
