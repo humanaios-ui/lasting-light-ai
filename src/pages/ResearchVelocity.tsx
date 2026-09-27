@@ -378,8 +378,68 @@ export function ResearchVelocity() {
   const [lastUpdate, setLastUpdate] = useState<string>('');
 
   useEffect(() => {
-    // Mock data for prototype
-    const mockTopics: ResearchTopic[] = [
+    const loadData = async () => {
+      try {
+        // Try to fetch real AI-EO index
+        const response = await fetch('/api/ai-eo-index.json');
+        if (response.ok) {
+          const indexEntries = await response.json();
+          const transformedTopics: ResearchTopic[] = [];
+          const transformedGaps: ResearchGap[] = [];
+
+          for (const entry of indexEntries) {
+            if (entry.page_type === 'topic_overview' && entry.data) {
+              const data = entry.data;
+              transformedTopics.push({
+                entity_id: data.entity_id,
+                title: data.title,
+                trending_trajectory: (data.trending_trajectory || 'stable') as 'up_strong' | 'up' | 'stable' | 'down',
+                velocity: data.velocity || 0.5,
+                signal_strength: data.signal_strength || 0.5,
+                public_confidence: data.public_confidence || 0.5,
+                discussion_volume: data.discussion_volume || 0,
+                key_concerns: data.key_concerns || [],
+                lifecycle_stage: (data.lifecycle_stage || 'established') as 'emerging' | 'established' | 'resolved' | 'obsolete',
+                days_active: data.days_active || 0,
+                related_gaps: entry.related_entities?.filter((e: { entity_type: string }) => e.entity_type === 'gap').length || 0,
+                arena_findings: 0,
+                caveats: 0,
+              });
+            } else if (entry.page_type === 'gap_analysis' && entry.data) {
+              const data = entry.data;
+              const priorityMap: Record<string, 'critical' | 'high' | 'medium' | 'low'> = {
+                'P0': 'critical', 'P1': 'high', 'P2': 'medium', 'P3': 'low'
+              };
+              transformedGaps.push({
+                entity_id: data.entity_id,
+                title: data.title,
+                severity: priorityMap[data.priority] || 'medium',
+                trending_trajectory: 'stable' as const,
+                velocity: 0.5,
+                public_confidence: data.confidence || 0.5,
+                triggered_by_topics: [],
+                responses_in_progress: 0,
+                days_open: 0,
+              });
+            }
+          }
+
+          if (transformedTopics.length > 0) {
+            setTopics(transformedTopics);
+          }
+          if (transformedGaps.length > 0) {
+            setGaps(transformedGaps);
+          }
+          setLastUpdate(new Date().toLocaleString());
+          setLoading(false);
+          return;
+        }
+      } catch (error) {
+        console.log('AI-EO index not available, using mock data');
+      }
+
+      // Fallback to mock data
+      const mockTopics: ResearchTopic[] = [
       {
         entity_id: 'topic-llm-hallucinations',
         title: 'LLM Hallucination Risks & Detection',
@@ -473,12 +533,16 @@ export function ResearchVelocity() {
       },
     ];
 
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setTopics(mockTopics);
-    setGaps(mockGaps);
-    setFindings(mockFindings);
-    setLastUpdate(new Date().toLocaleString());
-    setLoading(false);
+      // Load mock data as final fallback
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setTopics(mockTopics);
+      setGaps(mockGaps);
+      setFindings(mockFindings);
+      setLastUpdate(new Date().toLocaleString());
+      setLoading(false);
+    };
+
+    loadData();
   }, []);
 
   if (loading) {
