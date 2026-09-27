@@ -43,19 +43,21 @@ interface ResearchFinding {
 function VelocityBadge({ trajectory, velocity }: { trajectory: string; velocity: number }) {
   const velocityPercent = Math.round(velocity * 100);
 
-  const trajectoryIcon = {
+  const trajectoryIconMap: Record<string, string> = {
     'up_strong': '⚡',
     'up': '📈',
     'stable': '→',
     'down': '📉',
-  }[trajectory as keyof typeof trajectoryIcon] || '→';
+  };
+  const trajectoryIcon = trajectoryIconMap[trajectory] || '→';
 
-  const trajectoryColor = {
+  const trajectoryColorMap: Record<string, string> = {
     'up_strong': '#d4a04a',
     'up': '#a8b088',
     'stable': '#7a7268',
     'down': '#5a5250',
-  }[trajectory as keyof typeof trajectoryColor] || '#7a7268';
+  };
+  const trajectoryColor = trajectoryColorMap[trajectory] || '#7a7268';
 
   return (
     <div style={{
