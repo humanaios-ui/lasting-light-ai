@@ -1,7 +1,29 @@
 /* FDS: F3-Component | Parent: CUSTOM_INSTRUCTIONS_V3_5_ORD.md | Hawkins: internal-only | Status: ACTIVE */
 
-const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL ?? 'https://ksinisdzgtnqzsymhfya.supabase.co';
-const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY ?? 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtzaW5pc2R6Z3RucXpzeW1oZnlhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQzMDEzMzEsImV4cCI6MjA4OTg3NzMzMX0.2M9uE_JQOeDPy8obGweyNlPNMiJoISSf3xx4qeYbUU8';
+import { EnvironmentSchema, logAudit } from './validation';
+
+/**
+ * Validate and load environment variables at module initialization
+ * Throws error if required credentials are missing
+ */
+function initializeSupabaseConfig() {
+  const result = EnvironmentSchema.safeParse({
+    VITE_SUPABASE_URL: import.meta.env.VITE_SUPABASE_URL,
+    VITE_SUPABASE_ANON_KEY: import.meta.env.VITE_SUPABASE_ANON_KEY,
+  });
+
+  if (!result.success) {
+    const errorMsg = `Missing or invalid Supabase configuration: ${result.error.issues.map((e) => `${e.path.join('.')}: ${e.message}`).join('; ')}`;
+    logAudit('SUPABASE_CONFIG_ERROR', { error: errorMsg });
+    throw new Error(errorMsg);
+  }
+
+  return result.data;
+}
+
+const config = initializeSupabaseConfig();
+const SUPABASE_URL = config.VITE_SUPABASE_URL;
+const SUPABASE_ANON_KEY = config.VITE_SUPABASE_ANON_KEY;
 
 export interface LiveStats {
   n_total: number;
@@ -30,7 +52,18 @@ export async function fetchLiveStats(): Promise<LiveStats | null> {
 
     if (!response.ok) return null;
 
-    const data = await response.json();
+    let data: unknown;
+    try {
+      data = await response.json();
+    } catch (parseError) {
+      logAudit('JSON_PARSE_FAILED', {
+        endpoint: 'acat_stats_v1',
+        status: response.status,
+        error: parseError instanceof Error ? parseError.message : String(parseError),
+      });
+      return null;
+    }
+
     if (Array.isArray(data) && data.length > 0) {
       const row = data[0];
       return {
@@ -47,6 +80,9 @@ export async function fetchLiveStats(): Promise<LiveStats | null> {
       };
     }
   } catch (error) {
+    logAudit('FETCH_LIVE_STATS_ERROR', {
+      error: error instanceof Error ? error.message : String(error),
+    });
     console.error('Failed to fetch live stats from Supabase:', error);
   }
 

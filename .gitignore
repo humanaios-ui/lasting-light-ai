@@ -13,6 +13,8 @@ venv/
 llai.config.yaml
 !config/llai.config.example.yaml
 .env
+.env.local
+.env.*.local
 *.key
 *.pem
 .pytest_cache/

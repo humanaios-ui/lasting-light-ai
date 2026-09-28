@@ -1,22 +1,57 @@
 import React, { useState } from 'react';
 import { ArenaTestRunner, ArenaTestSession, ArenaSummary } from '../arena/ArenaTestRunner';
+import { ArenaExporter, ArenaExportData } from '../arena/ArenaExport';
 
 export function ArenaPrototype() {
   const [sessions, setSessions] = useState<ArenaTestSession[]>([]);
   const [running, setRunning] = useState(false);
   const [summary, setSummary] = useState<ArenaSummary | null>(null);
+  const [exportData, setExportData] = useState<ArenaExportData | null>(null);
+  const [exportMessage, setExportMessage] = useState<string | null>(null);
 
   const runTests = async () => {
     setRunning(true);
     setSessions([]);
     setSummary(null);
+    setExportData(null);
+    setExportMessage(null);
 
     const runner = new ArenaTestRunner();
     const results = await runner.runBatch(10, 'llm-hallucinations');
 
     setSessions(results);
-    setSummary(runner.generateSummary());
+    const generatedSummary = runner.generateSummary();
+    setSummary(generatedSummary);
+
+    // Generate export data automatically after test completes
+    const exportedData = ArenaExporter.generateExportData(results, generatedSummary);
+    setExportData(exportedData);
+
     setRunning(false);
+  };
+
+  const handleExportJSON = () => {
+    if (exportData) {
+      ArenaExporter.downloadJSON(exportData);
+      setExportMessage('JSON export downloaded successfully!');
+      setTimeout(() => setExportMessage(null), 3000);
+    }
+  };
+
+  const handleCopyToClipboard = async () => {
+    if (exportData) {
+      const success = await ArenaExporter.copyToClipboard(exportData);
+      if (success) {
+        setExportMessage('Export data copied to clipboard!');
+      } else {
+        setExportMessage('Failed to copy to clipboard. Please try Download instead.');
+      }
+      setTimeout(() => setExportMessage(null), 3000);
+    }
+  };
+
+  const getExportReport = (): string => {
+    return exportData ? ArenaExporter.generateReport(exportData) : '';
   };
 
   return (
@@ -54,23 +89,130 @@ export function ArenaPrototype() {
         background: 'rgba(212,160,74,0.05)',
         marginBottom: 32,
       }}>
-        <button
-          onClick={runTests}
-          disabled={running}
-          style={{
-            padding: '10px 20px',
-            borderRadius: 6,
-            border: 'none',
-            background: running ? '#7a7268' : 'linear-gradient(180deg,#f1c36e,#d4a04a)',
-            color: running ? '#c2b8a6' : '#0f0e0c',
-            fontWeight: 700,
-            cursor: running ? 'not-allowed' : 'pointer',
-            fontSize: '1rem',
-          }}
-        >
-          {running ? 'Running 10 Sessions...' : 'Start Arena Test Batch (10 sessions)'}
-        </button>
+        <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', alignItems: 'center' }}>
+          <button
+            onClick={runTests}
+            disabled={running}
+            style={{
+              padding: '10px 20px',
+              borderRadius: 6,
+              border: 'none',
+              background: running ? '#7a7268' : 'linear-gradient(180deg,#f1c36e,#d4a04a)',
+              color: running ? '#c2b8a6' : '#0f0e0c',
+              fontWeight: 700,
+              cursor: running ? 'not-allowed' : 'pointer',
+              fontSize: '1rem',
+            }}
+          >
+            {running ? 'Running 10 Sessions...' : 'Start Arena Test Batch (10 sessions)'}
+          </button>
+
+          {exportData && (
+            <>
+              <button
+                onClick={handleExportJSON}
+                style={{
+                  padding: '10px 20px',
+                  borderRadius: 6,
+                  border: '1px solid rgba(168,176,136,0.4)',
+                  background: 'rgba(168,176,136,0.1)',
+                  color: '#a8b088',
+                  fontWeight: 600,
+                  cursor: 'pointer',
+                  fontSize: '0.95rem',
+                  transition: 'all 0.2s',
+                }}
+                onMouseOver={(e) => {
+                  e.currentTarget.style.background = 'rgba(168,176,136,0.2)';
+                }}
+                onMouseOut={(e) => {
+                  e.currentTarget.style.background = 'rgba(168,176,136,0.1)';
+                }}
+              >
+                Download JSON
+              </button>
+
+              <button
+                onClick={handleCopyToClipboard}
+                style={{
+                  padding: '10px 20px',
+                  borderRadius: 6,
+                  border: '1px solid rgba(212,160,74,0.4)',
+                  background: 'rgba(212,160,74,0.1)',
+                  color: '#d4a04a',
+                  fontWeight: 600,
+                  cursor: 'pointer',
+                  fontSize: '0.95rem',
+                  transition: 'all 0.2s',
+                }}
+                onMouseOver={(e) => {
+                  e.currentTarget.style.background = 'rgba(212,160,74,0.2)';
+                }}
+                onMouseOut={(e) => {
+                  e.currentTarget.style.background = 'rgba(212,160,74,0.1)';
+                }}
+              >
+                Copy to Clipboard
+              </button>
+            </>
+          )}
+        </div>
+
+        {exportMessage && (
+          <div
+            style={{
+              marginTop: 16,
+              padding: 12,
+              borderRadius: 6,
+              background: 'rgba(168,176,136,0.15)',
+              border: '1px solid rgba(168,176,136,0.3)',
+              color: '#a8b088',
+              fontSize: '0.9rem',
+            }}
+          >
+            {exportMessage}
+          </div>
+        )}
       </div>
+
+      {/* Export Report */}
+      {exportData && (
+        <div style={{
+          padding: 20,
+          borderRadius: 8,
+          border: '1px solid rgba(168,176,136,0.2)',
+          background: 'rgba(168,176,136,0.05)',
+          marginBottom: 32,
+        }}>
+          <h3 style={{
+            color: '#a8b088',
+            fontSize: '1rem',
+            margin: '0 0 12px 0',
+            fontWeight: 600,
+          }}>
+            Export Summary
+          </h3>
+          <div style={{
+            fontSize: '0.9rem',
+            color: '#c2b8a6',
+            fontFamily: 'monospace',
+            lineHeight: 1.6,
+            whiteSpace: 'pre-wrap',
+            wordBreak: 'break-word',
+            overflowX: 'auto',
+          }}>
+            {getExportReport()}
+          </div>
+          <div style={{
+            marginTop: 12,
+            fontSize: '0.85rem',
+            color: '#7a7268',
+          }}>
+            Batch ID: <code style={{ background: 'rgba(0,0,0,0.2)', padding: '2px 6px', borderRadius: 3 }}>{exportData.batch_id}</code>
+            {' '}| Sessions in export: <strong>{exportData.total_sessions}</strong>
+          </div>
+        </div>
+      )}
 
       {/* Results Summary */}
       {summary && (

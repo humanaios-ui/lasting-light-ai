@@ -6,10 +6,41 @@ import React, {
 'react';
 import { clampScore, parseAssessmentResponse } from '../lib/assessment';
 import { analyzeContamination, type SubmissionMetadata } from '../lib/contamination';
+import { EnvironmentSchema, logAudit } from '../lib/validation';
+
+// Helper function to convert contamination confidence from text to integer scale (0-100)
+function confidenceToInteger(confidence: 'HIGH' | 'MEDIUM' | 'LOW'): number {
+  switch (confidence) {
+    case 'HIGH': return 80;
+    case 'MEDIUM': return 50;
+    case 'LOW': return 20;
+    default: return 20;
+  }
+}
+
 // ── Constants ────────────────────────────────────────────────────────────────
-// FIX 1: Hardcoded fallbacks ensure connection works even if env vars don't compile
-const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL ?? 'https://ksinisdzgtnqzsymhfya.supabase.co';
-const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY ?? 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtzaW5pc2R6Z3RucXpzeW1oZnlhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQzMDEzMzEsImV4cCI6MjA4OTg3NzMzMX0.2M9uE_JQOeDPy8obGweyNlPNMiJoISSf3xx4qeYbUU8';
+/**
+ * Validate and load environment variables at module initialization
+ * Throws error if required credentials are missing
+ */
+function initializeSupabaseConfig() {
+  const result = EnvironmentSchema.safeParse({
+    VITE_SUPABASE_URL: import.meta.env.VITE_SUPABASE_URL,
+    VITE_SUPABASE_ANON_KEY: import.meta.env.VITE_SUPABASE_ANON_KEY,
+  });
+
+  if (!result.success) {
+    const errorMsg = `Missing or invalid Supabase configuration: ${result.error.issues.map((e) => `${e.path.join('.')}: ${e.message}`).join('; ')}`;
+    logAudit('SUPABASE_CONFIG_ERROR', { error: errorMsg });
+    throw new Error(errorMsg);
+  }
+
+  return result.data;
+}
+
+const config = initializeSupabaseConfig();
+const SUPABASE_URL = config.VITE_SUPABASE_URL;
+const SUPABASE_ANON_KEY = config.VITE_SUPABASE_ANON_KEY;
 interface Dimension {
   id: string;
   label: string;
@@ -184,7 +215,14 @@ function loadAgentRuns(agentName: string): {runs: Run[]; currentRunId: string;} 
     try {
       const parsed = JSON.parse(raw);
       if (Array.isArray(parsed)) stored = parsed;
-    } catch { /* fall through to a fresh run */ }
+    } catch (error) {
+      logAudit('LOAD_AGENT_RUNS_PARSE_ERROR', {
+        agentName,
+        error: error instanceof Error ? error.message : String(error),
+        dataLength: raw.length,
+      });
+      /* fall through to a fresh run */
+    }
   }
   if (stored.length > 0) {
     return { runs: stored, currentRunId: stored[stored.length - 1].id };
@@ -264,7 +302,13 @@ export function AcatTool({
     return fetch(`${SUPABASE_URL}/rest/v1/acat_stats_v1?select=*&limit=1`, {
       headers: { apikey: SUPABASE_ANON_KEY, Authorization: `Bearer ${SUPABASE_ANON_KEY}` }
     }).
-    then((res) => res.json()).
+    then((res) => {
+      if (!res.ok) {
+        logAudit('FETCH_LIVE_STATS_HTTP_ERROR', { status: res.status });
+        throw new Error(`HTTP ${res.status}`);
+      }
+      return res.json();
+    }).
     then((data) => {
       if (Array.isArray(data) && data.length > 0) {
         const row = data[0];
@@ -279,7 +323,12 @@ export function AcatTool({
         setLiveStats(fallback());
       }
     }).
-    catch(() => {setLiveStats(fallback());});
+    catch((error) => {
+      logAudit('FETCH_LIVE_STATS_ERROR', {
+        error: error instanceof Error ? error.message : String(error),
+      });
+      setLiveStats(fallback());
+    });
   }, [onMeanLIUpdate]);
 
   useEffect(() => {fetchLiveStats();}, [fetchLiveStats]);
@@ -435,7 +484,18 @@ Rules:
     const agentKey = parsedAgent || agentName;
     let existingRuns: Run[] = [];
     const stored = localStorage.getItem(`acat55_${agentKey}`);
-    if (stored) { try { existingRuns = JSON.parse(stored); } catch { /* noop */ } }
+    if (stored) {
+      try {
+        existingRuns = JSON.parse(stored);
+      } catch (error) {
+        logAudit('PARSE_RESPONSE_JSON_ERROR', {
+          agentKey,
+          error: error instanceof Error ? error.message : String(error),
+          dataLength: stored.length,
+        });
+        /* noop - use empty array */
+      }
+    }
     const updatedRuns = [...existingRuns, newRun];
     localStorage.setItem(`acat55_${agentKey}`, JSON.stringify(updatedRuns));
     setRuns(updatedRuns); setCurrentRunId(newId); setP1Inputs(p1Scores); setP3Inputs(p3Scores);
@@ -527,22 +587,53 @@ Rules:
     };
     const contaminationAnalysis = analyzeContamination(contaminationMetadata);
 
-    const supabasePayload = {
-      agent_name: agentName, layer: 'ai-self-report', mode: 'prompt-transfer',
-      prompt_version: 'v1.0', acat_version: 'v1.0', instrument_variant: selectedVariant,
-      thread_id: 'T2-MANUAL', bot_name: '', p_version: currentRun.perturbationType || '',
-      assessment_mode: 'web-v1', p1_truth: p1[0], p1_service: p1[1], p1_harm: p1[2],
-      p1_autonomy: p1[3], p1_value: p1[4], p1_humility: p1[5],
-      p3_truth: p3[0], p3_service: p3[1], p3_harm: p3[2],
-      p3_autonomy: p3[3], p3_value: p3[4], p3_humility: p3[5],
-      extended_dims: extDims, version: 'v1.0', provider: '', notes,
-      user_agent: navigator.userAgent, pair_id: currentRun.id,
-      behavioral_summary: currentRun.behavioralSummary || '', flags: dbFlags,
-      contamination_flags: contaminationAnalysis.flags,
-      contamination_action: contaminationAnalysis.recommended_action,
-      contamination_confidence: contaminationAnalysis.confidence,
-      metadata: JSON.stringify({ flags: dbFlags, submission_version: 'v1.0', perturbation_type: currentRun.perturbationType, extended_dims: extDims, behavioral_summary: currentRun.behavioralSummary || '', acat_metrics: metrics ? { CR: metrics.CR, AI: metrics.AI, VS: metrics.VS, PS_total: metrics.PS_total, EC: metrics.EC } : null, contamination: { flags: contaminationAnalysis.flags, confidence: contaminationAnalysis.confidence, action: contaminationAnalysis.recommended_action } })
-    };
+    let supabasePayload;
+    try {
+      const metadataObj = {
+        flags: dbFlags,
+        submission_version: 'v1.0',
+        perturbation_type: currentRun.perturbationType,
+        extended_dims: extDims,
+        behavioral_summary: currentRun.behavioralSummary || '',
+        acat_metrics: metrics ? {
+          CR: metrics.CR,
+          AI: metrics.AI,
+          VS: metrics.VS,
+          PS_total: metrics.PS_total,
+          EC: metrics.EC
+        } : null,
+        contamination: {
+          flags: contaminationAnalysis.flags,
+          confidence: contaminationAnalysis.confidence,
+          action: contaminationAnalysis.recommended_action
+        }
+      };
+
+      supabasePayload = {
+        agent_name: agentName, layer: 'ai-self-report', mode: 'prompt-transfer',
+        prompt_version: 'v1.0', acat_version: 'v1.0', instrument_variant: selectedVariant,
+        thread_id: 'T2-MANUAL', bot_name: '', p_version: currentRun.perturbationType || '',
+        assessment_mode: 'web-v1', p1_truth: p1[0], p1_service: p1[1], p1_harm: p1[2],
+        p1_autonomy: p1[3], p1_value: p1[4], p1_humility: p1[5],
+        p3_truth: p3[0], p3_service: p3[1], p3_harm: p3[2],
+        p3_autonomy: p3[3], p3_value: p3[4], p3_humility: p3[5],
+        extended_dims: extDims, version: 'v1.0', provider: '', notes,
+        user_agent: navigator.userAgent, pair_id: currentRun.id,
+        behavioral_summary: currentRun.behavioralSummary || '', flags: dbFlags,
+        contamination_flags: contaminationAnalysis.flags.length > 0 ? contaminationAnalysis.flags : null,
+        contamination_action: contaminationAnalysis.recommended_action || null,
+        contamination_confidence: confidenceToInteger(contaminationAnalysis.confidence),
+        metadata: JSON.stringify(metadataObj)
+      };
+    } catch (error) {
+      logAudit('PAYLOAD_CONSTRUCTION_ERROR', {
+        error: error instanceof Error ? error.message : String(error),
+        pairId: currentRun.id,
+      });
+      setSubmitStatus({ type: 'error', message: 'Error constructing submission payload. Try again.' });
+      return;
+    }
+
     try {
       const response = await fetch(`${SUPABASE_URL}/rest/v1/acat_assessments_v1`, {
         method: 'POST',
@@ -550,9 +641,14 @@ Rules:
         body: JSON.stringify(supabasePayload)
       });
 
-      // FIX 2: Check HTTP response before marking success — prevents false "✓ Submitted"
+      // Check HTTP response before marking success — prevents false "✓ Submitted"
       if (!response.ok) {
         const errBody = await response.text().catch(() => 'no body');
+        logAudit('SUPABASE_SUBMISSION_ERROR', {
+          status: response.status,
+          error: errBody,
+          pairId: currentRun.id,
+        });
         throw new Error(`HTTP ${response.status}: ${errBody}`);
       }
 
@@ -568,6 +664,10 @@ Rules:
       setTimeout(() => fetchLiveStats(), 2000);
     } catch (err) {
       const message = err instanceof Error ? err.message : String(err);
+      logAudit('SUBMIT_TO_DATABASE_ERROR', {
+        error: message,
+        pairId: currentRun?.id,
+      });
       setSubmitStatus({ type: 'error', message: `Error: ${message}. Try again.` });
     }
   };

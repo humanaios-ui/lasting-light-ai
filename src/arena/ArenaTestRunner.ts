@@ -285,4 +285,27 @@ export class ArenaTestRunner {
       protocol_validation: avgConvergence > 0.7 ? 'PASS' : 'INVESTIGATE',
     };
   }
+
+  /**
+   * Get current sessions for export
+   * Use with ArenaExporter.generateExportData() to create JSON export
+   */
+  exportableSessions(): ArenaTestSession[] {
+    return [...this.sessions]; // Return copy to prevent external modification
+  }
+
+  /**
+   * Clear in-memory sessions
+   * Called after archival to free memory
+   */
+  clearSessions(): void {
+    this.sessions = [];
+  }
+
+  /**
+   * Get count of sessions in memory
+   */
+  getSessionCount(): number {
+    return this.sessions.length;
+  }
 }

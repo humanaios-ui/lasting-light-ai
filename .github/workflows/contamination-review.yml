@@ -1,0 +1,248 @@
+name: Contamination Review Pipeline
+
+on:
+  # Trigger on data submissions via webhook or manual dispatch
+  workflow_dispatch:
+    inputs:
+      entity_id:
+        description: 'Assessment entity ID'
+        required: false
+        default: ''
+      submission_source:
+        description: 'Source of submission (manual, api, batch)'
+        required: false
+        default: 'manual'
+        type: choice
+        options:
+          - manual
+          - api
+          - batch
+
+  # Trigger via repository dispatch event (for programmatic submissions)
+  repository_dispatch:
+    types: [data-submission]
+
+jobs:
+  contamination-review:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Install dependencies
+        run: npm install @supabase/supabase-js
+
+      - name: Fetch contamination data from Supabase
+        id: fetch-data
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+        run: |
+          cat > fetch_contamination.js << 'EOF'
+          const { createClient } = require('@supabase/supabase-js');
+
+          const supabase = createClient(
+            process.env.SUPABASE_URL,
+            process.env.SUPABASE_ANON_KEY
+          );
+
+          async function fetchContaminationData() {
+            try {
+              // Fetch assessments with contamination flags
+              const { data, error } = await supabase
+                .from('acat_assessments_v1')
+                .select('id, contamination_flags, contamination_action, contamination_confidence, created_at')
+                .neq('contamination_action', 'INCLUDE')
+                .order('created_at', { ascending: false })
+                .limit(100);
+
+              if (error) {
+                console.error('Supabase error:', error);
+                process.exit(1);
+              }
+
+              console.log('CONTAMINATION_DATA<<EOF');
+              console.log(JSON.stringify(data || [], null, 2));
+              console.log('EOF');
+            } catch (err) {
+              console.error('Fetch error:', err);
+              process.exit(1);
+            }
+          }
+
+          fetchContaminationData();
+          EOF
+
+          node fetch_contamination.js >> $GITHUB_OUTPUT
+
+      - name: Process contamination assessments
+        id: process
+        run: |
+          cat > process_contamination.js << 'EOF'
+          const fs = require('fs');
+          const path = require('path');
+
+          // Parse input data
+          const inputData = process.argv[2];
+          let assessments = [];
+
+          try {
+            assessments = JSON.parse(inputData);
+          } catch (e) {
+            console.log('No contamination data to process');
+            process.exit(0);
+          }
+
+          if (!Array.isArray(assessments) || assessments.length === 0) {
+            console.log('No contamination assessments to review');
+            process.exit(0);
+          }
+
+          // Prepare log entries
+          const logEntries = assessments.map(assessment => {
+            const timestamp = new Date(assessment.created_at).toISOString();
+            const entityId = assessment.id;
+            const action = assessment.contamination_action;
+            const confidence = assessment.contamination_confidence;
+
+            return `${timestamp} | ${entityId} | ${action} | ${confidence}`;
+          });
+
+          // Log entries for GitHub output
+          logEntries.forEach(entry => console.log(entry));
+
+          // Store for next step
+          process.stdout.write('LOG_ENTRIES<<EOF\n');
+          process.stdout.write(logEntries.join('\n'));
+          process.stdout.write('\nEOF\n');
+          EOF
+
+          node process_contamination.js '${{ steps.fetch-data.outputs.CONTAMINATION_DATA }}' >> $GITHUB_OUTPUT
+
+      - name: Append to contamination review log
+        id: append-log
+        run: |
+          # Ensure log directory exists
+          mkdir -p logs
+
+          # Append entries to immutable log file (git tracked, append-only)
+          cat >> logs/contamination_review_log.txt << 'LOGEOF'
+          ${{ steps.process.outputs.LOG_ENTRIES }}
+          LOGEOF
+
+          # Count entries processed
+          ENTRY_COUNT=$(echo "${{ steps.process.outputs.LOG_ENTRIES }}" | grep -c '|' || echo 0)
+          echo "entries_processed=$ENTRY_COUNT" >> $GITHUB_OUTPUT
+
+          echo "✅ Appended $ENTRY_COUNT contamination review entries to log"
+
+      - name: Commit and push log updates
+        if: steps.append-log.outputs.entries_processed > 0
+        run: |
+          git config user.name "contamination-bot"
+          git config user.email "contamination-bot@lasting-light-ai.local"
+          git add logs/contamination_review_log.txt
+          git commit -m "docs: append contamination review log (${{ steps.append-log.outputs.entries_processed }} entries)" \
+            -m "Automated log update from contamination review pipeline" \
+            -m "Source: ${{ github.event.inputs.submission_source || github.event.action }}" \
+            --no-verify || echo "No changes to commit"
+          git push origin HEAD:${{ github.ref }} || echo "Push failed, but log update is local"
+
+      - name: Notify Supabase database
+        id: notify-db
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: |
+          cat > notify_database.js << 'EOF'
+          const { createClient } = require('@supabase/supabase-js');
+
+          const supabase = createClient(
+            process.env.SUPABASE_URL,
+            process.env.SUPABASE_SERVICE_ROLE_KEY,
+            {
+              auth: {
+                persistSession: false
+              }
+            }
+          );
+
+          async function notifyDatabase() {
+            try {
+              const runId = process.env.GITHUB_RUN_ID;
+              const timestamp = new Date().toISOString();
+              const entriesProcessed = parseInt(process.env.ENTRIES_PROCESSED || '0');
+
+              if (entriesProcessed > 0) {
+                // Insert review run record
+                const { error } = await supabase
+                  .from('contamination_review_runs')
+                  .insert({
+                    github_run_id: runId,
+                    timestamp: timestamp,
+                    entries_processed: entriesProcessed,
+                    status: 'completed'
+                  });
+
+                if (error) {
+                  console.error('Error logging run:', error);
+                  process.exit(1);
+                }
+
+                console.log(`✅ Logged ${entriesProcessed} entries to database`);
+              }
+            } catch (err) {
+              console.error('Notification error:', err);
+              // Non-fatal: continue even if notification fails
+            }
+          }
+
+          notifyDatabase();
+          EOF
+
+          ENTRIES_PROCESSED=${{ steps.append-log.outputs.entries_processed }} node notify_database.js || true
+
+      - name: Generate summary report
+        if: always()
+        run: |
+          cat >> $GITHUB_STEP_SUMMARY << 'EOF'
+          ## Contamination Review Pipeline Results
+
+          | Metric | Value |
+          |--------|-------|
+          | Entries Processed | ${{ steps.append-log.outputs.entries_processed || 0 }} |
+          | Log File | `logs/contamination_review_log.txt` |
+          | Submission Source | ${{ github.event.inputs.submission_source || github.event.action }} |
+          | Run ID | ${{ github.run_id }} |
+
+          ### Log Entry Format
+          ```
+          timestamp | entity_id | action | confidence
+          ```
+
+          ### Actions
+          - **EXCLUDE**: High-confidence contamination detected
+          - **FLAG_FOR_REVIEW**: Potential contamination requiring human review
+          - **REVERT**: Action to revert a previous assessment
+
+          ### Confidence Levels
+          - **HIGH**: Automated or obvious contamination detection
+          - **MEDIUM**: Pattern-based detection
+          - **LOW**: Single signal detection
+
+          EOF
+
+      - name: Report on failures
+        if: failure()
+        run: |
+          echo "❌ Contamination review pipeline failed"
+          echo "Check logs above for details"
+          exit 1

@@ -124,6 +124,83 @@ describe('AcatTool run state', () => {
 
 });
 
+describe('AcatTool contamination submission', () => {
+  it('converts contamination confidence to integer scale (0-100) in submission payload', async () => {
+    let capturedPayload: unknown;
+    const mockFetch = vi.fn((url: string, options: any) => {
+      if (url.includes('acat_assessments_v1')) {
+        capturedPayload = JSON.parse(options.body);
+      }
+      return Promise.resolve({ ok: true, text: () => Promise.resolve('') });
+    });
+    vi.stubGlobal('fetch', mockFetch);
+
+    const { getByText, getByRole } = render(<AcatTool />);
+
+    // Wait for component to render
+    await waitFor(() => {
+      expect(screen.queryByText('Live Dataset')).toBeInTheDocument();
+    });
+
+    // Set agent name
+    const agentInput = document.getElementById('agent-name-input') as HTMLInputElement;
+    fireEvent.change(agentInput, { target: { value: 'Test Agent' } });
+
+    // Fill Phase 1 scores
+    for (let i = 0; i < DIM_COUNT; i++) {
+      const input = document.getElementById(`p1-${['truth', 'service', 'harm', 'autonomy', 'value', 'humility', 'scheme', 'power', 'syc', 'consist', 'fair'][i]}`) as HTMLInputElement;
+      if (input) fireEvent.change(input, { target: { value: '50' } });
+    }
+
+    // Commit Phase 1
+    fireEvent.click(getByText('Commit Phase 1 →'));
+
+    // Reveal perturbation
+    await waitFor(() => {
+      const revealBtn = screen.queryByText('Show perturbation');
+      if (revealBtn) fireEvent.click(revealBtn);
+    });
+
+    // Fill Phase 3 scores
+    await waitFor(() => {
+      const phase3Input = document.getElementById('p3-truth') as HTMLInputElement;
+      if (phase3Input) {
+        fireEvent.change(phase3Input, { target: { value: '48' } });
+      }
+    });
+
+    // Save Phase 3
+    const savePhase3Btn = screen.queryByText('Save this run →');
+    if (savePhase3Btn) fireEvent.click(savePhase3Btn);
+
+    // Submit to database
+    await waitFor(() => {
+      const submitBtn = screen.queryByText('Submit to Live Dataset');
+      if (submitBtn && !submitBtn.hasAttribute('disabled')) {
+        fireEvent.click(submitBtn);
+      }
+    });
+
+    // Verify contamination fields in payload
+    await waitFor(() => {
+      expect(capturedPayload).toBeDefined();
+      const payload = capturedPayload as Record<string, any>;
+
+      // Verify contamination_confidence is an integer
+      expect(typeof payload.contamination_confidence).toBe('number');
+      expect(payload.contamination_confidence).toBeGreaterThanOrEqual(0);
+      expect(payload.contamination_confidence).toBeLessThanOrEqual(100);
+
+      // Verify contamination_flags is array or null
+      expect(Array.isArray(payload.contamination_flags) || payload.contamination_flags === null).toBe(true);
+
+      // Verify contamination_action is one of the valid values
+      const validActions = ['INCLUDE', 'FLAG_FOR_REVIEW', 'EXCLUDE'];
+      expect(validActions.includes(payload.contamination_action) || payload.contamination_action === null).toBe(true);
+    });
+  });
+});
+
 describe('AcatTool live stats', () => {
   function stubStats(body: unknown) {
     vi.stubGlobal('fetch', vi.fn(() => Promise.resolve({ json: () => Promise.resolve(body) })));

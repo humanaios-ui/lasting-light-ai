@@ -1,5 +1,7 @@
 /* FDS: F3-Component | Parent: CUSTOM_INSTRUCTIONS_V3_5_ORD.md | Hawkins: internal-only | Status: ACTIVE */
 
+import { logAudit } from './validation';
+
 // Pseudonymous submission storage and retrieval
 
 // Simple UUID v4 generator
@@ -129,12 +131,32 @@ export function getRegimeAResponses(problemId: string): Submission[] {
 // Get all submissions (for dashboard)
 export function getAllSubmissions(): Submission[] {
   const stored = localStorage.getItem(STORAGE_KEYS.SUBMISSIONS);
-  return stored ? JSON.parse(stored) : [];
+  if (!stored) return [];
+
+  try {
+    return JSON.parse(stored);
+  } catch (error) {
+    logAudit('GET_ALL_SUBMISSIONS_PARSE_ERROR', {
+      error: error instanceof Error ? error.message : String(error),
+      dataLength: stored.length,
+    });
+    return [];
+  }
 }
 
 export function getAllParticipants(): Participant[] {
   const stored = localStorage.getItem(STORAGE_KEYS.PARTICIPANTS);
-  return stored ? JSON.parse(stored) : [];
+  if (!stored) return [];
+
+  try {
+    return JSON.parse(stored);
+  } catch (error) {
+    logAudit('GET_ALL_PARTICIPANTS_PARSE_ERROR', {
+      error: error instanceof Error ? error.message : String(error),
+      dataLength: stored.length,
+    });
+    return [];
+  }
 }
 
 // Get metrics for a regime
