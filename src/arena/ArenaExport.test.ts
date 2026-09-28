@@ -3,89 +3,137 @@
  * Verifies JSON export functionality for manual archival
  */
 
+import { describe, it, expect, beforeAll } from 'vitest';
 import { ArenaTestRunner } from './ArenaTestRunner';
 import { ArenaExporter } from './ArenaExport';
 
-async function testExportFunctionality() {
-  console.log('=== ARENA EXPORT TEST START ===\n');
+describe('Arena Export Functionality', () => {
+  let sessions: any[] = [];
+  let summary: any = null;
+  let exportData: any = null;
 
-  // Run a small batch of test sessions
-  console.log('Running 10-session batch...');
-  const runner = new ArenaTestRunner();
-  const sessions = await runner.runBatch(10, 'llm-hallucinations');
-  const summary = runner.generateSummary();
+  beforeAll(async () => {
+    // Run a small batch of test sessions
+    const runner = new ArenaTestRunner();
+    sessions = await runner.runBatch(10, 'llm-hallucinations');
+    summary = runner.generateSummary();
+    exportData = ArenaExporter.generateExportData(sessions, summary);
+  });
 
-  console.log(`Completed ${sessions.length} sessions\n`);
+  describe('Export data structure', () => {
+    it('should generate export data with batch ID', () => {
+      expect(exportData.batch_id).toBeDefined();
+      expect(typeof exportData.batch_id).toBe('string');
+    });
 
-  // Generate export data
-  console.log('Generating export data...');
-  const exportData = ArenaExporter.generateExportData(sessions, summary);
+    it('should include export timestamp', () => {
+      expect(exportData.export_timestamp).toBeDefined();
+      expect(typeof exportData.export_timestamp).toBe('string');
+    });
 
-  // Verify export structure
-  console.log('Verifying export structure:');
-  console.log(`  - Batch ID: ${exportData.batch_id}`);
-  console.log(`  - Export timestamp: ${exportData.export_timestamp}`);
-  console.log(`  - Total sessions in export: ${exportData.total_sessions}`);
-  console.log(`  - Sessions with metadata: ${exportData.sessions.length}`);
+    it('should include correct session count', () => {
+      expect(exportData.total_sessions).toBe(sessions.length);
+      expect(exportData.sessions.length).toBe(sessions.length);
+    });
 
-  // Verify all sessions have required metadata
-  const allSessionsHaveMetadata = exportData.sessions.every(
-    (s) =>
-      s.session_id &&
-      s.test_index !== undefined &&
-      s.topic &&
-      s.timestamp &&
-      s.blind_pass &&
-      s.convergence &&
-      s.reverse_gaze_observed !== undefined &&
-      s.learning_signal !== undefined
-  );
+    it('should have all sessions with complete metadata', () => {
+      const allSessionsHaveMetadata = exportData.sessions.every(
+        (s: any) =>
+          s.session_id &&
+          s.test_index !== undefined &&
+          s.topic &&
+          s.timestamp &&
+          s.blind_pass &&
+          s.convergence &&
+          s.reverse_gaze_observed !== undefined &&
+          s.learning_signal !== undefined
+      );
 
-  console.log(`  - All sessions have complete metadata: ${allSessionsHaveMetadata ? 'YES' : 'NO'}`);
+      expect(allSessionsHaveMetadata).toBe(true);
+    });
+  });
 
-  // Test JSON serialization
-  console.log('\nTesting JSON serialization...');
-  const json = ArenaExporter.toJSON(exportData);
-  const jsonSize = new Blob([json]).size;
-  console.log(`  - JSON size: ${(jsonSize / 1024).toFixed(2)} KB`);
-  console.log(`  - JSON is valid: ${json.length > 0 ? 'YES' : 'NO'}`);
+  describe('JSON serialization and deserialization', () => {
+    let json: string;
+    let jsonSize: number;
 
-  // Verify JSON can be parsed back
-  console.log('\nTesting JSON deserialization...');
-  try {
-    const parsed = JSON.parse(json);
-    console.log(`  - Parse successful: YES`);
-    console.log(`  - Batch ID matches: ${parsed.batch_id === exportData.batch_id ? 'YES' : 'NO'}`);
-    console.log(`  - Session count matches: ${parsed.total_sessions === exportData.total_sessions ? 'YES' : 'NO'}`);
-  } catch (e) {
-    console.log(`  - Parse error: ${e}`);
-  }
+    beforeAll(() => {
+      json = ArenaExporter.toJSON(exportData);
+      jsonSize = new Blob([json]).size;
+    });
 
-  // Test report generation
-  console.log('\nGenerating export report...');
-  const report = ArenaExporter.generateReport(exportData);
-  const reportLines = report.split('\n').length;
-  console.log(`  - Report lines: ${reportLines}`);
-  console.log(`  - Report contains batch ID: ${report.includes(exportData.batch_id) ? 'YES' : 'NO'}`);
-  console.log(`  - Report contains metrics: ${report.includes('Convergence Score') ? 'YES' : 'NO'}`);
+    it('should generate valid JSON string', () => {
+      expect(json).toBeDefined();
+      expect(typeof json).toBe('string');
+      expect(json.length).toBeGreaterThan(0);
+    });
 
-  // Display the report
-  console.log('\n=== EXPORT REPORT ===\n');
-  console.log(report);
+    it('should produce reasonable JSON size', () => {
+      expect(jsonSize).toBeGreaterThan(0);
+      expect(jsonSize).toBeLessThan(1000000); // Less than 1MB for archival
+    });
 
-  console.log('\n=== ARENA EXPORT TEST COMPLETE ===');
-  console.log(`\nSummary:`);
-  console.log(`  - Export contains ${exportData.total_sessions} sessions`);
-  console.log(`  - Reverse-gaze detection rate: ${exportData.summary.reverse_gaze_rate}`);
-  console.log(`  - Protocol validation: ${exportData.summary.protocol_validation}`);
-  console.log(`  - JSON size suitable for archival: ${jsonSize < 1000000 ? 'YES' : 'NO'} (${(jsonSize / 1024).toFixed(2)} KB)`);
+    it('should produce valid JSON that can be parsed', () => {
+      expect(() => JSON.parse(json)).not.toThrow();
+    });
 
-  return exportData;
-}
+    it('should preserve batch ID after serialization', () => {
+      const parsed = JSON.parse(json);
+      expect(parsed.batch_id).toBe(exportData.batch_id);
+    });
 
-// Run test if executed directly
-if (typeof window === 'undefined' && import.meta.url === `file://${process.argv[1]}`) {
-  testExportFunctionality().catch(console.error);
-}
+    it('should preserve session count after serialization', () => {
+      const parsed = JSON.parse(json);
+      expect(parsed.total_sessions).toBe(exportData.total_sessions);
+    });
 
-export { testExportFunctionality };
+    it('should preserve all session data after serialization', () => {
+      const parsed = JSON.parse(json);
+      expect(parsed.sessions.length).toBe(exportData.sessions.length);
+    });
+  });
+
+  describe('Report generation', () => {
+    let report: string;
+
+    beforeAll(() => {
+      report = ArenaExporter.generateReport(exportData);
+    });
+
+    it('should generate non-empty report', () => {
+      expect(report).toBeDefined();
+      expect(report.length).toBeGreaterThan(0);
+    });
+
+    it('should include batch ID in report', () => {
+      expect(report).toContain(exportData.batch_id);
+    });
+
+    it('should include convergence metrics in report', () => {
+      expect(report).toContain('Convergence');
+    });
+
+    it('should have reasonable report length', () => {
+      const reportLines = report.split('\n').length;
+      expect(reportLines).toBeGreaterThan(5); // At least some content
+    });
+  });
+
+  describe('Export summary validation', () => {
+    it('should include reverse-gaze detection rate', () => {
+      expect(exportData.summary).toBeDefined();
+      expect(exportData.summary.reverse_gaze_rate).toBeDefined();
+    });
+
+    it('should include protocol validation', () => {
+      expect(exportData.summary).toBeDefined();
+      expect(exportData.summary.protocol_validation).toBeDefined();
+    });
+
+    it('should have valid reverse-gaze rate', () => {
+      const rate = exportData.summary.reverse_gaze_rate;
+      expect(typeof rate).toBe('string');
+      expect(rate).toMatch(/^\d+(\.\d+)?%$/); // Should match pattern like "50.0%"
+    });
+  });
+});
