@@ -18,7 +18,13 @@ export interface DeltaIndexEntry {
   velocity?: number;
   trending_trajectory?: string;
   related_entities?: Array<{ entity_id: string; relationship_type: string }>;
-  [key: string]: any;
+  signal_strength?: number;
+  public_confidence?: number;
+  discussion_volume?: number;
+  lifecycle_stage?: string;
+  days_active?: number;
+  last_updated?: string;
+  [key: string]: string | number | boolean | null | undefined | Record<string, unknown> | unknown[];
 }
 
 export interface RegeneratedPage {
