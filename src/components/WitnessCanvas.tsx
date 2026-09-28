@@ -654,7 +654,18 @@ export function WitnessCanvas() {
       ctx.fillStyle = vg;
       ctx.fill();
     }
+    const TARGET_FPS = 60;
+    const FRAME_TIME = 1000 / TARGET_FPS;
+    let lastFrameTime = 0;
+
     function animate(timestamp: number) {
+      // Frame rate limiting to 60fps
+      if (timestamp - lastFrameTime < FRAME_TIME) {
+        animId = requestAnimationFrame(animate);
+        return;
+      }
+      lastFrameTime = timestamp;
+
       if (lastTs === null) lastTs = timestamp;
       const dt = (timestamp - lastTs) / 1000;
       lastTs = timestamp;

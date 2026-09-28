@@ -297,7 +297,18 @@ export function MiniWitnessCanvas() {
       ctx.fill();
       ctx.globalAlpha = 1;
     }
+    const TARGET_FPS = 60;
+    const FRAME_TIME = 1000 / TARGET_FPS;
+    let lastFrameTime = 0;
+
     function frame(timestamp: number) {
+      // Frame rate limiting to 60fps
+      if (timestamp - lastFrameTime < FRAME_TIME) {
+        animId = requestAnimationFrame(frame);
+        return;
+      }
+      lastFrameTime = timestamp;
+
       if (lastTs === null) lastTs = timestamp;
       const dt = (timestamp - lastTs) / 1000;
       lastTs = timestamp;

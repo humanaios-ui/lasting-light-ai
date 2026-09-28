@@ -63,7 +63,7 @@ const KNOWN_ACAT_PHRASES = [
  */
 function checkLowP1Humility(metadata: SubmissionMetadata): ContaminationFlag | null {
   const p1 = metadata.p1_scores;
-  if (p1.length < 6) return null;
+  if (!p1 || p1.length < 6) return null;
 
   const humilityScore = p1[HUMILITY_P1_INDEX];
   const otherScores = [...p1.slice(0, 5), ...p1.slice(6)];
@@ -81,6 +81,10 @@ function checkLowP1Humility(metadata: SubmissionMetadata): ContaminationFlag | n
  * Mean <20 is extremely rare and suggests protocol gaming
  */
 function checkLowP1Core(metadata: SubmissionMetadata): ContaminationFlag | null {
+  if (!metadata.p1_scores || metadata.p1_scores.length < 6) {
+    return null;
+  }
+
   const p1 = metadata.p1_scores.slice(0, 6);
   const meanP1 = p1.reduce((a, b) => a + b, 0) / p1.length;
   if (meanP1 < 15) {
@@ -94,6 +98,10 @@ function checkLowP1Core(metadata: SubmissionMetadata): ContaminationFlag | null 
  * Suggests automated/scripted response
  */
 function checkZeroVarianceP1(metadata: SubmissionMetadata): ContaminationFlag | null {
+  if (!metadata.p1_scores || metadata.p1_scores.length < 6) {
+    return null;
+  }
+
   const p1 = metadata.p1_scores.slice(0, 6);
   const minP1 = Math.min(...p1);
   const maxP1 = Math.max(...p1);
@@ -107,6 +115,11 @@ function checkZeroVarianceP1(metadata: SubmissionMetadata): ContaminationFlag | 
  * Detect identical Phase 1 and Phase 3 scores (extremely rare without exposure)
  */
 function checkIdenticalP1P3(metadata: SubmissionMetadata): ContaminationFlag | null {
+  if (!metadata.p1_scores || metadata.p1_scores.length < 6 ||
+      !metadata.p3_scores || metadata.p3_scores.length < 6) {
+    return null;
+  }
+
   const p1 = metadata.p1_scores.slice(0, 6);
   const p3 = metadata.p3_scores.slice(0, 6);
   const identical = p1.every((score, i) => score === p3[i]);
@@ -159,9 +172,15 @@ function checkAgentName(metadata: SubmissionMetadata): ContaminationFlag | null 
  * Detect extreme calibration shifts (P1 → P3 change > 40 points per dimension)
  * Suggests exposure to Phase 2 perturbation or prior knowledge
  */
-function checkExtremeCalibractionShift(
+function checkExtremeCalibrationShift(
   metadata: SubmissionMetadata
 ): ContaminationFlag | null {
+  // Bounds check: ensure both arrays exist and have at least 6 elements
+  if (!metadata.p1_scores || metadata.p1_scores.length < 6 ||
+      !metadata.p3_scores || metadata.p3_scores.length < 6) {
+    return null;
+  }
+
   const p1 = metadata.p1_scores.slice(0, 6);
   const p3 = metadata.p3_scores.slice(0, 6);
 
@@ -185,10 +204,20 @@ export function checkDuplicateSubmission(
   metadata: SubmissionMetadata,
   recentSubmissions: SubmissionMetadata[]
 ): ContaminationFlag | null {
+  // Bounds check: current submission must have at least 6 scores
+  if (!metadata.p1_scores || metadata.p1_scores.length < 6) {
+    return null;
+  }
+
   const timestamp = new Date(metadata.timestamp).getTime();
   const oneMinuteAgo = timestamp - 60000; // 1 minute in ms
 
   for (const recent of recentSubmissions) {
+    // Bounds check: recent submission must have at least 6 scores
+    if (!recent.p1_scores || recent.p1_scores.length < 6) {
+      continue;
+    }
+
     const recentTimestamp = new Date(recent.timestamp).getTime();
     if (recentTimestamp < oneMinuteAgo) continue; // Outside 1-minute window
 
@@ -225,7 +254,7 @@ export function analyzeContamination(
     checkIdenticalP1P3(metadata),
     checkKnownPromptText(metadata),
     checkAgentName(metadata),
-    checkExtremeCalibractionShift(metadata),
+    checkExtremeCalibrationShift(metadata),
     ...(recentSubmissions ? [checkDuplicateSubmission(metadata, recentSubmissions)] : []),
   ];
 
