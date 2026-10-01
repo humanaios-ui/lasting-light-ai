@@ -8,23 +8,32 @@ import React from 'react';
  */
 export function LazyLoadingFallback() {
   return (
-    <div style={{
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      minHeight: '60vh',
-      color: '#c2b8a6',
-    }}>
+    <div
+      style={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        minHeight: '60vh',
+        color: '#c2b8a6',
+      }}
+      role="status"
+      aria-live="polite"
+      aria-busy="true"
+      aria-label="Loading component"
+    >
       <div style={{
         textAlign: 'center',
       }}>
         {/* Animated spinner */}
-        <div style={{
-          width: 48,
-          height: 48,
-          margin: '0 auto 24px',
-          position: 'relative',
-        }}>
+        <div
+          style={{
+            width: 48,
+            height: 48,
+            margin: '0 auto 24px',
+            position: 'relative',
+          }}
+          aria-hidden="true"
+        >
           <div
             style={{
               width: '100%',
