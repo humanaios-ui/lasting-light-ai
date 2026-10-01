@@ -142,7 +142,7 @@ export function parseJSON<T>(
 
 /**
  * Audit log function for security events
- * Logs to contamination_review_log.txt (client-side this writes to console and localStorage)
+ * Logs to contamination_review_log.txt (client-side this writes to localStorage only)
  */
 export function logAudit(
   event: string,
@@ -154,13 +154,14 @@ export function logAudit(
     data,
   };
 
-  // Console logging for debugging
-  console.warn('[AUDIT]', event, data);
-
-  // Store in localStorage for persistence
+  // Store in localStorage for persistence (no console logging to avoid exposing audit data)
   try {
     const auditLog = localStorage.getItem('contamination_audit_log') || '[]';
     const logs = JSON.parse(auditLog);
+    if (!Array.isArray(logs)) {
+      console.error('[AUDIT_STORAGE_ERROR] Audit log is not an array');
+      return;
+    }
     logs.push(logEntry);
     // Keep only last 100 entries to avoid storage overflow
     const trimmed = logs.slice(-100);

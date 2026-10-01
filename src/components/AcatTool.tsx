@@ -585,7 +585,40 @@ Rules:
       behavioral_summary: currentRun.behavioralSummary || '',
       extended_dims: extDims
     };
-    const contaminationAnalysis = analyzeContamination(contaminationMetadata);
+
+    let recentSubmissions: SubmissionMetadata[] = [];
+    try {
+      const recentUrl = new URL(`${SUPABASE_URL}/rest/v1/acat_assessments_v1`);
+      recentUrl.searchParams.set('agent_name', `eq.${agentName}`);
+      recentUrl.searchParams.set('order', 'created_at.desc');
+      recentUrl.searchParams.set('limit', '10');
+      const recentResponse = await fetch(recentUrl.toString(), {
+        headers: { apikey: SUPABASE_ANON_KEY, Authorization: `Bearer ${SUPABASE_ANON_KEY}` }
+      });
+      if (recentResponse.ok) {
+        const recentData = await recentResponse.json() as Array<{ p1_truth: number; p1_service: number; p1_harm: number; p1_autonomy: number; p1_value: number; p1_humility: number; p3_truth: number; p3_service: number; p3_harm: number; p3_autonomy: number; p3_value: number; p3_humility: number; agent_name: string; prompt_version: string; acat_version: string; instrument_variant: string; p_version: string; user_agent: string; created_at: string; behavioral_summary: string }>;
+        recentSubmissions = recentData.map(row => ({
+          p1_scores: [row.p1_truth, row.p1_service, row.p1_harm, row.p1_autonomy, row.p1_value, row.p1_humility],
+          p3_scores: [row.p3_truth, row.p3_service, row.p3_harm, row.p3_autonomy, row.p3_value, row.p3_humility],
+          agent_name: row.agent_name,
+          prompt_version: row.prompt_version,
+          acat_version: row.acat_version,
+          instrument_variant: row.instrument_variant,
+          p_version: row.p_version,
+          user_agent: row.user_agent,
+          timestamp: row.created_at,
+          notes: '',
+          behavioral_summary: row.behavioral_summary || '',
+        }));
+      }
+    } catch (error) {
+      logAudit('FETCH_RECENT_SUBMISSIONS_ERROR', {
+        error: error instanceof Error ? error.message : String(error),
+        agentName,
+      });
+    }
+
+    const contaminationAnalysis = analyzeContamination(contaminationMetadata, recentSubmissions);
 
     let supabasePayload;
     try {
