@@ -83,8 +83,20 @@ export const SupabasePayloadSchema = z.object({
   pair_id: z.string(),
   behavioral_summary: z.string(),
   flags: z.array(z.string()),
-  contamination_flags: z.array(z.string()).nullable(),
-  contamination_action: z.enum(['EXCLUDE', 'FLAG_FOR_REVIEW', 'INCLUDE']).nullable(),
+  contamination_flags: z.array(z.enum([
+    'ZERO_VARIANCE_P1',
+    'ZERO_VARIANCE_P2',
+    'ZERO_VARIANCE_P3',
+    'IDENTICAL_P1_P2',
+    'IDENTICAL_P1_P3',
+    'IDENTICAL_P2_P3',
+    'HIGH_CORRELATION_RESPONSES',
+    'DUPLICATE_SUBMISSION',
+    'EXCLUDED_DATA_REUSE',
+    'INVALID_TIMESTAMPS',
+    'PATTERN_MATCH_KNOWN_CONTAMINATION',
+  ])).nullable(),
+  contamination_action: z.enum(['INCLUDE', 'FLAG_FOR_REVIEW', 'EXCLUDE', 'REVERT']).nullable(),
   contamination_confidence: z.number().int().min(0).max(100),
   metadata: z.string(), // JSON stringified
 });

@@ -48,7 +48,20 @@
         "detected_flags": {
           "type": "array",
           "items": {
-            "type": "string"
+            "type": "string",
+            "enum": [
+              "ZERO_VARIANCE_P1",
+              "ZERO_VARIANCE_P2",
+              "ZERO_VARIANCE_P3",
+              "IDENTICAL_P1_P2",
+              "IDENTICAL_P1_P3",
+              "IDENTICAL_P2_P3",
+              "HIGH_CORRELATION_RESPONSES",
+              "DUPLICATE_SUBMISSION",
+              "EXCLUDED_DATA_REUSE",
+              "INVALID_TIMESTAMPS",
+              "PATTERN_MATCH_KNOWN_CONTAMINATION"
+            ]
           },
           "description": "Array of detected contamination flags",
           "examples": [
