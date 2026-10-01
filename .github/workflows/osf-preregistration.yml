@@ -96,15 +96,18 @@ jobs:
           REGISTRATION_URL=$(echo "$RESPONSE" | jq -r '.registration_url // "failed"')
           SUCCESS=$(echo "$RESPONSE" | jq -r '.success // false')
 
+          # Set outputs for both success and failure cases (required by downstream steps)
+          echo "registration_id=${REGISTRATION_ID}" >> $GITHUB_OUTPUT
+          echo "registration_url=${REGISTRATION_URL}" >> $GITHUB_OUTPUT
+
           if [ "$REGISTRATION_ID" = "failed" ] || [ "$SUCCESS" != "true" ]; then
+            echo "submission_status=failed" >> $GITHUB_OUTPUT
             echo "❌ OSF submission failed - registration ID not received"
             echo "Response: $RESPONSE"
             exit 1
           fi
 
           echo "submission_status=success" >> $GITHUB_OUTPUT
-          echo "registration_id=${REGISTRATION_ID}" >> $GITHUB_OUTPUT
-          echo "registration_url=${REGISTRATION_URL}" >> $GITHUB_OUTPUT
           echo "✅ OSF registration submitted: $REGISTRATION_ID"
 
       - name: Comment on PR with OSF status
