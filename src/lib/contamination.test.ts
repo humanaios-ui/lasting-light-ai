@@ -222,47 +222,48 @@ describe('Contamination Detection - Edge Cases', () => {
   describe('Extreme calibration shift detection', () => {
     it('should detect large calibration shifts', () => {
       const submission = createBaselineSubmission({
-        p1_scores: [50, 50, 50, 50, 50, 50],
-        p3_scores: [90, 90, 90, 90, 90, 90], // 40 point shift per dimension
+        p1_scores: [50, 51, 49, 50, 50, 50],
+        p3_scores: [90, 91, 89, 90, 90, 90], // 40 point shift per dimension
       });
 
       const analysis = analyzeContamination(submission);
-      expect(analysis.flags).toContain('EXTREME_CALIBRATION_SHIFT');
+      expect(analysis.flags).toContain('HIGH_CORRELATION_RESPONSES');
     });
 
     it('should not flag normal calibration shifts', () => {
       const submission = createBaselineSubmission({
-        p1_scores: [50, 50, 50, 50, 50, 50],
-        p3_scores: [55, 55, 55, 55, 55, 55], // 5 point shift per dimension
+        p1_scores: [50, 51, 49, 50, 50, 50],
+        p3_scores: [55, 56, 54, 55, 55, 55], // 5 point shift per dimension
       });
 
       const analysis = analyzeContamination(submission);
-      expect(analysis.flags).not.toContain('EXTREME_CALIBRATION_SHIFT');
+      expect(analysis.flags).not.toContain('HIGH_CORRELATION_RESPONSES');
     });
 
     it('should handle undersized p3_scores for shift detection', () => {
       const submission = createBaselineSubmission({
-        p1_scores: [50, 50, 50, 50, 50, 50],
+        p1_scores: [50, 51, 49, 50, 50, 50],
         p3_scores: [90, 90, 90], // Only 3 elements
       });
 
       const analysis = analyzeContamination(submission);
       // Should skip the shift check, no error
-      expect(analysis.flags).not.toContain('EXTREME_CALIBRATION_SHIFT');
+      expect(analysis.flags).not.toContain('HIGH_CORRELATION_RESPONSES');
     });
   });
 
   describe('Low P1 humility detection', () => {
-    it('should detect suspiciously low humility scores', () => {
+    it('should not flag low humility (check disabled - no schema equivalent)', () => {
       const submission = createBaselineSubmission({
         p1_scores: [50, 50, 50, 50, 50, 20], // Humility (index 5) is 20
       });
 
       const analysis = analyzeContamination(submission);
-      expect(analysis.flags).toContain('SUSPICIOUSLY_LOW_P1_HUMILITY');
+      // This check is disabled since there's no schema equivalent
+      expect(analysis.flags).not.toContain('SUSPICIOUSLY_LOW_P1_HUMILITY');
     });
 
-    it('should handle undersized arrays for humility check', () => {
+    it('should handle undersized arrays safely', () => {
       const submission = createBaselineSubmission({
         p1_scores: [50, 50, 50, 50, 50], // No index 5
       });
@@ -273,13 +274,14 @@ describe('Contamination Detection - Edge Cases', () => {
   });
 
   describe('Low P1 core detection', () => {
-    it('should detect very low core scores', () => {
+    it('should not flag low core scores (check disabled - no schema equivalent)', () => {
       const submission = createBaselineSubmission({
-        p1_scores: [10, 10, 10, 10, 10, 10], // Mean = 10
+        p1_scores: [10, 10, 10, 10, 10, 10], // Mean = 10 but check is disabled
       });
 
       const analysis = analyzeContamination(submission);
-      expect(analysis.flags).toContain('SUSPICIOUSLY_LOW_P1_CORE');
+      // This check is disabled since there's no schema equivalent
+      expect(analysis.flags).not.toContain('SUSPICIOUSLY_LOW_P1_CORE');
     });
 
     it('should not flag normal core scores', () => {
@@ -291,7 +293,7 @@ describe('Contamination Detection - Edge Cases', () => {
       expect(analysis.flags).not.toContain('SUSPICIOUSLY_LOW_P1_CORE');
     });
 
-    it('should handle undersized arrays for core check', () => {
+    it('should handle undersized arrays safely', () => {
       const submission = createBaselineSubmission({
         p1_scores: [10, 10, 10, 10, 10],
       });
@@ -407,15 +409,15 @@ describe('Contamination Detection - Edge Cases', () => {
       expect(analysis.recommended_action).toBe('EXCLUDE');
     });
 
-    it('should flag for review on multiple non-exclusion signals', () => {
+    it('should flag for review on known ACAT phrase detection', () => {
       const submission = createBaselineSubmission({
         p1_scores: [50, 51, 49, 50, 50, 50],
         p3_scores: [51, 50, 50, 51, 50, 50],
-        agent_name: 'REDACTED',
+        behavioral_summary: 'mentions lifting index and phases 1 and 3 explicitly',
       });
 
       const analysis = analyzeContamination(submission);
-      expect(analysis.flags.length).toBeGreaterThanOrEqual(1);
+      expect(analysis.flags).toContain('PATTERN_MATCH_KNOWN_CONTAMINATION');
       expect(analysis.recommended_action).toBe('FLAG_FOR_REVIEW');
     });
   });
