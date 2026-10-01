@@ -29,6 +29,16 @@ serve(async (req) => {
   try {
     const payload: RegistrationPayload = await req.json();
 
+    if (!payload.title || !payload.description || !payload.category || !payload.protocolText) {
+      return new Response(
+        JSON.stringify({ error: "Missing required fields: title, description, category, protocolText" }),
+        {
+          status: 400,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        }
+      );
+    }
+
     const supabaseUrl = Deno.env.get("SUPABASE_URL");
     const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
 
@@ -104,6 +114,18 @@ serve(async (req) => {
     }
 
     const registrationData = await createRegistrationResponse.json();
+
+    if (!registrationData?.data?.id || !registrationData?.data?.links?.self) {
+      console.error("OSF response missing registration ID or URL:", registrationData);
+      return new Response(
+        JSON.stringify({ error: "Invalid OSF registration response: missing required fields" }),
+        {
+          status: 400,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        }
+      );
+    }
+
     const registrationId = registrationData.data.id;
     const registrationUrl = registrationData.data.links.self;
 
