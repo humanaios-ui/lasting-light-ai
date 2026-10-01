@@ -5,8 +5,8 @@
 CREATE TABLE IF NOT EXISTS contamination_assessments (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
 
-  -- Foreign key to the assessment being reviewed
-  acat_assessment_id UUID NOT NULL REFERENCES acat_assessments_v1(id) ON DELETE CASCADE,
+  -- Foreign key to the assessment being reviewed (preserve audit trail on deletion)
+  acat_assessment_id UUID NOT NULL REFERENCES acat_assessments_v1(id) ON DELETE RESTRICT,
 
   -- Contamination detection metadata
   detected_flags JSONB DEFAULT '[]' NOT NULL,
@@ -71,17 +71,20 @@ ALTER TABLE contamination_assessments ENABLE ROW LEVEL SECURITY;
 CREATE POLICY contamination_assessments_read_policy
   ON contamination_assessments
   FOR SELECT
+  TO authenticated
   USING (true);
 
--- RLS Policy: Allow service role to insert contamination assessments
+-- RLS Policy: Allow service role to insert contamination assessments (GitHub Actions workflow only)
 CREATE POLICY contamination_assessments_insert_policy
   ON contamination_assessments
   FOR INSERT
+  TO service_role
   WITH CHECK (true);
 
--- RLS Policy: Allow updates only for review_action and reviewer_notes
+-- RLS Policy: Allow service role to update review_action and reviewer_notes
 CREATE POLICY contamination_assessments_update_policy
   ON contamination_assessments
   FOR UPDATE
+  TO service_role
   USING (true)
   WITH CHECK (true);

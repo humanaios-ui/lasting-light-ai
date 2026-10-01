@@ -85,13 +85,15 @@ jobs:
 
       - name: Process contamination assessments
         id: process
+        env:
+          CONTAMINATION_DATA: ${{ steps.fetch-data.outputs.CONTAMINATION_DATA }}
         run: |
           cat > process_contamination.js << 'EOF'
           const fs = require('fs');
           const path = require('path');
 
-          // Parse input data
-          const inputData = process.argv[2];
+          // Parse input data from environment variable (prevents shell injection)
+          const inputData = process.env.CONTAMINATION_DATA;
           let assessments = [];
 
           try {
@@ -125,7 +127,7 @@ jobs:
           process.stdout.write('\nEOF\n');
           EOF
 
-          node process_contamination.js '${{ steps.fetch-data.outputs.CONTAMINATION_DATA }}' >> $GITHUB_OUTPUT
+          node process_contamination.js >> $GITHUB_OUTPUT
 
       - name: Append to contamination review log
         id: append-log
@@ -187,7 +189,7 @@ jobs:
                   .from('contamination_review_runs')
                   .insert({
                     github_run_id: runId,
-                    timestamp: timestamp,
+                    run_timestamp: timestamp,
                     entries_processed: entriesProcessed,
                     status: 'completed'
                   });

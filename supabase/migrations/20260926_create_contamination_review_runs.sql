@@ -65,17 +65,20 @@ ALTER TABLE contamination_review_runs ENABLE ROW LEVEL SECURITY;
 CREATE POLICY contamination_review_runs_read_policy
   ON contamination_review_runs
   FOR SELECT
+  TO authenticated
   USING (true);
 
--- RLS Policy: Allow service role to insert runs
+-- RLS Policy: Allow service role to insert runs (GitHub Actions workflow only)
 CREATE POLICY contamination_review_runs_insert_policy
   ON contamination_review_runs
   FOR INSERT
+  TO service_role
   WITH CHECK (true);
 
--- RLS Policy: Allow updates for status tracking
+-- RLS Policy: Allow service role to update runs for status tracking
 CREATE POLICY contamination_review_runs_update_policy
   ON contamination_review_runs
   FOR UPDATE
+  TO service_role
   USING (true)
   WITH CHECK (true);

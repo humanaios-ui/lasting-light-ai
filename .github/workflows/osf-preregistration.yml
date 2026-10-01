@@ -161,6 +161,12 @@ jobs:
 
       - name: Store metadata in PR context
         uses: actions/github-script@v7
+        env:
+          PR_TITLE: ${{ github.event.pull_request.title }}
+          PR_BRANCH: ${{ github.event.pull_request.head.ref }}
+          REGISTRATION_ID: ${{ needs.create-osf-draft.outputs.registration_id }}
+          REGISTRATION_URL: ${{ needs.create-osf-draft.outputs.registration_url }}
+          SUBMISSION_STATUS: ${{ needs.create-osf-draft.outputs.submission_status }}
         with:
           script: |
             const fs = require('fs');
@@ -168,11 +174,11 @@ jobs:
             const metadata = {
               workflow: 'osf-preregistration',
               pr_number: ${{ github.event.pull_request.number }},
-              pr_title: '${{ github.event.pull_request.title }}',
-              pr_branch: '${{ github.event.pull_request.head.ref }}',
-              registration_id: '${{ needs.create-osf-draft.outputs.registration_id }}',
-              registration_url: '${{ needs.create-osf-draft.outputs.registration_url }}',
-              submission_status: '${{ needs.create-osf-draft.outputs.submission_status }}',
+              pr_title: process.env.PR_TITLE,
+              pr_branch: process.env.PR_BRANCH,
+              registration_id: process.env.REGISTRATION_ID,
+              registration_url: process.env.REGISTRATION_URL,
+              submission_status: process.env.SUBMISSION_STATUS,
               created_at: new Date().toISOString(),
               approval_required: true,
               approval_deadline: '2026-10-01'
