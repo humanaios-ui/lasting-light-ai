@@ -10,14 +10,18 @@ import { ArenaExporter } from './ArenaExport';
 describe('Arena Export Functionality', () => {
   let sessions: unknown[] = [];
   let summary: unknown = null;
-  let exportData: unknown = null;
+  let exportData: Record<string, unknown> | null = null;
 
   beforeAll(async () => {
     // Run a small batch of test sessions
     const runner = new ArenaTestRunner();
     sessions = await runner.runBatch(10, 'llm-hallucinations');
     summary = runner.generateSummary();
-    exportData = ArenaExporter.generateExportData(sessions, summary);
+    exportData = ArenaExporter.generateExportData(sessions, summary) as Record<string, unknown>;
+    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+    if (!exportData) {
+      throw new Error('Failed to generate export data');
+    }
   });
 
   describe('Export data structure', () => {
@@ -125,17 +129,22 @@ describe('Arena Export Functionality', () => {
 
   describe('Export summary validation', () => {
     it('should include reverse-gaze detection rate', () => {
-      expect(exportData.summary).toBeDefined();
-      expect(exportData.summary.reverse_gaze_rate).toBeDefined();
+      expect(exportData).toBeDefined();
+      const summary = (exportData as Record<string, unknown>).summary as Record<string, unknown>;
+      expect(summary).toBeDefined();
+      expect(summary.reverse_gaze_rate).toBeDefined();
     });
 
     it('should include protocol validation', () => {
-      expect(exportData.summary).toBeDefined();
-      expect(exportData.summary.protocol_validation).toBeDefined();
+      expect(exportData).toBeDefined();
+      const summary = (exportData as Record<string, unknown>).summary as Record<string, unknown>;
+      expect(summary).toBeDefined();
+      expect(summary.protocol_validation).toBeDefined();
     });
 
     it('should have valid reverse-gaze rate', () => {
-      const rate = exportData.summary.reverse_gaze_rate;
+      const summary = ((exportData as Record<string, unknown>).summary as Record<string, unknown>);
+      const rate = summary.reverse_gaze_rate as string;
       expect(typeof rate).toBe('string');
       expect(rate).toMatch(/^\d+(\.\d+)?%$/); // Should match pattern like "50.0%"
     });

@@ -196,7 +196,7 @@ describe('AcatTool contamination submission', () => {
 
       // Verify contamination_action is one of the valid values
       const validActions = ['INCLUDE', 'FLAG_FOR_REVIEW', 'EXCLUDE'];
-      expect(validActions.includes(payload.contamination_action) || payload.contamination_action === null).toBe(true);
+      expect(validActions.includes(payload.contamination_action as string) || payload.contamination_action === null).toBe(true);
     });
   });
 });
