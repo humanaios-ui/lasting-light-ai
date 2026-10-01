@@ -6,58 +6,57 @@
  */
 
 import { describe, it, expect, beforeAll } from 'vitest';
-import { ArenaTestRunner } from './ArenaTestRunner';
-import { ArenaExporter } from './ArenaExport';
+import { ArenaTestRunner, ArenaTestSession, ArenaSummary } from './ArenaTestRunner';
+import { ArenaExporter, ArenaExportData } from './ArenaExport';
 
 describe('Arena Export Functionality', () => {
-  let sessions: unknown[] = [];
-  let summary: unknown = null;
-  let exportData: Record<string, unknown> | null = null;
+  let sessions: ArenaTestSession[] = [];
+  let summary: ArenaSummary | null = null;
+  let exportData: ArenaExportData | null = null;
 
   beforeAll(async () => {
     // Run a small batch of test sessions
     const runner = new ArenaTestRunner();
     sessions = await runner.runBatch(10, 'llm-hallucinations');
     summary = runner.generateSummary();
-    exportData = ArenaExporter.generateExportData(sessions, summary) as Record<string, unknown>;
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
-    if (!exportData) {
-      throw new Error('Failed to generate export data');
+    if (summary) {
+      exportData = ArenaExporter.generateExportData(sessions, summary);
     }
   });
 
   describe('Export data structure', () => {
     it('should generate export data with batch ID', () => {
+      if (!exportData) throw new Error('exportData is null');
       expect(exportData.batch_id).toBeDefined();
       expect(typeof exportData.batch_id).toBe('string');
     });
 
     it('should include export timestamp', () => {
+      if (!exportData) throw new Error('exportData is null');
       expect(exportData.export_timestamp).toBeDefined();
       expect(typeof exportData.export_timestamp).toBe('string');
     });
 
     it('should include correct session count', () => {
+      if (!exportData) throw new Error('exportData is null');
       expect(exportData.total_sessions).toBe(sessions.length);
       expect(exportData.sessions.length).toBe(sessions.length);
     });
 
     it('should have all sessions with complete metadata', () => {
-      const allSessionsHaveMetadata = (exportData as Record<string, unknown>).sessions.every(
-        (s: unknown) => {
-          const session = s as Record<string, unknown>;
-          return (
-            session.session_id &&
-            session.test_index !== undefined &&
-            session.topic &&
-            session.timestamp &&
-            session.blind_pass &&
-            session.convergence &&
-            session.reverse_gaze_observed !== undefined &&
-            session.learning_signal !== undefined
-          );
-        }
-      );
+      if (!exportData) throw new Error('exportData is null');
+      const allSessionsHaveMetadata = exportData.sessions.every((s) => {
+        return (
+          s.session_id &&
+          s.test_index !== undefined &&
+          s.topic &&
+          s.timestamp &&
+          s.blind_pass &&
+          s.convergence &&
+          s.reverse_gaze_observed !== undefined &&
+          s.learning_signal !== undefined
+        );
+      });
 
       expect(allSessionsHaveMetadata).toBe(true);
     });
@@ -68,6 +67,7 @@ describe('Arena Export Functionality', () => {
     let jsonSize: number;
 
     beforeAll(() => {
+      if (!exportData) throw new Error('exportData is null');
       json = ArenaExporter.toJSON(exportData);
       jsonSize = new Blob([json]).size;
     });
@@ -88,16 +88,19 @@ describe('Arena Export Functionality', () => {
     });
 
     it('should preserve batch ID after serialization', () => {
+      if (!exportData) throw new Error('exportData is null');
       const parsed = JSON.parse(json);
       expect(parsed.batch_id).toBe(exportData.batch_id);
     });
 
     it('should preserve session count after serialization', () => {
+      if (!exportData) throw new Error('exportData is null');
       const parsed = JSON.parse(json);
       expect(parsed.total_sessions).toBe(exportData.total_sessions);
     });
 
     it('should preserve all session data after serialization', () => {
+      if (!exportData) throw new Error('exportData is null');
       const parsed = JSON.parse(json);
       expect(parsed.sessions.length).toBe(exportData.sessions.length);
     });
@@ -107,6 +110,7 @@ describe('Arena Export Functionality', () => {
     let report: string;
 
     beforeAll(() => {
+      if (!exportData) throw new Error('exportData is null');
       report = ArenaExporter.generateReport(exportData);
     });
 
@@ -116,6 +120,7 @@ describe('Arena Export Functionality', () => {
     });
 
     it('should include batch ID in report', () => {
+      if (!exportData) throw new Error('exportData is null');
       expect(report).toContain(exportData.batch_id);
     });
 
@@ -131,22 +136,25 @@ describe('Arena Export Functionality', () => {
 
   describe('Export summary validation', () => {
     it('should include reverse-gaze detection rate', () => {
+      if (!exportData) throw new Error('exportData is null');
       expect(exportData).toBeDefined();
-      const summary = (exportData as Record<string, unknown>).summary as Record<string, unknown>;
+      const summary = exportData.summary;
       expect(summary).toBeDefined();
       expect(summary.reverse_gaze_rate).toBeDefined();
     });
 
     it('should include protocol validation', () => {
+      if (!exportData) throw new Error('exportData is null');
       expect(exportData).toBeDefined();
-      const summary = (exportData as Record<string, unknown>).summary as Record<string, unknown>;
+      const summary = exportData.summary;
       expect(summary).toBeDefined();
       expect(summary.protocol_validation).toBeDefined();
     });
 
     it('should have valid reverse-gaze rate', () => {
-      const summary = ((exportData as Record<string, unknown>).summary as Record<string, unknown>);
-      const rate = summary.reverse_gaze_rate as string;
+      if (!exportData) throw new Error('exportData is null');
+      const summary = exportData.summary;
+      const rate = summary.reverse_gaze_rate;
       expect(typeof rate).toBe('string');
       expect(rate).toMatch(/^\d+(\.\d+)?%$/); // Should match pattern like "50.0%"
     });
