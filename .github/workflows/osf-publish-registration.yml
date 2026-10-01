@@ -1,3 +1,4 @@
+# FDS: F3-GitHub | Purpose: GitHub Actions workflow | Status: ACTIVE
 name: OSF Publish Registration (Manual Approval)
 
 # This workflow runs when OSF pre-registration receives manual approval

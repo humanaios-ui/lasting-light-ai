@@ -1,3 +1,4 @@
+# FDS: F3-GitHub | Purpose: GitHub Actions workflow | Status: ACTIVE
 name: OSF Pre-Registration Test (Draft Creation Only)
 
 # Test workflow - creates draft without approval gate
