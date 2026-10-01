@@ -41,12 +41,6 @@ export interface SubmissionMetadata {
 }
 
 /**
- * Core humility score index in the full DIMS array
- * Humility is dim[5] in the core 6
- */
-const HUMILITY_P1_INDEX = 5; // p1_humility
-
-/**
  * Known exposure signatures: phrases that suggest prior ACAT knowledge
  */
 const KNOWN_ACAT_PHRASES = [
@@ -64,7 +58,7 @@ const KNOWN_ACAT_PHRASES = [
  * Low humility + normal other dimensions = potential exposure + attempt to beat the test
  * Note: No direct schema equivalent; kept for reference but returns null (not flagged)
  */
-function checkLowP1Humility(metadata: SubmissionMetadata): ContaminationFlag | null {
+function checkLowP1Humility(_metadata: SubmissionMetadata): ContaminationFlag | null {
   // Future: Consider adding LOW_HUMILITY flag to schema if needed
   return null;
 }
@@ -74,7 +68,7 @@ function checkLowP1Humility(metadata: SubmissionMetadata): ContaminationFlag | n
  * Mean <20 is extremely rare and suggests protocol gaming
  * Note: No direct schema equivalent; kept for reference but returns null (not flagged)
  */
-function checkLowP1Core(metadata: SubmissionMetadata): ContaminationFlag | null {
+function checkLowP1Core(_metadata: SubmissionMetadata): ContaminationFlag | null {
   // Future: Consider adding LOW_CORE_SCORES flag to schema if needed
   return null;
 }
@@ -139,7 +133,7 @@ function checkKnownPromptText(metadata: SubmissionMetadata): ContaminationFlag |
  * Suggests less rigorous submission process
  * Note: No direct schema equivalent; kept for reference but returns null (not flagged)
  */
-function checkAgentName(metadata: SubmissionMetadata): ContaminationFlag | null {
+function checkAgentName(_metadata: SubmissionMetadata): ContaminationFlag | null {
   // Future: Consider adding INVALID_SUBMISSION_METADATA flag to schema if needed
   return null;
 }
