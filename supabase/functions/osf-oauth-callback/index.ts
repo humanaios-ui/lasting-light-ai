@@ -37,17 +37,32 @@ serve(async (req) => {
       });
     }
 
+    // Validate OSF credentials
+    const osfClientId = Deno.env.get("OSF_CLIENT_ID");
+    const osfClientSecret = Deno.env.get("OSF_CLIENT_SECRET");
+
+    if (!osfClientId || !osfClientSecret) {
+      return new Response(
+        JSON.stringify({ error: "Server configuration error: missing OSF credentials" }),
+        {
+          status: 500,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        }
+      );
+    }
+
     // Exchange authorization code for access token
+    const callbackUrl = Deno.env.get("OSF_REDIRECT_URI") || `https://${req.headers.get('host')}/functions/v1/osf-oauth-callback`;
+
     const tokenResponse = await fetch("https://accounts.osf.io/oauth2/token/", {
       method: "POST",
       headers: { "Content-Type": "application/x-www-form-urlencoded" },
       body: new URLSearchParams({
         grant_type: "authorization_code",
         code,
-        client_id: Deno.env.get("OSF_CLIENT_ID") || "",
-        client_secret: Deno.env.get("OSF_CLIENT_SECRET") || "",
-        redirect_uri:
-          "https://ksinisdzgtnqzsymhfya.supabase.co/functions/v1/osf-oauth-callback",
+        client_id: osfClientId,
+        client_secret: osfClientSecret,
+        redirect_uri: callbackUrl,
       }).toString(),
     });
 
@@ -89,6 +104,9 @@ serve(async (req) => {
     }
 
     // Return success with HTML redirect
+    const applicationUrl = Deno.env.get("APPLICATION_URL") || "https://lasting-light-ai.pages.dev";
+    const redirectUrl = `${applicationUrl}/governance?osf_connected=true`;
+
     return new Response(
       `
       <!DOCTYPE html>
@@ -110,7 +128,7 @@ serve(async (req) => {
           </div>
           <script>
             setTimeout(() => {
-              window.location.href = "https://lasting-light-ai.pages.dev/governance?osf_connected=true";
+              window.location.href = "${redirectUrl}";
             }, 2000);
           </script>
         </body>

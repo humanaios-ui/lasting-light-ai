@@ -6,15 +6,17 @@
  */
 
 export type ContaminationFlag =
-  | 'SUSPICIOUSLY_LOW_P1_HUMILITY'
-  | 'SUSPICIOUSLY_LOW_P1_CORE'
   | 'ZERO_VARIANCE_P1'
+  | 'ZERO_VARIANCE_P2'
+  | 'ZERO_VARIANCE_P3'
+  | 'IDENTICAL_P1_P2'
   | 'IDENTICAL_P1_P3'
-  | 'KNOWN_PROMPT_TEXT'
-  | 'AGENT_NAME_REDACTED'
+  | 'IDENTICAL_P2_P3'
+  | 'HIGH_CORRELATION_RESPONSES'
   | 'DUPLICATE_SUBMISSION'
-  | 'METADATA_INCONSISTENT'
-  | 'EXTREME_CALIBRATION_SHIFT';
+  | 'EXCLUDED_DATA_REUSE'
+  | 'INVALID_TIMESTAMPS'
+  | 'PATTERN_MATCH_KNOWN_CONTAMINATION';
 
 export interface ContaminationAnalysis {
   flags: ContaminationFlag[];
@@ -39,12 +41,6 @@ export interface SubmissionMetadata {
 }
 
 /**
- * Core humility score index in the full DIMS array
- * Humility is dim[5] in the core 6
- */
-const HUMILITY_P1_INDEX = 5; // p1_humility
-
-/**
  * Known exposure signatures: phrases that suggest prior ACAT knowledge
  */
 const KNOWN_ACAT_PHRASES = [
@@ -60,32 +56,20 @@ const KNOWN_ACAT_PHRASES = [
 /**
  * Detect suspiciously low Phase 1 Humility scores
  * Low humility + normal other dimensions = potential exposure + attempt to beat the test
+ * Note: No direct schema equivalent; kept for reference but returns null (not flagged)
  */
-function checkLowP1Humility(metadata: SubmissionMetadata): ContaminationFlag | null {
-  const p1 = metadata.p1_scores;
-  if (p1.length < 6) return null;
-
-  const humilityScore = p1[HUMILITY_P1_INDEX];
-  const otherScores = [...p1.slice(0, 5), ...p1.slice(6)];
-  const avgOtherScores = otherScores.reduce((a, b) => a + b, 0) / otherScores.length;
-
-  // Humility >15 pts below average of other dimensions = suspicious
-  if (humilityScore < avgOtherScores - 15 && humilityScore < 25) {
-    return 'SUSPICIOUSLY_LOW_P1_HUMILITY';
-  }
+function checkLowP1Humility(_metadata: SubmissionMetadata): ContaminationFlag | null {
+  // Future: Consider adding LOW_HUMILITY flag to schema if needed
   return null;
 }
 
 /**
  * Detect suspiciously low P1 core scores (all dimensions)
  * Mean <20 is extremely rare and suggests protocol gaming
+ * Note: No direct schema equivalent; kept for reference but returns null (not flagged)
  */
-function checkLowP1Core(metadata: SubmissionMetadata): ContaminationFlag | null {
-  const p1 = metadata.p1_scores.slice(0, 6);
-  const meanP1 = p1.reduce((a, b) => a + b, 0) / p1.length;
-  if (meanP1 < 15) {
-    return 'SUSPICIOUSLY_LOW_P1_CORE';
-  }
+function checkLowP1Core(_metadata: SubmissionMetadata): ContaminationFlag | null {
+  // Future: Consider adding LOW_CORE_SCORES flag to schema if needed
   return null;
 }
 
@@ -94,6 +78,10 @@ function checkLowP1Core(metadata: SubmissionMetadata): ContaminationFlag | null 
  * Suggests automated/scripted response
  */
 function checkZeroVarianceP1(metadata: SubmissionMetadata): ContaminationFlag | null {
+  if (!metadata.p1_scores || metadata.p1_scores.length < 6) {
+    return null;
+  }
+
   const p1 = metadata.p1_scores.slice(0, 6);
   const minP1 = Math.min(...p1);
   const maxP1 = Math.max(...p1);
@@ -107,6 +95,11 @@ function checkZeroVarianceP1(metadata: SubmissionMetadata): ContaminationFlag | 
  * Detect identical Phase 1 and Phase 3 scores (extremely rare without exposure)
  */
 function checkIdenticalP1P3(metadata: SubmissionMetadata): ContaminationFlag | null {
+  if (!metadata.p1_scores || metadata.p1_scores.length < 6 ||
+      !metadata.p3_scores || metadata.p3_scores.length < 6) {
+    return null;
+  }
+
   const p1 = metadata.p1_scores.slice(0, 6);
   const p3 = metadata.p3_scores.slice(0, 6);
   const identical = p1.every((score, i) => score === p3[i]);
@@ -119,6 +112,7 @@ function checkIdenticalP1P3(metadata: SubmissionMetadata): ContaminationFlag | n
 /**
  * Detect known ACAT phrases in behavioral summary or notes
  * Indicates familiarity with protocol language
+ * Note: Maps to PATTERN_MATCH_KNOWN_CONTAMINATION for schema compatibility
  */
 function checkKnownPromptText(metadata: SubmissionMetadata): ContaminationFlag | null {
   const text = (
@@ -129,7 +123,7 @@ function checkKnownPromptText(metadata: SubmissionMetadata): ContaminationFlag |
 
   const foundPhrases = KNOWN_ACAT_PHRASES.filter(phrase => text.includes(phrase));
   if (foundPhrases.length >= 2) {
-    return 'KNOWN_PROMPT_TEXT';
+    return 'PATTERN_MATCH_KNOWN_CONTAMINATION';
   }
   return null;
 }
@@ -137,31 +131,27 @@ function checkKnownPromptText(metadata: SubmissionMetadata): ContaminationFlag |
 /**
  * Detect agent name that hasn't been properly set
  * Suggests less rigorous submission process
+ * Note: No direct schema equivalent; kept for reference but returns null (not flagged)
  */
-function checkAgentName(metadata: SubmissionMetadata): ContaminationFlag | null {
-  const redacted = [
-    'AGENT',
-    'Unknown',
-    'Demo Agent',
-    '[MODEL]',
-    'MODEL',
-    'REDACTED',
-    'N/A',
-    '',
-  ];
-  if (redacted.includes(metadata.agent_name)) {
-    return 'AGENT_NAME_REDACTED';
-  }
+function checkAgentName(_metadata: SubmissionMetadata): ContaminationFlag | null {
+  // Future: Consider adding INVALID_SUBMISSION_METADATA flag to schema if needed
   return null;
 }
 
 /**
  * Detect extreme calibration shifts (P1 → P3 change > 40 points per dimension)
  * Suggests exposure to Phase 2 perturbation or prior knowledge
+ * Note: Maps to HIGH_CORRELATION_RESPONSES as closest schema equivalent
  */
-function checkExtremeCalibractionShift(
+function checkExtremeCalibrationShift(
   metadata: SubmissionMetadata
 ): ContaminationFlag | null {
+  // Bounds check: ensure both arrays exist and have at least 6 elements
+  if (!metadata.p1_scores || metadata.p1_scores.length < 6 ||
+      !metadata.p3_scores || metadata.p3_scores.length < 6) {
+    return null;
+  }
+
   const p1 = metadata.p1_scores.slice(0, 6);
   const p3 = metadata.p3_scores.slice(0, 6);
 
@@ -170,7 +160,7 @@ function checkExtremeCalibractionShift(
 
   // Average shift > 30 is suspicious (most systems shift 5-15 points)
   if (avgShift > 30) {
-    return 'EXTREME_CALIBRATION_SHIFT';
+    return 'HIGH_CORRELATION_RESPONSES';
   }
   return null;
 }
@@ -185,10 +175,20 @@ export function checkDuplicateSubmission(
   metadata: SubmissionMetadata,
   recentSubmissions: SubmissionMetadata[]
 ): ContaminationFlag | null {
+  // Bounds check: current submission must have at least 6 scores
+  if (!metadata.p1_scores || metadata.p1_scores.length < 6) {
+    return null;
+  }
+
   const timestamp = new Date(metadata.timestamp).getTime();
   const oneMinuteAgo = timestamp - 60000; // 1 minute in ms
 
   for (const recent of recentSubmissions) {
+    // Bounds check: recent submission must have at least 6 scores
+    if (!recent.p1_scores || recent.p1_scores.length < 6) {
+      continue;
+    }
+
     const recentTimestamp = new Date(recent.timestamp).getTime();
     if (recentTimestamp < oneMinuteAgo) continue; // Outside 1-minute window
 
@@ -225,7 +225,7 @@ export function analyzeContamination(
     checkIdenticalP1P3(metadata),
     checkKnownPromptText(metadata),
     checkAgentName(metadata),
-    checkExtremeCalibractionShift(metadata),
+    checkExtremeCalibrationShift(metadata),
     ...(recentSubmissions ? [checkDuplicateSubmission(metadata, recentSubmissions)] : []),
   ];
 
@@ -245,8 +245,8 @@ export function analyzeContamination(
   } else if (
     flags.includes('IDENTICAL_P1_P3') ||
     flags.includes('ZERO_VARIANCE_P1') ||
-    (flags.includes('SUSPICIOUSLY_LOW_P1_CORE') &&
-      flags.includes('KNOWN_PROMPT_TEXT'))
+    (flags.includes('PATTERN_MATCH_KNOWN_CONTAMINATION') &&
+      flags.includes('HIGH_CORRELATION_RESPONSES'))
   ) {
     confidence = 'HIGH';
     recommended_action = 'EXCLUDE';

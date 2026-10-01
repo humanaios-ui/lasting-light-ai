@@ -1,14 +1,16 @@
 /* FDS: F3-Component | Parent: CUSTOM_INSTRUCTIONS_V3_5_ORD.md | Hawkins: internal-only | Status: ACTIVE */
 
+import { logAudit } from './validation';
+
 // Pseudonymous submission storage and retrieval
 
-// Simple UUID v4 generator
+// Cryptographically secure UUID v4 generator
 function uuidv4(): string {
-  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-    const r = Math.random() * 16 | 0;
-    const v = c === 'x' ? r : (r & 0x3 | 0x8);
-    return v.toString(16);
-  });
+  const bytes = crypto.getRandomValues(new Uint8Array(16));
+  bytes[6] = (bytes[6] & 0x0f) | 0x40;
+  bytes[8] = (bytes[8] & 0x3f) | 0x80;
+  const hex = Array.from(bytes).map(b => b.toString(16).padStart(2, '0')).join('');
+  return `${hex.slice(0, 8)}-${hex.slice(8, 12)}-${hex.slice(12, 16)}-${hex.slice(16, 20)}-${hex.slice(20)}`;
 }
 
 export interface ContributionEnvelope {
@@ -75,7 +77,15 @@ export function getPseudonym(): string {
   if (stored) return stored;
 
   const newId = uuidv4();
-  localStorage.setItem(STORAGE_KEYS.PARTICIPANT_ID, newId);
+  try {
+    localStorage.setItem(STORAGE_KEYS.PARTICIPANT_ID, newId);
+  } catch (error) {
+    logAudit('STORAGE_QUOTA_ERROR', {
+      error: error instanceof Error ? error.message : String(error),
+      operation: 'setPseudonym',
+    });
+    return newId;
+  }
 
   // Also create participant record
   const participant: Participant = {
@@ -85,7 +95,14 @@ export function getPseudonym(): string {
   };
   const participants = getAllParticipants();
   participants.push(participant);
-  localStorage.setItem(STORAGE_KEYS.PARTICIPANTS, JSON.stringify(participants));
+  try {
+    localStorage.setItem(STORAGE_KEYS.PARTICIPANTS, JSON.stringify(participants));
+  } catch (error) {
+    logAudit('STORAGE_QUOTA_ERROR', {
+      error: error instanceof Error ? error.message : String(error),
+      operation: 'setPseudonym_participants',
+    });
+  }
 
   return newId;
 }
@@ -108,7 +125,15 @@ export function submitResponse(
 
   const submissions = getAllSubmissions();
   submissions.push(submission);
-  localStorage.setItem(STORAGE_KEYS.SUBMISSIONS, JSON.stringify(submissions));
+  try {
+    localStorage.setItem(STORAGE_KEYS.SUBMISSIONS, JSON.stringify(submissions));
+  } catch (error) {
+    logAudit('STORAGE_QUOTA_ERROR', {
+      error: error instanceof Error ? error.message : String(error),
+      operation: 'submitResponse',
+      submissionId: submission.id,
+    });
+  }
 
   return submission;
 }
@@ -129,12 +154,32 @@ export function getRegimeAResponses(problemId: string): Submission[] {
 // Get all submissions (for dashboard)
 export function getAllSubmissions(): Submission[] {
   const stored = localStorage.getItem(STORAGE_KEYS.SUBMISSIONS);
-  return stored ? JSON.parse(stored) : [];
+  if (!stored) return [];
+
+  try {
+    return JSON.parse(stored);
+  } catch (error) {
+    logAudit('GET_ALL_SUBMISSIONS_PARSE_ERROR', {
+      error: error instanceof Error ? error.message : String(error),
+      dataLength: stored.length,
+    });
+    return [];
+  }
 }
 
 export function getAllParticipants(): Participant[] {
   const stored = localStorage.getItem(STORAGE_KEYS.PARTICIPANTS);
-  return stored ? JSON.parse(stored) : [];
+  if (!stored) return [];
+
+  try {
+    return JSON.parse(stored);
+  } catch (error) {
+    logAudit('GET_ALL_PARTICIPANTS_PARSE_ERROR', {
+      error: error instanceof Error ? error.message : String(error),
+      dataLength: stored.length,
+    });
+    return [];
+  }
 }
 
 // Get metrics for a regime

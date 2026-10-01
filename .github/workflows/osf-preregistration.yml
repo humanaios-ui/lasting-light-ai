@@ -1,0 +1,259 @@
+# FDS: F3-GitHub | Purpose: GitHub Actions workflow | Status: ACTIVE
+name: OSF Pre-Registration Workflow
+
+on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'PROTOCOL_PHASE2_PREREGISTRATION.md'
+      - '.github/workflows/osf-preregistration.yml'
+
+env:
+  SUPABASE_URL: https://ksinisdzgtnqzsymhfya.supabase.co
+  OSF_SUBMIT_ENDPOINT: /functions/v1/osf-submit-registration
+
+jobs:
+  # Job 1: Create draft OSF pre-registration on PR open
+  create-osf-draft:
+    name: Create OSF Draft Registration
+    runs-on: ubuntu-latest
+    outputs:
+      registration_id: ${{ steps.submit-osf.outputs.registration_id }}
+      registration_url: ${{ steps.submit-osf.outputs.registration_url }}
+      submission_status: ${{ steps.submit-osf.outputs.submission_status }}
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Read protocol document
+        id: read-protocol
+        run: |
+          PROTOCOL_TEXT=$(cat PROTOCOL_PHASE2_PREREGISTRATION.md)
+          # Escape newlines for JSON payload
+          PROTOCOL_JSON=$(printf '%s\n' "$PROTOCOL_TEXT" | jq -R -s '.')
+          echo "protocol_json=${PROTOCOL_JSON}" >> $GITHUB_OUTPUT
+          echo "Protocol file read successfully"
+
+      - name: Validate protocol format
+        id: validate-protocol
+        run: |
+          # Check that protocol contains required sections
+          PROTOCOL_TEXT=$(cat PROTOCOL_PHASE2_PREREGISTRATION.md)
+
+          REQUIRED_SECTIONS=(
+            "Research Question & Hypotheses"
+            "Sample Definition & Eligibility"
+            "Data Collection Procedures"
+            "Primary Analysis Plan"
+            "Statistical test"
+          )
+
+          for section in "${REQUIRED_SECTIONS[@]}"; do
+            if ! grep -q "$section" PROTOCOL_PHASE2_PREREGISTRATION.md; then
+              echo "ERROR: Missing required section: $section"
+              exit 1
+            fi
+          done
+
+          echo "validation_status=passed" >> $GITHUB_OUTPUT
+          echo "Protocol validation passed - all required sections present"
+
+      - name: Submit to OSF
+        id: submit-osf
+        env:
+          PROTOCOL_TEXT: ${{ steps.read-protocol.outputs.protocol_json }}
+          OSF_SUBMIT_TOKEN: ${{ secrets.OSF_SUBMIT_TOKEN }}
+        run: |
+          # Prepare JSON payload
+          PAYLOAD=$(jq -n \
+            --arg title "ACAT Phase 2: Calibration Integrity Under Perturbation" \
+            --arg description "AI system behavioral integrity assessment with contamination detection" \
+            --arg category "research" \
+            --argjson protocolText "$PROTOCOL_TEXT" \
+            '{
+              title: $title,
+              description: $description,
+              category: $category,
+              protocolText: $protocolText
+            }')
+
+          echo "Submitting OSF registration..."
+
+          # Call OSF submit endpoint
+          RESPONSE=$(curl -s -X POST \
+            "${SUPABASE_URL}${OSF_SUBMIT_ENDPOINT}" \
+            -H "Content-Type: application/json" \
+            -H "Authorization: Bearer ${OSF_SUBMIT_TOKEN}" \
+            -d "$PAYLOAD")
+
+          echo "OSF Response: $RESPONSE"
+
+          # Parse response
+          REGISTRATION_ID=$(echo "$RESPONSE" | jq -r '.registration_id // "failed"')
+          REGISTRATION_URL=$(echo "$RESPONSE" | jq -r '.registration_url // "failed"')
+          SUCCESS=$(echo "$RESPONSE" | jq -r '.success // false')
+
+          # Set outputs for both success and failure cases (required by downstream steps)
+          echo "registration_id=${REGISTRATION_ID}" >> $GITHUB_OUTPUT
+          echo "registration_url=${REGISTRATION_URL}" >> $GITHUB_OUTPUT
+
+          if [ "$REGISTRATION_ID" = "failed" ] || [ "$SUCCESS" != "true" ]; then
+            echo "submission_status=failed" >> $GITHUB_OUTPUT
+            echo "❌ OSF submission failed - registration ID not received"
+            echo "Response: $RESPONSE"
+            exit 1
+          fi
+
+          echo "submission_status=success" >> $GITHUB_OUTPUT
+          echo "✅ OSF registration submitted: $REGISTRATION_ID"
+
+      - name: Comment on PR with OSF status
+        uses: actions/github-script@v7
+        if: always()
+        with:
+          script: |
+            const registrationId = '${{ steps.submit-osf.outputs.registration_id }}';
+            const registrationUrl = '${{ steps.submit-osf.outputs.registration_url }}';
+            const submissionStatus = '${{ steps.submit-osf.outputs.submission_status }}';
+
+            let comment = '## OSF Pre-Registration Status\n\n';
+
+            if (submissionStatus === 'success') {
+              comment += `✅ **Draft Registration Created**\n\n`;
+              comment += `- **Registration ID:** \`${registrationId}\`\n`;
+              comment += `- **Registration URL:** [View on OSF](${registrationUrl})\n`;
+              comment += `- **Status:** Draft (awaiting approval to publish)\n\n`;
+              comment += `**Next Steps:**\n`;
+              comment += `1. Review the protocol on OSF\n`;
+              comment += `2. Request approval to publish (see "Approval" section below)\n`;
+              comment += `3. On approval, DOI will be generated and committed to repository\n\n`;
+            } else {
+              comment += `⏳ **Draft Registration Pending**\n\n`;
+              comment += `The protocol has been prepared for OSF submission.\n`;
+              comment += `**Status:** Draft mode (registration ID: ${registrationId})\n\n`;
+              comment += `**Next Steps:**\n`;
+              comment += `1. Review this PR to ensure protocol accuracy\n`;
+              comment += `2. Approve deployment to publish registration\n`;
+              comment += `3. DOI will be generated upon publication\n\n`;
+            }
+
+            comment += `**Deadline:** 2026-10-01\n`;
+            comment += `**Protocol:** [PROTOCOL_PHASE2_PREREGISTRATION.md](${process.env.GITHUB_SERVER_URL}/${process.env.GITHUB_REPOSITORY}/blob/${process.env.GITHUB_HEAD_REF}/PROTOCOL_PHASE2_PREREGISTRATION.md)\n`;
+
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: comment
+            });
+
+  # Job 2: Store draft registration metadata for approval workflow
+  store-registration-metadata:
+    name: Store Registration Metadata
+    runs-on: ubuntu-latest
+    needs: create-osf-draft
+    if: always()
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Store metadata in PR context
+        uses: actions/github-script@v7
+        env:
+          PR_TITLE: ${{ github.event.pull_request.title }}
+          PR_BRANCH: ${{ github.event.pull_request.head.ref }}
+          REGISTRATION_ID: ${{ needs.create-osf-draft.outputs.registration_id }}
+          REGISTRATION_URL: ${{ needs.create-osf-draft.outputs.registration_url }}
+          SUBMISSION_STATUS: ${{ needs.create-osf-draft.outputs.submission_status }}
+        with:
+          script: |
+            const fs = require('fs');
+
+            const metadata = {
+              workflow: 'osf-preregistration',
+              pr_number: ${{ github.event.pull_request.number }},
+              pr_title: process.env.PR_TITLE,
+              pr_branch: process.env.PR_BRANCH,
+              registration_id: process.env.REGISTRATION_ID,
+              registration_url: process.env.REGISTRATION_URL,
+              submission_status: process.env.SUBMISSION_STATUS,
+              created_at: new Date().toISOString(),
+              approval_required: true,
+              approval_deadline: '2026-10-01'
+            };
+
+            console.log('OSF Pre-Registration Metadata:');
+            console.log(JSON.stringify(metadata, null, 2));
+
+            // Log for reference
+            console.log('\nDeployment approval required before publishing registration.');
+
+  # Job 3: Mark as requiring approval
+  require-approval:
+    name: Require Manual Approval
+    runs-on: ubuntu-latest
+    needs: [create-osf-draft, store-registration-metadata]
+    if: always()
+
+    steps:
+      - name: Create approval comment
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const registrationId = '${{ needs.create-osf-draft.outputs.registration_id }}';
+            const registrationUrl = '${{ needs.create-osf-draft.outputs.registration_url }}';
+
+            let approvalComment = `## ⏳ OSF Registration Awaiting Approval\n\n`;
+            approvalComment += `**Registration ID:** \`${registrationId}\`\n\n`;
+            approvalComment += `### Approval Instructions\n\n`;
+            approvalComment += `This PR has prepared an OSF pre-registration. Before merging:\n\n`;
+            approvalComment += `1. **Review Protocol:** Verify PROTOCOL_PHASE2_PREREGISTRATION.md is accurate\n`;
+            approvalComment += `2. **Verify OSF Entry:** Check the draft on OSF (if URL available)\n`;
+            approvalComment += `3. **Approve Deployment:** Use GitHub environment to approve publication\n`;
+            approvalComment += `4. **Merge PR:** After approval, merge to \`main\` to publish\n\n`;
+            approvalComment += `### Approval Process\n\n`;
+            approvalComment += `- Approval environment: \`osf-publish\`\n`;
+            approvalComment += `- Required approvers: Maintainers\n`;
+            approvalComment += `- Timeout: Until 2026-10-01 (deadline)\n`;
+            approvalComment += `- On approval: DOI will be generated and committed\n\n`;
+            approvalComment += `### Approval Workflow\n\n`;
+            approvalComment += `Once approved, the following occurs:\n`;
+            approvalComment += `- OSF registration published\n`;
+            approvalComment += `- DOI assigned (format: 10.17605/OSF.IO/XXXXX)\n`;
+            approvalComment += `- PREREGISTRATION_DOI.md created with DOI details\n`;
+            approvalComment += `- Commit pushed to \`main\` with DOI reference\n`;
+            approvalComment += `- Registration locked and immutable\n\n`;
+
+            // Add to PR
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: approvalComment
+            });
+
+  # Summary job
+  summary:
+    name: Workflow Summary
+    runs-on: ubuntu-latest
+    needs: [create-osf-draft, store-registration-metadata, require-approval]
+    if: always()
+
+    steps:
+      - name: Print workflow summary
+        run: |
+          echo "=== OSF Pre-Registration Workflow Summary ==="
+          echo ""
+          echo "✅ Draft Registration Status: ${{ needs.create-osf-draft.outputs.submission_status }}"
+          echo "📝 Registration ID: ${{ needs.create-osf-draft.outputs.registration_id }}"
+          echo "🔗 Registration URL: ${{ needs.create-osf-draft.outputs.registration_url }}"
+          echo ""
+          echo "⏰ Deadline: 2026-10-01"
+          echo "🔐 Approval Required: Yes (manual approval via GitHub environment)"
+          echo ""
+          echo "Next: Approve publication via GitHub environment to finalize"

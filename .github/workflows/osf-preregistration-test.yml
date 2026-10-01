@@ -1,0 +1,192 @@
+# FDS: F3-GitHub | Purpose: GitHub Actions workflow | Status: ACTIVE
+name: OSF Pre-Registration Test (Draft Creation Only)
+
+# Test workflow - creates draft without approval gate
+# Run manually via Actions tab to verify integration works
+
+on:
+  workflow_dispatch:
+    inputs:
+      test_mode:
+        description: 'Run in test mode (dry-run)'
+        required: false
+        default: 'true'
+        type: choice
+        options:
+          - 'true'
+          - 'false'
+
+jobs:
+  test-draft-creation:
+    name: Test OSF Draft Creation
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Read protocol document
+        id: read-protocol
+        run: |
+          if [ ! -f "PROTOCOL_PHASE2_PREREGISTRATION.md" ]; then
+            echo "ERROR: Protocol file not found"
+            exit 1
+          fi
+
+          PROTOCOL_TEXT=$(cat PROTOCOL_PHASE2_PREREGISTRATION.md)
+          echo "protocol_size=${#PROTOCOL_TEXT}" >> $GITHUB_OUTPUT
+          echo "✅ Protocol file loaded (${#PROTOCOL_TEXT} bytes)"
+
+      - name: Validate protocol format
+        id: validate-protocol
+        run: |
+          PROTOCOL_TEXT=$(cat PROTOCOL_PHASE2_PREREGISTRATION.md)
+
+          REQUIRED_SECTIONS=(
+            "Research Question & Hypotheses"
+            "Sample Definition & Eligibility"
+            "Data Collection Procedures"
+            "Primary Analysis Plan"
+            "Statistical test"
+          )
+
+          MISSING_SECTIONS=()
+          for section in "${REQUIRED_SECTIONS[@]}"; do
+            if ! grep -q "$section" PROTOCOL_PHASE2_PREREGISTRATION.md; then
+              MISSING_SECTIONS+=("$section")
+            fi
+          done
+
+          if [ ${#MISSING_SECTIONS[@]} -gt 0 ]; then
+            echo "ERROR: Missing required sections:"
+            printf '%s\n' "${MISSING_SECTIONS[@]}"
+            exit 1
+          fi
+
+          echo "validation_status=passed" >> $GITHUB_OUTPUT
+          echo "✅ All required sections present"
+
+      - name: Verify protocol metadata
+        id: verify-metadata
+        run: |
+          # Check version
+          if grep -q "Version: 2.0" PROTOCOL_PHASE2_PREREGISTRATION.md; then
+            echo "metadata_check=passed" >> $GITHUB_OUTPUT
+            echo "✅ Protocol version 2.0 confirmed"
+          else
+            echo "metadata_check=warning" >> $GITHUB_OUTPUT
+            echo "⚠️ Protocol version might need verification"
+          fi
+
+          # Check status
+          if grep -q "Registration Status: PRE-ANALYSIS" PROTOCOL_PHASE2_PREREGISTRATION.md; then
+            echo "✅ Registration status: PRE-ANALYSIS"
+          fi
+
+          # Check lock status
+          if grep -q "locked" PROTOCOL_PHASE2_PREREGISTRATION.md; then
+            echo "✅ Protocol marked as locked"
+          fi
+
+      - name: Simulate OSF draft creation
+        id: simulate-osf
+        run: |
+          TEST_MODE="${{ github.event.inputs.test_mode }}"
+          TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+
+          if [ "$TEST_MODE" = "true" ]; then
+            echo "🧪 Running in TEST MODE (dry-run)"
+
+            # Generate mock registration ID
+            MOCK_ID="TEST_$(date +%s)"
+            echo "registration_id=${MOCK_ID}" >> $GITHUB_OUTPUT
+            echo "registration_url=https://osf.io/registrations/${MOCK_ID}/" >> $GITHUB_OUTPUT
+            echo "submission_status=simulated" >> $GITHUB_OUTPUT
+
+            echo "✅ Mock registration created: ${MOCK_ID}"
+            echo "   (This is a test - no actual OSF submission)"
+          else
+            echo "❌ Live mode not configured for test workflow"
+            echo "   Use osf-preregistration.yml for production"
+            exit 1
+          fi
+
+      - name: Generate test report
+        id: test-report
+        env:
+          PROTOCOL_SIZE: ${{ steps.read-protocol.outputs.protocol_size }}
+          VALIDATION_STATUS: ${{ steps.validate-protocol.outputs.validation_status }}
+          REGISTRATION_ID: ${{ steps.simulate-osf.outputs.registration_id }}
+        run: |
+          cat > /tmp/test-report.txt << 'EOF'
+          ╔════════════════════════════════════════════════════════╗
+          ║     OSF PRE-REGISTRATION DRAFT TEST REPORT             ║
+          ╚════════════════════════════════════════════════════════╝
+
+          TEST RESULTS:
+          ✅ Protocol File: Found and valid
+          ✅ File Size: ${{ env.PROTOCOL_SIZE }} bytes
+          ✅ Validation: ${{ env.VALIDATION_STATUS }}
+          ✅ Draft Creation: Simulated
+
+          MOCK REGISTRATION:
+          ID: ${{ env.REGISTRATION_ID }}
+          Status: Test mode (no OSF submission)
+
+          CONFIGURATION REQUIRED:
+          1. OSF_SUBMIT_TOKEN: Set in GitHub Actions secrets
+             Provides authentication to OSF API
+
+          2. osf-publish Environment: Required in repository settings
+             Used for manual approval gate
+
+          3. Supabase Functions: Must be deployed
+             - osf-submit-registration
+             - osf-publish-registration
+
+          NEXT STEPS:
+          1. Add OSF_SUBMIT_TOKEN to GitHub secrets
+          2. Create "osf-publish" environment in repo settings
+          3. Add maintainers as required approvers
+          4. Create PR to PROTOCOL_PHASE2_PREREGISTRATION.md
+             (triggers osf-preregistration.yml)
+          5. Review draft on OSF
+          6. Approve via GitHub environment
+          7. Monitor osf-publish-registration.yml
+
+          DEADLINE: 2026-10-01
+
+          EOF
+          cat /tmp/test-report.txt
+          echo "test_report_generated=true" >> $GITHUB_OUTPUT
+
+      - name: Print test summary
+        run: |
+          echo ""
+          echo "╔════════════════════════════════════════════════════════╗"
+          echo "║           TEST WORKFLOW COMPLETED SUCCESSFULLY          ║"
+          echo "╚════════════════════════════════════════════════════════╝"
+          echo ""
+          echo "Protocol validation: ✅ PASSED"
+          echo "Draft creation simulation: ✅ PASSED"
+          echo ""
+          echo "TO PROCEED WITH REAL OSF SUBMISSION:"
+          echo ""
+          echo "1. In GitHub Settings → Secrets and Variables:"
+          echo "   Add: OSF_SUBMIT_TOKEN = [your OSF API token]"
+          echo ""
+          echo "2. In GitHub Settings → Environments:"
+          echo "   Create: osf-publish"
+          echo "   Set required approvers"
+          echo ""
+          echo "3. Create a PR updating PROTOCOL_PHASE2_PREREGISTRATION.md"
+          echo "   This will trigger osf-preregistration.yml workflow"
+          echo ""
+          echo "4. Review draft on OSF and verify accuracy"
+          echo ""
+          echo "5. Approve via osf-publish environment to publish"
+          echo ""
+          echo "Deadline: 2026-10-01"
+          echo ""

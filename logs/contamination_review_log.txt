@@ -1,0 +1,19 @@
+# Contamination Review Log
+# Format: timestamp | entity_id | action | confidence
+# This is an append-only log tracked in Git for immutability and audit trail
+#
+# Actions:
+#   - EXCLUDE: High-confidence contamination detected (rejected)
+#   - FLAG_FOR_REVIEW: Potential contamination requiring human review
+#   - REVERT: Action to revert a previous assessment decision
+#   - INCLUDE: Assessment approved (no contamination)
+#
+# Confidence Levels:
+#   - HIGH: Automated or obvious contamination detection
+#   - MEDIUM: Pattern-based detection
+#   - LOW: Single signal detection
+#
+# Schema Version: 1.0
+# Last Updated: 2026-09-28
+#
+

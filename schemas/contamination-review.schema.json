@@ -1,0 +1,300 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Contamination Review System Schema",
+  "description": "JSON Schema definitions for contamination review workflow and database records",
+  "definitions": {
+    "LogEntry": {
+      "type": "object",
+      "description": "Single entry in the contamination review log",
+      "required": ["timestamp", "entity_id", "action", "confidence"],
+      "properties": {
+        "timestamp": {
+          "type": "string",
+          "format": "date-time",
+          "description": "ISO 8601 timestamp (UTC)"
+        },
+        "entity_id": {
+          "type": "string",
+          "format": "uuid",
+          "description": "UUID of the assessment being reviewed"
+        },
+        "action": {
+          "type": "string",
+          "enum": ["INCLUDE", "FLAG_FOR_REVIEW", "EXCLUDE", "REVERT"],
+          "description": "Review decision action"
+        },
+        "confidence": {
+          "type": "string",
+          "enum": ["HIGH", "MEDIUM", "LOW"],
+          "description": "Confidence level of the decision"
+        }
+      }
+    },
+    "ContaminationAssessment": {
+      "type": "object",
+      "description": "Detailed contamination assessment record",
+      "required": ["acat_assessment_id", "review_action", "confidence_level"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "uuid",
+          "description": "Primary key"
+        },
+        "acat_assessment_id": {
+          "type": "string",
+          "format": "uuid",
+          "description": "Reference to acat_assessments_v1"
+        },
+        "detected_flags": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "ZERO_VARIANCE_P1",
+              "ZERO_VARIANCE_P2",
+              "ZERO_VARIANCE_P3",
+              "IDENTICAL_P1_P2",
+              "IDENTICAL_P1_P3",
+              "IDENTICAL_P2_P3",
+              "HIGH_CORRELATION_RESPONSES",
+              "DUPLICATE_SUBMISSION",
+              "EXCLUDED_DATA_REUSE",
+              "INVALID_TIMESTAMPS",
+              "PATTERN_MATCH_KNOWN_CONTAMINATION"
+            ]
+          },
+          "description": "Array of detected contamination flags",
+          "examples": [
+            "ZERO_VARIANCE_P1",
+            "IDENTICAL_P1_P3",
+            "HIGH_CORRELATION_RESPONSES"
+          ]
+        },
+        "review_action": {
+          "type": "string",
+          "enum": ["INCLUDE", "FLAG_FOR_REVIEW", "EXCLUDE", "REVERT"],
+          "description": "Final review decision"
+        },
+        "confidence_level": {
+          "type": "string",
+          "enum": ["HIGH", "MEDIUM", "LOW"],
+          "description": "Confidence in the decision"
+        },
+        "decision_rationale": {
+          "type": "string",
+          "description": "Text explanation of the review decision"
+        },
+        "reviewer_notes": {
+          "type": "object",
+          "description": "Structured reviewer feedback",
+          "additionalProperties": true
+        },
+        "github_run_id": {
+          "type": "integer",
+          "description": "GitHub Actions workflow run ID"
+        },
+        "reviewed_by": {
+          "type": "string",
+          "description": "ID of reviewer (system, user email, or service)"
+        },
+        "reviewed_at": {
+          "type": "string",
+          "format": "date-time",
+          "description": "When review occurred"
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Record creation timestamp"
+        },
+        "updated_at": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Record last update timestamp"
+        }
+      }
+    },
+    "ContaminationReviewRun": {
+      "type": "object",
+      "description": "Workflow execution record",
+      "required": ["github_run_id", "submission_source", "entries_processed", "status"],
+      "properties": {
+        "id": {
+          "type": "string",
+          "format": "uuid",
+          "description": "Primary key"
+        },
+        "github_run_id": {
+          "type": "integer",
+          "description": "GitHub Actions run ID (unique)"
+        },
+        "github_run_url": {
+          "type": "string",
+          "format": "uri",
+          "description": "Direct URL to GitHub Actions workflow run"
+        },
+        "github_actor": {
+          "type": "string",
+          "description": "User who triggered the workflow"
+        },
+        "github_ref": {
+          "type": "string",
+          "description": "Git reference (branch/tag) the workflow ran on"
+        },
+        "submission_source": {
+          "type": "string",
+          "enum": ["manual", "api", "batch", "webhook"],
+          "description": "How submissions were triggered"
+        },
+        "run_timestamp": {
+          "type": "string",
+          "format": "date-time",
+          "description": "When workflow executed"
+        },
+        "entries_processed": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Total contamination records reviewed"
+        },
+        "entries_excluded": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Records marked for exclusion"
+        },
+        "entries_flagged": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Records flagged for human review"
+        },
+        "entries_reverted": {
+          "type": "integer",
+          "minimum": 0,
+          "description": "Previous decisions that were reverted"
+        },
+        "status": {
+          "type": "string",
+          "enum": ["pending", "in_progress", "completed", "failed"],
+          "description": "Workflow status"
+        },
+        "error_message": {
+          "type": "string",
+          "description": "Error details if workflow failed"
+        },
+        "created_at": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Record creation timestamp"
+        },
+        "updated_at": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Record last update timestamp"
+        }
+      }
+    },
+    "RepositoryDispatchPayload": {
+      "type": "object",
+      "description": "Payload for GitHub repository dispatch (webhook trigger)",
+      "required": ["event_type", "client_payload"],
+      "properties": {
+        "event_type": {
+          "type": "string",
+          "const": "data-submission",
+          "description": "Must be 'data-submission' for contamination workflow"
+        },
+        "client_payload": {
+          "type": "object",
+          "required": ["submission_source"],
+          "properties": {
+            "submission_source": {
+              "type": "string",
+              "enum": ["manual", "api", "batch", "webhook"],
+              "description": "Source of the submission"
+            },
+            "entity_id": {
+              "type": "string",
+              "format": "uuid",
+              "description": "Optional: specific assessment ID to review"
+            },
+            "batch_size": {
+              "type": "integer",
+              "description": "Optional: number of items in batch"
+            }
+          }
+        }
+      },
+      "examples": [
+        {
+          "event_type": "data-submission",
+          "client_payload": {
+            "submission_source": "api",
+            "batch_size": 150
+          }
+        },
+        {
+          "event_type": "data-submission",
+          "client_payload": {
+            "submission_source": "webhook",
+            "entity_id": "550e8400-e29b-41d4-a716-446655440000"
+          }
+        }
+      ]
+    },
+    "WorkflowInputs": {
+      "type": "object",
+      "description": "GitHub Actions workflow_dispatch inputs",
+      "properties": {
+        "entity_id": {
+          "type": "string",
+          "description": "Assessment entity ID (optional)"
+        },
+        "submission_source": {
+          "type": "string",
+          "enum": ["manual", "api", "batch"],
+          "description": "Source of submission"
+        }
+      }
+    },
+    "ContaminationFlags": {
+      "type": "array",
+      "description": "Array of contamination detection flags",
+      "items": {
+        "type": "string",
+        "enum": [
+          "ZERO_VARIANCE_P1",
+          "ZERO_VARIANCE_P2",
+          "ZERO_VARIANCE_P3",
+          "IDENTICAL_P1_P2",
+          "IDENTICAL_P1_P3",
+          "IDENTICAL_P2_P3",
+          "HIGH_CORRELATION_RESPONSES",
+          "DUPLICATE_SUBMISSION",
+          "EXCLUDED_DATA_REUSE",
+          "INVALID_TIMESTAMPS",
+          "PATTERN_MATCH_KNOWN_CONTAMINATION"
+        ]
+      }
+    }
+  },
+  "type": "object",
+  "properties": {
+    "log_entry": {
+      "$ref": "#/definitions/LogEntry"
+    },
+    "contamination_assessment": {
+      "$ref": "#/definitions/ContaminationAssessment"
+    },
+    "contamination_review_run": {
+      "$ref": "#/definitions/ContaminationReviewRun"
+    },
+    "repository_dispatch_payload": {
+      "$ref": "#/definitions/RepositoryDispatchPayload"
+    },
+    "workflow_inputs": {
+      "$ref": "#/definitions/WorkflowInputs"
+    },
+    "contamination_flags": {
+      "$ref": "#/definitions/ContaminationFlags"
+    }
+  }
+}

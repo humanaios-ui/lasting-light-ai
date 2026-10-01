@@ -13,6 +13,8 @@ venv/
 llai.config.yaml
 !config/llai.config.example.yaml
 .env
+.env.local
+.env.*.local
 *.key
 *.pem
 .pytest_cache/
@@ -64,3 +66,7 @@ rentahuman-pull-bounties.sh*
 # Playwright output — written by `npm run test:e2e` on every local run
 test-results/
 playwright-report/
+
+# Supabase function configuration and secrets
+supabase/functions/*/config.json
+supabase/functions/*/.env*

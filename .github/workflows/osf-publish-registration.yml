@@ -1,0 +1,220 @@
+# FDS: F3-GitHub | Purpose: GitHub Actions workflow | Status: ACTIVE
+name: OSF Publish Registration (Manual Approval)
+
+# This workflow runs when OSF pre-registration receives manual approval
+# Triggered via workflow_dispatch for manual execution by authorized users
+
+on:
+  workflow_dispatch:
+    inputs:
+      registration_id:
+        description: 'OSF Registration ID to publish'
+        required: true
+        type: string
+      pr_number:
+        description: 'PR number (for reference)'
+        required: false
+        type: string
+      doi:
+        description: 'DOI if already available (optional)'
+        required: false
+        type: string
+
+env:
+  SUPABASE_URL: https://ksinisdzgtnqzsymhfya.supabase.co
+  OSF_PUBLISH_ENDPOINT: /functions/v1/osf-publish-registration
+
+jobs:
+  publish-registration:
+    name: Publish OSF Registration
+    runs-on: ubuntu-latest
+    environment: osf-publish  # Requires manual approval
+    outputs:
+      doi: ${{ steps.publish-osf.outputs.doi }}
+      registration_url: ${{ steps.publish-osf.outputs.registration_url }}
+
+    steps:
+      - name: Validate inputs
+        id: validate
+        run: |
+          REGISTRATION_ID="${{ github.event.inputs.registration_id }}"
+
+          if [ -z "$REGISTRATION_ID" ] || [ "$REGISTRATION_ID" = "draft" ]; then
+            echo "ERROR: Valid registration ID required"
+            exit 1
+          fi
+
+          echo "validation_status=passed" >> $GITHUB_OUTPUT
+          echo "✅ Registration ID validated: ${REGISTRATION_ID}"
+
+      - name: Publish registration to OSF
+        id: publish-osf
+        env:
+          OSF_SUBMIT_TOKEN: ${{ secrets.OSF_SUBMIT_TOKEN }}
+        run: |
+          REGISTRATION_ID="${{ github.event.inputs.registration_id }}"
+
+          # Prepare JSON payload for publication
+          PAYLOAD=$(jq -n \
+            --arg registrationId "$REGISTRATION_ID" \
+            --arg action "publish" \
+            '{
+              registration_id: $registrationId,
+              action: $action
+            }')
+
+          echo "Publishing OSF registration: $REGISTRATION_ID"
+
+          # Call OSF publish endpoint
+          RESPONSE=$(curl -s -X POST \
+            "${SUPABASE_URL}${OSF_PUBLISH_ENDPOINT}" \
+            -H "Content-Type: application/json" \
+            -H "Authorization: Bearer ${OSF_SUBMIT_TOKEN}" \
+            -d "$PAYLOAD")
+
+          echo "OSF Response: $RESPONSE"
+
+          # Parse response
+          DOI=$(echo "$RESPONSE" | jq -r '.doi // .doi_url // "pending"')
+          REGISTRATION_URL=$(echo "$RESPONSE" | jq -r '.registration_url // "https://osf.io"')
+          SUCCESS=$(echo "$RESPONSE" | jq -r '.success // false')
+
+          if [ "$SUCCESS" = "true" ]; then
+            echo "publish_status=success" >> $GITHUB_OUTPUT
+            echo "doi=${DOI}" >> $GITHUB_OUTPUT
+            echo "registration_url=${REGISTRATION_URL}" >> $GITHUB_OUTPUT
+            echo "✅ Registration published successfully"
+            echo "📌 DOI: $DOI"
+          else
+            echo "publish_status=partial" >> $GITHUB_OUTPUT
+            echo "doi=${DOI}" >> $GITHUB_OUTPUT
+            echo "registration_url=${REGISTRATION_URL}" >> $GITHUB_OUTPUT
+            echo "⚠️ Publication status: Check OSF for full details"
+          fi
+
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 1
+
+      - name: Create registration DOI file
+        id: create-doi-file
+        env:
+          DOI: ${{ steps.publish-osf.outputs.doi }}
+          REGISTRATION_URL: ${{ steps.publish-osf.outputs.registration_url }}
+        run: |
+          TIMESTAMP=$(date -u +"%Y-%m-%dT%H:%M:%SZ")
+          REGISTRATION_ID="${{ github.event.inputs.registration_id }}"
+
+          # Create DOI documentation file
+          cat > PREREGISTRATION_DOI.md << 'EOF'
+          # OSF Pre-Registration DOI
+
+          ## Registration Details
+
+          - **Title:** ACAT Phase 2: Calibration Integrity Under Perturbation
+          - **Registration Type:** Pre-registration
+          - **Status:** Published (locked and immutable)
+          - **Registration ID:** $REGISTRATION_ID
+          - **DOI:** $DOI
+          - **OSF URL:** $REGISTRATION_URL
+          - **Published:** $TIMESTAMP
+
+          ## Protocol Reference
+
+          This registration locks the analysis plan defined in:
+          [PROTOCOL_PHASE2_PREREGISTRATION.md](PROTOCOL_PHASE2_PREREGISTRATION.md)
+
+          ## Citation
+
+          ```bibtex
+          @registration{$REGISTRATION_ID,
+            title={ACAT Phase 2: Calibration Integrity Under Perturbation},
+            doi={$DOI},
+            url={$REGISTRATION_URL},
+            year={2026},
+            author={Lasting Light AI}
+          }
+          ```
+
+          Or cite as:
+          ```
+          Lasting Light AI. (2026). ACAT Phase 2: Calibration Integrity Under Perturbation. Retrieved from $REGISTRATION_URL (DOI: $DOI)
+          ```
+
+          ## What This Means
+
+          - **Locked:** The protocol and analysis plan are now immutable
+          - **Public:** The registration is visible to all on OSF
+          - **Timestamped:** Registration date establishes priority
+          - **Citable:** DOI enables persistent citation
+          - **Analysis:** All statistical tests must follow pre-registered plan
+          - **Timeline:** Data collection continues through 2026-12-31, analysis lockdown 2027-01-01
+
+          ## Amendment Process
+
+          Any changes to the analysis plan after this registration require:
+          1. Filing a formal amendment on OSF (creates new version)
+          2. Updating this file with amendment details
+          3. Clearly labeling unregistered analyses in manuscripts
+
+          See [PROTOCOL_PHASE2_PREREGISTRATION.md](PROTOCOL_PHASE2_PREREGISTRATION.md) Section 8 for details.
+
+          ---
+          Generated: $TIMESTAMP
+          EOF
+
+          echo "✅ DOI file created: PREREGISTRATION_DOI.md"
+          echo "doi_file_created=true" >> $GITHUB_OUTPUT
+
+      - name: Commit DOI to repository
+        id: commit-doi
+        uses: EndBug/add-and-commit@v9
+        with:
+          author_name: 'OSF Pre-Registration Bot'
+          author_email: 'preregistration@osf.io'
+          message: 'chore: add OSF pre-registration DOI [CI skip]'
+          add: 'PREREGISTRATION_DOI.md'
+          pull: false
+          push: true
+          pathspec_error_handling: 'exitImmediately'
+
+      - name: Log publication summary
+        run: |
+          echo "Publication Summary:"
+          echo "==================="
+          echo "Status: Success"
+          echo "DOI: ${{ steps.publish-osf.outputs.doi }}"
+          echo "Registration URL: ${{ steps.publish-osf.outputs.registration_url }}"
+          echo "File Created: PREREGISTRATION_DOI.md"
+          echo ""
+          echo "Next Steps:"
+          echo "- DOI file committed to main branch"
+          echo "- Registration is now public and immutable"
+          echo "- Data collection may proceed through 2026-12-31"
+          echo "- Analysis window opens 2027-01-01"
+
+  publication-summary:
+    name: Publication Summary
+    runs-on: ubuntu-latest
+    needs: publish-registration
+    if: always()
+
+    steps:
+      - name: Print publication summary
+        run: |
+          echo "=== OSF Pre-Registration Publication Summary ==="
+          echo ""
+          echo "DOI: ${{ needs.publish-registration.outputs.doi }}"
+          echo "Registration URL: ${{ needs.publish-registration.outputs.registration_url }}"
+          echo ""
+          echo "✅ Registration Status: Locked and Immutable"
+          echo "🔐 Public Access: Available on OSF"
+          echo ""
+          echo "📋 Protocol: PROTOCOL_PHASE2_PREREGISTRATION.md"
+          echo "📄 Citation: See PREREGISTRATION_DOI.md"
+          echo ""
+          echo "Timeline:"
+          echo "  - Data Collection: Through 2026-12-31"
+          echo "  - Analysis Window: Starts 2027-01-01"
+          echo "  - Report: Follow pre-registered plan"

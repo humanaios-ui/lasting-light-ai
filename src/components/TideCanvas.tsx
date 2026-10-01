@@ -6,6 +6,7 @@ export function TideCanvas() {
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
     if (!ctx) return;
+
     let W: number,
       H: number,
       t = 0;
@@ -19,16 +20,29 @@ export function TideCanvas() {
       f: number;
       c: 'a' | 'b';
     }> = [];
+
+    // Offscreen canvas for particle rendering
+    const particleCanvas = document.createElement('canvas');
+    const particleCtx = particleCanvas.getContext('2d');
+
     const LI = 0.8632;
     let animationFrameId: number;
+    const TARGET_FPS = 60;
+    const FRAME_TIME = 1000 / TARGET_FPS;
+    let lastFrameTime = 0;
+
     function resize() {
       W = canvas!.width = window.innerWidth;
       H = canvas!.height = window.innerHeight;
+      particleCanvas.width = W;
+      particleCanvas.height = H;
       spawnPts();
     }
+
     function spawnPts() {
       pts = [];
-      const n = Math.floor(W / 15);
+      // Cap particle count to 60-70 instead of W/15
+      const n = Math.min(70, Math.max(60, Math.floor(W / 25)));
       for (let i = 0; i < n; i++) {
         pts.push({
           x: Math.random() * W,
@@ -42,6 +56,7 @@ export function TideCanvas() {
         });
       }
     }
+
     function wl(x: number, t: number) {
       const b = H * (1 - LI * 0.53);
       return (
@@ -51,43 +66,14 @@ export function TideCanvas() {
         Math.sin(x * 0.0015 + t * 0.21 + 2.3) * H * 0.037);
 
     }
-    function draw() {
-      t += 0.0068;
-      ctx!.clearRect(0, 0, W, H);
-      // Water body
-      ctx!.beginPath();
-      ctx!.moveTo(0, H);
-      for (let x = 0; x <= W; x += 4) ctx!.lineTo(x, wl(x, t));
-      ctx!.lineTo(W, H);
-      ctx!.closePath();
-      const g = ctx!.createLinearGradient(0, H * 0.22, 0, H);
-      g.addColorStop(0, 'rgba(26,84,144,.19)');
-      g.addColorStop(0.42, 'rgba(13,40,72,.36)');
-      g.addColorStop(1, 'rgba(26,23,20,.8)');
-      ctx!.fillStyle = g;
-      ctx!.fill();
-      // Crest
-      ctx!.beginPath();
-      for (let x = 0; x <= W; x += 4) {
-        const y = wl(x, t);
-        if (x === 0) ctx!.moveTo(x, y);
-        else ctx!.lineTo(x, y);
-      }
-      ctx!.strokeStyle = 'rgba(37,99,168,.36)';
-      ctx!.lineWidth = 1.1;
-      ctx!.stroke();
-      // Electric shimmer
-      const sh = 0.038 + 0.028 * Math.sin(t * 4.2);
-      ctx!.beginPath();
-      for (let x = 0; x <= W; x += 4) {
-        const y = wl(x, t) - 1.8;
-        if (x === 0) ctx!.moveTo(x, y);
-        else ctx!.lineTo(x, y);
-      }
-      ctx!.strokeStyle = `rgba(212,160,74,${sh})`;
-      ctx!.lineWidth = 0.65;
-      ctx!.stroke();
-      // Particles
+
+    function drawParticles() {
+      if (!particleCtx) return;
+
+      // Clear offscreen canvas
+      particleCtx.clearRect(0, 0, particleCanvas.width, particleCanvas.height);
+
+      // Update and draw particles
       pts.forEach((p) => {
         const wy = wl(p.x, t);
         const inW = p.y > wy;
@@ -102,16 +88,71 @@ export function TideCanvas() {
         const d = Math.abs(p.y - wy);
         const al = inW ? p.a * 0.45 : p.a * Math.max(0, 1 - d / (H * 0.3));
         const [r, g, b] = p.c === 'a' ? [212, 160, 74] : [37, 99, 168];
-        ctx!.beginPath();
-        ctx!.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-        ctx!.fillStyle = `rgba(${r},${g},${b},${al})`;
-        ctx!.fill();
+        particleCtx.beginPath();
+        particleCtx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+        particleCtx.fillStyle = `rgba(${r},${g},${b},${al})`;
+        particleCtx.fill();
       });
+    }
+
+    function draw(timestamp: number) {
+      // Frame rate limiting to 60fps
+      if (timestamp - lastFrameTime < FRAME_TIME) {
+        animationFrameId = requestAnimationFrame(draw);
+        return;
+      }
+      lastFrameTime = timestamp;
+
+      t += 0.0068;
+      ctx!.clearRect(0, 0, W, H);
+
+      // Water body
+      ctx!.beginPath();
+      ctx!.moveTo(0, H);
+      for (let x = 0; x <= W; x += 4) ctx!.lineTo(x, wl(x, t));
+      ctx!.lineTo(W, H);
+      ctx!.closePath();
+      const g = ctx!.createLinearGradient(0, H * 0.22, 0, H);
+      g.addColorStop(0, 'rgba(26,84,144,.19)');
+      g.addColorStop(0.42, 'rgba(13,40,72,.36)');
+      g.addColorStop(1, 'rgba(26,23,20,.8)');
+      ctx!.fillStyle = g;
+      ctx!.fill();
+
+      // Crest
+      ctx!.beginPath();
+      for (let x = 0; x <= W; x += 4) {
+        const y = wl(x, t);
+        if (x === 0) ctx!.moveTo(x, y);
+        else ctx!.lineTo(x, y);
+      }
+      ctx!.strokeStyle = 'rgba(37,99,168,.36)';
+      ctx!.lineWidth = 1.1;
+      ctx!.stroke();
+
+      // Electric shimmer
+      const sh = 0.038 + 0.028 * Math.sin(t * 4.2);
+      ctx!.beginPath();
+      for (let x = 0; x <= W; x += 4) {
+        const y = wl(x, t) - 1.8;
+        if (x === 0) ctx!.moveTo(x, y);
+        else ctx!.lineTo(x, y);
+      }
+      ctx!.strokeStyle = `rgba(212,160,74,${sh})`;
+      ctx!.lineWidth = 0.65;
+      ctx!.stroke();
+
+      // Draw particles using offscreen canvas
+      drawParticles();
+      ctx!.drawImage(particleCanvas, 0, 0);
+
       animationFrameId = requestAnimationFrame(draw);
     }
+
     window.addEventListener('resize', resize);
     resize();
-    draw();
+    animationFrameId = requestAnimationFrame(draw);
+
     return () => {
       window.removeEventListener('resize', resize);
       cancelAnimationFrame(animationFrameId);

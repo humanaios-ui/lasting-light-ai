@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, Suspense } from 'react';
 import {
   BrowserRouter,
   Routes,
@@ -19,12 +19,16 @@ import { SigilsSection } from './components/SigilsSection';
 import { SiteMap } from './components/SiteMap';
 import { Footer } from './components/Footer';
 import { AcatTool } from './components/AcatTool';
+import { LazyLoadingFallback } from './components/LazyLoadingFallback';
 import { Experiment } from './pages/Experiment';
 import { RegimeA } from './pages/RegimeA';
-import { ResearchVelocity } from './pages/ResearchVelocity';
 import { TopicDetail } from './pages/TopicDetail';
 import { ArenaPrototype } from './pages/ArenaPrototype';
-import { SystemFindingsBaseline } from './pages/SystemFindingsBaseline';
+import { DeltaPageGeneratorDemo } from './pages/DeltaPageGeneratorDemo';
+
+// Lazy-load code-split routes
+const ResearchVelocity = React.lazy(() => import('./pages/ResearchVelocity').then(m => ({ default: m.ResearchVelocity })));
+const SystemFindingsBaseline = React.lazy(() => import('./pages/SystemFindingsBaseline').then(m => ({ default: m.SystemFindingsBaseline })));
 
 // ── Nav link data — mirrors witness-nav.js NAV_GROUPS ──────────────────────
 const NAV_GROUPS = [
@@ -242,10 +246,19 @@ function AppShell() {
           <Route path="/acat" element={<Navigate to="/assess" replace />} />
           <Route path="/experiment" element={<Experiment />} />
           <Route path="/regime-a" element={<RegimeA />} />
-          <Route path="/research-velocity" element={<ResearchVelocity />} />
+          <Route path="/research-velocity" element={
+            <Suspense fallback={<LazyLoadingFallback />}>
+              <ResearchVelocity />
+            </Suspense>
+          } />
           <Route path="/topics/:topicId" element={<TopicDetail />} />
           <Route path="/arena" element={<ArenaPrototype />} />
-          <Route path="/system-findings" element={<SystemFindingsBaseline />} />
+          <Route path="/system-findings" element={
+            <Suspense fallback={<LazyLoadingFallback />}>
+              <SystemFindingsBaseline />
+            </Suspense>
+          } />
+          <Route path="/delta-generator" element={<DeltaPageGeneratorDemo />} />
         </Routes>
       </main>
 

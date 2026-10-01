@@ -29,8 +29,29 @@ serve(async (req) => {
   try {
     const payload: RegistrationPayload = await req.json();
 
-    const supabaseUrl = Deno.env.get("SUPABASE_URL") || "";
-    const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") || "";
+    if (!payload.title || !payload.description || !payload.category || !payload.protocolText) {
+      return new Response(
+        JSON.stringify({ error: "Missing required fields: title, description, category, protocolText" }),
+        {
+          status: 400,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        }
+      );
+    }
+
+    const supabaseUrl = Deno.env.get("SUPABASE_URL");
+    const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+
+    if (!supabaseUrl || !supabaseKey) {
+      return new Response(
+        JSON.stringify({ error: "Server configuration error: missing Supabase credentials" }),
+        {
+          status: 500,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        }
+      );
+    }
+
     const supabase = createClient(supabaseUrl, supabaseKey);
 
     const { data: tokenData, error: tokenError } = await supabase
@@ -93,6 +114,18 @@ serve(async (req) => {
     }
 
     const registrationData = await createRegistrationResponse.json();
+
+    if (!registrationData?.data?.id || !registrationData?.data?.links?.self) {
+      console.error("OSF response missing registration ID or URL:", registrationData);
+      return new Response(
+        JSON.stringify({ error: "Invalid OSF registration response: missing required fields" }),
+        {
+          status: 400,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        }
+      );
+    }
+
     const registrationId = registrationData.data.id;
     const registrationUrl = registrationData.data.links.self;
 
@@ -112,10 +145,12 @@ Analysis Lockdown: All statistical tests deferred until after registration confi
 Governance Framework: HumanAIOS Class-Zone-MOLT architecture (Class 1: hypotheses, Class 2: processes, Class 3: reviewed outcomes)`,
     };
 
+    const failedFields: string[] = [];
+
     for (const [fieldName, fieldValue] of Object.entries(fieldsToFill)) {
       const responseUrl = registrationUrl.replace("/registrations/", "/registration_responses/");
 
-      await fetch(responseUrl, {
+      const responseSubmission = await fetch(responseUrl, {
         method: "POST",
         headers: {
           "Authorization": `Bearer ${accessToken}`,
@@ -138,6 +173,29 @@ Governance Framework: HumanAIOS Class-Zone-MOLT architecture (Class 1: hypothese
           },
         }),
       });
+
+      if (!responseSubmission.ok) {
+        const errorData = await responseSubmission.json();
+        console.error(`Failed to submit registration response for field '${fieldName}':`, errorData);
+        failedFields.push(fieldName);
+      }
+    }
+
+    if (failedFields.length > 0) {
+      return new Response(
+        JSON.stringify({
+          success: false,
+          error: "Failed to submit some registration responses",
+          failed_fields: failedFields,
+          registration_id: registrationId,
+          registration_url: registrationUrl,
+          message: `Registration created but ${failedFields.length} field(s) failed to submit: ${failedFields.join(", ")}`,
+        }),
+        {
+          status: 400,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        }
+      );
     }
 
     const { error: insertError } = await supabase
