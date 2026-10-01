@@ -127,15 +127,15 @@ describe('AcatTool run state', () => {
 describe('AcatTool contamination submission', () => {
   it('converts contamination confidence to integer scale (0-100) in submission payload', async () => {
     let capturedPayload: unknown;
-    const mockFetch = vi.fn((url: string, options: any) => {
+    const mockFetch = vi.fn((url: string, options: RequestInit) => {
       if (url.includes('acat_assessments_v1')) {
-        capturedPayload = JSON.parse(options.body);
+        capturedPayload = JSON.parse(options.body as string);
       }
       return Promise.resolve({ ok: true, text: () => Promise.resolve('') });
     });
     vi.stubGlobal('fetch', mockFetch);
 
-    const { getByText, getByRole } = render(<AcatTool />);
+    const { getByText } = render(<AcatTool />);
 
     // Wait for component to render
     await waitFor(() => {
@@ -184,7 +184,7 @@ describe('AcatTool contamination submission', () => {
     // Verify contamination fields in payload
     await waitFor(() => {
       expect(capturedPayload).toBeDefined();
-      const payload = capturedPayload as Record<string, any>;
+      const payload = capturedPayload as Record<string, unknown>;
 
       // Verify contamination_confidence is an integer
       expect(typeof payload.contamination_confidence).toBe('number');

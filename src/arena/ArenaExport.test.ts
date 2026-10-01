@@ -8,9 +8,9 @@ import { ArenaTestRunner } from './ArenaTestRunner';
 import { ArenaExporter } from './ArenaExport';
 
 describe('Arena Export Functionality', () => {
-  let sessions: any[] = [];
-  let summary: any = null;
-  let exportData: any = null;
+  let sessions: unknown[] = [];
+  let summary: unknown = null;
+  let exportData: unknown = null;
 
   beforeAll(async () => {
     // Run a small batch of test sessions
@@ -37,16 +37,20 @@ describe('Arena Export Functionality', () => {
     });
 
     it('should have all sessions with complete metadata', () => {
-      const allSessionsHaveMetadata = exportData.sessions.every(
-        (s: any) =>
-          s.session_id &&
-          s.test_index !== undefined &&
-          s.topic &&
-          s.timestamp &&
-          s.blind_pass &&
-          s.convergence &&
-          s.reverse_gaze_observed !== undefined &&
-          s.learning_signal !== undefined
+      const allSessionsHaveMetadata = (exportData as Record<string, unknown>).sessions.every(
+        (s: unknown) => {
+          const session = s as Record<string, unknown>;
+          return (
+            session.session_id &&
+            session.test_index !== undefined &&
+            session.topic &&
+            session.timestamp &&
+            session.blind_pass &&
+            session.convergence &&
+            session.reverse_gaze_observed !== undefined &&
+            session.learning_signal !== undefined
+          );
+        }
       );
 
       expect(allSessionsHaveMetadata).toBe(true);

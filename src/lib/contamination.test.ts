@@ -197,7 +197,7 @@ describe('Contamination Detection - Edge Cases', () => {
     it('should handle null p1_scores in current submission', () => {
       const current = {
         ...createBaselineSubmission(),
-        p1_scores: null as any,
+        p1_scores: null as unknown as number[],
       };
       const recent = createBaselineSubmission();
 
@@ -209,7 +209,7 @@ describe('Contamination Detection - Edge Cases', () => {
       const current = createBaselineSubmission();
       const recent = {
         ...createBaselineSubmission(),
-        p1_scores: null as any,
+        p1_scores: null as unknown as number[],
       };
 
       const result = checkDuplicateSubmission(current, [recent]);
@@ -421,7 +421,7 @@ describe('Contamination Detection - Edge Cases', () => {
   describe('Null/undefined safety', () => {
     it('should handle undefined p1_scores', () => {
       const submission = createBaselineSubmission();
-      submission.p1_scores = undefined as any;
+      submission.p1_scores = undefined as unknown as number[];
 
       const analysis = analyzeContamination(submission);
       expect(analysis.flags).toEqual([]);
@@ -430,7 +430,7 @@ describe('Contamination Detection - Edge Cases', () => {
 
     it('should handle undefined p3_scores', () => {
       const submission = createBaselineSubmission();
-      submission.p3_scores = undefined as any;
+      submission.p3_scores = undefined as unknown as number[];
 
       const analysis = analyzeContamination(submission);
       // p1_scores are all 50 (zero variance), so ZERO_VARIANCE_P1 is flagged
@@ -439,7 +439,7 @@ describe('Contamination Detection - Edge Cases', () => {
 
     it('should handle null p1_scores', () => {
       const submission = createBaselineSubmission();
-      submission.p1_scores = null as any;
+      submission.p1_scores = null as unknown as number[];
 
       const analysis = analyzeContamination(submission);
       expect(analysis.flags).toEqual([]);
@@ -447,7 +447,7 @@ describe('Contamination Detection - Edge Cases', () => {
 
     it('should handle null p3_scores', () => {
       const submission = createBaselineSubmission();
-      submission.p3_scores = null as any;
+      submission.p3_scores = null as unknown as number[];
 
       const analysis = analyzeContamination(submission);
       // p1_scores are all 50 (zero variance), so ZERO_VARIANCE_P1 is flagged
