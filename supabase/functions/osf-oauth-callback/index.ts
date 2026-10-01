@@ -37,6 +37,20 @@ serve(async (req) => {
       });
     }
 
+    // Validate OSF credentials
+    const osfClientId = Deno.env.get("OSF_CLIENT_ID");
+    const osfClientSecret = Deno.env.get("OSF_CLIENT_SECRET");
+
+    if (!osfClientId || !osfClientSecret) {
+      return new Response(
+        JSON.stringify({ error: "Server configuration error: missing OSF credentials" }),
+        {
+          status: 500,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        }
+      );
+    }
+
     // Exchange authorization code for access token
     const tokenResponse = await fetch("https://accounts.osf.io/oauth2/token/", {
       method: "POST",
@@ -44,8 +58,8 @@ serve(async (req) => {
       body: new URLSearchParams({
         grant_type: "authorization_code",
         code,
-        client_id: Deno.env.get("OSF_CLIENT_ID") || "",
-        client_secret: Deno.env.get("OSF_CLIENT_SECRET") || "",
+        client_id: osfClientId,
+        client_secret: osfClientSecret,
         redirect_uri:
           "https://ksinisdzgtnqzsymhfya.supabase.co/functions/v1/osf-oauth-callback",
       }).toString(),
