@@ -1,3 +1,5 @@
+/* FDS: F3-Source | Parent: CUSTOM_INSTRUCTIONS_V3_5_ORD.md | Hawkins: internal-only | Status: ACTIVE */
+
 /**
  * Zod validation schemas for contamination data and Supabase submissions
  * Used to validate JSON.parse results and submission payloads

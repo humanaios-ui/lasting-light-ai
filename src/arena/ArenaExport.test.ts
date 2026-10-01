@@ -1,3 +1,5 @@
+/* FDS: F3-Test | Parent: CUSTOM_INSTRUCTIONS_V3_5_ORD.md | Hawkins: internal-only | Status: ACTIVE */
+
 /**
  * Arena Export Tests
  * Verifies JSON export functionality for manual archival

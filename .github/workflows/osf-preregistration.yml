@@ -97,16 +97,15 @@ jobs:
           SUCCESS=$(echo "$RESPONSE" | jq -r '.success // false')
 
           if [ "$REGISTRATION_ID" = "failed" ] || [ "$SUCCESS" != "true" ]; then
-            echo "submission_status=failed" >> $GITHUB_OUTPUT
-            echo "registration_id=draft" >> $GITHUB_OUTPUT
-            echo "registration_url=pending" >> $GITHUB_OUTPUT
-            echo "WARNING: OSF submission experienced an issue (this may be expected for draft registrations)"
-          else
-            echo "submission_status=success" >> $GITHUB_OUTPUT
-            echo "registration_id=${REGISTRATION_ID}" >> $GITHUB_OUTPUT
-            echo "registration_url=${REGISTRATION_URL}" >> $GITHUB_OUTPUT
-            echo "OSF registration submitted: $REGISTRATION_ID"
+            echo "❌ OSF submission failed - registration ID not received"
+            echo "Response: $RESPONSE"
+            exit 1
           fi
+
+          echo "submission_status=success" >> $GITHUB_OUTPUT
+          echo "registration_id=${REGISTRATION_ID}" >> $GITHUB_OUTPUT
+          echo "registration_url=${REGISTRATION_URL}" >> $GITHUB_OUTPUT
+          echo "✅ OSF registration submitted: $REGISTRATION_ID"
 
       - name: Comment on PR with OSF status
         uses: actions/github-script@v7

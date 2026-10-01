@@ -1,3 +1,5 @@
+/* FDS: F3-Library | Parent: CUSTOM_INSTRUCTIONS_V3_5_ORD.md | Hawkins: internal-only | Status: ACTIVE */
+
 /**
  * Contamination Review Integration Example
  * Shows how to integrate with n8n, Make.com, or other platforms

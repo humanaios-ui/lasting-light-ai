@@ -1,3 +1,5 @@
+/* FDS: F3-Source | Parent: CUSTOM_INSTRUCTIONS_V3_5_ORD.md | Hawkins: internal-only | Status: ACTIVE */
+
 /**
  * Delta Page Generator
  * Regenerates only pages affected by index changes (incremental rebuild)
