@@ -6,7 +6,8 @@ import React, {
 'react';
 import { clampScore, parseAssessmentResponse } from '../lib/assessment';
 import { analyzeContamination, type SubmissionMetadata } from '../lib/contamination';
-import { EnvironmentSchema, logAudit } from '../lib/validation';
+import { logAudit } from '../lib/validation';
+import { getSupabaseUrl, getSupabaseAnonKey } from '../lib/supabase';
 
 // Helper function to convert contamination confidence from text to integer scale (0-100)
 function confidenceToInteger(confidence: 'HIGH' | 'MEDIUM' | 'LOW'): number {
@@ -19,28 +20,6 @@ function confidenceToInteger(confidence: 'HIGH' | 'MEDIUM' | 'LOW'): number {
 }
 
 // ── Constants ────────────────────────────────────────────────────────────────
-/**
- * Validate and load environment variables at module initialization
- * Throws error if required credentials are missing
- */
-function initializeSupabaseConfig() {
-  const result = EnvironmentSchema.safeParse({
-    VITE_SUPABASE_URL: import.meta.env.VITE_SUPABASE_URL,
-    VITE_SUPABASE_ANON_KEY: import.meta.env.VITE_SUPABASE_ANON_KEY,
-  });
-
-  if (!result.success) {
-    const errorMsg = `Missing or invalid Supabase configuration: ${result.error.issues.map((e) => `${e.path.join('.')}: ${e.message}`).join('; ')}`;
-    logAudit('SUPABASE_CONFIG_ERROR', { error: errorMsg });
-    throw new Error(errorMsg);
-  }
-
-  return result.data;
-}
-
-const config = initializeSupabaseConfig();
-const SUPABASE_URL = config.VITE_SUPABASE_URL;
-const SUPABASE_ANON_KEY = config.VITE_SUPABASE_ANON_KEY;
 interface Dimension {
   id: string;
   label: string;
@@ -299,8 +278,12 @@ export function AcatTool({
       n_total: 630, n_phase1: 517, n_li: 308, mean_li: 0.8632,
       dimensions: {}, timestamp: new Date().toISOString()
     });
-    return fetch(`${SUPABASE_URL}/rest/v1/acat_stats_v1?select=*&limit=1`, {
-      headers: { apikey: SUPABASE_ANON_KEY, Authorization: `Bearer ${SUPABASE_ANON_KEY}` }
+    return Promise.resolve().then(() => {
+      const url = getSupabaseUrl();
+      const anonKey = getSupabaseAnonKey();
+      return fetch(`${url}/rest/v1/acat_stats_v1?select=*&limit=1`, {
+        headers: { apikey: anonKey, Authorization: `Bearer ${anonKey}` }
+      });
     }).
     then((res) => {
       if (!res.ok) {
@@ -588,12 +571,12 @@ Rules:
 
     let recentSubmissions: SubmissionMetadata[] = [];
     try {
-      const recentUrl = new URL(`${SUPABASE_URL}/rest/v1/acat_assessments_v1`);
+      const recentUrl = new URL(`${getSupabaseUrl()}/rest/v1/acat_assessments_v1`);
       recentUrl.searchParams.set('agent_name', `eq.${agentName}`);
       recentUrl.searchParams.set('order', 'created_at.desc');
       recentUrl.searchParams.set('limit', '10');
       const recentResponse = await fetch(recentUrl.toString(), {
-        headers: { apikey: SUPABASE_ANON_KEY, Authorization: `Bearer ${SUPABASE_ANON_KEY}` }
+        headers: { apikey: getSupabaseAnonKey(), Authorization: `Bearer ${getSupabaseAnonKey()}` }
       });
       if (recentResponse.ok) {
         const recentData = await recentResponse.json() as Array<{ p1_truth: number; p1_service: number; p1_harm: number; p1_autonomy: number; p1_value: number; p1_humility: number; p3_truth: number; p3_service: number; p3_harm: number; p3_autonomy: number; p3_value: number; p3_humility: number; agent_name: string; prompt_version: string; acat_version: string; instrument_variant: string; p_version: string; user_agent: string; created_at: string; behavioral_summary: string }>;
@@ -668,9 +651,9 @@ Rules:
     }
 
     try {
-      const response = await fetch(`${SUPABASE_URL}/rest/v1/acat_assessments_v1`, {
+      const response = await fetch(`${getSupabaseUrl()}/rest/v1/acat_assessments_v1`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', apikey: SUPABASE_ANON_KEY, Authorization: `Bearer ${SUPABASE_ANON_KEY}`, Prefer: 'return=representation' },
+        headers: { 'Content-Type': 'application/json', apikey: getSupabaseAnonKey(), Authorization: `Bearer ${getSupabaseAnonKey()}`, Prefer: 'return=representation' },
         body: JSON.stringify(supabasePayload)
       });
 

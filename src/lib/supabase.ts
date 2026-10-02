@@ -3,10 +3,14 @@
 import { EnvironmentSchema, logAudit } from './validation';
 
 /**
- * Validate and load environment variables at module initialization
- * Throws error if required credentials are missing
+ * Validate and load environment variables lazily on first access
+ * Allows variables to be set at build/deploy time
  */
-function initializeSupabaseConfig() {
+let cachedConfig: { VITE_SUPABASE_URL: string; VITE_SUPABASE_ANON_KEY: string } | null = null;
+
+function getSupabaseConfig() {
+  if (cachedConfig) return cachedConfig;
+
   const result = EnvironmentSchema.safeParse({
     VITE_SUPABASE_URL: import.meta.env.VITE_SUPABASE_URL,
     VITE_SUPABASE_ANON_KEY: import.meta.env.VITE_SUPABASE_ANON_KEY,
@@ -18,12 +22,17 @@ function initializeSupabaseConfig() {
     throw new Error(errorMsg);
   }
 
-  return result.data;
+  cachedConfig = result.data;
+  return cachedConfig;
 }
 
-const config = initializeSupabaseConfig();
-const SUPABASE_URL = config.VITE_SUPABASE_URL;
-const SUPABASE_ANON_KEY = config.VITE_SUPABASE_ANON_KEY;
+export function getSupabaseUrl() {
+  return getSupabaseConfig().VITE_SUPABASE_URL;
+}
+
+export function getSupabaseAnonKey() {
+  return getSupabaseConfig().VITE_SUPABASE_ANON_KEY;
+}
 
 export interface LiveStats {
   n_total: number;
@@ -41,11 +50,11 @@ export interface LiveStats {
 export async function fetchLiveStats(): Promise<LiveStats | null> {
   try {
     const response = await fetch(
-      `${SUPABASE_URL}/rest/v1/acat_stats_v1?select=*&limit=1`,
+      `${getSupabaseUrl()}/rest/v1/acat_stats_v1?select=*&limit=1`,
       {
         headers: {
-          apikey: SUPABASE_ANON_KEY,
-          Authorization: `Bearer ${SUPABASE_ANON_KEY}`,
+          apikey: getSupabaseAnonKey(),
+          Authorization: `Bearer ${getSupabaseAnonKey()}`,
         },
       }
     );
