@@ -132,16 +132,18 @@ jobs:
               comment += `2. Request approval to publish (see "Approval" section below)\n`;
               comment += `3. On approval, DOI will be generated and committed to repository\n\n`;
             } else {
-              comment += `⏳ **Draft Registration Pending**\n\n`;
-              comment += `The protocol has been prepared for OSF submission.\n`;
-              comment += `**Status:** Draft mode (registration ID: ${registrationId})\n\n`;
+              comment += `❌ **Submission Failed**\n\n`;
+              comment += `OSF registration submission did not complete.\n`;
+              comment += `**Status:** Error (registration ID: ${registrationId})\n\n`;
               comment += `**Next Steps:**\n`;
-              comment += `1. Review this PR to ensure protocol accuracy\n`;
-              comment += `2. Approve deployment to publish registration\n`;
-              comment += `3. DOI will be generated upon publication\n\n`;
+              comment += `1. Review OSF submission error above\n`;
+              comment += `2. Check PROTOCOL_PHASE2_PREREGISTRATION.md content\n`;
+              comment += `3. Retry OSF submission\n\n`;
             }
 
-            comment += `**Deadline:** 2026-10-01\n`;
+            if (submissionStatus === 'success') {
+              comment += `**Status:** Awaiting approval to publish\n`;
+            }
             comment += `**Protocol:** [PROTOCOL_PHASE2_PREREGISTRATION.md](${process.env.GITHUB_SERVER_URL}/${process.env.GITHUB_REPOSITORY}/blob/${process.env.GITHUB_HEAD_REF}/PROTOCOL_PHASE2_PREREGISTRATION.md)\n`;
 
             github.rest.issues.createComment({
@@ -183,8 +185,8 @@ jobs:
               registration_url: process.env.REGISTRATION_URL,
               submission_status: process.env.SUBMISSION_STATUS,
               created_at: new Date().toISOString(),
-              approval_required: true,
-              approval_deadline: '2026-10-01'
+              approval_required: process.env.SUBMISSION_STATUS === 'success',
+              approval_status: process.env.SUBMISSION_STATUS === 'success' ? 'awaiting_approval' : 'submission_failed'
             };
 
             console.log('OSF Pre-Registration Metadata:');
@@ -193,12 +195,12 @@ jobs:
             // Log for reference
             console.log('\nDeployment approval required before publishing registration.');
 
-  # Job 3: Mark as requiring approval
+  # Job 3: Mark as requiring approval (only if submission succeeded)
   require-approval:
     name: Require Manual Approval
     runs-on: ubuntu-latest
     needs: [create-osf-draft, store-registration-metadata]
-    if: always()
+    if: always() && needs.create-osf-draft.outputs.submission_status == 'success'
 
     steps:
       - name: Create approval comment
@@ -208,7 +210,7 @@ jobs:
             const registrationId = '${{ needs.create-osf-draft.outputs.registration_id }}';
             const registrationUrl = '${{ needs.create-osf-draft.outputs.registration_url }}';
 
-            let approvalComment = `## ⏳ OSF Registration Awaiting Approval\n\n`;
+            let approvalComment = `## 📋 OSF Registration Ready for Approval\n\n`;
             approvalComment += `**Registration ID:** \`${registrationId}\`\n\n`;
             approvalComment += `### Approval Instructions\n\n`;
             approvalComment += `This PR has prepared an OSF pre-registration. Before merging:\n\n`;
@@ -219,7 +221,7 @@ jobs:
             approvalComment += `### Approval Process\n\n`;
             approvalComment += `- Approval environment: \`osf-publish\`\n`;
             approvalComment += `- Required approvers: Maintainers\n`;
-            approvalComment += `- Timeout: Until 2026-10-01 (deadline)\n`;
+            approvalComment += `- Approval gate: Manual review and protocol validation\n`;
             approvalComment += `- On approval: DOI will be generated and committed\n\n`;
             approvalComment += `### Approval Workflow\n\n`;
             approvalComment += `Once approved, the following occurs:\n`;
@@ -253,7 +255,7 @@ jobs:
           echo "📝 Registration ID: ${{ needs.create-osf-draft.outputs.registration_id }}"
           echo "🔗 Registration URL: ${{ needs.create-osf-draft.outputs.registration_url }}"
           echo ""
-          echo "⏰ Deadline: 2026-10-01"
           echo "🔐 Approval Required: Yes (manual approval via GitHub environment)"
+          echo "📋 Gate: Protocol validation + reviewer acknowledgment"
           echo ""
           echo "Next: Approve publication via GitHub environment to finalize"
