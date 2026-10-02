@@ -2,6 +2,7 @@
 import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { AcatTool } from './AcatTool';
+import * as supabaseModule from '../lib/supabase';
 
 // These tests pin the state-initialisation behaviour that used to live in two
 // effects: seeding runs from localStorage when the agent name changes, and
@@ -43,11 +44,15 @@ beforeEach(() => {
   vi.stubGlobal('fetch', vi.fn(() => new Promise(() => {})));
   // Starting a run schedules a smooth scroll that jsdom does not implement.
   vi.stubGlobal('scrollTo', vi.fn());
+  // Mock Supabase config functions to prevent errors when env vars are missing
+  vi.spyOn(supabaseModule, 'getSupabaseUrl').mockReturnValue('https://fake-supabase.supabase.co');
+  vi.spyOn(supabaseModule, 'getSupabaseAnonKey').mockReturnValue('fake-anon-key');
 });
 
 afterEach(() => {
   cleanup();
   vi.unstubAllGlobals();
+  vi.restoreAllMocks();
 });
 
 describe('AcatTool run state', () => {
@@ -127,83 +132,81 @@ describe('AcatTool run state', () => {
 describe('AcatTool contamination submission', () => {
   it('converts contamination confidence to integer scale (0-100) in submission payload', async () => {
     let capturedPayload: unknown;
-    const mockFetch = vi.fn((url: string, options: RequestInit) => {
-      if (url.includes('acat_assessments_v1')) {
+    const mockFetch = vi.fn((url: string, options?: RequestInit) => {
+      if (typeof url === 'string' && url.includes('acat_assessments_v1') && options?.body) {
         capturedPayload = JSON.parse(options.body as string);
       }
-      return Promise.resolve({ ok: true, text: () => Promise.resolve('') });
+      return Promise.resolve({ ok: true, text: () => Promise.resolve(''), json: () => Promise.resolve([]) });
     });
+
     vi.stubGlobal('fetch', mockFetch);
 
-    const { getByText } = render(<AcatTool />);
+    render(<AcatTool />);
 
     // Wait for component to render
-    await waitFor(() => {
-      expect(screen.queryByText('Live Dataset')).toBeInTheDocument();
-    });
+    await screen.findByText('Live Dataset');
 
     // Set agent name
-    const agentInput = document.getElementById('agent-name-input') as HTMLInputElement;
+    const agentInput = screen.getByDisplayValue('Demo Agent') as HTMLInputElement;
     fireEvent.change(agentInput, { target: { value: 'Test Agent' } });
 
     // Fill Phase 1 scores
-    for (let i = 0; i < DIM_COUNT; i++) {
-      const input = document.getElementById(`p1-${['truth', 'service', 'harm', 'autonomy', 'value', 'humility', 'scheme', 'power', 'syc', 'consist', 'fair'][i]}`) as HTMLInputElement;
-      if (input) fireEvent.change(input, { target: { value: '50' } });
+    const dims = ['truth', 'service', 'harm', 'autonomy', 'value', 'humility', 'scheme', 'power', 'syc', 'consist', 'fair'];
+    for (const dim of dims) {
+      const input = document.getElementById(`p1-${dim}`) as HTMLInputElement;
+      fireEvent.change(input, { target: { value: '50' } });
     }
 
     // Commit Phase 1
-    fireEvent.click(getByText('Commit Phase 1 →'));
+    fireEvent.click(screen.getByText('Commit Phase 1 →'));
 
-    // Reveal perturbation
+    // Wait for Phase 2 to appear and reveal perturbation
+    await screen.findByText(/Show perturbation/);
+    fireEvent.click(screen.getByText(/Show perturbation/));
+
+    // Wait for Phase 3 to appear
     await waitFor(() => {
-      const revealBtn = screen.queryByText('Show perturbation');
-      if (revealBtn) fireEvent.click(revealBtn);
+      const p3Input = document.getElementById('p3-truth') as HTMLInputElement;
+      expect(p3Input).toBeInTheDocument();
     });
 
     // Fill Phase 3 scores
-    await waitFor(() => {
-      const phase3Input = document.getElementById('p3-truth') as HTMLInputElement;
-      if (phase3Input) {
-        fireEvent.change(phase3Input, { target: { value: '48' } });
-      }
-    });
+    for (const dim of dims) {
+      const input = document.getElementById(`p3-${dim}`) as HTMLInputElement;
+      fireEvent.change(input, { target: { value: '48' } });
+    }
 
     // Save Phase 3
-    const savePhase3Btn = screen.queryByText('Save this run →');
-    if (savePhase3Btn) fireEvent.click(savePhase3Btn);
+    fireEvent.click(screen.getByText('Save this run →'));
 
-    // Submit to database
-    await waitFor(() => {
-      const submitBtn = screen.queryByText('Submit to Live Dataset');
-      if (submitBtn && !submitBtn.hasAttribute('disabled')) {
-        fireEvent.click(submitBtn);
-      }
-    });
+    // Wait for Submit button to appear and click it
+    await screen.findByText('Submit to Live Dataset');
+    fireEvent.click(screen.getByText('Submit to Live Dataset'));
 
-    // Verify contamination fields in payload
+    // Verify fetch was called with contamination payload
     await waitFor(() => {
       expect(capturedPayload).toBeDefined();
-      const payload = capturedPayload as Record<string, unknown>;
-
-      // Verify contamination_confidence is an integer
-      expect(typeof payload.contamination_confidence).toBe('number');
-      expect(payload.contamination_confidence).toBeGreaterThanOrEqual(0);
-      expect(payload.contamination_confidence).toBeLessThanOrEqual(100);
-
-      // Verify contamination_flags is array or null
-      expect(Array.isArray(payload.contamination_flags) || payload.contamination_flags === null).toBe(true);
-
-      // Verify contamination_action is one of the valid values
-      const validActions = ['INCLUDE', 'FLAG_FOR_REVIEW', 'EXCLUDE'];
-      expect(validActions.includes(payload.contamination_action as string) || payload.contamination_action === null).toBe(true);
     });
+
+    const payload = capturedPayload as Record<string, unknown>;
+
+    // Verify contamination_confidence is an integer
+    expect(typeof payload.contamination_confidence).toBe('number');
+    expect(payload.contamination_confidence).toBeGreaterThanOrEqual(0);
+    expect(payload.contamination_confidence).toBeLessThanOrEqual(100);
+
+    // Verify contamination_flags is array or null
+    expect(Array.isArray(payload.contamination_flags) || payload.contamination_flags === null).toBe(true);
+
+    // Verify contamination_action is one of the valid values
+    const validActions = ['INCLUDE', 'FLAG_FOR_REVIEW', 'EXCLUDE'];
+    expect(validActions.includes(payload.contamination_action as string) || payload.contamination_action === null).toBe(true);
   });
 });
 
 describe('AcatTool live stats', () => {
   function stubStats(body: unknown) {
-    vi.stubGlobal('fetch', vi.fn(() => Promise.resolve({ json: () => Promise.resolve(body) })));
+    vi.stubGlobal('fetch', vi.fn(() => Promise.resolve({ ok: true, json: () => Promise.resolve(body) })));
   }
 
   it('reports the fetched mean Learning Index to its parent', async () => {
