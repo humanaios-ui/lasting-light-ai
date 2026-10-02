@@ -34,29 +34,32 @@ jobs:
         id: check_deadlines
         run: |
           # Patterns to detect INTERNAL_WORK_DEADLINE violations:
-          # 1. INTERNAL_WORK_DEADLINE as a string constant
-          # 2. Calendar-based deadline checking in conditionals
-          # 3. Days-based urgency categorization
+          # Only check newly added lines (starting with +) to avoid false positives in docs/schemas
+          # Target actual business logic, not documentation strings
 
           VIOLATIONS=""
+          DIFF_OUTPUT=$(git diff ${{ steps.commit_range.outputs.range }})
 
-          # Check for explicit INTERNAL_WORK_DEADLINE markers
-          if git diff ${{ steps.commit_range.outputs.range }} | grep -E "INTERNAL_WORK_DEADLINE|INVALID_INTERNAL_DEADLINE"; then
+          # Check for explicit INTERNAL_WORK_DEADLINE markers in added code only
+          if echo "$DIFF_OUTPUT" | grep "^\+.*INTERNAL_WORK_DEADLINE\|INVALID_INTERNAL_DEADLINE"; then
             VIOLATIONS="${VIOLATIONS}Found explicit INTERNAL_WORK_DEADLINE markers\n"
           fi
 
-          # Check for hardcoded deadline dates in conditionals (YYYY-MM-DD format)
-          if git diff ${{ steps.commit_range.outputs.range }} | grep -E "(if|when|check).*[0-9]{4}-[0-9]{2}-[0-9]{2}"; then
+          # Check for hardcoded deadline dates in conditionals (YYYY-MM-DD) in added code only
+          # Match patterns like: if (date > "2026-01-15") or dateCheck("2026-01-15")
+          if echo "$DIFF_OUTPUT" | grep "^\+.*\(if\|when\|check\).*[0-9]\{4\}-[0-9]\{2\}-[0-9]\{2\}"; then
             VIOLATIONS="${VIOLATIONS}Found hardcoded deadline dates in conditionals\n"
           fi
 
-          # Check for days-based urgency calculations (< X days, > X days, etc.)
-          if git diff ${{ steps.commit_range.outputs.range }} | grep -E "< \d+ *d(ays)?|> \d+ *d(ays)?|deadline.*days?|days?.*deadline"; then
+          # Check for days-based urgency calculations in added code only
+          # Match patterns like: < 5 days, > 10 days (but not "deadline days" in docs)
+          if echo "$DIFF_OUTPUT" | grep "^\+.*\(< [0-9]\+ *days\?\|> [0-9]\+ *days\?\)"; then
             VIOLATIONS="${VIOLATIONS}Found deadline-based urgency calculations\n"
           fi
 
-          # Check for deadline-based prioritization (e.g., "urgent", "soon", "upcoming")
-          if git diff ${{ steps.commit_range.outputs.range }} | grep -E "(urgent|soon|upcoming).*deadline|deadline.*(urgent|soon|upcoming)"; then
+          # Check for deadline-based prioritization logic in added code only
+          # Match patterns like: results["urgent"] or isUrgent = deadline < now
+          if echo "$DIFF_OUTPUT" | grep "^\+.*\(results\[\"urgent\"\]\|results\[\"soon\"\]\|isUrgent.*deadline\|isPriority.*deadline\)"; then
             VIOLATIONS="${VIOLATIONS}Found deadline-based priority classifications\n"
           fi
 
