@@ -1,8 +1,9 @@
 # FDS: F3-GitHub | Purpose: GitHub Actions workflow | Status: ACTIVE
 ---
 # FDS: Framework Deployment System | Per-repo audit workflow
-# Phase: 1 (Advisory)
+# Mode: State-based compliance (COMPLIANT or NON_COMPLIANT, no phase-based gating)
 # Status: Deployed to all 31 HumanAIOS repositories
+# Note: Per Q-TEMPORAL-DISSOLUTION-01, audit uses actual compliance state not calendar phases
 ---
 
 name: Framework Mapping Compliance Audit
@@ -10,7 +11,7 @@ name: Framework Mapping Compliance Audit
 # Per-repo audit trigger for 31 HumanAIOS repositories
 # Deploy to each repo at: .github/workflows/framework-audit.yml
 # Purpose: Verify CLAUDE.md references FRAMEWORK_MAPPING.md and report compliance to operations
-# Phase 1: Advisory (warn but don't fail) | Phase 2+: Enforcement (fail on non-compliance)
+# Mode: State-based compliance check (no phase-based gating per Q-TEMPORAL-DISSOLUTION-01)
 
 on:
   pull_request:
@@ -35,17 +36,12 @@ jobs:
         run: |
           echo "Auditing FRAMEWORK_MAPPING.md reference in CLAUDE.md..."
           REPO_NAME="${{ github.repository }}"
-          PHASE="1"  # Phase 1: advisory mode (non-blocking)
 
           # Check if CLAUDE.md exists
           if [ ! -f "CLAUDE.md" ]; then
             echo "status=missing-claude-md" >> $GITHUB_OUTPUT
             echo "⚠️  FRAMEWORK AUDIT WARNING — CLAUDE.md not found in repo"
-            # Phase 1: advisory (exit 0) | Phase 2+: enforcement (exit 1)
-            if [ "$PHASE" -ge 2 ]; then
-              exit 1
-            fi
-            exit 0
+            exit 1
           fi
 
           # Extract Framework Reference section (from heading to next ## or EOF)
@@ -57,19 +53,15 @@ jobs:
             exit 0
           else
             echo "status=non-compliant" >> $GITHUB_OUTPUT
-            echo "⚠️  FRAMEWORK AUDIT WARNING — FRAMEWORK_MAPPING.md reference missing in CLAUDE.md Framework Reference section"
+            echo "❌ FRAMEWORK AUDIT FAIL — FRAMEWORK_MAPPING.md reference missing in CLAUDE.md Framework Reference section"
             echo ""
-            echo "Phase 2 deadline: Add to CLAUDE.md:"
+            echo "Add to CLAUDE.md:"
             echo "## Framework Reference"
             echo ""
             echo "See [FRAMEWORK_MAPPING.md](https://github.com/humanaios-ui/operations/blob/main/FRAMEWORK_MAPPING.md)"
             echo "for Z-role definitions and 5-concept alignment (Graph/Loop/Context/Harness/Prompt)."
             echo ""
-            # Phase 1: advisory (exit 0) | Phase 2+: enforcement (exit 1)
-            if [ "$PHASE" -ge 2 ]; then
-              exit 1
-            fi
-            exit 0
+            exit 1
           fi
 
       - name: Report compliance to operations
