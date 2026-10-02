@@ -34,9 +34,6 @@ export function getSupabaseAnonKey() {
   return getSupabaseConfig().VITE_SUPABASE_ANON_KEY;
 }
 
-const SUPABASE_URL = () => getSupabaseUrl();
-const SUPABASE_ANON_KEY = () => getSupabaseAnonKey();
-
 export interface LiveStats {
   n_total: number;
   n_phase1: number;
@@ -53,11 +50,11 @@ export interface LiveStats {
 export async function fetchLiveStats(): Promise<LiveStats | null> {
   try {
     const response = await fetch(
-      `${SUPABASE_URL()}/rest/v1/acat_stats_v1?select=*&limit=1`,
+      `${getSupabaseUrl()}/rest/v1/acat_stats_v1?select=*&limit=1`,
       {
         headers: {
-          apikey: SUPABASE_ANON_KEY(),
-          Authorization: `Bearer ${SUPABASE_ANON_KEY()}`,
+          apikey: getSupabaseAnonKey(),
+          Authorization: `Bearer ${getSupabaseAnonKey()}`,
         },
       }
     );
