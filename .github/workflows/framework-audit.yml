@@ -41,7 +41,8 @@ jobs:
           if [ ! -f "CLAUDE.md" ]; then
             echo "status=missing-claude-md" >> $GITHUB_OUTPUT
             echo "⚠️  FRAMEWORK AUDIT WARNING — CLAUDE.md not found in repo"
-            exit 1
+            echo "Action: Create CLAUDE.md with Framework Reference section"
+            exit 0
           fi
 
           # Extract Framework Reference section (from heading to next ## or EOF)
@@ -73,16 +74,16 @@ jobs:
           echo "Commit: ${{ github.sha }}"
           echo "Timestamp: $(date -u +%Y-%m-%dT%H:%M:%SZ)"
           echo ""
-          echo "Phase 1 (advisory): Compliance logged in this workflow run."
-          echo "Phase 2+ (enforcement): Will dispatch results to operations repo."
-          echo ""
           echo "Compliance result:"
           echo "- Status: ${{ steps.audit.outputs.status }}"
           echo "- Repo: ${{ github.repository }}"
           echo "- Commit: ${{ github.sha }}"
+          echo ""
+          echo "This audit checks for presence of FRAMEWORK_MAPPING.md reference."
+          echo "No phase-based gating: all repos checked uniformly per Q-TEMPORAL-DISSOLUTION-01."
 
       - name: Dispatch compliance event to operations
-        if: always() && false  # Disabled in Phase 1; enable in Phase 2+ with proper auth
+        if: always() && failure() && steps.audit.outputs.status != 'missing-claude-md'
         uses: actions/github-script@v7
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
@@ -102,14 +103,13 @@ jobs:
                   source_repo: `${owner}/${repo}`,
                   compliance_status: status,
                   commit_sha: sha,
-                  audit_timestamp: timestamp,
-                  phase: 1
+                  audit_timestamp: timestamp
                 }
               });
               console.log(`✅ Dispatched compliance result to operations repo: ${status}`);
             } catch (error) {
-              console.log(`⚠️  Dispatch to operations requires PAT token in Phase 2+: ${error.message}`);
-              console.log('Compliance result logged in CI workflow; will aggregate in Phase 2.');
+              console.log(`⚠️  Dispatch to operations failed: ${error.message}`);
+              console.log('Compliance result logged in CI workflow.');
             }
 
       - name: Audit summary

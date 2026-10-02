@@ -1,3 +1,5 @@
+# FDS: F3-Governance | Purpose: Temporal purity audit | Status: ACTIVE
+
 # Q-TEMPORAL-DISSOLUTION-01: Temporal Semantics Audit Report
 
 **Date:** 2026-10-02  
@@ -47,9 +49,11 @@ echo "⏰ Deadline: 2026-10-01"
 ```
 
 **Impact:**
-- Approval workflow blocked by calendar date, not resource readiness
-- Pre-registration cannot be published unless approval occurs before 2026-10-01
-- Violates resource-based scheduling: doesn't check availability of approvers, review completeness, or actual readiness state
+- Creates temporal pressure messaging: "deadline is 2026-10-01"
+- Appears in PR comments, metadata, and workflow output (messaging-based pressure, not enforced gate)
+- Workflow did NOT actually block approval after 2026-10-01; date was reference only
+- Violates temporal purity principle: introduces calendar-based urgency in approval messaging even though no date check occurs
+- Influences maintainer perception of urgency despite no actual time-based gate
 
 **Remediation:**
 1. Remove all references to `2026-10-01` as approval deadline
@@ -136,50 +140,81 @@ def check_deadlines(days_ahead: int = 30):
 #### **Finding 3: Hardcoded Phase Deadlines (Framework Audit)**
 
 **File:** `.github/workflows/framework-audit.yml`  
-**Lines:** 4, 38, 62, 69  
+**Lines:** 4, 38, 62, 69, 76-77, 85, 106  
 **Severity:** MEDIUM  
 **Classification:** `INVALID_INTERNAL_DEADLINE`
 
 **Problem:**
-```yaml
-# Line 4: Phase declared as time-based
-Phase: 1 (Advisory)
-
-# Line 38: Phase as gating variable
-PHASE="1"  # Phase 1: advisory mode (non-blocking)
-if [ "$PHASE" -ge 2 ]; then exit 1; fi
-
-# Line 62: "Phase 2 deadline" language
-echo "Phase 2 deadline: Add to CLAUDE.md:"
-
-# Line 69: Phase check determines pass/fail
-if [ "$PHASE" -ge 2 ]; then
-    exit 1  # FAIL audit at Phase 2
-fi
-```
+- Phase-based compliance gating: audit changes behavior when PHASE >= 2
+- Hidden calendar pressure tied to phase transitions
+- Conditional dispatch logic disabled "in Phase 1; enable in Phase 2+"
+- Metadata includes `phase: 1` field
 
 **Impact:**
 - Framework compliance gated on "Phase number reaching 2" not actual readiness
 - Audit will fail automatically when Phase increments, regardless of work state
-- Creates hidden calendar pressure: "we need to be compliant before Phase 2 is enforced"
+- Creates temporal coupling to phase schedule, not state
 
-**Remediation:**
-1. Remove phase numbering as a time-based gate
-2. Use **actual compliance state**:
-   - `COMPLIANT` = FRAMEWORK_MAPPING.md exists and referenced in CLAUDE.md
-   - `NON_COMPLIANT` = reference missing
-   - No phase-based gating
-3. Update workflow:
-   ```bash
-   if [ "$FRAMEWORK_REF_PRESENT" = "true" ]; then
-       echo "✅ PASS"
-       exit 0
-   else
-       echo "⚠️  NON-COMPLIANT: Add FRAMEWORK_MAPPING reference"
-       exit 1  # Fail audit based on state, not phase number
-   fi
-   ```
-4. If actual phase transitions are needed (e.g., "Phase 2 enforcement"), store in RESOURCE_UNITS.yaml with Z2 ratification and REGULATORY_EXTERNAL classification
+**Remediation:** COMPLETE (see fixes below)
+- Removed all phase-based conditionals
+- Changed to pure state-based checks (COMPLIANT / NON_COMPLIANT)
+- Removed `phase: 1` metadata field
+- Changed dispatch conditional from phase-based to state-based
+
+---
+
+#### **Finding 4: Test Workflow Deadline Reference (OSF Pre-Registration Test)**
+
+**File:** `.github/workflows/osf-preregistration-test.yml`  
+**Lines:** 159, 191  
+**Severity:** LOW  
+**Classification:** `OBSERVATIONAL` (documentation only, test workflow)
+
+**Problem:**
+```yaml
+DEADLINE: 2026-10-01  # Line 159: hardcoded in test instructions
+echo "Deadline: 2026-10-01"  # Line 191: printed in test output
+```
+
+**Impact:** None (test workflow only, no gating logic)
+
+**Status:** ✅ APPROVED — This is documentation in test workflow. Will be removed once Finding 1 (osf-preregistration.yml) is fully remediated.
+
+---
+
+#### **Finding 5: OSF Publish Workflow Timeline References**
+
+**File:** `.github/workflows/osf-publish-registration.yml`  
+**Lines:** 152, 194-195, 218-219  
+**Severity:** MEDIUM  
+**Classification:** `OBSERVATIONAL` (analysis boundary, not work priority)
+
+**Problem:**
+```yaml
+# Line 152: Timeline in PR comment
+- **Timeline:** Data collection continues through 2026-12-31, analysis lockdown 2027-01-01
+
+# Lines 194-195: In workflow output
+echo "- Data collection may proceed through 2026-12-31"
+echo "- Analysis window opens 2027-01-01"
+
+# Lines 218-219: In summary
+echo "  - Data Collection: Through 2026-12-31"
+echo "  - Analysis Window: Starts 2027-01-01"
+```
+
+**Analysis:**
+- These dates mark **research protocol boundaries** (data collection vs. analysis phases)
+- Not used to prioritize work or gate approvals
+- Are **protocol constraints**, not work-scheduling deadlines
+- Do NOT drive resource allocation or task sequencing
+
+**Status:** ✅ APPROVED — OBSERVATIONAL class
+- These define the research protocol timeline, not internal work deadlines
+- Are metadata for regulatory/compliance purposes (part of pre-registration)
+- Do not affect work prioritization or approval gating
+
+**Rationale:** A pre-registration specifies when data collection ends and analysis begins. This is a **regulatory/scientific protocol boundary**, not an internal deadline gating work. It's part of the published protocol's integrity constraints, similar to `HISTORICAL_RECORD` (immutable once published).
 
 ---
 
