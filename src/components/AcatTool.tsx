@@ -278,8 +278,12 @@ export function AcatTool({
       n_total: 630, n_phase1: 517, n_li: 308, mean_li: 0.8632,
       dimensions: {}, timestamp: new Date().toISOString()
     });
-    return fetch(`${getSupabaseUrl()}/rest/v1/acat_stats_v1?select=*&limit=1`, {
-      headers: { apikey: getSupabaseAnonKey(), Authorization: `Bearer ${getSupabaseAnonKey()}` }
+    return Promise.resolve().then(() => {
+      const url = getSupabaseUrl();
+      const anonKey = getSupabaseAnonKey();
+      return fetch(`${url}/rest/v1/acat_stats_v1?select=*&limit=1`, {
+        headers: { apikey: anonKey, Authorization: `Bearer ${anonKey}` }
+      });
     }).
     then((res) => {
       if (!res.ok) {
