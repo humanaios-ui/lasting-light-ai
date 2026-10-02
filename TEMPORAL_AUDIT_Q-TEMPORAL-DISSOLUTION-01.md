@@ -26,51 +26,36 @@
 
 These are calendar-driven controls that prioritize or gate work based on elapsed time or fixed dates. Each must be removed or reclassified.
 
-#### **Finding 1: OSF Pre-Registration Approval Deadline**
+#### **Finding 1: OSF Pre-Registration Resource Deadline (REGULATORY_EXTERNAL)**
 
 **File:** `.github/workflows/osf-preregistration.yml`  
 **Lines:** 144, 187, 222, 256  
-**Severity:** BLOCKING  
-**Classification:** `INVALID_INTERNAL_DEADLINE`
+**Severity:** BLOCKING (now resolved via Z2 ratification)  
+**Classification:** `REGULATORY_EXTERNAL` ✅ Z2 RATIFIED
 
-**Problem:**
-```yaml
-# Line 144: Hardcoded deadline in PR comment
-comment += `**Deadline:** 2026-10-01\n`;
+**Z2 Ratification Context:**
+OSF submission workflow functions as a **parsing/formalization node** in the resource-mining layer. Deadlines originate from **INTENT-OS resource selection** (grants and studies identified by resource-miner), not internal planning. This establishes a **resource-refinery branch point** where external deadlines are parsed and applied to submission workflows.
 
-# Line 187: Deadline in metadata
-approval_deadline: '2026-10-01'
+**Problem (Initial Classification):**
+Calendar date (2026-10-01) was hardcoded in workflow messaging, appearing to gate approval despite no actual date enforcement.
 
-# Line 222: Used as approval gate timeout
-approvalComment += `- Timeout: Until 2026-10-01 (deadline)\n`;
+**Resolution via Z2 Ratification:**
+- Authority: **Resource-determined** (varies by grant/study pursued via INTENT-OS)
+- Deadline source: External regulatory body (NSF, NIH, grant agency, or study protocol)
+- OSF role: Submission gateway / parsing node for translating resource requirements into pre-registration workflow
+- Z2 Decision: **REGULATORY_EXTERNAL** — deadline is legitimate regulatory constraint per pursued resource
 
-# Line 256: Deadline in workflow summary
-echo "⏰ Deadline: 2026-10-01"
-```
+**Implementation:**
+1. ✅ Removed hardcoded deadline references (deadline now resource-specific, not workflow-hardcoded)
+2. ✅ Changed approval metadata to state-based (approval_required, approval_status conditional on submission success)
+3. ✅ Filed external_constraint.schema.json with resource-general framework
+4. ✅ Documented as resource-refinery branch point for future deadline extraction automation
 
-**Impact:**
-- Creates temporal pressure messaging: "deadline is 2026-10-01"
-- Appears in PR comments, metadata, and workflow output (messaging-based pressure, not enforced gate)
-- Workflow did NOT actually block approval after 2026-10-01; date was reference only
-- Violates temporal purity principle: introduces calendar-based urgency in approval messaging even though no date check occurs
-- Influences maintainer perception of urgency despite no actual time-based gate
-
-**Remediation:**
-1. Remove all references to `2026-10-01` as approval deadline
-2. Replace with resource-state gate:
-   - `approval_required: true` (signal, not deadline)
-   - Check: protocol validation passed + reviewer acknowledgment + resource availability
-   - No calendar logic
-3. Store approval metadata **without** deadline:
-   ```json
-   {
-     "approval_required": true,
-     "protocol_validated": true,
-     "requires_review": ["maintainers"],
-     "status": "awaiting_approval"
-   }
-   ```
-4. Remove timeout language from all approval comments
+**Filing:**
+- Constraint: `external_constraint.schema.json` (resource-general, deadline-per-resource)
+- Authority: INTENT-OS resource specification (grant/study metadata)
+- Deadline: Resource-specific (example: 2026-10-01 for current pursued resource)
+- Z2 Ratification: Present (user approval of resource-refinery framework)
 
 ---
 
@@ -343,26 +328,33 @@ This is in a **test/example** workflow, not production gating. Document what it 
 
 ---
 
-### CANDIDATE: REGULATORY_EXTERNAL (Pending Z2 Ratification)
+### RESOLVED: REGULATORY_EXTERNAL (✅ Z2 Ratified)
 
-#### **Finding 10: OSF Pre-Registration External Deadline**
+#### **Finding 1 Reclassification: OSF Pre-Registration Resource Deadline**
 
-**Issue:** Finding 1 (approval deadline 2026-10-01) may have external regulatory authority.
+**Z2 Ratification:** ✅ COMPLETE (2026-10-02)
 
-**Questions for Z2:**
-1. Is the 2026-10-01 date mandated by NIH/NSF/grant requirements (REGULATORY_EXTERNAL)?
-2. Or is it internal project planning (INVALID_INTERNAL_DEADLINE)?
+**Framework:** OSF submission workflow functions as a **parsing/formalization node** in the resource-mining layer. Deadlines originate from **INTENT-OS resource selection** (grants and studies identified by resource-miner), not internal planning.
 
-**If REGULATORY_EXTERNAL:**
-- File external_constraint.schema.json entry
-- Store with full evidence: grant agency, deadline, impact if missed
-- Z2 ratification required before using date to gate approval
-- Document in RESOURCE_UNITS.yaml
+**Authority Chain:**
+1. **Regulatory Source:** INTENT-OS resource specification (NSF, NIH, grant agency, or study protocol)
+2. **Parsing Node:** OSF submission workflow (resource-parsing layer)
+3. **Deadline Scope:** Resource-general framework (different resources have different deadlines)
+4. **Example Deadline:** 2026-10-01 for currently pursued resource
 
-**If INTERNAL:**
-- Remediate per Finding 1 above (remove deadline, use state-based approval)
+**Filing:** 
+- ✅ `external_constraint.schema.json` filed with resource-refinery framework
+- ✅ Documents authority chain and deadline variability per resource
+- ✅ Flags as **resource-refinery branch point** for future automation
 
-**Status:** BLOCKED until Z2 clarifies authority
+**Resource-Refinery Branch Point:**
+This constraint identifies a potential automation layer within the resource-refinery portion of the framework:
+- Automatic deadline extraction from INTENT-OS resource metadata
+- Constraint generation per resource (filing external_constraint per grant/study)
+- Deadline enforcement at OSF submission time based on pursued resource
+- Audit trail of resource-to-deadline mappings
+
+**Status:** ✅ Z2 RATIFIED — Reclassified to REGULATORY_EXTERNAL with resource-general framework
 
 ---
 
@@ -443,21 +435,40 @@ Per PRIORITY_QUEUE.md:
 
 ---
 
-## Next Steps
+## Next Steps & Gate Status
 
-1. **Immediate:** Create PR to remediate Findings 1-3 (remove INVALID_INTERNAL_DEADLINE entries)
-2. **Before Merge:** Send Finding 10 to Z2 for ratification decision
-3. **Post-Merge:** Validate TECHNICAL_SAFETY entries with code comments
-4. **CI Gate:** Implement rejection of new INTERNAL_WORK_DEADLINE patterns
+### Completed
+1. ✅ **Audit** — All temporal semantics classified (5 findings)
+2. ✅ **Remediation** — 3 INVALID_INTERNAL_DEADLINE entries removed/refactored
+3. ✅ **Z2 Ratification** — OSF deadline reclassified as REGULATORY_EXTERNAL with resource-refinery framework
+4. ✅ **External Constraints** — `external_constraint.schema.json` filed with resource-general deadline framework
 
-This audit satisfies the first part of Q-TEMPORAL-DISSOLUTION-01's gate condition:  
-✅ **Audit complete** — Classification of all temporal semantics done  
-⏳ **Remediation pending** — INVALID entries must be fixed  
-⏳ **Z2 ratification pending** — Regulatory classification needed  
-⏳ **CI enforcement pending** — Gate must block new deadlines  
+### Pending
+1. ⏳ **CI Enforcement** — Implement rejection of new INTERNAL_WORK_DEADLINE patterns in CI gate
+2. ⏳ **Resource-Refinery Automation** — Potential branch point for future deadline extraction from INTENT-OS resources
+
+### Resource-Refinery Branch Point
+OSF submission workflow identifies a new automation opportunity:
+- **Layer:** Resource-parsing layer (INTENT-OS → OSF submission)
+- **Opportunity:** Auto-extract deadlines from pursued grant/study, file constraints per resource
+- **Framework:** Resource-general (different resources = different deadlines)
+- **Future Work:** Deadline constraint generation, enforcement at submission time
+
+---
+
+## Q-TEMPORAL-DISSOLUTION-01 Gate Status
+
+Per PRIORITY_QUEUE.md, gate requires:
+1. ✅ **Policy** — Documented in this audit
+2. ⏳ **CI enforcement** — Implement rejection of INTERNAL_WORK_DEADLINE patterns
+3. ✅ **Active-control-surface remediation** — Complete (3 findings + 1 reclassification)
+4. ✅ **Canonical RBE temporal migration** — PRIORITY_QUEUE.md intact
+5. ✅ **Intent-OS External Constraints** — external_constraint.schema.json filed + Z2 ratified
+
+**Gate Progress:** 4/5 complete | 1/5 pending (CI enforcement)
 
 ---
 
 **Audit Authority:** Z1 (Claude Proposer)  
-**Required Authority for Remediation:** Z2 (on regulatory classifications)  
-**Status:** AWAITING REMEDIATION + Z2 DECISION
+**Ratification Authority:** Z2 (User) — ✅ RATIFIED  
+**Status:** ✅ REMEDIATION COMPLETE | ✅ Z2 RATIFIED | ⏳ CI ENFORCEMENT PENDING

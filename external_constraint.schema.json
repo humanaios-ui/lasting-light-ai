@@ -1,0 +1,181 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "External Temporal Constraints - Resource-Refinery Framework",
+  "description": "Temporal deadlines that originate from external regulatory bodies (grant agencies, study protocols, IRB requirements) identified through INTENT-OS resource mining. OSF submission workflow serves as parsing/formalization node. Deadlines are resource-specific and vary by pursued grant/study.",
+  "type": "object",
+  "properties": {
+    "constraints": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id", "type", "authority_layer", "deadline_source", "osf_role", "z2_ratified"],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique constraint identifier (e.g., 'osf-preregistration-resource-deadline')",
+            "example": "osf-preregistration-resource-deadline"
+          },
+          "type": {
+            "type": "string",
+            "enum": ["REGULATORY_EXTERNAL"],
+            "description": "Constraint classification per Q-TEMPORAL-DISSOLUTION-01"
+          },
+          "workflow": {
+            "type": "string",
+            "description": "GitHub Actions workflow implementing this constraint",
+            "example": ".github/workflows/osf-preregistration.yml"
+          },
+          "authority_layer": {
+            "type": "object",
+            "description": "Regulatory authority chain: external → parsing → workflow",
+            "required": ["regulatory_body", "parsing_node"],
+            "properties": {
+              "regulatory_body": {
+                "type": "string",
+                "description": "External authority imposing the deadline",
+                "example": "INTENT-OS Resource Specification (NSF, NIH, grant agency, or study protocol)"
+              },
+              "parsing_node": {
+                "type": "string",
+                "description": "System layer that translates external deadline to workflow",
+                "example": "OSF submission workflow (resource-parsing layer)"
+              },
+              "resource_source": {
+                "type": "string",
+                "description": "Framework component identifying resources with deadlines",
+                "example": "INTENT-OS resource-miner (identified grants and studies)"
+              }
+            }
+          },
+          "deadline_source": {
+            "type": "object",
+            "description": "Origin and scope of the deadline requirement",
+            "required": ["origin", "scope"],
+            "properties": {
+              "origin": {
+                "type": "string",
+                "enum": ["resource_mining", "grant_requirement", "study_protocol", "irb_requirement"],
+                "description": "How the deadline was identified",
+                "example": "resource_mining"
+              },
+              "scope": {
+                "type": "string",
+                "enum": ["resource_general", "resource_specific"],
+                "description": "General framework (different resources have different deadlines) or specific resource",
+                "example": "resource_general"
+              },
+              "example_deadline": {
+                "type": "string",
+                "format": "date-time",
+                "description": "Example deadline (current pursued resource)",
+                "example": "2026-10-01T23:59:59Z"
+              },
+              "deadline_variability": {
+                "type": "string",
+                "description": "How deadline varies across resources",
+                "example": "Deadline determined by specific grant/study requirements identified through INTENT-OS resource-miner"
+              }
+            }
+          },
+          "osf_role": {
+            "type": "object",
+            "description": "OSF's function in this constraint framework",
+            "properties": {
+              "function": {
+                "type": "string",
+                "example": "Parsing/formalization node"
+              },
+              "purpose": {
+                "type": "string",
+                "example": "Translates INTENT-OS resource specification into pre-registration submission workflow"
+              },
+              "authority": {
+                "type": "string",
+                "example": "Submission gateway (not regulatory authority itself; channels external requirements)"
+              }
+            }
+          },
+          "impact_if_missed": {
+            "type": "object",
+            "description": "Consequences of missing the deadline",
+            "properties": {
+              "for_regulatory_body": {
+                "type": "string",
+                "example": "Ineligible for grant funding, study protocol invalid, or publication restrictions per grant/study requirements"
+              },
+              "for_workflow": {
+                "type": "string",
+                "example": "Pre-registration cannot be submitted/published through OSF for that resource"
+              }
+            }
+          },
+          "z2_ratified": {
+            "type": "boolean",
+            "description": "Z2 (Operator Ratification) approval of this constraint",
+            "example": true
+          },
+          "ratification_date": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Date Z2 ratified this constraint",
+            "example": "2026-10-02T00:00:00Z"
+          },
+          "resource_refinery_branch": {
+            "type": "boolean",
+            "description": "Flag: This constraint is a branch point for future resource-refinery automation (deadline extraction, constraint generation)",
+            "example": true
+          },
+          "future_automation": {
+            "type": "array",
+            "description": "Potential automation branches for resource-refinery layer",
+            "items": {
+              "type": "string"
+            },
+            "example": [
+              "Automatic deadline extraction from INTENT-OS resource metadata",
+              "Constraint generation per resource (filing external_constraint per grant/study)",
+              "Deadline enforcement at OSF submission time based on pursued resource",
+              "Audit trail of resource-to-deadline mappings"
+            ]
+          }
+        }
+      }
+    }
+  },
+  "examples": [
+    {
+      "id": "osf-preregistration-resource-deadline",
+      "type": "REGULATORY_EXTERNAL",
+      "workflow": ".github/workflows/osf-preregistration.yml",
+      "authority_layer": {
+        "regulatory_body": "INTENT-OS Resource Specification (NSF, NIH, grant agency, or study protocol)",
+        "parsing_node": "OSF submission workflow (resource-parsing layer)",
+        "resource_source": "INTENT-OS resource-miner (identified grants and studies)"
+      },
+      "deadline_source": {
+        "origin": "resource_mining",
+        "scope": "resource_general",
+        "example_deadline": "2026-10-01T23:59:59Z",
+        "deadline_variability": "Deadline determined by specific grant/study requirements identified through INTENT-OS resource-miner"
+      },
+      "osf_role": {
+        "function": "Parsing/formalization node",
+        "purpose": "Translates INTENT-OS resource specification into pre-registration submission workflow",
+        "authority": "Submission gateway (channels external requirements)"
+      },
+      "impact_if_missed": {
+        "for_regulatory_body": "Ineligible for grant funding or study protocol invalidated per grant/study requirements",
+        "for_workflow": "Pre-registration cannot be submitted/published through OSF for that resource"
+      },
+      "z2_ratified": true,
+      "ratification_date": "2026-10-02T00:00:00Z",
+      "resource_refinery_branch": true,
+      "future_automation": [
+        "Automatic deadline extraction from INTENT-OS resource metadata",
+        "Constraint generation per resource (filing external_constraint per grant/study)",
+        "Deadline enforcement at OSF submission time based on pursued resource",
+        "Audit trail of resource-to-deadline mappings"
+      ]
+    }
+  ]
+}
