@@ -444,7 +444,7 @@ Per PRIORITY_QUEUE.md:
 4. ✅ **External Constraints** — `external_constraint.schema.json` filed with resource-general deadline framework
 
 ### Pending
-1. ⏳ **CI Enforcement** — Implement rejection of new INTERNAL_WORK_DEADLINE patterns in CI gate
+1. ✅ **CI Enforcement** — Implemented `temporal-dissolution-gate.yml` workflow that rejects new INTERNAL_WORK_DEADLINE patterns
 2. ⏳ **Resource-Refinery Automation** — Potential branch point for future deadline extraction from INTENT-OS resources
 
 ### Resource-Refinery Branch Point
@@ -460,15 +460,15 @@ OSF submission workflow identifies a new automation opportunity:
 
 Per PRIORITY_QUEUE.md, gate requires:
 1. ✅ **Policy** — Documented in this audit
-2. ⏳ **CI enforcement** — Implement rejection of INTERNAL_WORK_DEADLINE patterns
+2. ✅ **CI enforcement** — `temporal-dissolution-gate.yml` workflow detects and rejects new INTERNAL_WORK_DEADLINE patterns
 3. ✅ **Active-control-surface remediation** — Complete (3 findings + 1 reclassification)
 4. ✅ **Canonical RBE temporal migration** — PRIORITY_QUEUE.md intact
 5. ✅ **Intent-OS External Constraints** — external_constraint.schema.json filed + Z2 ratified
 
-**Gate Progress:** 4/5 complete | 1/5 pending (CI enforcement)
+**Gate Progress:** ✅ 5/5 COMPLETE
 
 ---
 
 **Audit Authority:** Z1 (Claude Proposer)  
 **Ratification Authority:** Z2 (User) — ✅ RATIFIED  
-**Status:** ✅ REMEDIATION COMPLETE | ✅ Z2 RATIFIED | ⏳ CI ENFORCEMENT PENDING
+**Status:** ✅ REMEDIATION COMPLETE | ✅ Z2 RATIFIED | ✅ CI ENFORCEMENT ACTIVE
