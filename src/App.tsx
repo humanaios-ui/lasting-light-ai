@@ -53,6 +53,7 @@ const NAV_GROUPS = [
     label: 'INFRASTRUCTURE',
     items: [
       { href: '/empirica',           name: 'Empirica',        desc: 'AI coordination & epistemic framework' },
+      { href: '/system-findings',    name: 'System Stance',   desc: 'Evidence, uncertainty, and pre-action checks' },
     ],
   },
   {
@@ -107,7 +108,7 @@ function TopNav({ meanLI }: { meanLI: number }) {
           aria-label="Primary navigation">
           {NAV_GROUPS.map(group =>
             group.items.map(item => {
-              const isInternal = item.href.startsWith('/assess') || item.href.startsWith('/experiment');
+              const isInternal = item.href.startsWith('/assess') || item.href.startsWith('/experiment') || item.href === '/system-findings';
               const activePaths = item.href === '/experiment'
                 ? ['/experiment', '/regime-a']
                 : [item.href];
