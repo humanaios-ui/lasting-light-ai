@@ -153,7 +153,7 @@ def check_deadlines(days_ahead: int = 30):
 **File:** `.github/workflows/osf-preregistration-test.yml`  
 **Lines:** 159, 191  
 **Severity:** LOW  
-**Classification:** `OBSERVATIONAL` (documentation only, test workflow)
+**Classification:** `OBSERVATIONAL_REMOVED` (test-only messaging; no execution gate)
 
 **Problem:**
 ```yaml
@@ -161,9 +161,9 @@ DEADLINE: 2026-10-01  # Line 159: hardcoded in test instructions
 echo "Deadline: 2026-10-01"  # Line 191: printed in test output
 ```
 
-**Impact:** None (test workflow only, no gating logic)
+**Impact:** None on execution (test workflow only, no gating logic). The stale date nevertheless contradicted the repository's state-based governance language.
 
-**Status:** ✅ APPROVED — This is documentation in test workflow. Will be removed once Finding 1 (osf-preregistration.yml) is fully remediated.
+**Status:** ✅ REMEDIATED — Removed the hardcoded `2026-10-01` test/reporting references and replaced them with state-based manual-approval/protocol-validation language.
 
 ---
 
@@ -419,10 +419,10 @@ Per PRIORITY_QUEUE.md:
 ## Files to Change
 
 ### Must Change (Blocking)
-- [ ] `.github/workflows/osf-preregistration.yml` — Remove approval_deadline logic
-- [ ] `.github/workflows/osf-preregistration-test.yml` — Remove test deadline reference
+- [x] `.github/workflows/osf-preregistration.yml` — Removed approval_deadline logic
+- [x] `.github/workflows/osf-preregistration-test.yml` — Removed stale test deadline reference
 - [ ] `src/humanaios_operations/deadline_checker.py` — Remove days-based categorization
-- [ ] `.github/workflows/framework-audit.yml` — Remove phase-based gating
+- [x] `.github/workflows/framework-audit.yml` — Removed phase-based gating
 
 ### Should Change (Cleanup)
 - [ ] `.github/workflows/acat_pipeline_trigger.yml` — Add code comment: "TECHNICAL_SAFETY polling"
