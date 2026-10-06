@@ -1,0 +1,99 @@
+# FDS: F3-CI | Parent: CUSTOM_INSTRUCTIONS_V3_5_ORD.md | Hawkins: internal-only | Status: ACTIVE
+# Q-TEMPORAL-DISSOLUTION-01 Enforcement: Reject new INTERNAL_WORK_DEADLINE patterns
+name: Temporal Dissolution Gate (Q-TEMPORAL-DISSOLUTION-01)
+
+on:
+  pull_request:
+    branches: ["**"]
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+  checks: write
+
+jobs:
+  temporal-purity:
+    runs-on: ubuntu-latest
+    name: Enforce temporal purity (Q-TEMPORAL-DISSOLUTION-01)
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Get commit range
+        id: commit_range
+        run: |
+          if [ "${{ github.event_name }}" == "pull_request" ]; then
+            echo "range=${{ github.event.pull_request.base.sha }}..${{ github.event.pull_request.head.sha }}" >> $GITHUB_OUTPUT
+          else
+            echo "range=${{ github.event.before }}..${{ github.event.after }}" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Check for INTERNAL_WORK_DEADLINE patterns
+        id: check_deadlines
+        run: |
+          # Patterns to detect INTERNAL_WORK_DEADLINE violations in application code only
+          # Exclude documentation (.md) and schema (.json) files to avoid false positives
+          # Only check actual source files (.py, .ts, .tsx, .js, .jsx)
+
+          VIOLATIONS=""
+
+          # Filter git diff to only source code files (exclude .md, .json, .yml/.yaml, .txt)
+          DIFF_OUTPUT=$(git diff ${{ steps.commit_range.outputs.range }} -- \
+            ':(exclude)*.md' ':(exclude)*.json' ':(exclude)*.yml' ':(exclude)*.yaml' ':(exclude)*.txt')
+
+          # Check for explicit INTERNAL_WORK_DEADLINE markers in added code only
+          if echo "$DIFF_OUTPUT" | grep "^\+.*INTERNAL_WORK_DEADLINE\|INVALID_INTERNAL_DEADLINE"; then
+            VIOLATIONS="${VIOLATIONS}Found explicit INTERNAL_WORK_DEADLINE markers"
+          fi
+
+          # Check for hardcoded deadline dates in conditionals (YYYY-MM-DD) in added code only
+          # Match patterns like: if (date > "2026-01-15") or dateCheck("2026-01-15")
+          if echo "$DIFF_OUTPUT" | grep "^\+.*\(if\|when\|check\).*[0-9]\{4\}-[0-9]\{2\}-[0-9]\{2\}"; then
+            VIOLATIONS="${VIOLATIONS}Found hardcoded deadline dates in conditionals"
+          fi
+
+          # Check for days-based urgency calculations in added code only
+          # Match patterns like: < 5 days, > 10 days
+          if echo "$DIFF_OUTPUT" | grep "^\+.*\(< [0-9]\+ *days\?\|> [0-9]\+ *days\?\)"; then
+            VIOLATIONS="${VIOLATIONS}Found deadline-based urgency calculations"
+          fi
+
+          # Check for deadline-based prioritization logic in added code only
+          # Match patterns like: results["urgent"] or isUrgent = deadline < now
+          if echo "$DIFF_OUTPUT" | grep "^\+.*\(results\[\"urgent\"\]\|results\[\"soon\"\]\|isUrgent.*deadline\|isPriority.*deadline\)"; then
+            VIOLATIONS="${VIOLATIONS}Found deadline-based priority classifications"
+          fi
+
+          if [ -n "$VIOLATIONS" ]; then
+            echo "violations=true" >> $GITHUB_OUTPUT
+            echo "violations_text=$VIOLATIONS" >> $GITHUB_OUTPUT
+          else
+            echo "violations=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Report gate status
+        if: always()
+        run: |
+          if [ "${{ steps.check_deadlines.outputs.violations }}" == "true" ]; then
+            echo "❌ Q-TEMPORAL-DISSOLUTION-01 GATE FAILED"
+            echo ""
+            echo "Violations detected in application code:"
+            echo "${{ steps.check_deadlines.outputs.violations_text }}"
+            echo ""
+            echo "The Q-TEMPORAL-DISSOLUTION-01 gate prohibits INTERNAL_WORK_DEADLINE semantics in code."
+            echo "Work scheduling must use state-based resource allocation (RBE model)."
+            echo ""
+            echo "Allowed temporal patterns:"
+            echo "  • OBSERVATIONAL — timestamps for reference only (no prioritization)"
+            echo "  • TECHNICAL_SAFETY — timeouts, retries, polling intervals (system safety)"
+            echo "  • REGULATORY_EXTERNAL — deadlines from external bodies (NIH, NSF, grants)"
+            echo "  • HISTORICAL_RECORD — archival and audit logging"
+            echo ""
+            echo "Reference: PRIORITY_QUEUE.md + TEMPORAL_AUDIT_Q-TEMPORAL-DISSOLUTION-01.md"
+            exit 1
+          else
+            echo "✓ Q-TEMPORAL-DISSOLUTION-01 GATE PASSED"
+            echo "No INTERNAL_WORK_DEADLINE patterns detected in application code."
+          fi
