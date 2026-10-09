@@ -3,6 +3,11 @@ import { cleanup, fireEvent, render, screen, waitFor } from '@testing-library/re
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { AcatTool } from './AcatTool';
 
+vi.mock('../lib/supabase', () => ({
+  getSupabaseUrl: () => 'https://supabase.example.test',
+  getSupabaseAnonKey: () => 'test-anon-key',
+}));
+
 // These tests pin the state-initialisation behaviour that used to live in two
 // effects: seeding runs from localStorage when the agent name changes, and
 // resetting the score inputs when the selected run changes. They were written
@@ -128,10 +133,10 @@ describe('AcatTool contamination submission', () => {
   it('converts contamination confidence to integer scale (0-100) in submission payload', async () => {
     let capturedPayload: unknown;
     const mockFetch = vi.fn((url: string, options: RequestInit) => {
-      if (url.includes('acat_assessments_v1')) {
+      if (url.includes('acat_assessments_v1') && options.method === 'POST') {
         capturedPayload = JSON.parse(options.body as string);
       }
-      return Promise.resolve({ ok: true, text: () => Promise.resolve('') });
+      return Promise.resolve({ ok: true, json: () => Promise.resolve([]), text: () => Promise.resolve('') });
     });
     vi.stubGlobal('fetch', mockFetch);
 
@@ -149,37 +154,26 @@ describe('AcatTool contamination submission', () => {
     // Fill Phase 1 scores
     for (let i = 0; i < DIM_COUNT; i++) {
       const input = document.getElementById(`p1-${['truth', 'service', 'harm', 'autonomy', 'value', 'humility', 'scheme', 'power', 'syc', 'consist', 'fair'][i]}`) as HTMLInputElement;
-      if (input) fireEvent.change(input, { target: { value: '50' } });
+      fireEvent.change(input, { target: { value: '50' } });
     }
 
     // Commit Phase 1
     fireEvent.click(getByText('Commit Phase 1 →'));
 
     // Reveal perturbation
-    await waitFor(() => {
-      const revealBtn = screen.queryByText('Show perturbation');
-      if (revealBtn) fireEvent.click(revealBtn);
-    });
+    fireEvent.click(screen.getByRole('button', { name: /Show perturbation/ }));
 
     // Fill Phase 3 scores
-    await waitFor(() => {
-      const phase3Input = document.getElementById('p3-truth') as HTMLInputElement;
-      if (phase3Input) {
-        fireEvent.change(phase3Input, { target: { value: '48' } });
-      }
-    });
+    const phase3Input = document.getElementById('p3-truth') as HTMLInputElement;
+    fireEvent.change(phase3Input, { target: { value: '48' } });
 
     // Save Phase 3
-    const savePhase3Btn = screen.queryByText('Save this run →');
-    if (savePhase3Btn) fireEvent.click(savePhase3Btn);
+    fireEvent.click(screen.getByRole('button', { name: 'Save this run →' }));
 
     // Submit to database
-    await waitFor(() => {
-      const submitBtn = screen.queryByText('Submit to Live Dataset');
-      if (submitBtn && !submitBtn.hasAttribute('disabled')) {
-        fireEvent.click(submitBtn);
-      }
-    });
+    const submitBtn = screen.getByRole('button', { name: 'Submit to Live Dataset' });
+    expect(submitBtn).toBeEnabled();
+    fireEvent.click(submitBtn);
 
     // Verify contamination fields in payload
     await waitFor(() => {
@@ -188,6 +182,7 @@ describe('AcatTool contamination submission', () => {
 
       // Verify contamination_confidence is an integer
       expect(typeof payload.contamination_confidence).toBe('number');
+      expect(Number.isInteger(payload.contamination_confidence)).toBe(true);
       expect(payload.contamination_confidence).toBeGreaterThanOrEqual(0);
       expect(payload.contamination_confidence).toBeLessThanOrEqual(100);
 
@@ -203,7 +198,7 @@ describe('AcatTool contamination submission', () => {
 
 describe('AcatTool live stats', () => {
   function stubStats(body: unknown) {
-    vi.stubGlobal('fetch', vi.fn(() => Promise.resolve({ json: () => Promise.resolve(body) })));
+    vi.stubGlobal('fetch', vi.fn(() => Promise.resolve({ ok: true, json: () => Promise.resolve(body) })));
   }
 
   it('reports the fetched mean Learning Index to its parent', async () => {
