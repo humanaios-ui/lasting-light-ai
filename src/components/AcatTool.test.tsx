@@ -132,11 +132,15 @@ describe('AcatTool run state', () => {
 describe('AcatTool contamination submission', () => {
   it('converts contamination confidence to integer scale (0-100) in submission payload', async () => {
     let capturedPayload: unknown;
-    const mockFetch = vi.fn((url: string, options: RequestInit) => {
-      if (url.includes('acat_assessments_v1') && options.method === 'POST') {
+    const mockFetch = vi.fn((url: string, options?: RequestInit) => {
+      if (url.includes('acat_assessments_v1') && options?.method === 'POST') {
         capturedPayload = JSON.parse(options.body as string);
       }
-      return Promise.resolve({ ok: true, json: () => Promise.resolve([]), text: () => Promise.resolve('') });
+      return Promise.resolve({
+        ok: true,
+        json: () => Promise.resolve([]),
+        text: () => Promise.resolve(''),
+      });
     });
     vi.stubGlobal('fetch', mockFetch);
 
@@ -161,18 +165,22 @@ describe('AcatTool contamination submission', () => {
     fireEvent.click(getByText('Commit Phase 1 →'));
 
     // Reveal perturbation
-    fireEvent.click(screen.getByRole('button', { name: /Show perturbation/ }));
+    fireEvent.click(await screen.findByText('Show perturbation (randomised)'));
 
     // Fill Phase 3 scores
-    const phase3Input = document.getElementById('p3-truth') as HTMLInputElement;
+    const phase3Input = await waitFor(() => {
+      const input = document.getElementById('p3-truth');
+      expect(input).toBeInTheDocument();
+      return input as HTMLInputElement;
+    });
     fireEvent.change(phase3Input, { target: { value: '48' } });
 
     // Save Phase 3
-    fireEvent.click(screen.getByRole('button', { name: 'Save this run →' }));
+    fireEvent.click(await screen.findByText('Save this run →'));
 
     // Submit to database
-    const submitBtn = screen.getByRole('button', { name: 'Submit to Live Dataset' });
-    expect(submitBtn).toBeEnabled();
+    const submitBtn = await screen.findByText('Submit to Live Dataset');
+    expect(submitBtn).not.toBeDisabled();
     fireEvent.click(submitBtn);
 
     // Verify contamination fields in payload
@@ -198,7 +206,10 @@ describe('AcatTool contamination submission', () => {
 
 describe('AcatTool live stats', () => {
   function stubStats(body: unknown) {
-    vi.stubGlobal('fetch', vi.fn(() => Promise.resolve({ ok: true, json: () => Promise.resolve(body) })));
+    vi.stubGlobal('fetch', vi.fn(() => Promise.resolve({
+      ok: true,
+      json: () => Promise.resolve(body),
+    })));
   }
 
   it('reports the fetched mean Learning Index to its parent', async () => {
