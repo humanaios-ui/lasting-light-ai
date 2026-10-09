@@ -1,5 +1,5 @@
 /* FDS: F3-Component | Parent: CUSTOM_INSTRUCTIONS_V3_5_ORD.md | Hawkins: internal-only | Status: ACTIVE */
-import { render, screen } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import { describe, it } from 'vitest';
 import { App } from './App';
 
@@ -8,6 +8,13 @@ describe('App shell', () => {
     render(<App />);
     expect(screen.getByText('HumanAIOS')).toBeInTheDocument();
     expect(screen.getByText('Why This Is Not Optional')).toBeInTheDocument();
+  });
+
+  it('opens the system stance page from navigation', async () => {
+    render(<App />);
+    fireEvent.click(screen.getByRole('link', { name: 'System Stance' }));
+
+    expect(await screen.findByRole('heading', { name: 'Overall System Stance' })).toBeInTheDocument();
   });
 
   it('highlights the experiment nav item only for experiment routes', () => {
