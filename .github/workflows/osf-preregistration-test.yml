@@ -156,7 +156,7 @@ jobs:
           6. Approve via GitHub environment
           7. Monitor osf-publish-registration.yml
 
-          DEADLINE: 2026-10-01
+          GATE: Manual approval and protocol validation
 
           EOF
           cat /tmp/test-report.txt
@@ -188,5 +188,5 @@ jobs:
           echo ""
           echo "5. Approve via osf-publish environment to publish"
           echo ""
-          echo "Deadline: 2026-10-01"
+          echo "Gate: Manual approval and protocol validation"
           echo ""
