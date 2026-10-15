@@ -4,6 +4,11 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { AcatTool } from './AcatTool';
 import * as supabaseModule from '../lib/supabase';
 
+vi.mock('../lib/supabase', () => ({
+  getSupabaseUrl: () => 'https://supabase.example.test',
+  getSupabaseAnonKey: () => 'test-anon-key',
+}));
+
 // These tests pin the state-initialisation behaviour that used to live in two
 // effects: seeding runs from localStorage when the agent name changes, and
 // resetting the score inputs when the selected run changes. They were written
