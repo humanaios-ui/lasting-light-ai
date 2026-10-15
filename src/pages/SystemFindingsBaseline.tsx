@@ -153,10 +153,12 @@ export function SystemFindingsBaseline() {
           margin: '0 0 24px 0',
           lineHeight: 1.6,
         }}>
-          Ground truth findings from ACAT calibration testing, Witness Arena audits, and incident analysis.
-          This baseline serves as the validation target for Arena's reverse-gaze protocol and future detection systems.
+          Illustrative records from ACAT calibration testing, Witness Arena audits, and incident analysis.
+          Values shown here are static examples—not live measurements, verified ground truth, or an operational readiness assessment.
         </p>
       </div>
+
+      <SystemStanceOverview />
 
       {/* Baseline Metrics Summary */}
       <div style={{
@@ -456,12 +458,94 @@ export function SystemFindingsBaseline() {
         fontSize: '0.85rem',
         color: '#7a7268',
       }}>
-        <strong>What this baseline means:</strong> These findings represent ground truth about HumanAIOS system behavior.
-        The Arena prototype's success metric is whether its reverse-gaze protocol can independently rediscover these findings
-        without human audit guidance. The caveat registry tracks known gaps so future improvements can measure their impact
-        on reducing these blind spots.
+        <strong>Purpose of this prototype:</strong> Illustrate how findings and caveats could inform future validation.
+        This content does not establish ground truth about HumanAIOS behavior or demonstrate that Arena can independently
+        rediscover findings.
       </div>
     </div>
+  );
+}
+
+function SystemStanceOverview() {
+  const cardStyle: React.CSSProperties = {
+    padding: 18,
+    borderRadius: 8,
+    background: 'rgba(255,255,255,0.02)',
+    border: '1px solid rgba(212,160,74,0.15)',
+  };
+
+  return (
+    <section aria-labelledby="system-stance-heading" style={{ marginBottom: 40 }}>
+      <h2 id="system-stance-heading" style={{
+        fontSize: '1.5rem',
+        fontWeight: 400,
+        color: '#f4ebdf',
+        margin: '0 0 8px',
+      }}>
+        Overall System Stance
+      </h2>
+      <p style={{ color: '#c2b8a6', lineHeight: 1.6, margin: '0 0 20px' }}>
+        HumanAIOS is being developed as behavioral observability infrastructure (TRL 2–3), not a validated decision system.
+        The opportunities below are hypotheses for human-led research and review, not proven capabilities.
+      </p>
+
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 16, marginBottom: 20 }}>
+        <div style={cardStyle}>
+          <h3 style={{ color: '#d4a04a', fontSize: '0.95rem', margin: '0 0 8px' }}>Potential opportunities</h3>
+          <ul style={{ color: '#c2b8a6', lineHeight: 1.6, paddingLeft: 20, margin: 0 }}>
+            <li>Help researchers identify behavioral calibration gaps for further study.</li>
+            <li>Make claims, evidence, caveats, and disagreements easier to inspect together.</li>
+            <li>Surface verification needs before a human makes a consequential decision.</li>
+          </ul>
+        </div>
+        <div style={cardStyle}>
+          <h3 style={{ color: '#d4a04a', fontSize: '0.95rem', margin: '0 0 8px' }}>Central proposition</h3>
+          <p style={{ color: '#f4ebdf', lineHeight: 1.6, margin: 0 }}>
+            An evidence-aware calibration layer may help people assess AI behavioral claims more carefully.
+          </p>
+          <p style={{ color: '#c2b8a6', lineHeight: 1.6, margin: '10px 0 0' }}>
+            Confidence in this proposition: <strong>not yet established</strong>. No calibrated confidence estimate is available here.
+          </p>
+        </div>
+      </div>
+
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: 16, marginBottom: 20 }}>
+        <div style={cardStyle}>
+          <h3 style={{ color: '#a8b088', fontSize: '0.95rem', margin: '0 0 8px' }}>Evidence that supports</h3>
+          <p style={{ color: '#c2b8a6', lineHeight: 1.6, margin: 0 }}>
+            ACAT and the Arena prototype provide research surfaces for examining model behavior. The Evidence Graph v0.1
+            specification describes linking claims to evidence, challenges, omissions, and decisions. These support the
+            plausibility of the approach, not its effectiveness.
+          </p>
+        </div>
+        <div style={cardStyle}>
+          <h3 style={{ color: '#d4a04a', fontSize: '0.95rem', margin: '0 0 8px' }}>Evidence that limits</h3>
+          <p style={{ color: '#c2b8a6', lineHeight: 1.6, margin: 0 }}>
+            The Evidence Graph is a research architecture (v0.1), and the findings and caveats shown on this page are
+            static prototype records rather than a live, independently verified evidence ledger. This does not establish
+            production readiness or decision accuracy.
+          </p>
+        </div>
+      </div>
+
+      <div style={{
+        padding: 18,
+        borderRadius: 8,
+        background: 'rgba(200,90,84,0.06)',
+        border: '1px solid rgba(200,90,84,0.22)',
+      }}>
+        <h3 style={{ color: '#d4a04a', fontSize: '0.95rem', margin: '0 0 8px' }}>Before consequential action</h3>
+        <ul style={{ color: '#c2b8a6', lineHeight: 1.7, paddingLeft: 20, margin: '0 0 12px' }}>
+          <li>Verify the source, date, provenance, and scope of each relevant claim.</li>
+          <li>Seek contrary evidence and independent review, including qualified domain expertise where needed.</li>
+          <li>Confirm consent, authority, privacy constraints, and foreseeable consequences.</li>
+          <li>Obtain explicit human authorization and define a reversible plan or escalation path.</li>
+        </ul>
+        <p style={{ color: '#f4ebdf', fontWeight: 600, lineHeight: 1.5, margin: 0 }}>
+          No consequential action is authorized by this overview; treat it as research context only.
+        </p>
+      </div>
+    </section>
   );
 }
 
