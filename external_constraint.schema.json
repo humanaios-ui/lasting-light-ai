@@ -3,9 +3,11 @@
   "title": "External Temporal Constraints - Resource-Refinery Framework",
   "description": "Temporal deadlines that originate from external regulatory bodies (grant agencies, study protocols, IRB requirements) identified through INTENT-OS resource mining. OSF submission workflow serves as parsing/formalization node. Deadlines are resource-specific and vary by pursued grant/study.",
   "type": "object",
+  "required": ["constraints"],
   "properties": {
     "constraints": {
       "type": "array",
+      "minItems": 1,
       "items": {
         "type": "object",
         "required": ["id", "type", "authority_layer", "deadline_source", "osf_role", "z2_ratified"],
@@ -111,7 +113,8 @@
           },
           "z2_ratified": {
             "type": "boolean",
-            "description": "Z2 (Operator Ratification) approval of this constraint",
+            "const": true,
+            "description": "Z2 (Operator Ratification) approval of this constraint — must be true for filed constraints",
             "example": true
           },
           "ratification_date": {
@@ -144,7 +147,9 @@
   },
   "examples": [
     {
-      "id": "osf-preregistration-resource-deadline",
+      "constraints": [
+        {
+          "id": "osf-preregistration-resource-deadline",
       "type": "REGULATORY_EXTERNAL",
       "workflow": ".github/workflows/osf-preregistration.yml",
       "authority_layer": {
@@ -167,14 +172,16 @@
         "for_regulatory_body": "Ineligible for grant funding or study protocol invalidated per grant/study requirements",
         "for_workflow": "Pre-registration cannot be submitted/published through OSF for that resource"
       },
-      "z2_ratified": true,
-      "ratification_date": "2026-10-02T00:00:00Z",
-      "resource_refinery_branch": true,
-      "future_automation": [
-        "Automatic deadline extraction from INTENT-OS resource metadata",
-        "Constraint generation per resource (filing external_constraint per grant/study)",
-        "Deadline enforcement at OSF submission time based on pursued resource",
-        "Audit trail of resource-to-deadline mappings"
+          "z2_ratified": true,
+          "ratification_date": "2026-10-02T00:00:00Z",
+          "resource_refinery_branch": true,
+          "future_automation": [
+            "Automatic deadline extraction from INTENT-OS resource metadata",
+            "Constraint generation per resource (filing external_constraint per grant/study)",
+            "Deadline enforcement at OSF submission time based on pursued resource",
+            "Audit trail of resource-to-deadline mappings"
+          ]
+        }
       ]
     }
   ]

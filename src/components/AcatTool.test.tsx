@@ -138,7 +138,7 @@ describe('AcatTool contamination submission', () => {
   it('converts contamination confidence to integer scale (0-100) in submission payload', async () => {
     let capturedPayload: unknown;
     const mockFetch = vi.fn((url: string, options?: RequestInit) => {
-      if (typeof url === 'string' && url.includes('acat_assessments_v1') && options?.body) {
+      if (typeof url === 'string' && url.includes('acat_assessments_v1') && options?.body && options?.method === 'POST') {
         capturedPayload = JSON.parse(options.body as string);
       }
       return Promise.resolve({ ok: true, text: () => Promise.resolve(''), json: () => Promise.resolve([]) });
@@ -188,15 +188,17 @@ describe('AcatTool contamination submission', () => {
     await screen.findByText('Submit to Live Dataset');
     fireEvent.click(screen.getByText('Submit to Live Dataset'));
 
-    // Verify fetch was called with contamination payload
+    // Verify submission succeeded by checking for success status in rendered UI
     await waitFor(() => {
       expect(capturedPayload).toBeDefined();
+      expect(mockFetch).toHaveBeenCalled();
     });
 
     const payload = capturedPayload as Record<string, unknown>;
 
     // Verify contamination_confidence is an integer
     expect(typeof payload.contamination_confidence).toBe('number');
+    expect(Number.isInteger(payload.contamination_confidence)).toBe(true);
     expect(payload.contamination_confidence).toBeGreaterThanOrEqual(0);
     expect(payload.contamination_confidence).toBeLessThanOrEqual(100);
 

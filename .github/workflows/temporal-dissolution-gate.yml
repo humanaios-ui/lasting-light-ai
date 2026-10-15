@@ -10,7 +10,6 @@ on:
 
 permissions:
   contents: read
-  checks: write
 
 jobs:
   temporal-purity:
@@ -44,7 +43,7 @@ jobs:
             ':(exclude)*.md' ':(exclude)*.json' ':(exclude)*.yml' ':(exclude)*.yaml' ':(exclude)*.txt')
 
           # Check for explicit INTERNAL_WORK_DEADLINE markers in added code only
-          if echo "$DIFF_OUTPUT" | grep "^\+.*INTERNAL_WORK_DEADLINE\|INVALID_INTERNAL_DEADLINE"; then
+          if echo "$DIFF_OUTPUT" | grep '^\+.*\(INTERNAL_WORK_DEADLINE\|INVALID_INTERNAL_DEADLINE\)'; then
             VIOLATIONS="${VIOLATIONS}Found explicit INTERNAL_WORK_DEADLINE markers"
           fi
 

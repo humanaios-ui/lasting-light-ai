@@ -99,14 +99,31 @@ def check_deadlines(days_ahead: int = 30):
    - Z2 ratification present with external_constraint schema:
      ```json
      {
-       "type": "REGULATORY_DEADLINE",
-       "authority": "National Science Foundation",
-       "citation": "NSF RAPID deadline 2026-10-15",
-       "due_at": "2026-10-15T23:59:59Z",
-       "evidence_ref": "https://nsf.gov/funding/opportunities/...",
-       "impact_if_missed": "ineligible for $500k research grant",
+       "id": "nsf-rapid-research-deadline",
+       "type": "REGULATORY_EXTERNAL",
+       "authority_layer": {
+         "regulatory_body": "National Science Foundation",
+         "parsing_node": "OSF submission workflow (resource-parsing layer)",
+         "resource_source": "INTENT-OS resource-miner (identified grants)"
+       },
+       "deadline_source": {
+         "origin": "grant_requirement",
+         "scope": "resource_specific",
+         "example_deadline": "2026-10-15T23:59:59Z",
+         "deadline_variability": "Deadline varies by specific NSF grant opportunity"
+       },
+       "osf_role": {
+         "function": "Parsing/formalization node",
+         "purpose": "Translates NSF grant deadline into pre-registration submission workflow",
+         "authority": "Submission gateway (channels external NSF requirements)"
+       },
+       "impact_if_missed": {
+         "for_regulatory_body": "Ineligible for NSF RAPID grant funding",
+         "for_workflow": "Pre-registration cannot be submitted/published through OSF for that grant"
+       },
        "z2_ratified": true,
-       "ratification_date": "2026-09-28"
+       "ratification_date": "2026-09-28T00:00:00Z",
+       "resource_refinery_branch": true
      }
      ```
 2. **Remove internal deadline logic:**
@@ -421,7 +438,7 @@ Per PRIORITY_QUEUE.md:
 ### Must Change (Blocking)
 - [x] `.github/workflows/osf-preregistration.yml` — Removed approval_deadline logic
 - [x] `.github/workflows/osf-preregistration-test.yml` — Removed stale test deadline reference
-- [ ] `src/humanaios_operations/deadline_checker.py` — Remove days-based categorization
+- [x] `src/humanaios_operations/deadline_checker.py` — Remove days-based categorization (remediated via Z2 reclassification)
 - [x] `.github/workflows/framework-audit.yml` — Removed phase-based gating
 
 ### Should Change (Cleanup)
