@@ -2,9 +2,9 @@
 
 # ACAT and public-site source audit — initial receipt
 
-**Audit date:** 2026-10-18  
-**Repository baseline:** `humanaios-ui/lasting-light-ai` `main` at `6aa8f7ca685786775c200415255a480e52816e95`  
-**Tree:** `daf7211e29b8a6c07ab6049c6458bc1b06ab9882` · **tracked files:** 329  
+**Audit date:** 2026-10-18<br>
+**Repository baseline:** `humanaios-ui/lasting-light-ai` `main` at `6aa8f7ca685786775c200415255a480e52816e95`<br>
+**Tree:** `daf7211e29b8a6c07ab6049c6458bc1b06ab9882` · **tracked files:** 329
 **Purpose:** First read-only census and evidence-backed contradiction list. This is not a complete semantic review, independent peer review, or deployment attestation.
 
 Coordination: [operations#923](https://github.com/humanaios-ui/operations/issues/923), [humanaios#115](https://github.com/humanaios-ui/humanaios/issues/115), and [lasting-light-ai#62](https://github.com/humanaios-ui/lasting-light-ai/issues/62). The operations issue has an open draft implementation PR #924; its existence is not admission or review evidence.
@@ -60,10 +60,12 @@ The README's legacy assessment link has an in-repository redirect to the static 
 
 ## Reverse-impact sample
 
-**Change candidate:** revise or replace the static assessment submission route.  
+**Change candidate:** revise or replace the static assessment submission route.
+
 **Potential review path:** `public/assess.html` → `public/_redirects` and `src/App.tsx` route parity → `src/components/AcatTool.tsx` and `src/components/AcatTool.test.tsx` / `e2e/assess.spec.ts` → `PRIVACY.md`, `README.md`, `METHODS.md`, `public/research.html`, and public collection guidance → Supabase/Apps Script destination and data-export behavior. This is a review queue, not a verified exhaustive dependency graph; the test files and backend were not fully inspected in this pass.
 
-**Change candidate:** update the canonical dataset snapshot or calculation.  
+**Change candidate:** update the canonical dataset snapshot or calculation.
+
 **Potential review path:** authoritative source/filters → summary row and export → README → `src/components/AcatTool.tsx`, `public/index.html`, `public/observatory.html`, and `public/lumina_tide_pool_v2.html` → affected tests and generated/public pages. Data lineage and live refresh/regeneration are **PENDING**.
 
 ## Findings, gaps, and next review
