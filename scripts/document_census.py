@@ -63,6 +63,7 @@ def run_git(*args: str, input_bytes: bytes | None = None) -> bytes:
         ["git", *args],
         input=input_bytes,
         check=True,
+        timeout=120,
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
     ).stdout
@@ -242,6 +243,6 @@ def main() -> int:
 if __name__ == "__main__":
     try:
         raise SystemExit(main())
-    except (RuntimeError, subprocess.CalledProcessError) as error:
+    except (RuntimeError, subprocess.CalledProcessError, subprocess.TimeoutExpired) as error:
         print(f"document census failed: {error}", file=sys.stderr)
         raise SystemExit(1)
