@@ -1,0 +1,34 @@
+# FDS: F8-Integration | Parent: lasting-light-ai#62 | Status: ACTIVE
+name: Document Census Regression
+on:
+  pull_request:
+    paths:
+      - "scripts/document_census.py"
+      - "tests/test_document_census_timeout.py"
+      - ".github/workflows/document-census-regression.yml"
+  push:
+    branches: [main]
+    paths:
+      - "scripts/document_census.py"
+      - "tests/test_document_census_timeout.py"
+      - ".github/workflows/document-census-regression.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  census:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Python timeout regression
+        run: python3 -m unittest discover -s tests -p 'test_document_census_timeout.py' -v
+      - name: Pinned 329-file census smoke test
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 scripts/document_census.py > "$RUNNER_TEMP/document-census.csv"
+          test "$(wc -l < "$RUNNER_TEMP/document-census.csv")" -eq 330
