@@ -33,7 +33,7 @@ class CensusTimeoutTests(unittest.TestCase):
                 with self.assertRaises(SystemExit) as raised:
                     runpy.run_path(str(script), run_name="__main__")
         self.assertEqual(raised.exception.code, 1)
-        self.assertIn("TimeoutExpired", stderr.getvalue())
+        self.assertIn("timed out after 120 seconds", stderr.getvalue())
 
 
 if __name__ == "__main__":
