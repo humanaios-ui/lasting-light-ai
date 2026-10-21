@@ -92,11 +92,12 @@ describe('offline Witness build demo', () => {
     expect(humanRequired.mode).toBe('AUTHORITY_HALT');
   });
 
-  it('refuses an evaluation that drifts from its pinned expectations', () => {
+  it('refuses a variant that is not checked in, even with matching expected pins', () => {
     expect(() => evaluateFixture({
       ...CONFLICTING_EVIDENCE_FIXTURE,
       mode: 'ALIGNED',
-    })).toThrow('Fixture evaluation does not match its pinned expectations.');
+      expected: { ...CONFLICTING_EVIDENCE_FIXTURE.expected, mode: 'ALIGNED' },
+    })).toThrow('Offline evaluation accepts only the checked-in synthetic fixture.');
   });
 
   it('rejects a subset of the pinned evidence references', () => {

@@ -95,6 +95,24 @@ export const HUMAN_REQUIRED_BOUNDARY_FIXTURE: SyntheticFixture = Object.freeze({
   expected: AUTHORITY_HALT_PINS,
 });
 
+// The only fixtures evaluation accepts. Pins come from these checked-in objects, never from a caller.
+const ACCEPTED_FIXTURE_VARIANTS: readonly SyntheticFixture[] = [
+  CONFLICTING_EVIDENCE_FIXTURE,
+  BLOCKED_FIXTURE,
+  HUMAN_REQUIRED_FIXTURE,
+  HUMAN_REQUIRED_BOUNDARY_FIXTURE,
+];
+
+function findAcceptedVariant(fixture: SyntheticFixture): SyntheticFixture | undefined {
+  return ACCEPTED_FIXTURE_VARIANTS.find(
+    (variant) =>
+      variant.fixtureId === fixture.fixtureId &&
+      variant.sourceKind === fixture.sourceKind &&
+      variant.mode === fixture.mode &&
+      variant.authority === fixture.authority
+  );
+}
+
 function isMember<const T extends readonly string[]>(
   values: T,
   value: unknown
@@ -115,7 +133,8 @@ function validateFixture(fixture: SyntheticFixture): void {
     !isMember(AUTHORITY_STATES, fixture.authority) ||
     !Array.isArray(fixture.evidenceRefs) ||
     !sameList(fixture.evidenceRefs, DEMO_EVIDENCE_REFS) ||
-    !fixture.expected
+    !fixture.expected ||
+    !findAcceptedVariant(fixture)
   ) {
     throw new Error('Offline evaluation accepts only the checked-in synthetic fixture.');
   }
@@ -173,7 +192,8 @@ export function evaluateFixture(
     policyVersion: POLICY_VERSION,
   };
 
-  if (!matchesPins(evaluation, fixture.expected)) {
+  const pins = findAcceptedVariant(fixture)?.expected;
+  if (!pins || !matchesPins(evaluation, pins)) {
     throw new Error('Fixture evaluation does not match its pinned expectations.');
   }
 
