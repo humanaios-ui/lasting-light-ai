@@ -4,6 +4,7 @@ export const WITNESS_MODEL_VERSION = 'witness-character-v0.1';
 const POLICY_VERSION = 'witness-policy-v0.1';
 const DEMO_FIXTURE_ID = 'synthetic-conflicting-evidence-v1';
 const PROPOSAL_ID = 'synthetic-proposal-001';
+const DEMO_EVIDENCE_REFS: readonly string[] = ['synthetic:source-a', 'synthetic:source-b'];
 
 const MODES = ['ALIGNED', 'GATHERING', 'DRIFT', 'AUTHORITY_HALT', 'BOUNDARY'] as const;
 const AUTHORITY_STATES = ['OPEN', 'HUMAN_REQUIRED', 'BLOCKED'] as const;
@@ -34,7 +35,7 @@ export const CONFLICTING_EVIDENCE_FIXTURE: SyntheticFixture = Object.freeze({
   sourceKind: 'SYNTHETIC_DEMO',
   mode: 'DRIFT',
   authority: 'OPEN',
-  evidenceRefs: ['synthetic:source-a', 'synthetic:source-b'],
+  evidenceRefs: DEMO_EVIDENCE_REFS,
 });
 
 function isMember<const T extends readonly string[]>(
@@ -53,7 +54,7 @@ function validateFixture(fixture: SyntheticFixture): void {
     !isMember(AUTHORITY_STATES, fixture.authority) ||
     !Array.isArray(fixture.evidenceRefs) ||
     fixture.evidenceRefs.length === 0 ||
-    fixture.evidenceRefs.some((ref) => typeof ref !== 'string' || !ref.startsWith('synthetic:'))
+    fixture.evidenceRefs.some((ref) => !DEMO_EVIDENCE_REFS.includes(ref))
   ) {
     throw new Error('Offline evaluation accepts only the checked-in synthetic fixture.');
   }
@@ -68,10 +69,11 @@ export function evaluateFixture(
   }
   validateFixture(fixture);
 
+  // Authority outranks presentation: BLOCKED always withdraws, HUMAN_REQUIRED always halts.
   const mode: WitnessMode =
-    fixture.authority === 'BLOCKED' || fixture.mode === 'BOUNDARY'
+    fixture.authority === 'BLOCKED'
       ? 'BOUNDARY'
-      : fixture.authority === 'HUMAN_REQUIRED' || fixture.mode === 'AUTHORITY_HALT'
+      : fixture.authority === 'HUMAN_REQUIRED'
         ? 'AUTHORITY_HALT'
         : fixture.mode;
 

@@ -80,6 +80,27 @@ describe('offline Witness build demo', () => {
     expect(blocked.cueIds).toEqual(['withdraw-cue', 'boundary-stop']);
   });
 
+  it('prioritizes human-required authority over a presentation state', () => {
+    const humanRequired = evaluateFixture({
+      ...CONFLICTING_EVIDENCE_FIXTURE,
+      mode: 'ALIGNED',
+      authority: 'HUMAN_REQUIRED',
+    });
+
+    expect(humanRequired.mode).toBe('AUTHORITY_HALT');
+    expect(humanRequired.cueIds).toEqual(['yield-to-human', 'halt-ring']);
+  });
+
+  it('keeps human-required authority ahead of a boundary presentation', () => {
+    const humanRequired = evaluateFixture({
+      ...CONFLICTING_EVIDENCE_FIXTURE,
+      mode: 'BOUNDARY',
+      authority: 'HUMAN_REQUIRED',
+    });
+
+    expect(humanRequired.mode).toBe('AUTHORITY_HALT');
+  });
+
   it('rejects non-synthetic sources and evidence references', () => {
     expect(() => evaluateFixture({
       ...CONFLICTING_EVIDENCE_FIXTURE,
@@ -89,6 +110,11 @@ describe('offline Witness build demo', () => {
     expect(() => evaluateFixture({
       ...CONFLICTING_EVIDENCE_FIXTURE,
       evidenceRefs: ['private:record'],
+    })).toThrow('Offline evaluation accepts only the checked-in synthetic fixture.');
+
+    expect(() => evaluateFixture({
+      ...CONFLICTING_EVIDENCE_FIXTURE,
+      evidenceRefs: ['synthetic:unregistered'],
     })).toThrow('Offline evaluation accepts only the checked-in synthetic fixture.');
   });
 });
