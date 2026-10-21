@@ -4,7 +4,7 @@ export const WITNESS_MODEL_VERSION = 'witness-character-v0.1';
 const POLICY_VERSION = 'witness-policy-v0.1';
 const DEMO_FIXTURE_ID = 'synthetic-conflicting-evidence-v1';
 const PROPOSAL_ID = 'synthetic-proposal-001';
-const DEMO_EVIDENCE_REFS: readonly string[] = ['synthetic:source-a', 'synthetic:source-b'];
+const DEMO_EVIDENCE_REFS: readonly string[] = Object.freeze(['synthetic:source-a', 'synthetic:source-b']);
 
 const MODES = ['ALIGNED', 'GATHERING', 'DRIFT', 'AUTHORITY_HALT', 'BOUNDARY'] as const;
 const AUTHORITY_STATES = ['OPEN', 'HUMAN_REQUIRED', 'BLOCKED'] as const;
@@ -41,29 +41,29 @@ export interface FixtureEvaluation {
 
 // Each accepted fixture variant carries its own literal expectations. Evaluation must
 // reproduce them exactly, so a change to the mapping tables fails loudly instead of drifting.
-const DRIFT_PINS: FixturePins = {
+const DRIFT_PINS: FixturePins = Object.freeze({
   mode: 'DRIFT',
-  cueIds: ['motion-pause', 'seam-highlight'],
+  cueIds: Object.freeze(['motion-pause', 'seam-highlight']),
   explanation: 'The synthetic evidence references conflict; the seam is highlighted without treating either source as authoritative.',
   evidenceRefs: DEMO_EVIDENCE_REFS,
   policyVersion: POLICY_VERSION,
-};
+});
 
-const BOUNDARY_PINS: FixturePins = {
+const BOUNDARY_PINS: FixturePins = Object.freeze({
   mode: 'BOUNDARY',
-  cueIds: ['withdraw-cue', 'boundary-stop'],
+  cueIds: Object.freeze(['withdraw-cue', 'boundary-stop']),
   explanation: 'The synthetic fixture is blocked; the boundary cue cannot be overridden by presentation.',
   evidenceRefs: DEMO_EVIDENCE_REFS,
   policyVersion: POLICY_VERSION,
-};
+});
 
-const AUTHORITY_HALT_PINS: FixturePins = {
+const AUTHORITY_HALT_PINS: FixturePins = Object.freeze({
   mode: 'AUTHORITY_HALT',
-  cueIds: ['yield-to-human', 'halt-ring'],
+  cueIds: Object.freeze(['yield-to-human', 'halt-ring']),
   explanation: 'The synthetic fixture requires a human decision; no action is authorized.',
   evidenceRefs: DEMO_EVIDENCE_REFS,
   policyVersion: POLICY_VERSION,
-};
+});
 
 export const CONFLICTING_EVIDENCE_FIXTURE: SyntheticFixture = Object.freeze({
   fixtureId: DEMO_FIXTURE_ID,
