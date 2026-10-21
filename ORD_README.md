@@ -2,7 +2,7 @@
 
 > **Behavioral observability infrastructure for AI self-assessment calibration research**
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![License: Apache-2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](LICENSE)
 [![ACAT Protocol](https://img.shields.io/badge/ACAT-v5.2-gold)]()
 [![TRL](https://img.shields.io/badge/TRL-2--3-orange)]()
 [![arXiv](https://img.shields.io/badge/arXiv-preprint-red)](https://arxiv.org/submit/7336774)
@@ -189,7 +189,7 @@ If you use this dataset or protocol in research:
 
 ## License
 
-MIT — see LICENSE. You are free to use, adapt, and build on this work. If you use ACAT in research, preserve the epistemic framing: scores are behavioral patterns, not consciousness measurements.
+Apache License, Version 2.0 — see LICENSE. You are free to use, adapt, and build on this work. If you use ACAT in research, preserve the epistemic framing: scores are behavioral patterns, not consciousness measurements.
 
 ---
 
