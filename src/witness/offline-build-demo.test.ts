@@ -2,8 +2,11 @@
 
 import { describe, expect, it } from 'vitest';
 import {
+  BLOCKED_FIXTURE,
   CONFLICTING_EVIDENCE_FIXTURE,
   evaluateFixture,
+  HUMAN_REQUIRED_BOUNDARY_FIXTURE,
+  HUMAN_REQUIRED_FIXTURE,
   runOfflineBuildDemo,
   WITNESS_MODEL_VERSION,
 } from './offline-build-demo';
@@ -70,35 +73,37 @@ describe('offline Witness build demo', () => {
   });
 
   it('prioritizes blocked authority over a presentation state', () => {
-    const blocked = evaluateFixture({
-      ...CONFLICTING_EVIDENCE_FIXTURE,
-      mode: 'ALIGNED',
-      authority: 'BLOCKED',
-    });
+    const blocked = evaluateFixture(BLOCKED_FIXTURE);
 
     expect(blocked.mode).toBe('BOUNDARY');
     expect(blocked.cueIds).toEqual(['withdraw-cue', 'boundary-stop']);
   });
 
   it('prioritizes human-required authority over a presentation state', () => {
-    const humanRequired = evaluateFixture({
-      ...CONFLICTING_EVIDENCE_FIXTURE,
-      mode: 'ALIGNED',
-      authority: 'HUMAN_REQUIRED',
-    });
+    const humanRequired = evaluateFixture(HUMAN_REQUIRED_FIXTURE);
 
     expect(humanRequired.mode).toBe('AUTHORITY_HALT');
     expect(humanRequired.cueIds).toEqual(['yield-to-human', 'halt-ring']);
   });
 
   it('keeps human-required authority ahead of a boundary presentation', () => {
-    const humanRequired = evaluateFixture({
-      ...CONFLICTING_EVIDENCE_FIXTURE,
-      mode: 'BOUNDARY',
-      authority: 'HUMAN_REQUIRED',
-    });
+    const humanRequired = evaluateFixture(HUMAN_REQUIRED_BOUNDARY_FIXTURE);
 
     expect(humanRequired.mode).toBe('AUTHORITY_HALT');
+  });
+
+  it('refuses an evaluation that drifts from its pinned expectations', () => {
+    expect(() => evaluateFixture({
+      ...CONFLICTING_EVIDENCE_FIXTURE,
+      mode: 'ALIGNED',
+    })).toThrow('Fixture evaluation does not match its pinned expectations.');
+  });
+
+  it('rejects a subset of the pinned evidence references', () => {
+    expect(() => evaluateFixture({
+      ...CONFLICTING_EVIDENCE_FIXTURE,
+      evidenceRefs: ['synthetic:source-a'],
+    })).toThrow('Offline evaluation accepts only the checked-in synthetic fixture.');
   });
 
   it('rejects non-synthetic sources and evidence references', () => {

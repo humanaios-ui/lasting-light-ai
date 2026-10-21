@@ -12,12 +12,21 @@ const AUTHORITY_STATES = ['OPEN', 'HUMAN_REQUIRED', 'BLOCKED'] as const;
 export type WitnessMode = typeof MODES[number];
 export type AuthorityState = typeof AUTHORITY_STATES[number];
 
+export interface FixturePins {
+  mode: WitnessMode;
+  cueIds: readonly string[];
+  explanation: string;
+  evidenceRefs: readonly string[];
+  policyVersion: string;
+}
+
 export interface SyntheticFixture {
   fixtureId: string;
   sourceKind: 'SYNTHETIC_DEMO';
   mode: WitnessMode;
   authority: AuthorityState;
   evidenceRefs: readonly string[];
+  expected: FixturePins;
 }
 
 export interface FixtureEvaluation {
@@ -30,12 +39,60 @@ export interface FixtureEvaluation {
   policyVersion: string;
 }
 
+// Each accepted fixture variant carries its own literal expectations. Evaluation must
+// reproduce them exactly, so a change to the mapping tables fails loudly instead of drifting.
+const DRIFT_PINS: FixturePins = {
+  mode: 'DRIFT',
+  cueIds: ['motion-pause', 'seam-highlight'],
+  explanation: 'The synthetic evidence references conflict; the seam is highlighted without treating either source as authoritative.',
+  evidenceRefs: DEMO_EVIDENCE_REFS,
+  policyVersion: POLICY_VERSION,
+};
+
+const BOUNDARY_PINS: FixturePins = {
+  mode: 'BOUNDARY',
+  cueIds: ['withdraw-cue', 'boundary-stop'],
+  explanation: 'The synthetic fixture is blocked; the boundary cue cannot be overridden by presentation.',
+  evidenceRefs: DEMO_EVIDENCE_REFS,
+  policyVersion: POLICY_VERSION,
+};
+
+const AUTHORITY_HALT_PINS: FixturePins = {
+  mode: 'AUTHORITY_HALT',
+  cueIds: ['yield-to-human', 'halt-ring'],
+  explanation: 'The synthetic fixture requires a human decision; no action is authorized.',
+  evidenceRefs: DEMO_EVIDENCE_REFS,
+  policyVersion: POLICY_VERSION,
+};
+
 export const CONFLICTING_EVIDENCE_FIXTURE: SyntheticFixture = Object.freeze({
   fixtureId: DEMO_FIXTURE_ID,
   sourceKind: 'SYNTHETIC_DEMO',
   mode: 'DRIFT',
   authority: 'OPEN',
   evidenceRefs: DEMO_EVIDENCE_REFS,
+  expected: DRIFT_PINS,
+});
+
+export const BLOCKED_FIXTURE: SyntheticFixture = Object.freeze({
+  ...CONFLICTING_EVIDENCE_FIXTURE,
+  mode: 'ALIGNED',
+  authority: 'BLOCKED',
+  expected: BOUNDARY_PINS,
+});
+
+export const HUMAN_REQUIRED_FIXTURE: SyntheticFixture = Object.freeze({
+  ...CONFLICTING_EVIDENCE_FIXTURE,
+  mode: 'ALIGNED',
+  authority: 'HUMAN_REQUIRED',
+  expected: AUTHORITY_HALT_PINS,
+});
+
+export const HUMAN_REQUIRED_BOUNDARY_FIXTURE: SyntheticFixture = Object.freeze({
+  ...CONFLICTING_EVIDENCE_FIXTURE,
+  mode: 'BOUNDARY',
+  authority: 'HUMAN_REQUIRED',
+  expected: AUTHORITY_HALT_PINS,
 });
 
 function isMember<const T extends readonly string[]>(
@@ -43,6 +100,10 @@ function isMember<const T extends readonly string[]>(
   value: unknown
 ): value is T[number] {
   return typeof value === 'string' && values.includes(value as T[number]);
+}
+
+function sameList(actual: readonly string[], expected: readonly string[]): boolean {
+  return actual.length === expected.length && actual.every((value, index) => value === expected[index]);
 }
 
 function validateFixture(fixture: SyntheticFixture): void {
@@ -53,11 +114,21 @@ function validateFixture(fixture: SyntheticFixture): void {
     !isMember(MODES, fixture.mode) ||
     !isMember(AUTHORITY_STATES, fixture.authority) ||
     !Array.isArray(fixture.evidenceRefs) ||
-    fixture.evidenceRefs.length === 0 ||
-    fixture.evidenceRefs.some((ref) => !DEMO_EVIDENCE_REFS.includes(ref))
+    !sameList(fixture.evidenceRefs, DEMO_EVIDENCE_REFS) ||
+    !fixture.expected
   ) {
     throw new Error('Offline evaluation accepts only the checked-in synthetic fixture.');
   }
+}
+
+function matchesPins(evaluation: FixtureEvaluation, pins: FixturePins): boolean {
+  return (
+    evaluation.mode === pins.mode &&
+    sameList(evaluation.cueIds, pins.cueIds) &&
+    evaluation.explanation === pins.explanation &&
+    sameList(evaluation.evidenceRefs, pins.evidenceRefs) &&
+    evaluation.policyVersion === pins.policyVersion
+  );
 }
 
 export function evaluateFixture(
@@ -92,7 +163,7 @@ export function evaluateFixture(
     BOUNDARY: 'The synthetic fixture is blocked; the boundary cue cannot be overridden by presentation.',
   };
 
-  return {
+  const evaluation: FixtureEvaluation = {
     sourceKind: 'SYNTHETIC_DEMO',
     modelVersion: version,
     mode,
@@ -101,6 +172,12 @@ export function evaluateFixture(
     evidenceRefs: [...fixture.evidenceRefs],
     policyVersion: POLICY_VERSION,
   };
+
+  if (!matchesPins(evaluation, fixture.expected)) {
+    throw new Error('Fixture evaluation does not match its pinned expectations.');
+  }
+
+  return evaluation;
 }
 
 export function runOfflineBuildDemo() {
