@@ -23,6 +23,7 @@ jobs:
       - run: npm run lint
       - run: npm run typecheck
       - run: npm run test:run
+      - run: npm run test:attractor
       - run: npm run build
 
   e2e:
