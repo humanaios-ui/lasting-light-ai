@@ -121,7 +121,7 @@ export function projectSample(repo, raw, observedAtMs) {
   let rejected = 0;
   for (const entry of raw) {
     const item = canonicalSource(repo, entry);
-    if (!item || item.updated_ms > observedAtMs + 300000) { rejected++; continue; }
+    if (!item || item.updated_ms > observedAtMs) { rejected++; continue; }
     if (seen.has(item.url)) continue;
     seen.add(item.url);
     records.push(item);
