@@ -39,7 +39,7 @@ test('constellation has eight working nodes, real evidence links and non-authori
   await page.getByRole('button', {name:/Operations Observatory/}).click();
   await expect(page.locator('#detail-boundary')).toContainText('not a deployed');
   await expect(page.locator('#evidence-status')).toContainText('SOURCE SAMPLES READ');
-  await expect(page.locator('#source-operations')).toContainText('not a total');
+  await expect(page.locator('#source-operations')).toContainText('Not a total');
   await expect(page.locator('#source-operations a').first()).toHaveAttribute('href',
     'https://github.com/humanaios-ui/operations/issues/42');
   expect(methods.length).toBeGreaterThanOrEqual(3);
