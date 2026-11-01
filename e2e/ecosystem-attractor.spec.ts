@@ -13,7 +13,7 @@ async function mockPublicGitHub(page: import('@playwright/test').Page) {
     const item = {
       number: 42,
       title: 'Public source sample — not an outcome',
-      updated_at: new Date().toISOString(),
+      updated_at: new Date(Date.now() - 60000).toISOString(),
       html_url: 'https://github.com/' + repo + '/issues/42',
     };
     await route.fulfill({
