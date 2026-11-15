@@ -21,6 +21,7 @@ import { Footer } from './components/Footer';
 import { AcatTool } from './components/AcatTool';
 import { LazyLoadingFallback } from './components/LazyLoadingFallback';
 import { Experiment } from './pages/Experiment';
+import { LivingLab, WitnessChallenge } from './pages/LivingLab';
 import { RegimeA } from './pages/RegimeA';
 import { TopicDetail } from './pages/TopicDetail';
 import { ArenaPrototype } from './pages/ArenaPrototype';
@@ -246,6 +247,9 @@ function AppShell() {
           <Route path="/assess" element={<AssessPage onMeanLIUpdate={setMeanLI} />} />
           <Route path="/acat" element={<Navigate to="/assess" replace />} />
           <Route path="/experiment" element={<Experiment />} />
+          {/* Z1 preview only: no homepage replacement or live participant intake */}
+          <Route path="/lab" element={<LivingLab />} />
+          <Route path="/lab/witness-challenge" element={<WitnessChallenge />} />
           <Route path="/regime-a" element={<RegimeA />} />
           <Route path="/research-velocity" element={
             <Suspense fallback={<LazyLoadingFallback />}>
