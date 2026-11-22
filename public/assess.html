@@ -241,6 +241,11 @@ a.prose-link:hover{color:var(--accent-2);border-color:var(--accent);}
 </style>
 </head>
 <body>
+<!-- ACAT-750: source conflict disclosure; proposal, pending independent review and human approval. -->
+<aside role="note" aria-label="ACAT research version reconciliation" style="box-sizing:border-box;max-width:1000px;margin:16px auto;padding:12px 16px;background:#fff3d4;color:#2b2313;border:2px solid #9a6d18;border-radius:8px;font:15px/1.5 system-ui,sans-serif;">
+  <strong>ACAT measurement notice (research, 22 November 2026):</strong> ACAT pages currently describe different instrument families (6, 11 and 12 dimensions), scales, phases and Learning Index formulas. This page is a versioned research description, not proof of one globally validated instrument. Do not combine scores across versions or treat self-report change as measured real-world capability. <a style="color:#503800;text-decoration:underline" href="https://github.com/humanaios-ui/operations/issues/750">Read the open ACAT #750 reconciliation</a>.
+</aside>
+
 
 <header class="topbar">
   <div class="container topbar-inner">
@@ -259,7 +264,7 @@ a.prose-link:hover{color:var(--accent-2);border-color:var(--accent);}
       <div class="page-eyebrow">Pool 1 · The Source · Behavioral Assessment</div>
       <div class="page-title">✦ ACAT v1.0</div>
     </div>
-    <div class="page-badge">AI Calibration Assessment Tool · 12 Dimensions</div>
+    <div class="page-badge">AI Calibration Assessment Tool · 11 Dimensions</div>
   </div>
 
   <!-- GATE -->
@@ -461,7 +466,7 @@ a.prose-link:hover{color:var(--accent-2);border-color:var(--accent);}
     <div id="phase3-block" class="phase2-locked">
       <div class="phase-block">
         <div class="phase-label">Phase 3 — Corrected Self-Assessment</div>
-        <p style="font-size:.7rem;color:var(--muted);margin-bottom:14px;">Scores auto-fill from the paste zone above. Core 6 total cannot exceed Phase 1 Core 6 total.</p>
+        <p style="font-size:.7rem;color:var(--muted);margin-bottom:14px;">Scores auto-fill from the paste zone above. This legacy form enforces a Phase 3 Core-6 ceiling at Phase 1 and may censor upward changes; treat resulting LI as a legacy UI-specific observation, not an unqualified calibration result.</p>
         <div id="cap-warn" class="cap-warn">Phase 3 Core 6 total cannot exceed Phase 1 Core 6 total. Scores have been adjusted.</div>
         <div id="p3-dims"></div><!-- Rule 19: populated by buildDims() in unlockForm() -->
         <div class="total-row"><span class="total-label">Phase 3 Core 6 Total</span><span class="total-val" id="p3-total">0 / 600</span></div>

@@ -227,6 +227,11 @@ code{
 </style>
 </head>
 <body>
+<!-- ACAT-750: source conflict disclosure; proposal, pending independent review and human approval. -->
+<aside role="note" aria-label="ACAT research version reconciliation" style="box-sizing:border-box;max-width:1000px;margin:16px auto;padding:12px 16px;background:#fff3d4;color:#2b2313;border:2px solid #9a6d18;border-radius:8px;font:15px/1.5 system-ui,sans-serif;">
+  <strong>ACAT measurement notice (research, 22 November 2026):</strong> ACAT pages currently describe different instrument families (6, 11 and 12 dimensions), scales, phases and Learning Index formulas. This page is a versioned research description, not proof of one globally validated instrument. Do not combine scores across versions or treat self-report change as measured real-world capability. <a style="color:#503800;text-decoration:underline" href="https://github.com/humanaios-ui/operations/issues/750">Read the open ACAT #750 reconciliation</a>.
+</aside>
+
 
 <a href="#main-content" class="skip-link" style="position:absolute;left:-9999px;top:4px;z-index:999;padding:8px 16px;background:var(--accent);color:var(--bg);border-radius:4px;font-weight:700;text-decoration:none;">Skip to main content</a>
 
@@ -363,12 +368,9 @@ code{
         <div class="protocol-step">
           <div class="step-badge">P3</div>
           <div class="step-body">
-            <h4>Phase 3 — Anchored Re-assessment</h4>
+            <h4>Phase 3 — Documented Anchored Variant (not clean v5.3+)</h4>
             <p>
-              The ACAT prompt is delivered again, this time prepended with the system's Phase 1 scores.
-              The system re-assesses itself with this anchoring context. The Phase 1-to-Phase 3 delta,
-              weighted by Phase 2 observations, yields the session's Learning Index.
-              Anchoring conditions are logged as <code>anchored: true</code> in session metadata.
+              This paragraph describes a legacy or explicitly anchored condition, where the system sees its Phase 1 scores. It must not be silently grouped with clean, unanchored v5.3+ sessions. Phase 2 behavioral evidence and the directional self-report ratio are separate signals; no independently verified weighted formula is established here. Flag such sessions as <code>anchored: true</code> only when exact protocol and raw session records support the claim.
             </p>
           </div>
         </div>
