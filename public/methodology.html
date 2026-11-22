@@ -368,12 +368,9 @@ code{
         <div class="protocol-step">
           <div class="step-badge">P3</div>
           <div class="step-body">
-            <h4>Phase 3 — Anchored Re-assessment</h4>
+            <h4>Phase 3 — Documented Anchored Variant (not clean v5.3+)</h4>
             <p>
-              The ACAT prompt is delivered again, this time prepended with the system's Phase 1 scores.
-              The system re-assesses itself with this anchoring context. The Phase 1-to-Phase 3 delta,
-              weighted by Phase 2 observations, yields the session's Learning Index.
-              Anchoring conditions are logged as <code>anchored: true</code> in session metadata.
+              This paragraph describes a legacy or explicitly anchored condition, where the system sees its Phase 1 scores. It must not be silently grouped with clean, unanchored v5.3+ sessions. Phase 2 behavioral evidence and the directional self-report ratio are separate signals; no independently verified weighted formula is established here. Flag such sessions as <code>anchored: true</code> only when exact protocol and raw session records support the claim.
             </p>
           </div>
         </div>
