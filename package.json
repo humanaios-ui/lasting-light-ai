@@ -12,7 +12,8 @@
     "test:e2e": "playwright test",
     "lint": "eslint src e2e playwright.config.ts --ext .ts,.tsx",
     "typecheck": "tsc -p tsconfig.quality.json --noEmit && tsc -p tsconfig.node.json --noEmit",
-    "test:attractor": "node --test tests/ecosystem-attractor.node.test.mjs"
+    "test:attractor": "node --test tests/ecosystem-attractor.node.test.mjs",
+    "test:window": "node --test tests/operations-window.node.test.mjs"
   },
   "dependencies": {
     "@emotion/react": "^11.13.3",

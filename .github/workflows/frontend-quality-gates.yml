@@ -24,6 +24,7 @@ jobs:
       - run: npm run typecheck
       - run: npm run test:run
       - run: npm run test:attractor
+      - run: npm run test:window
       - run: npm run build
 
   e2e:

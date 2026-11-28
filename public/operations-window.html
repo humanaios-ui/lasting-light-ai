@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="theme-color" content="#08111b">
+  <meta name="description" content="A live, read-only window into the HumanAIOS operations repository: the research concept map, the system map, and what runs on its own.">
+  <title>HumanAIOS — Operations Window · E0 Preview</title>
+  <link rel="stylesheet" href="/ecosystem-attractor.css">
+  <link rel="stylesheet" href="/operations-window.css">
+  <script type="module" src="/operations-window.mjs"></script>
+</head>
+<body>
+<a class="skip-link" href="#window">Skip to the operations window</a>
+<div class="attractor-shell">
+  <header class="masthead">
+    <a class="brand" href="/" aria-label="HumanAIOS homepage">
+      <span class="brand-mark" aria-hidden="true">◐</span>
+      <span><strong>HumanAIOS</strong><small>People · Research · Code · Real-world impact</small></span>
+    </a>
+    <nav class="mast-nav" aria-label="Public navigation">
+      <a href="/ecosystem.html">Ecosystem</a>
+      <a href="/governance.html">Governance</a>
+      <a href="/assess.html">ACAT</a>
+      <a href="/">Homepage</a>
+    </nav>
+    <span class="preview-pill">Z1 · E0 PREVIEW</span>
+  </header>
+
+  <main id="window">
+    <section class="opening" aria-labelledby="window-title">
+      <p class="opening-kicker">Read live from the operations repository</p>
+      <h1 id="window-title">The <em>Operations Window</em></h1>
+      <p>People decide what and why. AI agents propose and build. This page shows what the shared repository says right now, in three pictures.</p>
+      <p class="opening-trust">Read-only. Your browser reads three public files from GitHub each time you open this page. It shows what those files say. It does not check that the files are true, and it does not show system health. <span id="read-at"></span></p>
+    </section>
+
+    <section class="ow-panel" aria-labelledby="intent-title">
+      <p class="section-kicker">1 · Research concepts</p>
+      <h2 id="intent-title">From vision down to the tools that measure it</h2>
+      <p class="ow-lede">Each dot is one idea. Lines show what serves, grounds, measures or enforces what. <span class="conflict">Red arcs are open conflicts</span>: two parts of the repo that say opposite things. Writing a conflict down is how the system admits it. Tap a dot to read it.</p>
+      <p class="ow-boundary">Source: <a href="https://github.com/humanaios-ui/operations/blob/main/INTENT_GRAPH.yaml" target="_blank" rel="noopener noreferrer">INTENT_GRAPH.yaml</a>. The graph itself is PROPOSED: Z2 has not ratified it.</p>
+      <div class="ow-facts" id="intent-facts"></div>
+      <div class="intent-wrap">
+        <div class="intent-map" id="intent-map"><p class="loading">Reading the concept map…</p></div>
+        <aside class="ow-detail" id="intent-detail" aria-live="polite"></aside>
+      </div>
+      <ul class="ow-legend" aria-label="Legend">
+        <li><span class="key key-live"></span>Live</li>
+        <li><span class="key key-conflicted"></span>Live, but contradicted</li>
+        <li><span class="key key-proposed"></span>Proposed</li>
+        <li><span class="key key-cited"></span>Named, not built</li>
+        <li><span class="key key-arc"></span>Open conflict</li>
+      </ul>
+    </section>
+
+    <section class="ow-panel" aria-labelledby="system-title">
+      <p class="section-kicker">2 · System map</p>
+      <h2 id="system-title">Every part, and whether it runs</h2>
+      <p class="ow-lede">Filled dots run. Hollow dots are built but not running. Faint dots are planned. Columns are zones: Z2 is the human who ratifies, Z1 is the AI agents who propose, then code and CI checks.</p>
+      <p class="ow-boundary">Source: <a href="https://github.com/humanaios-ui/operations/blob/main/system_graph.json" target="_blank" rel="noopener noreferrer">system_graph.json</a>. <span id="system-when"></span></p>
+      <div class="ow-facts" id="system-facts"></div>
+      <div class="system-wrap">
+        <div class="system-map" id="system-map"><p class="loading">Reading the system map…</p></div>
+        <aside class="ow-detail" id="system-detail" aria-live="polite"><p class="detail-kicker">Tap a dot</p></aside>
+      </div>
+    </section>
+
+    <section class="ow-panel" aria-labelledby="running-title">
+      <p class="section-kicker">3 · What runs on its own</p>
+      <h2 id="running-title">The running list</h2>
+      <p class="ow-lede">The rule: anything that runs by itself gets a line, with who started it, why, what it costs and when it stops.</p>
+      <p class="ow-boundary">Source: <a href="https://github.com/humanaios-ui/operations/blob/main/docs/RUNNING.md" target="_blank" rel="noopener noreferrer">docs/RUNNING.md</a>.</p>
+      <div class="running-list" id="running-list"><p class="loading">Reading the running list…</p></div>
+    </section>
+  </main>
+</div>
+</body>
+</html>
