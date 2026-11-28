@@ -2,7 +2,7 @@ import { test } from 'node:test';
 import assert from 'node:assert/strict';
 import {
   SOURCES, RAW_BASE, parseIntentYaml, parseSystemGraph, parseRunning,
-  plainText, sourceHref, layoutIntent, wrapLabel, fetchSource,
+  plainText, sourceHref, layoutIntent, wrapLabel, fetchSource, isOpenConflict,
 } from '../public/operations-window.mjs';
 
 const INTENT = `# header comment
@@ -39,7 +39,9 @@ nodes:
 
 edges:
   - {from: O-A, to: V-ONE, rel: realizes}
-  - {from: O-B,   to: V-ONE, rel: realizes}
+  - {from: O-B,   to: V-ONE, rel: realizes}  # trailing comment
+  - {from: G-X, to: O-B, rel: constrains, note: 'a, b'}
+  - {from: G-X, to: O-A, rel: conflicts_with, status: RESOLVED}
   - {from: O-A, to: MISSING, rel: grounds}
 
   - from: O-A
@@ -59,9 +61,12 @@ test('intent parser reads nodes, both edge styles, folded text, and drops dangli
   assert.equal(g.nodes[0].statement, 'First line of a folded statement.');
   assert.equal(g.nodes[1].name, 'Quoted name');
   assert.equal(g.nodes[3].status, 'CITED_NOT_IMPLEMENTED');
-  assert.equal(g.edges.length, 3);
+  assert.equal(g.edges.length, 5);
   assert.equal(g.skippedEdges, 1);
-  const c = g.edges.find(e => e.rel === 'conflicts_with');
+  assert.equal(g.edges[1].rel, 'realizes');
+  assert.equal(g.edges[2].rel, 'constrains');
+  assert.equal(g.edges.filter(isOpenConflict).length, 1);
+  const c = g.edges.find(isOpenConflict);
   assert.equal(c.detail, 'Two files say opposite things.');
   assert.equal(c.status, 'OPEN');
 });

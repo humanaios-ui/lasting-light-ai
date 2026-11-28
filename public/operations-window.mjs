@@ -28,6 +28,11 @@ export const TIER_WORDS = Object.freeze({
   other: 'Other',
 });
 
+export const TIER_ONE = Object.freeze({
+  vision: 'Vision', mission: 'Mission', principle: 'Principle', objective: 'Objective',
+  gate: 'Gate', instrument: 'Instrument', other: 'Idea',
+});
+
 export const REL_WORDS = Object.freeze({
   realizes: 'serves',
   grounds: 'grounds',
@@ -42,9 +47,9 @@ export const STATUS_WORDS = Object.freeze({
   CONFLICTED: 'Live, but contradicted',
   PROPOSED: 'Proposed',
   CITED_NOT_IMPLEMENTED: 'Named, not built',
-  OPERATED: 'Running',
-  LAID: 'Built, not running',
-  PLANNED: 'Planned',
+  OPERATED: 'Built and tested',
+  LAID: 'Code written, not wired in',
+  PLANNED: 'Planned, spec only',
 });
 
 // ---------------------------------------------------------------------------
@@ -59,10 +64,25 @@ function unquote(v) {
   return s;
 }
 
+function splitOutsideQuotes(text) {
+  const parts = [];
+  let cur = '';
+  let q = null;
+  for (const ch of text) {
+    if (q) { if (ch === q) q = null; cur += ch; continue; }
+    if (ch === "'" || ch === '"') { q = ch; cur += ch; continue; }
+    if (ch === ',') { parts.push(cur); cur = ''; continue; }
+    cur += ch;
+  }
+  parts.push(cur);
+  return parts;
+}
+
 function parseFlowMap(text) {
   const out = {};
-  const inner = text.trim().replace(/^\{/, '').replace(/\}$/, '');
-  for (const part of inner.split(',')) {
+  const close = text.lastIndexOf('}');
+  const inner = text.trim().slice(1, close > 0 ? close : undefined);
+  for (const part of splitOutsideQuotes(inner)) {
     const i = part.indexOf(':');
     if (i < 1) continue;
     out[part.slice(0, i).trim()] = unquote(part.slice(i + 1));
@@ -225,6 +245,10 @@ export function wrapLabel(name, perLine = 15, maxLines = 2) {
   return lines;
 }
 
+export function isOpenConflict(e) {
+  return e.rel === 'conflicts_with' && String(e.status).toUpperCase() === 'OPEN';
+}
+
 export function countBy(list, key) {
   const out = {};
   for (const x of list) out[x[key]] = (out[x[key]] || 0) + 1;
@@ -274,18 +298,18 @@ function statusWord(s) { return STATUS_WORDS[s] || s; }
 function showIntentDetail(node, graph) {
   const box = document.getElementById('intent-detail');
   box.replaceChildren();
-  box.append(el('p', 'detail-kicker', (TIER_WORDS[tierOf(node.type)] || node.type).split(':')[0] + ' · ' + statusWord(node.status)));
+  box.append(el('p', 'detail-kicker', TIER_ONE[tierOf(node.type)] + ' · ' + statusWord(node.status)));
   box.append(el('h3', null, node.name));
-  if (node.statement) box.append(el('p', null, node.statement));
+  if (node.statement) box.append(el('p', null, plainText(node.statement)));
   const out = graph.edges.filter(e => e.from === node.id);
   const inc = graph.edges.filter(e => e.to === node.id);
   const byId = new Map(graph.nodes.map(n => [n.id, n]));
   const list = el('ul', 'detail-links');
-  for (const e of out) list.append(el('li', e.rel === 'conflicts_with' ? 'conflict' : null, (REL_WORDS[e.rel] || e.rel) + ' → ' + byId.get(e.to).name));
-  for (const e of inc) list.append(el('li', e.rel === 'conflicts_with' ? 'conflict' : null, byId.get(e.from).name + ' ' + (REL_WORDS[e.rel] || e.rel) + ' this'));
+  for (const e of out) list.append(el('li', isOpenConflict(e) ? 'conflict' : null, (REL_WORDS[e.rel] || e.rel) + ' → ' + byId.get(e.to).name));
+  for (const e of inc) list.append(el('li', isOpenConflict(e) ? 'conflict' : null, byId.get(e.from).name + ' ' + (REL_WORDS[e.rel] || e.rel) + ' this'));
   if (list.children.length) box.append(list);
   for (const e of [...out, ...inc].filter(x => x.rel === 'conflicts_with' && x.detail)) {
-    box.append(el('p', 'conflict-detail', 'Why it conflicts: ' + e.detail));
+    box.append(el('p', 'conflict-detail', (isOpenConflict(e) ? 'Why it conflicts: ' : 'Conflict, now ' + (e.status || 'closed').toLowerCase() + ': ') + plainText(e.detail)));
   }
   const href = sourceHref(node.source);
   if (href) box.append(link(href, 'Read the source file: ' + node.source));
@@ -324,8 +348,9 @@ function drawIntent(graph) {
       const my = (a.y + b.y) / 2;
       d = 'M' + a.x + ',' + a.y + ' C' + a.x + ',' + my + ' ' + b.x + ',' + my + ' ' + b.x + ',' + b.y;
     }
-    const p = svg('path', { d, class: 'edge rel-' + e.rel.replace(/[^a-z_]/g, '') });
-    if (e.rel === 'conflicts_with') p.setAttribute('filter', 'url(#conflict-glow)');
+    const relClass = e.rel === 'conflicts_with' && !isOpenConflict(e) ? 'conflict-closed' : e.rel.replace(/[^a-z_]/g, '');
+    const p = svg('path', { d, class: 'edge rel-' + relClass });
+    if (isOpenConflict(e)) p.setAttribute('filter', 'url(#conflict-glow)');
     p.dataset.from = e.from;
     p.dataset.to = e.to;
     edgeLayer.append(p);
@@ -361,7 +386,7 @@ function drawIntent(graph) {
   holder.replaceChildren(root);
 
   const counts = countBy(graph.nodes, 'status');
-  const conflicts = graph.edges.filter(e => e.rel === 'conflicts_with').length;
+  const conflicts = graph.edges.filter(isOpenConflict).length;
   const facts = document.getElementById('intent-facts');
   facts.replaceChildren(
     el('span', null, graph.nodes.length + ' ideas'),
@@ -371,7 +396,10 @@ function drawIntent(graph) {
     el('span', null, (counts.PROPOSED || 0) + ' proposed'),
   );
   const first = graph.nodes.find(n => n.status === 'CONFLICTED') || graph.nodes[0];
+  const detailBox = document.getElementById('intent-detail');
+  detailBox.removeAttribute('aria-live');
   if (first) select(first, nodeEls[graph.nodes.indexOf(first)]);
+  detailBox.setAttribute('aria-live', 'polite');
 }
 
 function drawSystem(sys) {
@@ -404,10 +432,9 @@ function drawSystem(sys) {
   const c = countBy(sys.parts, 'status');
   document.getElementById('system-facts').replaceChildren(
     el('span', null, sys.parts.length + ' parts'),
-    el('span', 'on', (c.OPERATED || 0) + ' running'),
-    el('span', null, (c.LAID || 0) + ' built, not running'),
+    el('span', 'on', (c.OPERATED || 0) + ' built and tested'),
+    el('span', null, (c.LAID || 0) + ' written, not wired in'),
     el('span', null, (c.PLANNED || 0) + ' planned'),
-    el('span', null, sys.edgeCount + ' links'),
   );
   if (sys.generatedAt) document.getElementById('system-when').textContent = 'File says it was made ' + sys.generatedAt.slice(0, 10) + '.';
 }
@@ -430,20 +457,23 @@ function drawRunning(sections) {
 }
 
 function fail(id, name) {
+  failed.add(name);
   const box = document.getElementById(id);
   box.replaceChildren(el('p', 'load-fail', 'Could not read ' + SOURCES[name] + ' just now. Nothing is shown in its place. '), link(BLOB_BASE + SOURCES[name], 'Open the file on GitHub'));
 }
 
+const failed = new Set();
+
 export async function initWindow() {
   if (typeof document === 'undefined') return;
-  const stamp = document.getElementById('read-at');
-  if (stamp) stamp.textContent = 'Read from GitHub at ' + new Date().toLocaleString() + '.';
   const jobs = [
     fetchSource('intent').then(t => { const g = parseIntentYaml(t); if (!g.nodes.length) throw new Error('empty'); drawIntent(g); }).catch(() => fail('intent-map', 'intent')),
-    fetchSource('system').then(t => drawSystem(parseSystemGraph(t))).catch(() => fail('system-map', 'system')),
-    fetchSource('running').then(t => drawRunning(parseRunning(t))).catch(() => fail('running-list', 'running')),
+    fetchSource('system').then(t => { const s = parseSystemGraph(t); if (!s.parts.length) throw new Error('empty'); drawSystem(s); }).catch(() => fail('system-map', 'system')),
+    fetchSource('running').then(t => { const r = parseRunning(t); if (!r.length) throw new Error('empty'); drawRunning(r); }).catch(() => fail('running-list', 'running')),
   ];
-  await Promise.allSettled(jobs);
+  const results = await Promise.allSettled(jobs);
+  const stamp = document.getElementById('read-at');
+  if (stamp && failed.size < results.length) stamp.textContent = 'Read from GitHub at ' + new Date().toLocaleString() + '.';
 }
 
 if (typeof document !== 'undefined') {
