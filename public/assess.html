@@ -534,7 +534,7 @@ a.prose-link:hover{color:var(--accent-2);border-color:var(--accent);}
 // ══════════════════════════════════════════════════════════════════
 
 var SB_URL  = 'https://ksinisdzgtnqzsymhfya.supabase.co';
-var SB_KEY  = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtzaW5pc2R6Z3RucXpzeW1oZnlhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQzMDEzMzEsImV4cCI6MjA4OTg3NzMzMX0.2M9uE_JQOeDPy8obGweyNlPNMiJoISSf3xx4qeYbUU8';
+var SB_KEY  = 'sb_publishable_JskWcxXBfsul3IqMwiXsqA_OWMQb1Vh';
 var GAS_URL = 'https://script.google.com/macros/s/AKfycbzLGHNkoATfWEuZ_4wED8qZZ-Kua2zborJtV657limU3-hvHEln3GQE1q93W_ZW2uZv/exec';
 
 // ══════════════════════════════════════════════════════════════════
@@ -676,7 +676,14 @@ function readURLParams(){
     run_mode:           'auto',
     series_id:          seriesId,
     run_index:          1,
-    series_length:      1
+    series_length:      1,
+    // Required by the database (NOT NULL since the Sep schema hardening).
+    assessment_id:      'web-' + seriesId,
+    session_id:         session || seriesId,
+    thread_id:          '',
+    pair_id:            '',
+    rater_id:           '',
+    functional_node_id: ''
   };
 
   var ss = document.getElementById('submit-status');
@@ -1342,7 +1349,10 @@ function submitAssessment(){
     behavioral_summary:summaryStr,
     flags:flags.join(','),submission_source:'assess.html-static',
     // New schema fields (backend may or may not have columns yet — safe to send)
-    run_mode:runMode, series_id:seriesId, run_index:runIndex, series_length:seriesLength
+    run_mode:runMode, series_id:seriesId, run_index:runIndex, series_length:seriesLength,
+    // Required by the database (NOT NULL since the Sep schema hardening).
+    assessment_id:'web-'+seriesId+'-r'+runIndex, session_id:seriesId,
+    thread_id:'', pair_id:'', rater_id:'', functional_node_id:''
   };
   var gasPayload={
     agent_name:agent,agent:agent,layer:'ai-self-report',mode:'manual',version:'v1.0-static-11dim',

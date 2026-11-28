@@ -1294,7 +1294,7 @@ render(<App />, document.getElementById("root"));
     }
 
     // ── SUPABASE LOADER (replaces Papa.parse) ───────────────────────────────
-    const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtzaW5pc2R6Z3RucXpzeW1oZnlhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQzMDEzMzEsImV4cCI6MjA4OTg3NzMzMX0.2M9uE_JQOeDPy8obGweyNlPNMiJoISSf3xx4qeYbUU8';
+    const SB_KEY = 'sb_publishable_JskWcxXBfsul3IqMwiXsqA_OWMQb1Vh';
     const SB_URL = 'https://ksinisdzgtnqzsymhfya.supabase.co';
     async function loadData() {
       try {
@@ -1844,7 +1844,7 @@ export function getLiColor(li: number): string {
 // ── SUPABASE LOADER ──────────────────────────────────────────────────────
 
 const SB_KEY =
-  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtzaW5pc2R6Z3RucXpzeW1oZnlhIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQzMDEzMzEsImV4cCI6MjA4OTg3NzMzMX0.2M9uE_JQOeDPy8obGweyNlPNMiJoISSf3xx4qeYbUU8'
+  'sb_publishable_JskWcxXBfsul3IqMwiXsqA_OWMQb1Vh'
 const SB_URL = 'https://ksinisdzgtnqzsymhfya.supabase.co'
 
 interface RawRow {

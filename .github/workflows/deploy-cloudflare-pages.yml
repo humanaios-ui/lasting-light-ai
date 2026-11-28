@@ -33,7 +33,9 @@ jobs:
         run: npm run build
         env:
           VITE_SUPABASE_URL: ${{ secrets.VITE_SUPABASE_URL }}
-          VITE_SUPABASE_ANON_KEY: ${{ secrets.VITE_SUPABASE_ANON_KEY }}
+          # Public publishable key (safe in browser code; row rules in Supabase guard the data).
+          # The old JWT anon key is disabled in Supabase, so every site read and write got HTTP 401.
+          VITE_SUPABASE_ANON_KEY: sb_publishable_JskWcxXBfsul3IqMwiXsqA_OWMQb1Vh
 
       - name: Deploy to Cloudflare Pages
         run: |
